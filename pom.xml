@@ -10,11 +10,12 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>eureka-service-discovery</module>
         <module>gateway-service-config</module>
+        <module>auth-service</module>
         <module>first-service</module>
         <module>second-service</module>
-        <module>auth-service</module>
-        <module>eureka-service-discovery</module>
+        <module>user-profile</module>
     </modules>
 
 </project>

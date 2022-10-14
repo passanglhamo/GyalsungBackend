@@ -31,17 +31,20 @@ import java.time.Duration;
 @PropertySource("classpath:service-names.properties")
 public class SpringCloudConfig {
 
+    @Value("${app.auth.validation.url}")
+    private String authValidationURL;
+
+    @Value("${app.auth.url}")
+    private String authURL;
+
     @Value("${app.first.url}")
     private String firstURL;
 
     @Value("${app.second.url}")
     private String secondURL;
 
-    @Value("${app.auth.url}")
-    private String authURL;
-
-    @Value("${app.auth.validation.url}")
-    private String authValidationURL;
+    @Value("${app.user.profile.url}")
+    private String userProfileURL;
 
     @Bean
     public GlobalFilter globalFilter() {
@@ -90,6 +93,10 @@ public class SpringCloudConfig {
                 .route("consumerModule"
                         , r -> r.path("/api/consumer/**")
                             .uri(secondURL))
+                .route("userProfile"
+                        , r -> r.path("/api/user/profile/**")
+                                .filters(f -> f.filter(authFilter))
+                                .uri(userProfileURL))
                 /*.route("authModule"
                         , r -> r.path("/api/auth/**")
                             .uri(authURL))*/

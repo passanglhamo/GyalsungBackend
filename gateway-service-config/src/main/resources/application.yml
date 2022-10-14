@@ -2,7 +2,7 @@ spring:
   application:
     name: api-gateway
 server:
-  port: 80
+  port: 81
 management:
   endpoints:
     web:

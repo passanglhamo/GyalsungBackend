@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: user-profile
+  main:
+    banner-mode: "off"
+    allow-circular-references: true
+  jpa:
+    properties:
+      javax:
+        persistence:
+          validation:
+            mode: "none"
+  mail:
+    host: "smtp.gmail.com"
+    port: 587
+    username: "dhi.bhutan.bt@gmail.com"
+    password: "czconvqzibicectb"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+bezkoder:
+  app:
+    jwtSecret: "bezKoderSecretKey"
+    jwtExpirationMs: 86400000
+server:
+  port: 8084
+  servlet:
+    context-path: /api/user/profile
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,httptrace,prometheus
+app:
+  home:
+    #logs: /Users/${USER}/Logs
+    logs: /Users/Logs
+#Eureka-Config:
+app.eureka.service.host: localhost
+app.eureka.service.port: 801
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${app.eureka.service.host}:${app.eureka.service.port}/eureka
