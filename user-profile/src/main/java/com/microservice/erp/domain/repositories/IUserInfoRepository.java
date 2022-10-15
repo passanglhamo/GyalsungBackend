@@ -14,8 +14,8 @@ import java.util.List;
 
 @Repository
 public interface IUserInfoRepository extends JpaRepository<UserInfo, Long> {
-//    List<UserInfo> findByName(String name);
-//    long countByName(String name);
+    //List<UserInfo> findByName(String name);
+    //long countByName(String name);
 
     @Override
     long count();
