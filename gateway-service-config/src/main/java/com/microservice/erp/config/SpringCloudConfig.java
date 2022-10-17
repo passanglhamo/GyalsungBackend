@@ -46,6 +46,9 @@ public class SpringCloudConfig {
     @Value("${app.user.profile.url}")
     private String userProfileURL;
 
+    @Value("${app.notification.url}")
+    private String notificationURL;
+
     @Bean
     public GlobalFilter globalFilter() {
         return (exchange, chain) -> {
@@ -97,6 +100,10 @@ public class SpringCloudConfig {
                         , r -> r.path("/api/user/profile/**")
                                 .filters(f -> f.filter(authFilter))
                                 .uri(userProfileURL))
+                .route("notification"
+                        , r -> r.path("/api/notification/**")
+                                .filters(f -> f.filter(authFilter))
+                                .uri(notificationURL))
                 /*.route("authModule"
                         , r -> r.path("/api/auth/**")
                             .uri(authURL))*/

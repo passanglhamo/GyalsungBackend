@@ -16,6 +16,7 @@
         <module>first-service</module>
         <module>second-service</module>
         <module>user-profile</module>
+        <module>notification</module>
     </modules>
 
 </project>
