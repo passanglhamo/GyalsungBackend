@@ -46,6 +46,9 @@ public class SpringCloudConfig {
     @Value("${app.user.profile.url}")
     private String userProfileURL;
 
+    @Value("${app.training.management.url}")
+    private String trainingManagementURL;
+
     @Value("${app.notification.url}")
     private String notificationURL;
 
@@ -69,6 +72,7 @@ public class SpringCloudConfig {
     public RouteLocator gatewayRoutes(RouteLocatorBuilder builder
                         , @Qualifier("CustomAuthFilter") GatewayFilter authFilter
                         , RedisRateLimiter rateLimiter) {
+
         return builder.routes()
                 .route("employeeModuleRateLimit"
                         , r -> r.path("/api/employee/v1/rateLimit/**")
@@ -100,6 +104,10 @@ public class SpringCloudConfig {
                         , r -> r.path("/api/user/profile/**")
                                 .filters(f -> f.filter(authFilter))
                                 .uri(userProfileURL))
+                .route("trainingManagement"
+                        , r -> r.path("/api/training/management/**")
+                                .filters(f -> f.filter(authFilter))
+                                .uri(trainingManagementURL))
                 .route("notification"
                         , r -> r.path("/api/notification/**")
                                 .filters(f -> f.filter(authFilter))
