@@ -49,6 +49,9 @@ public class SpringCloudConfig {
     @Value("${app.training.management.url}")
     private String trainingManagementURL;
 
+    @Value("${app.enrolment.deferment.exemption.url}")
+    private String enrolmentDefermentExemptionURL;
+
     @Value("${app.notification.url}")
     private String notificationURL;
 
@@ -108,6 +111,10 @@ public class SpringCloudConfig {
                         , r -> r.path("/api/training/management/**")
                                 .filters(f -> f.filter(authFilter))
                                 .uri(trainingManagementURL))
+                .route("enrolmentDefermentExemption"
+                        , r -> r.path("/api/enrolment/deferment/exemption/**")
+                                .filters(f -> f.filter(authFilter))
+                                .uri(enrolmentDefermentExemptionURL))
                 .route("notification"
                         , r -> r.path("/api/notification/**")
                                 .filters(f -> f.filter(authFilter))

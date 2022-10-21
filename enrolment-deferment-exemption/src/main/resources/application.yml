@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: enrolment-deferment-exemption
+  main:
+    banner-mode: "off"
+  jpa:
+    properties:
+      javax:
+        persistence:
+          validation:
+            mode: "none"
+  servlet:
+    multipart:
+      enabled: true
+server:
+  port: 8087
+  servlet:
+    context-path: /api/enrolment/deferment/exemption
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,httptrace,prometheus
+app:
+  home:
+    #logs: /Users/${USER}/Logs
+    logs: /Users/Logs
+#Eureka-Config:
+app.eureka.service.host: localhost
+app.eureka.service.port: 801
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${app.eureka.service.host}:${app.eureka.service.port}/eureka

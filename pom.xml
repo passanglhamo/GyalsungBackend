@@ -17,6 +17,7 @@
         <module>second-service</module>
         <module>user-profile</module>
         <module>training-management</module>
+        <module>enrolment-deferment-exemption</module>
         <module>notification</module>
     </modules>
 
