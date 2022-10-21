@@ -16,4 +16,9 @@ public class TrainingAcademyCapacityService implements IReadTrainingAcademyCapac
     public List<TrainingAcademyCapacity> findAll() {
         return repository.findAll();
     }
+
+    @Override
+    public TrainingAcademyCapacity findById(Long id) {
+        return repository.findById(id).get();
+    }
 }

@@ -23,4 +23,9 @@ public class ReadReasonService implements IReadReasonService {
         return repository.findAllByStatus(status);
     }
 
+    @Override
+    public Reason findById(Long id) {
+        return repository.findById(id).get();
+    }
+
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
  * @author Passang Lhamo
  *
  */
-@CrossOrigin(origins = "*")
+
 @Repository
 public interface IDzongkhagHospitalMappingRepository extends JpaRepository<DzongkhagHospitalMapping,Long> {
 }

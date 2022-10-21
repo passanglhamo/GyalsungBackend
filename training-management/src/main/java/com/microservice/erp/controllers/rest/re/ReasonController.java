@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/reasons")
 @AllArgsConstructor
@@ -23,13 +22,18 @@ public class ReasonController {
         return service.add(reason);
     }
 
+
+    @GetMapping("/findById")
+    public Reason getById(@RequestParam("id")Long id) {
+        return readService.findById(id);
+    }
     @GetMapping
     public List<Reason> query() {
         return readService.findAll();
     }
 
-    @GetMapping("/{status}")
-    public List<Reason> activeQuery(@PathVariable("status") Character status) {
+    @GetMapping("/findByStatus")
+    public List<Reason> activeQuery(@RequestParam("status") Character status) {
         return readService.findAllByStatus(status);
     }
 
