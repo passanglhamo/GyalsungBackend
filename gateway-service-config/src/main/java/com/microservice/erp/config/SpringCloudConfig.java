@@ -82,7 +82,8 @@ public class SpringCloudConfig {
                                 .filters(f -> {
                                     //Code breakdown for readability:
                                     return f.requestRateLimiter()
-                                            .configure(c -> c.setRateLimiter(rateLimiter));
+                                            .configure(c -> c.setRateLimiter(rateLimiter))
+                                            .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE");
                                 })
                                 .uri(firstURL))
                 .route("employeeModuleDelayed"
@@ -91,33 +92,40 @@ public class SpringCloudConfig {
                                     //Code breakdown for readability:
                                     return f.filter(authFilter)
                                             .circuitBreaker(c -> c.setName("id-employee-circuit")
-                                                    .setFallbackUri("/api/employee/v1/errorFallback"));
+                                                    .setFallbackUri("/api/employee/v1/errorFallback"))
+                                            .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE");
                                                     //OR Generic messages:
                                                     //.setFallbackUri("/api/fallback/messages/unreachable"));
                                 })
                                 .uri(firstURL))
                 .route("employeeModule"
                         , r -> r.path("/api/employee/v1/**")
-                            .filters(f -> f.filter(authFilter))
+                            .filters(f -> f.filter(authFilter)
+                                    .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE")
+                            )
                             .uri(firstURL))
                 .route("consumerModule"
                         , r -> r.path("/api/consumer/**")
                             .uri(secondURL))
                 .route("userProfile"
                         , r -> r.path("/api/user/profile/**")
-                                .filters(f -> f.filter(authFilter))
+                                .filters(f -> f.filter(authFilter)
+                                        .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(userProfileURL))
                 .route("trainingManagement"
                         , r -> r.path("/api/training/management/**")
-                                .filters(f -> f.filter(authFilter))
+                                .filters(f -> f.filter(authFilter)
+                                        .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(trainingManagementURL))
                 .route("enrolmentDefermentExemption"
                         , r -> r.path("/api/enrolment/deferment/exemption/**")
-                                .filters(f -> f.filter(authFilter))
+                                .filters(f -> f.filter(authFilter)
+                                        .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(enrolmentDefermentExemptionURL))
                 .route("notification"
                         , r -> r.path("/api/notification/**")
-                                .filters(f -> f.filter(authFilter))
+                                .filters(f -> f.filter(authFilter)
+                                        .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(notificationURL))
                 /*.route("authModule"
                         , r -> r.path("/api/auth/**")
