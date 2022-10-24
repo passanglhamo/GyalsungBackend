@@ -1,6 +1,7 @@
 package com.microservice.erp.services.impl.parentConsent;
 
 
+import com.microservice.erp.domain.dto.ParentConsentListDto;
 import com.microservice.erp.domain.dto.parentConsent.ParentConsentDto;
 import com.microservice.erp.domain.entities.ParentConsent;
 import com.microservice.erp.domain.entities.ParentConsentOtp;
@@ -9,15 +10,13 @@ import com.microservice.erp.domain.repositories.ParentConsentRepository;
 import com.microservice.erp.services.helper.MessageResponse;
 import com.microservice.erp.services.iServices.parentConsent.IParentConsentService;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -57,6 +56,32 @@ public class ParentConsentService implements IParentConsentService {
         ParentConsent parentConsent = new ModelMapper().map(parentConsentDto, ParentConsent.class);
         parentConsentRepository.save(parentConsent);
         return ResponseEntity.ok(new MessageResponse("Data saved successfully."));
+    }
+
+    @Override
+    public ResponseEntity<?> getParentConsentList() {
+        //TODO: need to filter parent consent lists by year
+        List<ParentConsent> parentConsentLists = parentConsentRepository.findAll();
+
+        List<ParentConsentListDto> parentConsentListDtos = new ArrayList<>();
+        parentConsentLists.forEach(item -> {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", "Bearer " + "static-token");
+            HttpEntity<String> request = new HttpEntity<String>(headers);
+            String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
+            ResponseEntity<ParentConsentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, ParentConsentListDto.class);
+            ParentConsentListDto parentConsentListDto = new ParentConsentListDto();
+            parentConsentListDto.setUserId(item.getUserId());
+            parentConsentListDto.setFullName(Objects.requireNonNull(response.getBody()).getFullName());
+            parentConsentListDto.setCid(response.getBody().getCid());
+            parentConsentListDto.setDob(response.getBody().getDob());
+            parentConsentListDto.setGuardianName(item.getGuardianName());
+            parentConsentListDto.setGuardianMobileNo(item.getGuardianMobileNo());
+            parentConsentListDtos.add(parentConsentListDto);
+        });
+
+        return ResponseEntity.ok(parentConsentListDtos);
     }
 
     private ResponseEntity<?> verifyOtp(ParentConsentDto parentConsentDto) {

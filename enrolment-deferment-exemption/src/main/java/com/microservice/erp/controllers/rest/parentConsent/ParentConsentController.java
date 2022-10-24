@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/parentConsent")
@@ -21,5 +23,10 @@ public class ParentConsentController {
     @PostMapping(value = "/submitParentConsent")
     public ResponseEntity<?> submitParentConsent(@RequestBody ParentConsentDto parentConsentDto) {
         return parentConsentService.submitParentConsent(parentConsentDto);
+    }
+
+    @GetMapping(value = "/getParentConsentList")
+    public ResponseEntity<?> getParentConsentList() {
+        return parentConsentService.getParentConsentList();
     }
 }

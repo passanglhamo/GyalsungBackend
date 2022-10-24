@@ -8,4 +8,6 @@ public interface IParentConsentService {
     ResponseEntity<?> receiveOtp(ParentConsentDto parentConsentDto);
 
     ResponseEntity<?> submitParentConsent(ParentConsentDto parentConsentDto);
+
+    ResponseEntity<?> getParentConsentList();
 }

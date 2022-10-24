@@ -80,8 +80,8 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>		
-		
+        </dependency>
+
         <!-- Spring Cloud Sleuth -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -106,7 +106,7 @@
             <version>${logstash-logback-encoder.version}</version>
         </dependency>
         <!-- -->
-		
+
         <!-- Spring-Boot Unit & Integration Testing using H2 DB-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
