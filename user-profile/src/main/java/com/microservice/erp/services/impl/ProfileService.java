@@ -1,21 +1,20 @@
 package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dto.DzongkhagDto;
+import com.microservice.erp.domain.dto.GeogDto;
 import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.*;
 import com.microservice.erp.domain.helper.FileUploadDTO;
 import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
 import com.microservice.erp.domain.helper.ResponseMessage;
-import com.microservice.erp.domain.helper.SystemDataInt;
 import com.microservice.erp.domain.repositories.*;
 import com.microservice.erp.services.EmailSenderService;
 import com.microservice.erp.services.iServices.IProfileService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,10 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -43,9 +39,6 @@ public class ProfileService implements IProfileService {
 
     private final PasswordEncoder encoder;
     private final BCryptPasswordEncoder passwordEncoder;
-
-    private final IDzongkhagRepository dzongkhagRepository;
-    private final IGeogRepository geogRepository;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
 
 
@@ -243,14 +236,32 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> getAllDzongkhags() {
-        List<Dzongkhag> dzongkhags = dzongkhagRepository.findAll();
-        return ResponseEntity.ok(dzongkhags);
+        List<DzongkhagDto> dzongkhagDtos = new ArrayList<>();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + "static-token");
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        String url = "http://localhost:81/api/training/management/common/getAllDzongkhags";
+        ResponseEntity<DzongkhagDto[]> response = restTemplate.exchange(url, HttpMethod.GET, request, DzongkhagDto[].class);
+        for (DzongkhagDto dzongkhagDto : response.getBody()) {
+            dzongkhagDtos.add(dzongkhagDto);
+        }
+        return ResponseEntity.ok(dzongkhagDtos);
     }
 
     @Override
     public ResponseEntity<?> getGeogByDzongkhagId(Integer dzongkhagId) {
-        List<Geog> geogs = geogRepository.findByDzongkhagId(dzongkhagId);
-        return ResponseEntity.ok(geogs);
+        List<GeogDto> geogDtos = new ArrayList<>();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + "static-token");
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        String url = "http://localhost:81/api/training/management/common/getGeogByDzongkhagId?dzongkhagId=" + dzongkhagId;
+        ResponseEntity<GeogDto[]> response = restTemplate.exchange(url, HttpMethod.GET, request, GeogDto[].class);
+        for (GeogDto geogDto : response.getBody()) {
+            geogDtos.add(geogDto);
+        }
+        return ResponseEntity.ok(geogDtos);
     }
 
     @Override
@@ -258,12 +269,8 @@ public class ProfileService implements IProfileService {
         UserInfo userInfo = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
         userInfo.setPresentCountry(userProfileDto.getPresentCountry());
         userInfo.setPresentPlaceName(userProfileDto.getPresentPlaceName());
-
-        Dzongkhag dzongkhag = dzongkhagRepository.findByDzongkhagId(userProfileDto.getPresentDzongkhagId());
-        Geog geog = geogRepository.findByGeogId(userProfileDto.getPresentGeogId());
-        userInfo.setPresentDzongkhag(new Dzongkhag(userProfileDto.getPresentDzongkhagId(), dzongkhag.getDzongkhagName()));
-        userInfo.setPresentGeog(new Geog(userProfileDto.getPresentGeogId(), geog.getDzongkhagId(), geog.getGeogName()));
-
+        userInfo.setPresentDzongkhagId(userProfileDto.getPresentDzongkhagId());
+        userInfo.setPresentGeogId(userProfileDto.getPresentGeogId());
         iUserInfoRepository.save(userInfo);
         return ResponseEntity.ok(new MessageResponse("Guardian information updated successfully."));
     }

@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface IDzongkhagRepository extends JpaRepository<Dzongkhag,Integer> {
     List<Dzongkhag> findAllByOrderByDzongkhagNameAsc();
+    Dzongkhag findByDzongkhagId(Integer presentDzongkhagId);
 }

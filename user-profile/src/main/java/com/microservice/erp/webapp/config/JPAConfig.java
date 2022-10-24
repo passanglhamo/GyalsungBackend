@@ -33,7 +33,7 @@ import java.util.Optional;
 )
 @PropertySource("classpath:mysql-db.properties")
 @PropertySource("classpath:h2-db.properties")
-//@PropertySource("classpath:postgres-db.properties")
+@PropertySource("classpath:postgres-db.properties")
 public class JPAConfig {
 
     private Environment env;
