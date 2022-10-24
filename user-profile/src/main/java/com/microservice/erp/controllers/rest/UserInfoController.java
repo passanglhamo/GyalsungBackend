@@ -3,12 +3,14 @@ package com.microservice.erp.controllers.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservice.erp.domain.entities.UserInfo;
+import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.IUserInfoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Rajib Kumer Ghosh
@@ -20,12 +22,13 @@ public class UserInfoController {
 
     private IUserInfoService service;
     private ObjectMapper mapper;
+    private IUserInfoRepository iUserInfoRepository;
 
-    public UserInfoController(IUserInfoService service, ObjectMapper mapper) {
+    public UserInfoController(IUserInfoService service, ObjectMapper mapper, IUserInfoRepository iUserInfoRepository) {
         this.service = service;
         this.mapper = mapper;
+        this.iUserInfoRepository = iUserInfoRepository;
     }
-
     @GetMapping("/hello")
     public ResponseEntity<String> getHello() throws JsonProcessingException {
         Integer count = 121;
