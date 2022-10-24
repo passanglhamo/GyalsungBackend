@@ -50,7 +50,9 @@ public class UserProfileDto {
     private String socialMediaLink2;
     private String socialMediaLink3;
     private Integer presentDzongkhagId;
+    private String presentDzongkhagName;
     private Integer presentGeogId;
+    private String presentGeogName;
     private String presentPlaceName;
     private String presentCountry;
     private MultipartFile profilePicture;

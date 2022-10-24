@@ -22,4 +22,14 @@ public class CommonController {
     public ResponseEntity<?> getGeogByDzongkhagId(@RequestParam("dzongkhagId") Integer dzongkhagId) {
         return iCommonService.getGeogByDzongkhagId(dzongkhagId);
     }
+
+    @GetMapping("/getGeogByGeogId")
+    public ResponseEntity<?> getGeogByGeogId(@RequestParam("geogId") Integer geogId) {
+        return iCommonService.getGeogByGeogId(geogId);
+    }
+
+    @GetMapping("/getDzongkhagByDzongkhagId")
+    public ResponseEntity<?> getDzongkhagByDzongkhagId(@RequestParam("dzongkhagId") Integer dzongkhagId) {
+        return iCommonService.getDzongkhagByDzongkhagId(dzongkhagId);
+    }
 }

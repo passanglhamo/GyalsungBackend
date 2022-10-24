@@ -6,4 +6,8 @@ public interface ICommonService {
     ResponseEntity<?> getAllDzongkhags();
 
     ResponseEntity<?> getGeogByDzongkhagId(Integer dzongkhagId);
+
+    ResponseEntity<?> getGeogByGeogId(Integer geogId);
+
+    ResponseEntity<?> getDzongkhagByDzongkhagId(Integer dzongkhagId);
 }

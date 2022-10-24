@@ -7,5 +7,6 @@ import lombok.Setter;
 @Getter
 public class DzongkhagDto {
     private Integer dzongkhagId;
+    private Integer geogId;
     private String dzongkhagName;
 }

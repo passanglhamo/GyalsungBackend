@@ -29,4 +29,16 @@ public class CommonService implements ICommonService {
         List<Geog> geogs = geogRepository.findByDzongkhagIdOrderByGeogNameAsc(dzongkhagId);
         return ResponseEntity.ok(geogs);
     }
+
+    @Override
+    public ResponseEntity<?> getGeogByGeogId(Integer geogId) {
+        Geog geog = geogRepository.findByGeogId(geogId);
+        return ResponseEntity.ok(geog);
+    }
+
+    @Override
+    public ResponseEntity<?> getDzongkhagByDzongkhagId(Integer dzongkhagId) {
+        Dzongkhag dzongkhag = dzongkhagRepository.findByDzongkhagId(dzongkhagId);
+        return ResponseEntity.ok(dzongkhag);
+    }
 }

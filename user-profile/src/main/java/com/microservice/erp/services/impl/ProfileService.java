@@ -45,7 +45,21 @@ public class ProfileService implements IProfileService {
     @Override
     public ResponseEntity<?> getProfileInfo(Long userId) {
         UserInfo userInfo = iUserInfoRepository.findById(userId).get();
-        return ResponseEntity.ok(userInfo);
+        UserProfileDto userProfileDto = new ModelMapper().map(userInfo, UserProfileDto.class);
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + "static-token");
+        HttpEntity<String> request = new HttpEntity<String>(headers);
+
+        String geogUrl = "http://localhost:81/api/training/management/common/getGeogByGeogId?geogId=" + userInfo.getPresentGeogId();
+        ResponseEntity<GeogDto> geogResponse = restTemplate.exchange(geogUrl, HttpMethod.GET, request, GeogDto.class);
+        userProfileDto.setPresentGeogName(Objects.requireNonNull(geogResponse.getBody()).getGeogName());
+
+        String dzongkhagUrl = "http://localhost:81/api/training/management/common/getDzongkhagByDzongkhagId?dzongkhagId=" + userInfo.getPresentDzongkhagId();
+        ResponseEntity<DzongkhagDto> dzongkhagResponse = restTemplate.exchange(dzongkhagUrl, HttpMethod.GET, request, DzongkhagDto.class);
+        userProfileDto.setPresentDzongkhagName(Objects.requireNonNull(dzongkhagResponse.getBody()).getDzongkhagName());
+
+        return ResponseEntity.ok(userProfileDto);
     }
 
     @Override
