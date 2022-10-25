@@ -21,10 +21,10 @@ spring:
           auth: true
           starttls:
             enable: true
-bezkoder:
-  app:
-    jwtSecret: "bezKoderSecretKey"
-    jwtExpirationMs: 86400000
+#bezkoder:
+#  app:
+#    jwtSecret: "bezKoderSecretKey"
+#    jwtExpirationMs: 86400000
 server:
   port: 8084
   servlet:

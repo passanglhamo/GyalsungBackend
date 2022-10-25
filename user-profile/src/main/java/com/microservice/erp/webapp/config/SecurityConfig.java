@@ -1,17 +1,9 @@
 package com.microservice.erp.webapp.config;
 
-//TODO Need to remove
-
-import com.microservice.erp.domain.security.jwt.AuthEntryPointJwt;
-import com.microservice.erp.domain.security.jwt.AuthTokenFilter;
-import com.microservice.erp.domain.security.services.UserDetailsServiceImpl;
 import com.microservice.erp.webapp.config.jdbc.DriverClass;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -26,7 +18,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
  * @author Rajib Kumer Ghosh
  */
 
-//@EnableWebSecurity
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
@@ -40,33 +31,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
-
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
-    }
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-
-    @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-    }
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
     public static final String[] URL_WHITELIST = {
             "/v2/api-docs"
             , "/swagger-ui.html"
@@ -77,7 +41,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             , "/actuator/health"
             , "/actuator/prometheus"
             , "/h2-console/**"
-            , "/kmsfileupload/**"
     };
 
     @Value("${spring.datasource.driver-class-name}")
@@ -110,12 +73,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         multipartResolver.setMaxUploadSize(-1);//-1 means no file size restriction
         return multipartResolver;
     }
-
-//    @Bean
-//    public ServletRegistrationBean<ImageServlet> exampleServletBean() {
-//        ServletRegistrationBean<ImageServlet> bean = new ServletRegistrationBean<>(
-//                new ImageServlet(), "/profilePic/*");
-//        bean.setLoadOnStartup(1);
-//        return bean;
-//    }
 }

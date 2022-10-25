@@ -46,10 +46,10 @@ public class UserInfo extends Auditable<Long, Long> {
     @Min(value = 18, message = "Minimum age value must be 18")
     private Integer age = 18;
 
-    @NotNull(message = "dob Cannot be Null")
-    @Past(message = "Date Of Birth Must Be Greater Then Now")
+    @NotNull(message = "DOB cannot be null")
+    @Past(message = "DOB must be greater than now")
     @Basic(optional = false)
-    @Column(name = "DOB")
+    @Column(name = "dob")
     @Temporal(TemporalType.DATE)
     private Date dob = new java.sql.Date(new Date().getTime());
 
@@ -95,7 +95,7 @@ public class UserInfo extends Auditable<Long, Long> {
     @Column(name = "present_geog_id", columnDefinition = "int")
     private Integer presentGeogId;
 
-    @Column(name = "present_palce_name", columnDefinition = "varchar(255)")
+    @Column(name = "present_place_name", columnDefinition = "varchar(255)")
     private String presentPlaceName;
 
     @Column(name = "permanent_country", columnDefinition = "varchar(255)")
@@ -107,7 +107,7 @@ public class UserInfo extends Auditable<Long, Long> {
     @Column(name = "permanent_geog", columnDefinition = "varchar(255)")
     private String permanentGeog;
 
-    @Column(name = "permanent_pace_name", columnDefinition = "varchar(255)")
+    @Column(name = "permanent_place_name", columnDefinition = "varchar(255)")
     private String permanentPlaceName;
 
     @Column(name = "father_name", columnDefinition = "varchar(255)")
@@ -149,7 +149,7 @@ public class UserInfo extends Auditable<Long, Long> {
     @Column(name = "guardian_mobile_no", columnDefinition = "varchar(255)")
     private String guardianMobileNo;
 
-    @Column(name = "guargian_occupation", columnDefinition = "varchar(255)")
+    @Column(name = "guardian_occupation", columnDefinition = "varchar(255)")
     private String guardianOccupation;
 
     @Column(name = "guardian_email", columnDefinition = "varchar(255)")
@@ -190,12 +190,12 @@ public class UserInfo extends Auditable<Long, Long> {
     @Column(name = "status")
     private Character status;
 
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "sa_user_roles",
-            joinColumns = @JoinColumn(name = "userId"),
-            inverseJoinColumns = @JoinColumn(name = "roleId"))
-    private Set<Role> roles = new HashSet<>();
+//
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "sa_user_roles",
+//            joinColumns = @JoinColumn(name = "userId"),
+//            inverseJoinColumns = @JoinColumn(name = "roleId"))
+//    private Set<Role> roles = new HashSet<>();
 
     public UserInfo() {
     }
