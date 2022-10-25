@@ -236,6 +236,13 @@
             <version>1.4</version>
         </dependency>
         <!--fileupload start-->
+        <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-feign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-feign</artifactId>
+            <version>1.4.3.RELEASE</version>
+        </dependency>
+
     </dependencies>
 
     <build>

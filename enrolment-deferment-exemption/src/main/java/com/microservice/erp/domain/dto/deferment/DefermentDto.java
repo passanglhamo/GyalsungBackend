@@ -28,6 +28,11 @@ public class DefermentDto {
     private  MultipartFile[] proofDocuments;
     private  Collection<DefermentFileDto> defermentFileDtos;
 
+    private String fullName;
+    private String cid;
+    private Date dob;
+    private String sex;
+
         public static DefermentDto withId(
                 Long id,
                 Date fromDate,
@@ -38,7 +43,11 @@ public class DefermentDto {
                 Character status,
                 String remarks,
                 MultipartFile[] proofDocuments,
-                Collection<DefermentFileDto> defermentFileDtos) {
+                Collection<DefermentFileDto> defermentFileDtos,
+                String fullName,
+                String cid,
+                Date dob,
+                String sex) {
             return new DefermentDto(
                     id,
                     fromDate,
@@ -49,7 +58,11 @@ public class DefermentDto {
                     status,
                     remarks,
                     proofDocuments,
-                    defermentFileDtos);
+                    defermentFileDtos,
+                    fullName,
+                    cid,
+                    dob,
+                    sex);
         }
 
 

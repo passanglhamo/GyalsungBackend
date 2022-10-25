@@ -31,7 +31,7 @@ public class DefermentMapper {
         deferment.setApprovalRemarks(defermentDto.getApprovalRemarks());
         deferment.setRemarks(defermentDto.getRemarks());
         deferment.setStatus(ApprovalStatus.PENDING.value());
-        if(!Objects.isNull(defermentDto.getProofDocuments())){
+        if (!Objects.isNull(defermentDto.getProofDocuments())) {
             deferment.setFiles(
                     Arrays.stream(defermentDto.getProofDocuments())
                             .map(t ->
@@ -97,6 +97,11 @@ public class DefermentMapper {
                                 )
                         )
                         .collect(Collectors.toUnmodifiableSet())
+                ,
+                null,
+                null,
+                null,
+                null
         );
     }
 }

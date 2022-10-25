@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * Created by : Passang Lhamo
@@ -27,6 +28,11 @@ public class ExemptionDto {
     private MultipartFile[] proofDocuments;
     private Collection<ExemptionFileDto> exemptionFileDtos;
 
+    private String fullName;
+    private String cid;
+    private Date dob;
+    private String sex;
+
     public static ExemptionDto withId(
             Long id,
             Long userId,
@@ -35,7 +41,11 @@ public class ExemptionDto {
             Character status,
             String remarks,
             MultipartFile[] proofDocuments,
-            Collection<ExemptionFileDto> exemptionFileDtos) {
+            Collection<ExemptionFileDto> exemptionFileDtos,
+            String fullName,
+            String cid,
+            Date dob,
+            String sex) {
         return new ExemptionDto(
                 id,
                 userId,
@@ -44,6 +54,10 @@ public class ExemptionDto {
                 status,
                 remarks,
                 proofDocuments,
-                exemptionFileDtos);
+                exemptionFileDtos,
+                fullName,
+                cid,
+                dob,
+                sex);
     }
 }
