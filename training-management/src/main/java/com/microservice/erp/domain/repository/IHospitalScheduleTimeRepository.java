@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.Collection;
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+
 @Repository
 public interface IHospitalScheduleTimeRepository extends JpaRepository<HospitalScheduleTime,Long> {
 

@@ -25,7 +25,7 @@ public class ExemptionMapper {
         ExemptionInfo exemption = new ModelMapper().map(exemptionDto, ExemptionInfo.class);
         exemption.setStatus(ApprovalStatus.PENDING.value());
         exemption.setUserId(exemptionDto.getUserId());
-        if(!Objects.isNull(exemptionDto.getProofDocuments())) {
+        if (!Objects.isNull(exemptionDto.getProofDocuments())) {
             exemption.setFiles(
                     Arrays.stream(exemptionDto.getProofDocuments())
                             .map(t ->
@@ -88,6 +88,10 @@ public class ExemptionMapper {
                                         ta.getFileName()
                                 )
                         )
-                        .collect(Collectors.toUnmodifiableSet()));
+                        .collect(Collectors.toUnmodifiableSet()),
+                null,
+                null,
+                null,
+                null);
     }
 }

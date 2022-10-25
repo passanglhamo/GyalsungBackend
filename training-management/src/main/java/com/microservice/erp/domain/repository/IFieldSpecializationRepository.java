@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author Rajib Kumer Ghosh
  */
-@CrossOrigin(origins = "*")
+
 @Repository
 public interface IFieldSpecializationRepository extends JpaRepository<FieldSpecialization, Long> {
     List<FieldSpecialization> findAllByStatusOrderByNameAsc(Character status);

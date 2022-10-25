@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*")
 @Repository
 public interface IReasonRepository extends JpaRepository<Reason, Long> {
 

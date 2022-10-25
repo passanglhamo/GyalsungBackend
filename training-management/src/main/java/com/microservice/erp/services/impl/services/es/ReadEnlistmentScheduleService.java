@@ -14,7 +14,14 @@ public class ReadEnlistmentScheduleService implements IReadEnlistmentScheduleSer
 
     private final IEnlistmentScheduleRepository repository;
 
+    @Override
     public List<EnlistmentSchedule> findAll() {
         return repository.findAll();
+    }
+
+
+    @Override
+    public EnlistmentSchedule findById(Long id) {
+        return repository.findById(id).get();
     }
 }

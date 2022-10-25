@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collection;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/trainingAcademyCapacities")
 @AllArgsConstructor
@@ -31,5 +30,10 @@ public class TrainingAcademyCapacityController {
     public Collection<TrainingAcademyCapacity> getAll() {
 
         return readService.findAll();
+    }
+
+    @GetMapping("/findById")
+    public TrainingAcademyCapacity getById(@RequestParam("id") Long id) {
+        return readService.findById(id);
     }
 }

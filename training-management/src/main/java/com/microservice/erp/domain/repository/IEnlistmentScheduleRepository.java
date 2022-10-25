@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Rajib Kumer Ghosh
  */
-@CrossOrigin(origins = "*")
+
 @Repository
 public interface IEnlistmentScheduleRepository extends JpaRepository<EnlistmentSchedule, Long> {
     @Query(value = "FROM tms_enlistment_schedule t " +

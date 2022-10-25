@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
  * @author Rajib Kumer Ghosh
  *
  */
-@CrossOrigin(origins = "*")
+
 @Repository
 public interface IMedicalQuestionCategoryRepository extends JpaRepository<MedicalQuestionCategory, Long> {
 }

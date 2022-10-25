@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface IReadEnlistmentScheduleService {
     List<EnlistmentSchedule> findAll();
+
+    EnlistmentSchedule findById(Long id);
 }

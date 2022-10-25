@@ -7,4 +7,5 @@ import java.util.List;
 public interface IReadTrainingAcademyCapacityService {
     List<TrainingAcademyCapacity> findAll();
 
+    TrainingAcademyCapacity findById(Long id);
 }

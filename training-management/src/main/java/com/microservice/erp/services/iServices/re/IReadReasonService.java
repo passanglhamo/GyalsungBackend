@@ -8,4 +8,6 @@ public interface IReadReasonService {
     List<Reason> findAll();
 
     List<Reason> findAllByStatus(Character status);
+
+    Reason findById(Long id);
 }

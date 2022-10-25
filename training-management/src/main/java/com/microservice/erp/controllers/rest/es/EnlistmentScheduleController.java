@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/enlistmentSchedules")
 @AllArgsConstructor
@@ -32,6 +31,11 @@ public class EnlistmentScheduleController {
     public List<EnlistmentSchedule> query() {
 
         return readService.findAll();
+    }
+
+    @GetMapping("/findById")
+    public EnlistmentSchedule getById(@RequestParam("id") Long id) {
+        return readService.findById(id);
     }
 
 }

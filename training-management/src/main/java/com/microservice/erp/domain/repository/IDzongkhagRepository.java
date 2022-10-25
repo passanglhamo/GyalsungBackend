@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+
 @Repository
 public interface IDzongkhagRepository extends JpaRepository<Dzongkhag,Integer> {
     List<Dzongkhag> findAllByOrderByDzongkhagNameAsc();

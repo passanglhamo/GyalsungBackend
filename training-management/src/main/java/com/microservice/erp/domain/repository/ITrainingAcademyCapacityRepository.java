@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author Rajib Kumer Ghosh
  */
-@CrossOrigin(origins = "*")
+
 @Repository
 public interface ITrainingAcademyCapacityRepository extends JpaRepository<TrainingAcademyCapacity, Long> {
     TrainingAcademyCapacity findByTrainingYear(String trainingYear);
