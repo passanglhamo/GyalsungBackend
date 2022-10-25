@@ -46,6 +46,7 @@ public class ProfileService implements IProfileService {
     public ResponseEntity<?> getProfileInfo(Long userId) {
         UserInfo userInfo = iUserInfoRepository.findById(userId).get();
         UserProfileDto userProfileDto = new ModelMapper().map(userInfo, UserProfileDto.class);
+        userProfileDto.setPassword(null);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + "static-token");
