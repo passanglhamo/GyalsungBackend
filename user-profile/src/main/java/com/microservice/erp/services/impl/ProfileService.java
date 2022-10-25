@@ -402,4 +402,10 @@ public class ProfileService implements IProfileService {
         }
         return builder.toString();
     }
+
+    @Override
+    public ResponseEntity<?> getRegisteredUsers() {
+        List<UserInfo> userInfos = iUserInfoRepository.findAll();
+        return ResponseEntity.ok(userInfos);
+    }
 }

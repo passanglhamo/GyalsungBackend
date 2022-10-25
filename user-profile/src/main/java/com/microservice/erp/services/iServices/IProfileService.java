@@ -46,5 +46,5 @@ public interface IProfileService {
 
     ResponseEntity<?> changeProfilePic(HttpServletRequest request, UserProfileDto userProfileDto) throws IOException;
 
-
+    ResponseEntity<?> getRegisteredUsers();
 }

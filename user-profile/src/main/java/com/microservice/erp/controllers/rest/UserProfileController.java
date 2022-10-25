@@ -126,4 +126,9 @@ public class UserProfileController {
         return iProfileService.changeProfilePic(request, userProfileDto);
     }
 
+    @GetMapping("/getRegisteredUsers")
+    public ResponseEntity<?> getRegisteredUsers() {
+        return iProfileService.getRegisteredUsers();
+    }
+
 }
