@@ -24,7 +24,7 @@ public class MedicalQuestionController {
 
     @GetMapping
     public List<MedicalQuestionnaire> query() {
-        return readService.findAll();
+        return readService.getMedicalQuestionnaireList();
     }
 
     @GetMapping("/findById")

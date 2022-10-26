@@ -13,8 +13,9 @@ import java.util.List;
 public class ReadMedicalQuestionService implements IReadMedicalQuestionService {
     private final IMedicalQuestionnaireRepository repository;
     @Override
-    public List<MedicalQuestionnaire> findAll() {
-        return repository.findAll();
+    public List<MedicalQuestionnaire> getMedicalQuestionnaireList() {
+        return repository.findAllByOrderByNameAsc();
+//        return repository.findAll();
     }
 
     @Override

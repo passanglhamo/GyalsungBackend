@@ -5,7 +5,7 @@ import com.microservice.erp.domain.entities.MedicalQuestionnaire;
 import java.util.List;
 
 public interface IReadMedicalQuestionService {
-    List<MedicalQuestionnaire> findAll();
+    List<MedicalQuestionnaire> getMedicalQuestionnaireList();
 
     MedicalQuestionnaire findById(Long id);
 }
