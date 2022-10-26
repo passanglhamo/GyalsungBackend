@@ -26,7 +26,7 @@ public class ParentConsentController {
     }
 
     @GetMapping(value = "/getParentConsentList")
-    public ResponseEntity<?> getParentConsentList() {
-        return parentConsentService.getParentConsentList();
+    public ResponseEntity<?> getParentConsentList(@RequestHeader("Authorization") String authHeader) {
+        return parentConsentService.getParentConsentList(authHeader);
     }
 }

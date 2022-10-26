@@ -59,7 +59,7 @@ public class ParentConsentService implements IParentConsentService {
     }
 
     @Override
-    public ResponseEntity<?> getParentConsentList() {
+    public ResponseEntity<?> getParentConsentList(String authHeader) {
         //TODO: need to filter parent consent lists by year
         List<ParentConsent> parentConsentLists = parentConsentRepository.findAll();
 
@@ -67,8 +67,8 @@ public class ParentConsentService implements IParentConsentService {
         parentConsentLists.forEach(item -> {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", "Bearer " + "static-token");
-            HttpEntity<String> request = new HttpEntity<String>(headers);
+            headers.add("Authorization", authHeader);
+            HttpEntity<String> request = new HttpEntity<>(headers);
             String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
             ResponseEntity<ParentConsentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, ParentConsentListDto.class);
             ParentConsentListDto parentConsentListDto = new ParentConsentListDto();

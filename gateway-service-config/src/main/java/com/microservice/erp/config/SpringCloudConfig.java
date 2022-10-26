@@ -24,7 +24,6 @@ import java.time.Duration;
 
 /**
  * @author Rajib Kumer Ghosh
- *
  */
 
 @Configuration
@@ -67,14 +66,14 @@ public class SpringCloudConfig {
     }
 
     @Bean("CustomAuthFilter")
-    public GatewayFilter getAuthFilter(WebClient.Builder builder){
+    public GatewayFilter getAuthFilter(WebClient.Builder builder) {
         return AuthFilter.createGatewayFilter(builder, new AuthFilter.Config(authValidationURL));
     }
 
     @Bean
     public RouteLocator gatewayRoutes(RouteLocatorBuilder builder
-                        , @Qualifier("CustomAuthFilter") GatewayFilter authFilter
-                        , RedisRateLimiter rateLimiter) {
+            , @Qualifier("CustomAuthFilter") GatewayFilter authFilter
+            , RedisRateLimiter rateLimiter) {
 
         return builder.routes()
                 .route("employeeModuleRateLimit"
@@ -94,21 +93,22 @@ public class SpringCloudConfig {
                                             .circuitBreaker(c -> c.setName("id-employee-circuit")
                                                     .setFallbackUri("/api/employee/v1/errorFallback"))
                                             .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE");
-                                                    //OR Generic messages:
-                                                    //.setFallbackUri("/api/fallback/messages/unreachable"));
+                                    //OR Generic messages:
+                                    //.setFallbackUri("/api/fallback/messages/unreachable"));
                                 })
                                 .uri(firstURL))
                 .route("employeeModule"
                         , r -> r.path("/api/employee/v1/**")
-                            .filters(f -> f.filter(authFilter)
-                                    .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE")
-                            )
-                            .uri(firstURL))
+                                .filters(f -> f.filter(authFilter)
+                                        .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE")
+                                )
+                                .uri(firstURL))
                 .route("consumerModule"
                         , r -> r.path("/api/consumer/**")
-                            .uri(secondURL))
+                                .uri(secondURL))
                 .route("userProfile"
-                        , r -> r.path("/api/user/profile/**")
+                        , r ->
+                                r.path("/api/user/profile/**")
                                 .filters(f -> f.filter(authFilter)
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(userProfileURL))
@@ -148,7 +148,7 @@ public class SpringCloudConfig {
     }
 
     @Bean
-    public RedisRateLimiter redisRateLimiter(){
+    public RedisRateLimiter redisRateLimiter() {
         /**
          * defaultReplenishRate: Default number of request an user can do in a second without dropping any request.
          * defaultBurstCapacity: Maximum number of request an user allowed to do in a second.
@@ -157,7 +157,7 @@ public class SpringCloudConfig {
     }
 
     @Bean
-    public KeyResolver userKeyResolver(){
+    public KeyResolver userKeyResolver() {
         /**
          * RedisRateLimiter need a KeyResolver, without this limiter will not work.
          */

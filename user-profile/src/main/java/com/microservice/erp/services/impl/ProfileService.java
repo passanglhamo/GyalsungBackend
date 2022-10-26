@@ -43,14 +43,14 @@ public class ProfileService implements IProfileService {
 
 
     @Override
-    public ResponseEntity<?> getProfileInfo(Long userId) {
+    public ResponseEntity<?> getProfileInfo(String authHeader, Long userId) {
         UserInfo userInfo = iUserInfoRepository.findById(userId).get();
         UserProfileDto userProfileDto = new ModelMapper().map(userInfo, UserProfileDto.class);
         userProfileDto.setPassword(null);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + "static-token");
-        HttpEntity<String> request = new HttpEntity<String>(headers);
+        headers.add("Authorization", authHeader);
+        HttpEntity<String> request = new HttpEntity<>(headers);
 
         String geogUrl = "http://localhost:81/api/training/management/common/getGeogByGeogId?geogId=" + userInfo.getPresentGeogId();
         ResponseEntity<GeogDto> geogResponse = restTemplate.exchange(geogUrl, HttpMethod.GET, request, GeogDto.class);
@@ -250,11 +250,11 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public ResponseEntity<?> getAllDzongkhags() {
+    public ResponseEntity<?> getAllDzongkhags(String authHeader) {
         List<DzongkhagDto> dzongkhagDtos = new ArrayList<>();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + "static-token");
+        headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
         String url = "http://localhost:81/api/training/management/common/getAllDzongkhags";
         ResponseEntity<DzongkhagDto[]> response = restTemplate.exchange(url, HttpMethod.GET, request, DzongkhagDto[].class);
@@ -265,11 +265,11 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public ResponseEntity<?> getGeogByDzongkhagId(Integer dzongkhagId) {
+    public ResponseEntity<?> getGeogByDzongkhagId(String authHeader, Integer dzongkhagId) {
         List<GeogDto> geogDtos = new ArrayList<>();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + "static-token");
+        headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
         String url = "http://localhost:81/api/training/management/common/getGeogByDzongkhagId?dzongkhagId=" + dzongkhagId;
         ResponseEntity<GeogDto[]> response = restTemplate.exchange(url, HttpMethod.GET, request, GeogDto[].class);

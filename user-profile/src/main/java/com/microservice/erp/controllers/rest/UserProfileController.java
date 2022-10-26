@@ -37,8 +37,8 @@ public class UserProfileController {
     }
 
     @GetMapping("/getProfileInfo")
-    public ResponseEntity<?> getProfileInfo(@RequestParam("userId") Long userId) {
-        return iProfileService.getProfileInfo(userId);
+    public ResponseEntity<?> getProfileInfo(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") Long userId) {
+        return iProfileService.getProfileInfo(authHeader, userId);
     }
 
     @PostMapping("/changeUsername")
@@ -97,13 +97,13 @@ public class UserProfileController {
     }
 
     @GetMapping("/getAllDzongkhags")
-    public ResponseEntity<?> allDzongkhags() {
-        return iProfileService.getAllDzongkhags();
+    public ResponseEntity<?> allDzongkhags(@RequestHeader("Authorization") String authHeader) {
+        return iProfileService.getAllDzongkhags(authHeader);
     }
 
     @GetMapping("/getGeogByDzongkhagId")
-    public ResponseEntity<?> getGeogByDzongkhagId(@RequestParam("dzongkhagId") Integer dzongkhagId) {
-        return iProfileService.getGeogByDzongkhagId(dzongkhagId);
+    public ResponseEntity<?> getGeogByDzongkhagId(@RequestHeader("Authorization") String authHeader, @RequestParam("dzongkhagId") Integer dzongkhagId) {
+        return iProfileService.getGeogByDzongkhagId(authHeader, dzongkhagId);
     }
 
     @PostMapping("/syncCensusRecord")

@@ -9,5 +9,5 @@ public interface IParentConsentService {
 
     ResponseEntity<?> submitParentConsent(ParentConsentDto parentConsentDto);
 
-    ResponseEntity<?> getParentConsentList();
+    ResponseEntity<?> getParentConsentList(String authHeader);
 }

@@ -10,14 +10,16 @@ import java.text.ParseException;
 
 public interface IProfileService {
 
-    ResponseEntity<?> getProfileInfo(Long userId);
+    ResponseEntity<?> getProfileInfo(String authHeader, Long userId);
 
-    ResponseEntity<?>  getProfilePicture(Long userId) throws IOException;
+    ResponseEntity<?> getProfilePicture(Long userId) throws IOException;
 
     ResponseEntity<?> changeUsername(UserProfileDto userProfileDto);
+
     ResponseEntity<?> changeMobileNo(UserProfileDto userProfileDto);
 
     ResponseEntity<?> checkEmailExistOrNot(String email);
+
     ResponseEntity<?> changeEmail(UserProfileDto userProfileDto);
 
     ResponseEntity<?> receiveOtp(UserProfileDto userProfileDto);
@@ -32,9 +34,9 @@ public interface IProfileService {
 
     ResponseEntity<?> changeSocialMediaLink(UserProfileDto userProfileDto);
 
-    ResponseEntity<?> getAllDzongkhags();
+    ResponseEntity<?> getAllDzongkhags(String authHeader);
 
-    ResponseEntity<?> getGeogByDzongkhagId(Integer dzongkhagId);
+    ResponseEntity<?> getGeogByDzongkhagId(String authHeader, Integer dzongkhagId);
 
     ResponseEntity<?> changeCurrentAddress(UserProfileDto userProfileDto);
 
