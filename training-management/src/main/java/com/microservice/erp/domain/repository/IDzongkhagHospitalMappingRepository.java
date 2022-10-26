@@ -11,4 +11,5 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @Repository
 public interface IDzongkhagHospitalMappingRepository extends JpaRepository<DzongkhagHospitalMapping,Long> {
+    DzongkhagHospitalMapping findByDzongkhagId(Integer id);
 }

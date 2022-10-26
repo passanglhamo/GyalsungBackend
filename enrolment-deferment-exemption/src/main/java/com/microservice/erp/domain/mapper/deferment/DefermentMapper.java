@@ -8,6 +8,7 @@ import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.services.helper.ApprovalStatus;
 import com.microservice.erp.services.helper.FileUploadDTO;
 import com.microservice.erp.services.helper.FileUploadToExternalLocation;
+import com.microservice.erp.services.iServices.deferment.ICreateDefermentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -21,19 +22,13 @@ import java.util.stream.Collectors;
 
 @Component
 public class DefermentMapper {
-    public DefermentInfo mapToEntity(HttpServletRequest request, DefermentDto defermentDto) {
+    public DefermentInfo mapToEntity(HttpServletRequest request, ICreateDefermentService.CreateDefermentCommand command) {
 
-        DefermentInfo deferment = new ModelMapper().map(defermentDto, DefermentInfo.class);
-        deferment.setFromDate(defermentDto.getFromDate());
-        deferment.setUserId(deferment.getUserId());
-        deferment.setToDate(defermentDto.getToDate());
-        deferment.setReasonId(defermentDto.getReasonId());
-        deferment.setApprovalRemarks(defermentDto.getApprovalRemarks());
-        deferment.setRemarks(defermentDto.getRemarks());
+        DefermentInfo deferment = new ModelMapper().map(command, DefermentInfo.class);
         deferment.setStatus(ApprovalStatus.PENDING.value());
-        if (!Objects.isNull(defermentDto.getProofDocuments())) {
+        if (!Objects.isNull(command.getProofDocuments())) {
             deferment.setFiles(
-                    Arrays.stream(defermentDto.getProofDocuments())
+                    Arrays.stream(command.getProofDocuments())
                             .map(t ->
                             {
 

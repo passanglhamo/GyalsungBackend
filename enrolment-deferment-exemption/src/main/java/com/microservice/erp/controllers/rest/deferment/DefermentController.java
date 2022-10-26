@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collection;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/deferment")
 @AllArgsConstructor
@@ -30,8 +29,9 @@ public class DefermentController {
 
 
     @PostMapping(value = "/save")
-    public ResponseEntity<?> save(HttpServletRequest request, @ModelAttribute DefermentDto defermentDto) throws ParseException, IOException {
-        return service.save(request, defermentDto);
+    public ResponseEntity<?> save(HttpServletRequest request, @ModelAttribute ICreateDefermentService.
+            CreateDefermentCommand command) throws ParseException, IOException {
+        return service.save(request, command);
     }
 
     @GetMapping(value = "/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,6 +52,7 @@ public class DefermentController {
 
         return updateService.rejectByIds(command);
     }
+
     @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
     public ResponseEntity<?> downloadFile(@RequestParam("url") String url) {
         FileSystemResource file = new FileSystemResource(new File(url));

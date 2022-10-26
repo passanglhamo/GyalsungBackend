@@ -1,6 +1,5 @@
 package com.microservice.erp.services.impl.deferment;
 
-import com.microservice.erp.domain.dto.deferment.DefermentDto;
 import com.microservice.erp.domain.mapper.deferment.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.helper.ApprovalStatus;
@@ -24,9 +23,8 @@ public class CreateDefermentService implements ICreateDefermentService {
     private final DefermentMapper mapper;
 
     @Transactional(rollbackOn = Exception.class)
-    public ResponseEntity<?> save(HttpServletRequest request, DefermentDto defermentDto) throws IOException {
-        defermentDto.setUserId(1L);
-        boolean defermentInfoExist = repository.existsByUserIdAndStatusIn(defermentDto.getUserId(),
+    public ResponseEntity<?> save(HttpServletRequest request, CreateDefermentCommand command) throws IOException {
+        boolean defermentInfoExist = repository.existsByUserIdAndStatusIn(command.getUserId(),
                 Set.of(ApprovalStatus.PENDING.value(), ApprovalStatus.APPROVED.value()));
 
 
@@ -36,16 +34,13 @@ public class CreateDefermentService implements ICreateDefermentService {
 
         var deferment = repository.save(
                 mapper.mapToEntity(
-                        request, defermentDto
+                        request, command
                 )
         );
 
         repository.save(deferment);
 
-        return ResponseEntity.ok(new MessageResponse("An acknowledgement notifcation will be sent  to you as soon as you submit your  application.\" +\n" +
-                "                    \"Your Deferment application will be  reviewed and the outcome  of the deferment wil be sent \" +\n" +
-                "                    \" to you throught your email. If you  are not approved for deferment , you will have to complete the \" +\n" +
-                "                    \" Gyalsung pre-enlistment procedure"));
+        return ResponseEntity.ok(new MessageResponse("Deferment is successfully saved"));
     }
 
 

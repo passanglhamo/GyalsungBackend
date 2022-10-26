@@ -21,7 +21,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-        // securedEnabled = true,
+         securedEnabled = true,
         // jsr250Enabled = true,
         prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
