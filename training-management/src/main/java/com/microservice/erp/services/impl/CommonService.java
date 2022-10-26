@@ -2,8 +2,10 @@ package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.entities.Dzongkhag;
 import com.microservice.erp.domain.entities.Geog;
+import com.microservice.erp.domain.entities.Hospital;
 import com.microservice.erp.domain.repository.IDzongkhagRepository;
 import com.microservice.erp.domain.repository.IGeogRepository;
+import com.microservice.erp.domain.repository.IHospitalRepository;
 import com.microservice.erp.services.iServices.ICommonService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import java.util.List;
 public class CommonService implements ICommonService {
 
     private IDzongkhagRepository dzongkhagRepository;
+    private IHospitalRepository hospitalRepository;
     private IGeogRepository geogRepository;
 
     @Override
@@ -40,5 +43,11 @@ public class CommonService implements ICommonService {
     public ResponseEntity<?> getDzongkhagByDzongkhagId(Integer dzongkhagId) {
         Dzongkhag dzongkhag = dzongkhagRepository.findByDzongkhagId(dzongkhagId);
         return ResponseEntity.ok(dzongkhag);
+    }
+
+    @Override
+    public ResponseEntity<?> getAllHospitals() {
+        List<Hospital> hospitals = hospitalRepository.findAllByOrderByHospitalNameAsc();
+        return ResponseEntity.ok(hospitals);
     }
 }

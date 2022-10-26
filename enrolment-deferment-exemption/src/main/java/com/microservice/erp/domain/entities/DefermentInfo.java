@@ -32,9 +32,6 @@ public class DefermentInfo extends Auditable<Long, Long> {
 //    @Column(name = "deferment_year")
 //    private String defermentYear;
 
-    @NotNull(message = "From date cannot be null")
-    //@Future(message = "From Date Of Schedule Must Be Greater Then Now")
-    @Basic(optional = false)
     @Column(name = "from_date")
     @Temporal(TemporalType.DATE)
     private Date fromDate = new java.sql.Date(new Date().getTime());

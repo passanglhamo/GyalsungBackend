@@ -32,4 +32,9 @@ public class CommonController {
     public ResponseEntity<?> getDzongkhagByDzongkhagId(@RequestParam("dzongkhagId") Integer dzongkhagId) {
         return iCommonService.getDzongkhagByDzongkhagId(dzongkhagId);
     }
+
+    @GetMapping("/getAllHospitals")
+    public ResponseEntity<?> allHospitals() {
+        return iCommonService.getAllHospitals();
+    }
 }

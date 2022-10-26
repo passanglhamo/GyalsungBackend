@@ -10,4 +10,6 @@ public interface ICommonService {
     ResponseEntity<?> getGeogByGeogId(Integer geogId);
 
     ResponseEntity<?> getDzongkhagByDzongkhagId(Integer dzongkhagId);
+
+    ResponseEntity<?> getAllHospitals();
 }
