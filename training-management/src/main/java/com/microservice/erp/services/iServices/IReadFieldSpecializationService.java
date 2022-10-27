@@ -6,11 +6,11 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface IReadFieldSpecializationService {
-    ResponseEntity<?> findAllByStatus(Character status);
+    ResponseEntity<?> getAllFieldSpecByStatus(Character status);
 
-    ResponseEntity<?> findAllMathRequiredCourses();
-    ResponseEntity<?> findAllDefaultCourses();
+    ResponseEntity<?> getAllMathRequiredCourses();
+    ResponseEntity<?> getAllDefaultCourses();
 
-    List<FieldSpecialization> findAll();
+    List<FieldSpecialization> getAllFieldSpecList();
 
 }

@@ -10,15 +10,15 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TrainingAcademyCapacityService implements IReadTrainingAcademyCapacityService {
+public class ReadTrainingAcademyCapacityService implements IReadTrainingAcademyCapacityService {
     private final ITrainingAcademyCapacityRepository repository;
 
-    public List<TrainingAcademyCapacity> findAll() {
+    public List<TrainingAcademyCapacity> getAllTrainingAcaCapList() {
         return repository.findAll();
     }
 
     @Override
-    public TrainingAcademyCapacity findById(Long id) {
+    public TrainingAcademyCapacity getAllTrainingAcaCapById(Long id) {
         return repository.findById(id).get();
     }
 }

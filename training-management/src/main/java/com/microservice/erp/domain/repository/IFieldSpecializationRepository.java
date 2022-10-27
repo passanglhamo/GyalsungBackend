@@ -13,8 +13,8 @@ import java.util.List;
 
 @Repository
 public interface IFieldSpecializationRepository extends JpaRepository<FieldSpecialization, Long> {
-    List<FieldSpecialization> findAllByStatusOrderByNameAsc(Character status);
+    List<FieldSpecialization> findAllByStatusOrderByFieldSpecNameAsc(Character status);
 
-    List<FieldSpecialization> findAllByMathRequiredOrderByNameAsc(boolean defaultCourse);
-    List<FieldSpecialization> findAllByDefaultCourseOrderByNameAsc(boolean defaultCourse);
+    List<FieldSpecialization> findAllByMathRequiredOrderByFieldSpecNameAsc(boolean defaultCourse);
+    List<FieldSpecialization> findAllByDefaultCourseOrderByFieldSpecNameAsc(boolean defaultCourse);
 }

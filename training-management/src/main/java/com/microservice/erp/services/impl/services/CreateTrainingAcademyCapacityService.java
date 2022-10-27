@@ -20,7 +20,7 @@ public class CreateTrainingAcademyCapacityService implements ICreateTrainingAcad
     private final TrainingAcademyCapacityMapper mapper;
 
     @Override
-    public ResponseEntity<?> save(TrainingAcademyCapacityDto trainingAcademyCapacityDto) throws IOException, ParseException {
+    public ResponseEntity<?> saveTrainingAcaCap(TrainingAcademyCapacityDto trainingAcademyCapacityDto) throws IOException, ParseException {
         if (!Objects.isNull(repository.findByTrainingYear(trainingAcademyCapacityDto.getTrainingYear()))) {
             return ResponseEntity.ok(new MessageResponse("Year already existed."));
         }

@@ -4,5 +4,5 @@ import com.microservice.erp.domain.entities.FieldSpecialization;
 
 public interface ICreateFieldSpecializationService {
 
-    FieldSpecialization add(FieldSpecialization fieldSpecialization);
+    FieldSpecialization saveFieldSpec(FieldSpecialization fieldSpecialization);
 }

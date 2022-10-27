@@ -23,9 +23,8 @@ public class CreateExemptionService implements ICreateExemptionService {
     private final ExemptionMapper mapper;
 
     @Transactional(rollbackOn = Exception.class)
-    public ResponseEntity<?> save(HttpServletRequest request, ExemptionDto exemptionDto) throws IOException {
-        exemptionDto.setUserId(1L);
-        boolean exemptionInfoExist = repository.existsByUserIdAndStatusIn(exemptionDto.getUserId(),
+    public ResponseEntity<?> saveExemption(HttpServletRequest request, CreateExemptionCommand command) throws IOException {
+        boolean exemptionInfoExist = repository.existsByUserIdAndStatusIn(command.getUserId(),
                 Set.of(ApprovalStatus.PENDING.value(), ApprovalStatus.APPROVED.value()));
 
         if (exemptionInfoExist) {
@@ -33,7 +32,7 @@ public class CreateExemptionService implements ICreateExemptionService {
         }
         var exemption = repository.save(
                 mapper.mapToEntity(
-                        request, exemptionDto
+                        request, command
                 )
         );
 

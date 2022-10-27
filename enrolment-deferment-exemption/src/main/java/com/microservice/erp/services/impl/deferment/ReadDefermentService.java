@@ -34,7 +34,7 @@ public class ReadDefermentService implements IReadDefermentService {
     private final HeaderToken headerToken;
 
     @Override
-    public Collection<DefermentDto> getAll() {
+    public List<DefermentDto> getAllDefermentList(String authHeader) {
         List<DefermentDto> defermentDtoList = repository.findAll()
                 .stream()
                 .map(mapper::mapToDomain)
@@ -42,7 +42,7 @@ public class ReadDefermentService implements IReadDefermentService {
 
         defermentDtoList.forEach(item -> {
             RestTemplate restTemplate = new RestTemplate();
-            HttpEntity<String> request = headerToken.tokenHeader();
+            HttpEntity<String> request = headerToken.tokenHeader(authHeader);
 
             String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
             ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
@@ -50,13 +50,6 @@ public class ReadDefermentService implements IReadDefermentService {
             item.setCid(Objects.requireNonNull(userResponse.getBody()).getCid());
             item.setDob(Objects.requireNonNull(userResponse.getBody()).getDob());
             item.setSex(Objects.requireNonNull(userResponse.getBody()).getSex());
-//            UserProfileDto userInfoServiceProfileInfo = (UserProfileDto) userInfoService.getProfileInfo(d.getUserId()).getBody();
-//            userInfoServiceProfileInfo.getFullName();
-//            try {
-//                userInfoServiceProfileInfo.getBody().getClass().getField("fullName");
-//            } catch (NoSuchFieldException e) {
-//                throw new RuntimeException(e);
-//            }
         });
 
 

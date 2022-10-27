@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface IReadDzongkhagHospitalMappingService {
 
-    List<DzongkhagHospitalMapping> findAll();
+    List<DzongkhagHospitalMapping> getAllDzongkhagHospitalList();
 
-    DzongkhagHospitalMapping findById(Long id);
+    DzongkhagHospitalMapping getAllDzongkhagHospitalById(Long id);
+
+    List<DzongkhagHospitalMapping> getAllDzongkhagHosByStatus(String status);
 }

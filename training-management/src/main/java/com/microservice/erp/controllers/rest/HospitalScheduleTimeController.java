@@ -24,9 +24,9 @@ public class HospitalScheduleTimeController {
     private final IUpdateHospitalScheduleTimeService updateService;
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody HospitalScheduleTimeDto hospitalScheduleTimeDto) throws IOException {
+    public ResponseEntity<?> saveScheduleTimes(@RequestBody HospitalScheduleTimeDto hospitalScheduleTimeDto) throws IOException {
 
-        return service.save(hospitalScheduleTimeDto);
+        return service.saveScheduleTimes(hospitalScheduleTimeDto);
     }
 
     @GetMapping(value = "/getAllScheduleTimesById", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -41,10 +41,6 @@ public class HospitalScheduleTimeController {
         return updateService.updateScheduleTimes(hospitalScheduleTimeListDto);
     }
 
-    @GetMapping(value = "/getAllDzongkhag", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllDzongkhag() {
-        return readService.getAllDzongkhag();
-    }
 
     @GetMapping(value = "/getAllActiveHospitalsByDzongkhagId", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllActiveHospitalsByDzongkhagId(@RequestParam("dzongkhagId") Integer dzongkhagId) {
@@ -52,7 +48,7 @@ public class HospitalScheduleTimeController {
     }
 
     @GetMapping(value = "/getAllAvailableTimeSlotByHospitalId", produces = MediaType.APPLICATION_JSON_VALUE)
-    public  ResponseEntity<?> getAllAvailableTimeSlotByHospitalId(@RequestParam("hospitalId") Long hospitalId) {
+    public ResponseEntity<?> getAllAvailableTimeSlotByHospitalId(@RequestParam("hospitalId") Long hospitalId) {
         return readService.getAllAvailableTimeSlotByHospitalId(hospitalId);
     }
 }

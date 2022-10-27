@@ -18,17 +18,17 @@ public class MedicalQuestionController {
     private final IReadMedicalQuestionService readService;
 
     @PostMapping
-    public MedicalQuestionnaire insert(@Valid @RequestBody MedicalQuestionnaire medicalQuestionnaire) {
-        return service.add(medicalQuestionnaire);
+    public MedicalQuestionnaire saveMedicalQuestionnaire(@Valid @RequestBody MedicalQuestionnaire medicalQuestionnaire) {
+        return service.saveMedicalQuestionnaire(medicalQuestionnaire);
     }
 
     @GetMapping
-    public List<MedicalQuestionnaire> query() {
-        return readService.getMedicalQuestionnaireList();
+    public List<MedicalQuestionnaire> getAllMedicalQuestionnaireList() {
+        return readService.getAllMedicalQuestionnaireList();
     }
 
-    @GetMapping("/findById")
-    public MedicalQuestionnaire getById(@RequestParam("id") Long id) {
-        return readService.findById(id);
+    @GetMapping("/getAllMedicalQuestionnaireById")
+    public MedicalQuestionnaire getAllMedicalQuestionnaireById(@RequestParam("id") Long id) {
+        return readService.getAllMedicalQuestionnaireById(id);
     }
 }

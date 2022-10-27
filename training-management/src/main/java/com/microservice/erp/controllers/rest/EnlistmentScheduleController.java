@@ -21,21 +21,21 @@ public class EnlistmentScheduleController {
     private final IReadEnlistmentScheduleService readService;
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody EnlistmentScheduleDto enlistmentScheduleDto)
+    public ResponseEntity<?> saveEnlistment(@RequestBody EnlistmentScheduleDto enlistmentScheduleDto)
             throws IOException, ParseException {
 
-        return service.save(enlistmentScheduleDto);
+        return service.saveEnlistmentSchedule(enlistmentScheduleDto);
     }
 
     @GetMapping
-    public List<EnlistmentSchedule> query() {
+    public List<EnlistmentSchedule> getAllEnlistmentScheduleList() {
 
-        return readService.findAll();
+        return readService.getAllEnlistmentScheduleList();
     }
 
-    @GetMapping("/findById")
-    public EnlistmentSchedule getById(@RequestParam("id") Long id) {
-        return readService.findById(id);
+    @GetMapping("/getEnlistmentScheduleById")
+    public EnlistmentSchedule getEnlistmentScheduleById(@RequestParam("id") Long id) {
+        return readService.getEnlistmentScheduleById(id);
     }
 
 }

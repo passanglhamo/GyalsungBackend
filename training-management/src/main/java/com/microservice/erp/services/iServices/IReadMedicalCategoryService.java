@@ -5,7 +5,8 @@ import com.microservice.erp.domain.entities.MedicalQuestionCategory;
 import java.util.List;
 
 public interface IReadMedicalCategoryService {
-    MedicalQuestionCategory findById(Long id);
+    MedicalQuestionCategory getAllMedicalCategoriesById(Long id);
 
-    List<MedicalQuestionCategory> findAll();
+    List<MedicalQuestionCategory> getAllMedicalCategoryList();
+    List<MedicalQuestionCategory> getAllActiveMedicalCatList();
 }

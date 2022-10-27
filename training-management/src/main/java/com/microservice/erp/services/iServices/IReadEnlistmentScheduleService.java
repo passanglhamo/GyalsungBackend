@@ -5,7 +5,7 @@ import com.microservice.erp.domain.entities.EnlistmentSchedule;
 import java.util.List;
 
 public interface IReadEnlistmentScheduleService {
-    List<EnlistmentSchedule> findAll();
+    List<EnlistmentSchedule> getAllEnlistmentScheduleList();
 
-    EnlistmentSchedule findById(Long id);
+    EnlistmentSchedule getEnlistmentScheduleById(Long id);
 }

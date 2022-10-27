@@ -13,7 +13,7 @@ public class CreateDzongkhagHospitalMappingService implements ICreateDzongkhagHo
     private final IDzongkhagHospitalMappingRepository repository;
 
     @Override
-    public DzongkhagHospitalMapping add(DzongkhagHospitalMapping dzongkhagHospitalMapping) {
+    public DzongkhagHospitalMapping saveDzongkhagHospital(DzongkhagHospitalMapping dzongkhagHospitalMapping) {
         return repository.save(dzongkhagHospitalMapping);
     }
 }

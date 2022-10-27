@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,7 +27,7 @@ public class ReadExemptionService implements IReadExemptionService {
 
 
     @Override
-    public Collection<ExemptionDto> getAll() {
+    public List<ExemptionDto> getAllExemptionList(String authHeader) {
         List<ExemptionDto> exemptionDtoList = repository.findAll()
                 .stream()
                 .map(mapper::mapToDomain)
@@ -36,7 +35,7 @@ public class ReadExemptionService implements IReadExemptionService {
 
         exemptionDtoList.forEach(item -> {
             RestTemplate restTemplate = new RestTemplate();
-            HttpEntity<String> request = headerToken.tokenHeader();
+            HttpEntity<String> request = headerToken.tokenHeader(authHeader);
 
             String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
             ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);

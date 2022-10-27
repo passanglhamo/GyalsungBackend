@@ -16,8 +16,8 @@ public class ReadFieldSpecializationService implements IReadFieldSpecializationS
     private final IFieldSpecializationRepository repository;
 
     @Override
-    public ResponseEntity<?> findAllByStatus(Character status) {
-        List<FieldSpecialization> fieldSpecializations = repository.findAllByStatusOrderByNameAsc(status);
+    public ResponseEntity<?> getAllFieldSpecByStatus(Character status) {
+        List<FieldSpecialization> fieldSpecializations = repository.findAllByStatusOrderByFieldSpecNameAsc(status);
         if (fieldSpecializations.size() > 0) {
             return ResponseEntity.ok(fieldSpecializations);
         } else {
@@ -26,16 +26,17 @@ public class ReadFieldSpecializationService implements IReadFieldSpecializationS
     }
 
     @Override
-    public ResponseEntity<?> findAllMathRequiredCourses() {
-        List<FieldSpecialization> fieldSpecializations = repository.findAllByMathRequiredOrderByNameAsc(true);
+    public ResponseEntity<?> getAllMathRequiredCourses() {
+        List<FieldSpecialization> fieldSpecializations = repository.findAllByMathRequiredOrderByFieldSpecNameAsc(true);
         if (fieldSpecializations.size() > 0) {
             return ResponseEntity.ok(fieldSpecializations);
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("Data not found"));
         }
-    }  @Override
-    public ResponseEntity<?> findAllDefaultCourses() {
-        List<FieldSpecialization> fieldSpecializations = repository.findAllByDefaultCourseOrderByNameAsc(true);
+    }
+    @Override
+    public ResponseEntity<?> getAllDefaultCourses() {
+        List<FieldSpecialization> fieldSpecializations = repository.findAllByDefaultCourseOrderByFieldSpecNameAsc(true);
         if (fieldSpecializations.size() > 0) {
             return ResponseEntity.ok(fieldSpecializations);
         } else {
@@ -44,7 +45,7 @@ public class ReadFieldSpecializationService implements IReadFieldSpecializationS
     }
 
     @Override
-    public List<FieldSpecialization> findAll() {
+    public List<FieldSpecialization> getAllFieldSpecList() {
         return repository.findAll();
     }
 }

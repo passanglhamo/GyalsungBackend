@@ -4,10 +4,10 @@ import com.microservice.erp.domain.dto.deferment.DefermentDto;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
+import java.util.List;
 
 public interface IReadDefermentService {
-    Collection<DefermentDto> getAll();
+    List<DefermentDto> getAllDefermentList(String authHeader);
 
     ResponseEntity<?> downloadFiles(Long defermentId, HttpServletResponse response);
 

@@ -7,6 +7,7 @@ import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.services.helper.ApprovalStatus;
 import com.microservice.erp.services.helper.FileUploadDTO;
 import com.microservice.erp.services.helper.FileUploadToExternalLocation;
+import com.microservice.erp.services.iServices.exemption.ICreateExemptionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -20,14 +21,13 @@ import java.util.stream.Collectors;
 
 @Component
 public class ExemptionMapper {
-    public ExemptionInfo mapToEntity(HttpServletRequest request, ExemptionDto exemptionDto) {
+    public ExemptionInfo mapToEntity(HttpServletRequest request, ICreateExemptionService.CreateExemptionCommand command) {
 
-        ExemptionInfo exemption = new ModelMapper().map(exemptionDto, ExemptionInfo.class);
+        ExemptionInfo exemption = new ModelMapper().map(command, ExemptionInfo.class);
         exemption.setStatus(ApprovalStatus.PENDING.value());
-        exemption.setUserId(exemptionDto.getUserId());
-        if (!Objects.isNull(exemptionDto.getProofDocuments())) {
+        if (!Objects.isNull(command.getProofDocuments())) {
             exemption.setFiles(
-                    Arrays.stream(exemptionDto.getProofDocuments())
+                    Arrays.stream(command.getProofDocuments())
                             .map(t ->
                             {
 

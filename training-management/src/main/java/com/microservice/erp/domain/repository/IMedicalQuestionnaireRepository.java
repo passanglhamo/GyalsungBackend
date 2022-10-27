@@ -14,6 +14,6 @@ import java.util.List;
 
 @Repository
 public interface IMedicalQuestionnaireRepository extends JpaRepository<MedicalQuestionnaire, Long> {
-    List<MedicalQuestionnaire> findAllByOrderByNameAsc();
+    List<MedicalQuestionnaire> findAllByOrderByMedicalQuestionNameAsc();
 
 }

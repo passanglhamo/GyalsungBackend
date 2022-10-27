@@ -18,7 +18,7 @@ public class CreateEnlistmentScheduleService implements ICreateEnlistmentSchedul
     private final IEnlistmentScheduleRepository repository;
     private final EnlistmentScheduleMapper mapper;
 
-    public ResponseEntity<?> save(EnlistmentScheduleDto enlistmentScheduleDto) throws IOException, ParseException {
+    public ResponseEntity<?> saveEnlistmentSchedule(EnlistmentScheduleDto enlistmentScheduleDto) throws IOException, ParseException {
 
         if (repository.existsByToDateAfter(enlistmentScheduleDto.getFromDate())) {
             return new ResponseEntity<>("From Date already existed.", HttpStatus.ALREADY_REPORTED);

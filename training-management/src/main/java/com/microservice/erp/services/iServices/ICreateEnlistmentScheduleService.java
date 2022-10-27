@@ -7,6 +7,6 @@ import java.io.IOException;
 import java.text.ParseException;
 
 public interface ICreateEnlistmentScheduleService {
-    ResponseEntity<?> save(EnlistmentScheduleDto enlistmentScheduleDto) throws IOException, ParseException;
+    ResponseEntity<?> saveEnlistmentSchedule(EnlistmentScheduleDto enlistmentScheduleDto) throws IOException, ParseException;
 
 }

@@ -2,8 +2,8 @@ package com.microservice.erp.services.iServices.exemption;
 
 import com.microservice.erp.domain.dto.exemption.ExemptionDto;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface IReadExemptionService {
-    Collection<ExemptionDto> getAll();
+    List<ExemptionDto> getAllExemptionList(String authHeader);
 }

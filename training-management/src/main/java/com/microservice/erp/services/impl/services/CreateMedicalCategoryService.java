@@ -13,7 +13,8 @@ public class CreateMedicalCategoryService implements ICreateMedicalCategoryServi
     private final IMedicalQuestionCategoryRepository repository;
 
     @Override
-    public MedicalQuestionCategory add(MedicalQuestionCategory medicalQuestionCategory) {
+    public MedicalQuestionCategory saveMedicalCategory(MedicalQuestionCategory medicalQuestionCategory) {
         return repository.save(medicalQuestionCategory);
     }
+
 }

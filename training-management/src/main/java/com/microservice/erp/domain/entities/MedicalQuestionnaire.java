@@ -22,9 +22,9 @@ import javax.validation.constraints.NotNull;
 public class MedicalQuestionnaire extends Auditable<Long, Long> {
 
     @Basic(optional = false)
-    @NotNull(message = "Name cannot be null.")
-    @Column(name = "name",columnDefinition = "varchar(255)")
-    private String name;
+    @NotNull(message = "Medical Questionnaire cannot be null.")
+    @Column(name = "medical_question_name",columnDefinition = "varchar(255)")
+    private String medicalQuestionName;
 
     @NotNull
     @Basic(optional = false)

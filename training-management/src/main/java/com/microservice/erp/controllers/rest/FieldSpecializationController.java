@@ -10,36 +10,35 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/fieldSpecializations")
 @AllArgsConstructor
 public class FieldSpecializationController {
-    private final IReadFieldSpecializationService readService;
     private final ICreateFieldSpecializationService service;
+    private final IReadFieldSpecializationService readService;
 
     @PostMapping
-    public FieldSpecialization insert(@Valid @RequestBody FieldSpecialization fieldSpecialization) {
-        return service.add(fieldSpecialization);
+    public FieldSpecialization saveFieldSpec(@Valid @RequestBody FieldSpecialization fieldSpecialization) {
+        return service.saveFieldSpec(fieldSpecialization);
     }
 
-    @GetMapping(value = "/findAllByStatus")
-    public ResponseEntity<?> findAllByStatus(@RequestParam("status") Character status) {
-        return readService.findAllByStatus(status);
+    @GetMapping(value = "/getAllFieldSpecByStatus")
+    public ResponseEntity<?> getAllFieldSpecByStatus(@RequestParam("status") Character status) {
+        return readService.getAllFieldSpecByStatus(status);
     }
 
-    @GetMapping(value = "/findAllDefaultCourses")
-    public ResponseEntity<?> findAllDefaultCourses() {
-        return readService.findAllDefaultCourses();
+    @GetMapping(value = "/getAllDefaultCourses")
+    public ResponseEntity<?> getAllDefaultCourses() {
+        return readService.getAllDefaultCourses();
     }
 
-    @GetMapping(value = "/findAllMathRequiredCourses")
-    public ResponseEntity<?> findAllMathRequiredCourses() {
-        return readService.findAllMathRequiredCourses();
+    @GetMapping(value = "/getAllMathRequiredCourses")
+    public ResponseEntity<?> getAllMathRequiredCourses() {
+        return readService.getAllMathRequiredCourses();
     }
 
     @GetMapping
-    public List<FieldSpecialization> query() {
-        return readService.findAll();
+    public List<FieldSpecialization> getAllFieldSpecList() {
+        return readService.getAllFieldSpecList();
     }
 }

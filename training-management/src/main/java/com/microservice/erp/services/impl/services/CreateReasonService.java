@@ -13,7 +13,7 @@ public class CreateReasonService implements ICreateReasonService {
     private final IReasonRepository repository;
 
     @Override
-    public Reason add(Reason reason) {
+    public Reason saveReason(Reason reason) {
         return repository.save(reason);
     }
 }

@@ -23,9 +23,9 @@ import java.util.Objects;
 public class FieldSpecialization extends Auditable<Long, Long> {
 
     @Basic(optional = false)
-    @NotNull(message = "Name cannot be null")
-    @Column(name = "name",columnDefinition = "varchar(255)")
-    private String name;
+    @NotNull(message = "Particular cannot be null")
+    @Column(name = "field_spec_name",columnDefinition = "varchar(255)")
+    private String fieldSpecName;
 
     @Basic(optional = false)
     @Column(name = "math_required")

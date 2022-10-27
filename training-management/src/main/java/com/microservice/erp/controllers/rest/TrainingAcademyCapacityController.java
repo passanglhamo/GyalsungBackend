@@ -20,20 +20,20 @@ public class TrainingAcademyCapacityController {
     private final IReadTrainingAcademyCapacityService readService;
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody TrainingAcademyCapacityDto trainingAcademyCapacityDto)
+    public ResponseEntity<?> saveTrainingAcaCap(@RequestBody TrainingAcademyCapacityDto trainingAcademyCapacityDto)
             throws IOException, ParseException {
 
-        return service.save(trainingAcademyCapacityDto);
+        return service.saveTrainingAcaCap(trainingAcademyCapacityDto);
     }
 
     @GetMapping
-    public Collection<TrainingAcademyCapacity> getAll() {
+    public Collection<TrainingAcademyCapacity> getAllTrainingAcaCapList() {
 
-        return readService.findAll();
+        return readService.getAllTrainingAcaCapList();
     }
 
-    @GetMapping("/findById")
-    public TrainingAcademyCapacity getById(@RequestParam("id") Long id) {
-        return readService.findById(id);
+    @GetMapping("/getAllTrainingAcaCapById")
+    public TrainingAcademyCapacity getAllTrainingAcaCapById(@RequestParam("id") Long id) {
+        return readService.getAllTrainingAcaCapById(id);
     }
 }

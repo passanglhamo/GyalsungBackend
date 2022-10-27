@@ -4,5 +4,5 @@ import com.microservice.erp.domain.entities.DzongkhagHospitalMapping;
 
 public interface ICreateDzongkhagHospitalMappingService {
 
-    DzongkhagHospitalMapping add(DzongkhagHospitalMapping dzongkhagHospitalMapping);
+    DzongkhagHospitalMapping saveDzongkhagHospital(DzongkhagHospitalMapping dzongkhagHospitalMapping);
 }

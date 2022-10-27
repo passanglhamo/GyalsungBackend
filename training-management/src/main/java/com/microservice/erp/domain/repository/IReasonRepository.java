@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface IReasonRepository extends JpaRepository<Reason, Long> {
 
-    List<Reason> findAllByStatus(Character status);
+    List<Reason> findAllByStatus(String status);
 }

@@ -18,13 +18,18 @@ public class DzongkhagHospitalMappingController {
     private final IReadDzongkhagHospitalMappingService readService;
 
     @PostMapping
-    public DzongkhagHospitalMapping insert(@Valid @RequestBody DzongkhagHospitalMapping dzongkhagHospitalMapping) {
-        return service.add(dzongkhagHospitalMapping);
+    public DzongkhagHospitalMapping saveDzongkhagHospital(@Valid @RequestBody DzongkhagHospitalMapping dzongkhagHospitalMapping) {
+        return service.saveDzongkhagHospital(dzongkhagHospitalMapping);
     }
 
     @GetMapping
-    public List<DzongkhagHospitalMapping> query() {
-        return readService.findAll();
+    public List<DzongkhagHospitalMapping> getAllDzongkhagHospitalList() {
+        return readService.getAllDzongkhagHospitalList();
+    }
+
+    @GetMapping("/getAllDzongkhagHosByStatus")
+    public List<DzongkhagHospitalMapping> getAllDzongkhagHosByStatus(@RequestParam("status") String status) {
+        return readService.getAllDzongkhagHosByStatus(status);
     }
 
 }

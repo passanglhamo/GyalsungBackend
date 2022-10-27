@@ -22,9 +22,9 @@ import java.util.Objects;
 public class MedicalQuestionCategory extends Auditable<Long, Long> {
 
     @Basic(optional = false)
-    @NotNull(message = "Name cannot be null.")
+    @NotNull(message = "Category name cannot be null.")
     @Column(name = "category_name",columnDefinition = "varchar(255)")
-    private String name;
+    private String categoryName;
 
     @NotNull
     @Basic(optional = false)

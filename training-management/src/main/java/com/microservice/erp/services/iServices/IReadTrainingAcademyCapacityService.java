@@ -5,7 +5,7 @@ import com.microservice.erp.domain.entities.TrainingAcademyCapacity;
 import java.util.List;
 
 public interface IReadTrainingAcademyCapacityService {
-    List<TrainingAcademyCapacity> findAll();
+    List<TrainingAcademyCapacity> getAllTrainingAcaCapList();
 
-    TrainingAcademyCapacity findById(Long id);
+    TrainingAcademyCapacity getAllTrainingAcaCapById(Long id);
 }

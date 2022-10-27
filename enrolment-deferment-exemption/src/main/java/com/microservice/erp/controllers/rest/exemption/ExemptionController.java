@@ -7,18 +7,15 @@ import com.microservice.erp.services.iServices.exemption.IUpdateExemptionService
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
-import java.util.Collection;
+import java.util.List;
 
-@CrossOrigin(origins = "*")
+
 @RestController
 @RequestMapping("/exemption")
 @AllArgsConstructor
@@ -28,16 +25,16 @@ public class ExemptionController {
     private final IReadExemptionService readService;
     private final IUpdateExemptionService updateService;
 
-    @PostMapping(value = "/save")
-    public ResponseEntity<?> save(HttpServletRequest request, @ModelAttribute ExemptionDto exemptionDto) throws ParseException, IOException {
-        return service.save(request, exemptionDto);
+    @PostMapping
+    public ResponseEntity<?> saveExemption(HttpServletRequest request, @ModelAttribute
+    ICreateExemptionService.CreateExemptionCommand command) throws  IOException {
+        return service.saveExemption(request, command);
     }
 
-    @GetMapping(value = "/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(value = HttpStatus.OK)
-    public Collection<ExemptionDto> getAll() {
+    @GetMapping
+    public List<ExemptionDto> getAllExemptionList(@RequestHeader("Authorization") String authHeader) {
 
-        return readService.getAll();
+        return readService.getAllExemptionList(authHeader);
     }
 
     @PostMapping(value = "/approveByIds")

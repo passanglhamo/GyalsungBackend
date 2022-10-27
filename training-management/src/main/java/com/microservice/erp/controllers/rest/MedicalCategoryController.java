@@ -13,22 +13,26 @@ import java.util.List;
 @RequestMapping("/medicalQuestionCategories")
 @AllArgsConstructor
 public class MedicalCategoryController {
-
-    private final IReadMedicalCategoryService readService;
     private final ICreateMedicalCategoryService service;
+    private final IReadMedicalCategoryService readService;
 
     @PostMapping
-    public MedicalQuestionCategory insert(@Valid @RequestBody MedicalQuestionCategory medicalQuestionCategory) {
-        return service.add(medicalQuestionCategory);
+    public MedicalQuestionCategory saveMedicalCategory(@Valid @RequestBody MedicalQuestionCategory medicalQuestionCategory) {
+        return service.saveMedicalCategory(medicalQuestionCategory);
     }
 
     @GetMapping
-    public List<MedicalQuestionCategory> query() {
-        return readService.findAll();
+    public List<MedicalQuestionCategory> getAllMedicalCategoryList() {
+        return readService.getAllMedicalCategoryList();
     }
 
-    @GetMapping("/findById")
-    public MedicalQuestionCategory getById(@RequestParam("id") Long id) {
-        return readService.findById(id);
+    @GetMapping("/getAllMedicalCategoriesById")
+    public MedicalQuestionCategory getAllMedicalCategoriesById(@RequestParam("id") Long id) {
+        return readService.getAllMedicalCategoriesById(id);
+    }
+
+    @GetMapping("/getAllActiveMedicalCatList")
+    public List<MedicalQuestionCategory> getAllActiveMedicalCatList() {
+        return readService.getAllActiveMedicalCatList();
     }
 }

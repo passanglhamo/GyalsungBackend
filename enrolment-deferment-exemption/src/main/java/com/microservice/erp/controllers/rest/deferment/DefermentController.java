@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/deferment")
@@ -28,17 +29,15 @@ public class DefermentController {
     private final IUpdateDefermentService updateService;
 
 
-    @PostMapping(value = "/save")
-    public ResponseEntity<?> save(HttpServletRequest request, @ModelAttribute ICreateDefermentService.
+    @PostMapping
+    public ResponseEntity<?> saveDeferment(HttpServletRequest request, @ModelAttribute ICreateDefermentService.
             CreateDefermentCommand command) throws ParseException, IOException {
-        return service.save(request, command);
+        return service.saveDeferment(request, command);
     }
 
-    @GetMapping(value = "/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(value = HttpStatus.OK)
-    public Collection<DefermentDto> getAll() {
-
-        return readService.getAll();
+    @GetMapping
+    public List<DefermentDto> getAllDefermentList(@RequestHeader("Authorization") String authHeader) {
+        return readService.getAllDefermentList(authHeader);
     }
 
     @PostMapping(value = "/approveByIds")

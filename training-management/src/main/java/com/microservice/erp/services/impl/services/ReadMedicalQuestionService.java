@@ -12,14 +12,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReadMedicalQuestionService implements IReadMedicalQuestionService {
     private final IMedicalQuestionnaireRepository repository;
+
     @Override
-    public List<MedicalQuestionnaire> getMedicalQuestionnaireList() {
-        return repository.findAllByOrderByNameAsc();
-//        return repository.findAll();
+    public List<MedicalQuestionnaire> getAllMedicalQuestionnaireList() {
+        return repository.findAllByOrderByMedicalQuestionNameAsc();
     }
 
     @Override
-    public MedicalQuestionnaire findById(Long id) {
+    public MedicalQuestionnaire getAllMedicalQuestionnaireById(Long id) {
         return repository.findById(id).get();
     }
 }

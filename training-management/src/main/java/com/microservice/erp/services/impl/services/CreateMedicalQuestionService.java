@@ -13,7 +13,7 @@ public class CreateMedicalQuestionService implements ICreateMedicalQuestionServi
     private final IMedicalQuestionnaireRepository repository;
 
     @Override
-    public MedicalQuestionnaire add(MedicalQuestionnaire medicalQuestionnaire) {
+    public MedicalQuestionnaire saveMedicalQuestionnaire(MedicalQuestionnaire medicalQuestionnaire) {
         return repository.save(medicalQuestionnaire);
     }
 }

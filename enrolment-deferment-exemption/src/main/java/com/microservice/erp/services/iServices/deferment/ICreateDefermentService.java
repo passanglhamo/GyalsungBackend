@@ -22,7 +22,7 @@ import java.util.Date;
 @Validated
 public interface ICreateDefermentService {
 
-    ResponseEntity<?> save(HttpServletRequest request,@Valid CreateDefermentCommand command) throws IOException;
+    ResponseEntity<?> saveDeferment(HttpServletRequest request,@Valid CreateDefermentCommand command) throws IOException;
 
     @Getter
     @Setter
@@ -35,7 +35,6 @@ public interface ICreateDefermentService {
         private Long reasonId;
         private String approvalRemarks;
         @NotNull(message = "Till date cannot be null")
-        @NotEmpty(message = "Till date cannot be null")
         private Date toDate;
         private Character status;
         private String remarks;

@@ -8,10 +8,9 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class HeaderToken {
 
-    public HttpEntity<String> tokenHeader() {
-        RestTemplate restTemplate = new RestTemplate();
+    public HttpEntity<String> tokenHeader(String authHeader) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + "static-token");
+        headers.add("Authorization", authHeader);
         return new HttpEntity<String>(headers);
     }
 

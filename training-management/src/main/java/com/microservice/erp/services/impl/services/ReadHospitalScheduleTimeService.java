@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 public class ReadHospitalScheduleTimeService implements IReadHospitalScheduleTimeService {
 
     private final IHospitalScheduleTimeRepository repository;
-    private final IDzongkhagRepository dzongkhagRepository;
     private final IHospitalRepository iHospitalRepository;
     private final HospitalScheduleTimeMapper mapper;
     private final IHospitalScheduleTimeRepository iHospitalScheduleTimeRepository;
@@ -35,15 +34,7 @@ public class ReadHospitalScheduleTimeService implements IReadHospitalScheduleTim
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    @Override
-    public ResponseEntity<?> getAllDzongkhag() {
-        List<Dzongkhag> dzongkhags = dzongkhagRepository.findAllByOrderByDzongkhagNameAsc();
-        if (dzongkhags.size() > 0) {
-            return ResponseEntity.ok(dzongkhags);
-        } else {
-            return ResponseEntity.badRequest().body(new MessageResponse("Data not found"));
-        }
-    }
+
 
     @Override
     public ResponseEntity<?> getAllActiveHospitalsByDzongkhagId(Integer dzongkhagId) {

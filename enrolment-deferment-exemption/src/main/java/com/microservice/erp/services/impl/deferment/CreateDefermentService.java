@@ -23,7 +23,7 @@ public class CreateDefermentService implements ICreateDefermentService {
     private final DefermentMapper mapper;
 
     @Transactional(rollbackOn = Exception.class)
-    public ResponseEntity<?> save(HttpServletRequest request, CreateDefermentCommand command) throws IOException {
+    public ResponseEntity<?> saveDeferment(HttpServletRequest request, CreateDefermentCommand command) throws IOException {
         boolean defermentInfoExist = repository.existsByUserIdAndStatusIn(command.getUserId(),
                 Set.of(ApprovalStatus.PENDING.value(), ApprovalStatus.APPROVED.value()));
 

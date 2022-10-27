@@ -16,7 +16,7 @@ public class CreateHospitalScheduleTimeService implements ICreateHospitalSchedul
     private final IHospitalScheduleTimeRepository repository;
     private final HospitalScheduleTimeMapper mapper;
 
-    public ResponseEntity<?> save(HospitalScheduleTimeDto hospitalScheduleTimeDto) throws IOException {
+    public ResponseEntity<?> saveScheduleTimes(HospitalScheduleTimeDto hospitalScheduleTimeDto) throws IOException {
 
         var hospitalScheduleTime = repository.save(
                 mapper.mapToEntity(hospitalScheduleTimeDto)

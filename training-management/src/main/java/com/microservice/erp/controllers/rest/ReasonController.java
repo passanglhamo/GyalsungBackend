@@ -18,23 +18,24 @@ public class ReasonController {
     private final ICreateReasonService service;
 
     @PostMapping
-    public Reason insert(@Valid @RequestBody Reason reason) {
-        return service.add(reason);
+    public Reason saveReason(@Valid @RequestBody Reason reason) {
+        return service.saveReason(reason);
     }
 
 
-    @GetMapping("/findById")
-    public Reason getById(@RequestParam("id")Long id) {
-        return readService.findById(id);
+    @GetMapping("/getAllReasonById")
+    public Reason getAllReasonById(@RequestParam("id")Long id) {
+        return readService.getAllReasonById(id);
     }
+
     @GetMapping
-    public List<Reason> query() {
-        return readService.findAll();
+    public List<Reason> getAllReasonList() {
+        return readService.getAllReasonList();
     }
 
-    @GetMapping("/findByStatus")
-    public List<Reason> activeQuery(@RequestParam("status") Character status) {
-        return readService.findAllByStatus(status);
+    @GetMapping("/getAllReasonByStatus")
+    public List<Reason> getAllReasonByStatus(@RequestParam("status") String status) {
+        return readService.getAllReasonByStatus(status);
     }
 
 }

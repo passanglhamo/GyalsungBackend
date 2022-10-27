@@ -7,6 +7,6 @@ import java.io.IOException;
 import java.text.ParseException;
 
 public interface ICreateTrainingAcademyCapacityService {
-    ResponseEntity<?> save(TrainingAcademyCapacityDto trainingAcademyCapacityDto) throws IOException, ParseException;
+    ResponseEntity<?> saveTrainingAcaCap(TrainingAcademyCapacityDto trainingAcademyCapacityDto) throws IOException, ParseException;
 
 }

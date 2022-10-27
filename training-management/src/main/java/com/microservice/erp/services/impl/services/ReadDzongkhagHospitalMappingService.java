@@ -15,12 +15,17 @@ public class ReadDzongkhagHospitalMappingService implements IReadDzongkhagHospit
     private final IDzongkhagHospitalMappingRepository repository;
 
     @Override
-    public List<DzongkhagHospitalMapping> findAll() {
+    public List<DzongkhagHospitalMapping> getAllDzongkhagHospitalList() {
         return repository.findAll();
     }
 
     @Override
-    public DzongkhagHospitalMapping findById(Long id) {
+    public DzongkhagHospitalMapping getAllDzongkhagHospitalById(Long id) {
         return repository.findById(id).get();
+    }
+
+    @Override
+    public List<DzongkhagHospitalMapping> getAllDzongkhagHosByStatus(String status) {
+        return repository.findAllByStatus(status);
     }
 }

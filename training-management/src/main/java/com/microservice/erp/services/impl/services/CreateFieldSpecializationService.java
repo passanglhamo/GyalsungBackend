@@ -13,7 +13,7 @@ public class CreateFieldSpecializationService implements ICreateFieldSpecializat
     private final IFieldSpecializationRepository repository;
 
     @Override
-    public FieldSpecialization add(FieldSpecialization fieldSpecialization) {
+    public FieldSpecialization saveFieldSpec(FieldSpecialization fieldSpecialization) {
         return repository.save(fieldSpecialization);
     }
 }

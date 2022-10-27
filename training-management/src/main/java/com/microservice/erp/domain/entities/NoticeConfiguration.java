@@ -18,10 +18,10 @@ import javax.validation.constraints.NotNull;
 public class NoticeConfiguration extends Auditable<Long,Long>{
 
 
-    @NotNull(message = "Name cannot be null.")
+    @NotNull(message = "Notice configuration name cannot be null.")
     @Basic(optional = false)
-    @Column(name = "name",columnDefinition = "varchar(255)")
-    private String name;
+    @Column(name = "notice_name",columnDefinition = "varchar(255)")
+    private String noticeName;
 
     @Basic(optional = false)
     @Column(name = "class_id",columnDefinition = "char(2)")

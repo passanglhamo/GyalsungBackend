@@ -5,9 +5,9 @@ import com.microservice.erp.domain.entities.Reason;
 import java.util.List;
 
 public interface IReadReasonService {
-    List<Reason> findAll();
+    List<Reason> getAllReasonList();
 
-    List<Reason> findAllByStatus(Character status);
+    List<Reason> getAllReasonByStatus(String status);
 
-    Reason findById(Long id);
+    Reason getAllReasonById(Long id);
 }

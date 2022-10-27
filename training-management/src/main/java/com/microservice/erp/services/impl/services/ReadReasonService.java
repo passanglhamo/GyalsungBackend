@@ -14,17 +14,17 @@ public class ReadReasonService implements IReadReasonService {
     private final IReasonRepository repository;
 
     @Override
-    public List<Reason> findAll() {
+    public List<Reason> getAllReasonList() {
         return repository.findAll();
     }
 
     @Override
-    public List<Reason> findAllByStatus(Character status) {
+    public List<Reason> getAllReasonByStatus(String status) {
         return repository.findAllByStatus(status);
     }
 
     @Override
-    public Reason findById(Long id) {
+    public Reason getAllReasonById(Long id) {
         return repository.findById(id).get();
     }
 

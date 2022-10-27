@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import java.util.Collection;
 
 public interface IReadHospitalScheduleTimeService {
-    ResponseEntity<?> getAllDzongkhag();
     Collection<HospitalScheduleTimeDto> getAllScheduleTimesById(Long dzoHosId);
 
     ResponseEntity<?> getAllActiveHospitalsByDzongkhagId(Integer dzongkhagId);
