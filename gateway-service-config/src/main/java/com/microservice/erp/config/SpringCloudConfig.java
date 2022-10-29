@@ -51,6 +51,9 @@ public class SpringCloudConfig {
     @Value("${app.enrolment.deferment.exemption.url}")
     private String enrolmentDefermentExemptionURL;
 
+    @Value("${app.medical.screening.url}")
+    private String medicalScreeningURL;
+
     @Value("${app.notification.url}")
     private String notificationURL;
 
@@ -122,6 +125,11 @@ public class SpringCloudConfig {
                                 .filters(f -> f.filter(authFilter)
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(enrolmentDefermentExemptionURL))
+                .route("medicalScreening"
+                        , r -> r.path("/api/medical/screening/**")
+                                .filters(f -> f.filter(authFilter)
+                                        .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
+                                .uri(medicalScreeningURL))
                 .route("notification"
                         , r -> r.path("/api/notification/**")
                                 .filters(f -> f.filter(authFilter)
