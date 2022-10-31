@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 
-public interface ICreateHospitalScheduleTimeService {
-    ResponseEntity<?> saveScheduleTimes(HospitalScheduleTimeDto hospitalScheduleTimeDto) throws IOException;
-
+public interface IUpdateHospitalScheduleTimeService {
+    ResponseEntity<?> updateScheduleTimes(HospitalScheduleTimeDto hospitalScheduleTimeListDto) throws IOException;
 }

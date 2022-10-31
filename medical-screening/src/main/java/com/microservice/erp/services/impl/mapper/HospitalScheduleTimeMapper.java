@@ -1,9 +1,9 @@
 package com.microservice.erp.services.impl.mapper;
 
+import com.microservice.erp.domain.dto.HospitalScheduleDateDto;
 import com.microservice.erp.domain.dto.HospitalScheduleTimeDto;
-import com.microservice.erp.domain.dto.HospitalScheduleTimeListDto;
+import com.microservice.erp.domain.entities.HospitalScheduleDate;
 import com.microservice.erp.domain.entities.HospitalScheduleTime;
-import com.microservice.erp.domain.entities.HospitalScheduleTimeList;
 import com.microservice.erp.domain.helper.AppointmentStatus;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -13,14 +13,14 @@ import java.util.stream.Collectors;
 @Component
 public class HospitalScheduleTimeMapper {
 
-    public HospitalScheduleTime mapToEntity(HospitalScheduleTimeDto hospitalScheduleTimeDto) {
-        HospitalScheduleTime hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDto, HospitalScheduleTime.class);
+    public HospitalScheduleDate mapToEntity(HospitalScheduleDateDto hospitalScheduleTimeDto) {
+        HospitalScheduleDate hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDto, HospitalScheduleDate.class);
         hospitalScheduleTime.setStatus(AppointmentStatus.Available.value());
         hospitalScheduleTime.setHospitalScheduleTimeLists(
                 hospitalScheduleTimeDto.getHospitalScheduleTimeList()
                         .stream()
                         .map(ta ->
-                                new HospitalScheduleTimeList(
+                                new HospitalScheduleTime(
                                         ta.getStartTime(),
                                         ta.getEndTime(),
                                         hospitalScheduleTime
@@ -31,8 +31,8 @@ public class HospitalScheduleTimeMapper {
 
         return hospitalScheduleTime;
     }
-    public HospitalScheduleTimeDto mapToDomain(HospitalScheduleTime hospitalScheduleTime) {
-        return HospitalScheduleTimeDto.withId(
+    public HospitalScheduleDateDto mapToDomain(HospitalScheduleDate hospitalScheduleTime) {
+        return HospitalScheduleDateDto.withId(
                 hospitalScheduleTime.getId(),
                 hospitalScheduleTime.getHospitalId(),
                 hospitalScheduleTime.getAppointmentDate(),
@@ -40,7 +40,7 @@ public class HospitalScheduleTimeMapper {
                 hospitalScheduleTime.getHospitalScheduleTimeLists()
                         .stream()
                         .map(ta ->
-                                HospitalScheduleTimeListDto.withId(
+                                HospitalScheduleTimeDto.withId(
                                         ta.getId(),
                                         ta.getStartTime(),
                                         ta.getEndTime()

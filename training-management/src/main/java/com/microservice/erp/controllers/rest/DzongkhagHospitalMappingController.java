@@ -4,6 +4,8 @@ import com.microservice.erp.domain.entities.DzongkhagHospitalMapping;
 import com.microservice.erp.services.iServices.ICreateDzongkhagHospitalMappingService;
 import com.microservice.erp.services.iServices.IReadDzongkhagHospitalMappingService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,6 +32,11 @@ public class DzongkhagHospitalMappingController {
     @GetMapping("/getAllDzongkhagHosByStatus")
     public List<DzongkhagHospitalMapping> getAllDzongkhagHosByStatus(@RequestParam("status") String status) {
         return readService.getAllDzongkhagHosByStatus(status);
+    }
+
+    @GetMapping(value = "/getAllActiveHospitalsByDzongkhagId", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllActiveHospitalsByDzongkhagId(@RequestParam("dzongkhagId") Integer dzongkhagId) {
+        return readService.getAllActiveHospitalsByDzongkhagId(dzongkhagId);
     }
 
 }

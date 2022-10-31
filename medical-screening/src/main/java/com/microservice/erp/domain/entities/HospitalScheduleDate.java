@@ -12,9 +12,9 @@ import java.util.Set;
 @Data
 @Builder
 @EqualsAndHashCode
-@Entity(name = "tms_hospital_schedule_time")
-@AttributeOverride(name = "id", column = @Column(name = "hospital_schedule_time_id"))
-public class HospitalScheduleTime extends Auditable<Long, Long> {
+@Entity(name = "tms_hospital_schedule_date")
+@AttributeOverride(name = "id", column = @Column(name = "hospital_schedule_date_id"))
+public class HospitalScheduleDate extends Auditable<Long, Long> {
 
     @NotNull
     @Basic(optional = false)
@@ -33,11 +33,11 @@ public class HospitalScheduleTime extends Auditable<Long, Long> {
     private Character status;
 
     @OneToMany(
-            mappedBy = "hospitalScheduleTime",
+            mappedBy = "hospitalScheduleDate",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )
-    private Set<HospitalScheduleTimeList> hospitalScheduleTimeLists;
+    private Set<HospitalScheduleTime> hospitalScheduleTimeLists;
 
 }

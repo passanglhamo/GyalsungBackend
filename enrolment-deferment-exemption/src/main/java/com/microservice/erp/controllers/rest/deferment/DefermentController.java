@@ -7,8 +7,6 @@ import com.microservice.erp.services.iServices.deferment.IUpdateDefermentService
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Collection;
 import java.util.List;
 
 @RestController
@@ -31,7 +28,7 @@ public class DefermentController {
 
     @PostMapping
     public ResponseEntity<?> saveDeferment(HttpServletRequest request, @ModelAttribute ICreateDefermentService.
-            CreateDefermentCommand command) throws ParseException, IOException {
+            CreateDefermentCommand command) throws IOException {
         return service.saveDeferment(request, command);
     }
 
