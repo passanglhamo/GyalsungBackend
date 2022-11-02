@@ -5,12 +5,18 @@ import com.microservice.erp.domain.dto.SignupRequestDto;
 import com.microservice.erp.domain.entities.UserInfo;
 import com.microservice.erp.services.iServices.ISignupService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.wso2.client.api.ApiException;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -51,5 +57,22 @@ public class SignupController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) throws ParseException {
          return iSignupService.signup(signupRequestDto);
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser() {
+
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+
+        return ResponseEntity.ok(new JwtResponse("staticToken",
+                2L,
+                "Ngawng Zepa",
+                "11514000454",
+                'M',
+                "17302667",
+                "nzepa",
+                "ngawang.zepa@thimphutechpark.bt",
+                roles));
     }
 }
