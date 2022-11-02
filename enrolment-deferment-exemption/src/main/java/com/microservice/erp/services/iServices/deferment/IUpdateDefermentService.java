@@ -10,9 +10,9 @@ import javax.validation.Valid;
 import java.util.List;
 
 public interface IUpdateDefermentService {
-    ResponseEntity<?> approveByIds(@Valid UpdateDefermentCommand command);
+    ResponseEntity<?> approveByIds(String authHeader, @Valid UpdateDefermentCommand command);
 
-    ResponseEntity<?> rejectByIds(@Valid UpdateDefermentCommand command);
+    ResponseEntity<?> rejectByIds(String authHeader, @Valid UpdateDefermentCommand command);
 
     @Getter
     @Setter

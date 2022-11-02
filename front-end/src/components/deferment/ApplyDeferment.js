@@ -208,7 +208,7 @@ const ApplyDeferment = () => {
                                                 return (
                                                     <MenuItem key={items.id}
                                                               value={items.id}>
-                                                        {items.name}
+                                                        {items.reasonName}
                                                     </MenuItem>
                                                 )
                                             })

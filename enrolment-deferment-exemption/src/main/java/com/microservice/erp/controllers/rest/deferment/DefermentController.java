@@ -38,15 +38,17 @@ public class DefermentController {
     }
 
     @PostMapping(value = "/approveByIds")
-    public ResponseEntity<?> approveByIds(@RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
+    public ResponseEntity<?> approveByIds(@RequestHeader("Authorization") String authHeader,
+                                          @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
 
-        return updateService.approveByIds(command);
+        return updateService.approveByIds(authHeader,command);
     }
 
     @PostMapping(value = "/rejectByIds")
-    public ResponseEntity<?> rejectByIds(@RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
+    public ResponseEntity<?> rejectByIds(@RequestHeader("Authorization") String authHeader,
+                                         @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
 
-        return updateService.rejectByIds(command);
+        return updateService.rejectByIds(authHeader,command);
     }
 
     @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)

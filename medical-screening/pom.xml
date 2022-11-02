@@ -200,12 +200,12 @@
             <version>8.0.18</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>RELEASE</version>
-            <scope>provided</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.projectlombok</groupId>-->
+<!--            <artifactId>lombok</artifactId>-->
+<!--            <version>RELEASE</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
         <!-- data mapper start-->
         <dependency>
             <groupId>org.modelmapper</groupId>
