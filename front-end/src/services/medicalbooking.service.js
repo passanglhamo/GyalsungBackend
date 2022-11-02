@@ -21,9 +21,8 @@ const getAllActiveHospitalsByDzongkhagId = (dzongkhagId) => {
         });
 };
 
-const getAllAvailableTimeSlotByHospitalId = (hospitalId) => { 
-    // return axios.get(BASE_URL + "api/training/management/hospitalScheduleTime/getAllAvailableTimeSlotByHospitalId"
-    return axios.get(BASE_URL + "api/medical/screening/hospitalScheduleDate/getAllAvailableTimeSlotByHospitalId"
+const getAllAvailableAppointmentDateByHospitalId = (hospitalId) => {
+    return axios.get(BASE_URL + "api/medical/screening/hospitalScheduleDate/getAllAvailableAppointmentDateByHospitalId"
         , {
             params: {
                 hospitalId
@@ -45,6 +44,6 @@ export default {
     getAllMedicalQuestion
     , getAllDzongkhag
     , getAllActiveHospitalsByDzongkhagId
-    , getAllAvailableTimeSlotByHospitalId
+    , getAllAvailableAppointmentDateByHospitalId
     , bookMedicalAppointment
 };

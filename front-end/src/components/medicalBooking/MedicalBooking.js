@@ -90,11 +90,11 @@ export const MedicalBooking = () => {
     }, [selectedDzongkhagId]);
 
     useEffect(() => {
-        getAllAvailableTimeSlotByHospitalId();
+        getAllAvailableAppointmentDateByHospitalId();
     }, [selectedHospitalId]);
 
     useEffect(() => {
-        getTimeAvailableTimeSlots();
+        getAvailableTimeSlots();
     }, [selectedHospitalId]);
 
     const getAllMedicalQuestion = () => {
@@ -131,8 +131,8 @@ export const MedicalBooking = () => {
         );
     }
 
-    const getAllAvailableTimeSlotByHospitalId = (selectedHospitalId) => {
-        medicalbookingService.getAllAvailableTimeSlotByHospitalId(selectedHospitalId).then(
+    const getAllAvailableAppointmentDateByHospitalId = (selectedHospitalId) => {
+        medicalbookingService.getAllAvailableAppointmentDateByHospitalId(selectedHospitalId).then(
             async response => {
                 setAvailableDateTimeSlots(response.data);
                 let availableDates = [];
@@ -146,7 +146,7 @@ export const MedicalBooking = () => {
                 });
                 setAvailableDates(availableDates);
                 defaultDate = availableDates[0];
-                // getTimeAvailableTimeSlots(availableDates[0]);
+                // getAvailableTimeSlots(availableDates[0]);
             },
             error => { }
         );
@@ -154,7 +154,7 @@ export const MedicalBooking = () => {
     }
 
     /*================Method to get list of available appointment times for the date=============*/
-    const getTimeAvailableTimeSlots = (date) => {
+    const getAvailableTimeSlots = (date) => {
         setSelectedDate(`${date}`);
         setTempAvailableDateTimeSlots(availableDateTimeSlots.filter(item =>
             moment(item.appointmentDate).format(dateFormat) === date)
@@ -191,7 +191,7 @@ export const MedicalBooking = () => {
 
     const handleHospitalChange = (e) => {
         setSelectedHospitalId(e.target.value);
-        getAllAvailableTimeSlotByHospitalId(e.target.value);
+        getAllAvailableAppointmentDateByHospitalId(e.target.value);
     }
 
     function getSteps() {
@@ -288,7 +288,7 @@ export const MedicalBooking = () => {
                             {/*                color="primary" variant="outlined"*/}
                             {/*                label={date}*/}
                             {/*                value={date}*/}
-                            {/*                onClick={(e) => getTimeAvailableTimeSlots(date)}*/}
+                            {/*                onClick={(e) => getAvailableTimeSlots(date)}*/}
                             {/*            /> </span>*/}
                             {/*        );*/}
                             {/*    })}*/}
@@ -314,7 +314,7 @@ export const MedicalBooking = () => {
                                                 variant={selectedDate === `${date}` ? undefined : "outlined"}
                                                 label={date}
                                                 value={date}
-                                                onClick={(e) => getTimeAvailableTimeSlots(date)}
+                                                onClick={(e) => getAvailableTimeSlots(date)}
                                             /> </span>
                                     );
                                 })}
