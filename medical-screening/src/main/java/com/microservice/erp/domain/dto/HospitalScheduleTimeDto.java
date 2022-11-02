@@ -9,17 +9,17 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HospitalScheduleTimeListDto {
+public class HospitalScheduleTimeDto {
 
     private Long id;
     private String startTime;
     private String endTime;
 
-    public static HospitalScheduleTimeListDto withId(
+    public static HospitalScheduleTimeDto withId(
             Long id,
             String startTime,
             String endTime) {
-        return new HospitalScheduleTimeListDto(
+        return new HospitalScheduleTimeDto(
                 id,
                 startTime,
                 endTime

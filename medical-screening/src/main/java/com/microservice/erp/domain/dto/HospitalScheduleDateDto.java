@@ -13,20 +13,20 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HospitalScheduleTimeDto {
+public class HospitalScheduleDateDto {
     private Long id;
     private Long hospitalId;
     private Date appointmentDate;
-    private List<HospitalScheduleTimeListDto> hospitalScheduleTimeList;
-    private Collection<HospitalScheduleTimeListDto> hospitalScheduleTimeListDtos;
+    private List<HospitalScheduleTimeDto> hospitalScheduleTimeList;
+    private Collection<HospitalScheduleTimeDto> hospitalScheduleTimeListDtos;
 
-    public static HospitalScheduleTimeDto withId(
+    public static HospitalScheduleDateDto withId(
             Long id,
             Long hospitalId,
             Date appointmentDate,
-            List<HospitalScheduleTimeListDto> hospitalScheduleTimeList,
-            Collection<HospitalScheduleTimeListDto> hospitalScheduleTimeListDtos) {
-        return new HospitalScheduleTimeDto(
+            List<HospitalScheduleTimeDto> hospitalScheduleTimeList,
+            Collection<HospitalScheduleTimeDto> hospitalScheduleTimeListDtos) {
+        return new HospitalScheduleDateDto(
                 id,
                 hospitalId,
                 appointmentDate,

@@ -1,7 +1,7 @@
 package com.microservice.erp.services.impl.services;
 
-import com.microservice.erp.domain.dto.HospitalScheduleTimeListDto;
-import com.microservice.erp.domain.repository.IHospitalScheduleTimeListRepository;
+import com.microservice.erp.domain.dto.HospitalScheduleTimeDto;
+import com.microservice.erp.domain.repositories.IHospitalScheduleTimeRepository;
 import com.microservice.erp.services.iServices.IUpdateHospitalScheduleTimeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +12,8 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 public class UpdateHospitalScheduleTimeService implements IUpdateHospitalScheduleTimeService {
-    private final IHospitalScheduleTimeListRepository repository;
-    public ResponseEntity<?> updateScheduleTimes(HospitalScheduleTimeListDto hospitalScheduleTimeListDto) throws IOException {
+    private final IHospitalScheduleTimeRepository repository;
+    public ResponseEntity<?> updateScheduleTimes(HospitalScheduleTimeDto hospitalScheduleTimeListDto) throws IOException {
 
         repository.findById(hospitalScheduleTimeListDto.getId()).map(d -> {
             d.setStartTime(hospitalScheduleTimeListDto.getStartTime());
@@ -22,6 +22,6 @@ public class UpdateHospitalScheduleTimeService implements IUpdateHospitalSchedul
         });
 
 
-        return ResponseEntity.ok("Hospital Scheduled Time List updated successfully.");
+        return ResponseEntity.ok("Hospital Scheduled Time updated successfully.");
     }
 }
