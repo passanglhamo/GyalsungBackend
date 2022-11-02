@@ -97,23 +97,23 @@ const EnlistmentDateSetup = () => {
         // fromDate: Yup.date()
         //     .required('From Date is required')
         //     .typeError("From Date is required"),
-        toDate: Yup.date()
-            //.required('To Date is required')
-            .typeError("To Date is required")
-            .min(new Date(Date.now()), "To date should be greater than current date")
-            .when('fromDate',
-                (fromDate, schema) => {
-                    if(moment(fromDate).isValid()){
-                        if (fromDate) {
-                            const dayAfter = new Date(fromDate.getTime() + 86400000);
-
-                            return schema.min(dayAfter, 'To date has to be after from date');
-                        }
-
-                        return schema;
-                    }
-
-                }),
+        // toDate: Yup.date()
+        //     //.required('To Date is required')
+        //     .typeError("To Date is required")
+        //     .min(new Date(Date.now()), "To date should be greater than current date")
+        //     .when('fromDate',
+        //         (fromDate, schema) => {
+        //             if(moment(fromDate).isValid()){
+        //                 if (fromDate) {
+        //                     const dayAfter = new Date(fromDate.getTime() + 86400000);
+        //
+        //                     return schema.min(dayAfter, 'To date has to be after from date');
+        //                 }
+        //
+        //                 return schema;
+        //             }
+        //
+        //         }),
         status: Yup.string()
             .required('Status is required'),
     });
