@@ -20,7 +20,7 @@ public class DzongkhagHospitalMappingController {
     private final IReadDzongkhagHospitalMappingService readService;
 
     @PostMapping
-    public DzongkhagHospitalMapping saveDzongkhagHospital(@Valid @RequestBody DzongkhagHospitalMapping dzongkhagHospitalMapping) {
+    public ResponseEntity<?> saveDzongkhagHospital(@Valid @RequestBody DzongkhagHospitalMapping dzongkhagHospitalMapping) {
         return service.saveDzongkhagHospital(dzongkhagHospitalMapping);
     }
 

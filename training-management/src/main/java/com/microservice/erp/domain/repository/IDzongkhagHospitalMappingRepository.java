@@ -16,4 +16,6 @@ public interface IDzongkhagHospitalMappingRepository extends JpaRepository<Dzong
 
     List<DzongkhagHospitalMapping> findAllByStatus(String status);
 
+    boolean  existsByDzongkhagIdAndHospitalId(Integer dzongkhagId,Integer hospitalId);
+
 }

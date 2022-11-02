@@ -38,15 +38,17 @@ public class ExemptionController {
     }
 
     @PostMapping(value = "/approveByIds")
-    public ResponseEntity<?> approveByIds(@RequestBody IUpdateExemptionService.UpdateExemptionCommand command) {
+    public ResponseEntity<?> approveByIds(@RequestHeader("Authorization") String authHeader,
+                                          @RequestBody IUpdateExemptionService.UpdateExemptionCommand command) {
 
-        return updateService.approveByIds(command);
+        return updateService.approveByIds(authHeader,command);
     }
 
     @PostMapping(value = "/rejectByIds")
-    public ResponseEntity<?> rejectByIds(@RequestBody IUpdateExemptionService.UpdateExemptionCommand command) {
+    public ResponseEntity<?> rejectByIds(@RequestHeader("Authorization") String authHeader,
+                                         @RequestBody IUpdateExemptionService.UpdateExemptionCommand command) {
 
-        return updateService.rejectByIds(command);
+        return updateService.rejectByIds(authHeader,command);
     }
 
     @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)

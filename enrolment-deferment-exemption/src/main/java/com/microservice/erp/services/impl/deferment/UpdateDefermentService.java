@@ -70,7 +70,7 @@ public class UpdateDefermentService implements IUpdateDefermentService {
             d.setStatus(ApprovalStatus.REJECTED.value());
             d.setApprovalRemarks(command.getRemarks());
             repository.save(d);
-            sendEmailAndSms(authHeader, d.getUserId());
+            //sendEmailAndSms(authHeader, d.getUserId());
             return d;
         }).map(mapper::mapToDomain).collect(Collectors.toUnmodifiableList());
 

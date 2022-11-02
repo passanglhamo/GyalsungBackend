@@ -48,7 +48,7 @@ public class CreateExemptionService implements ICreateExemptionService {
 
         repository.save(exemption);
 
-        sendEmailAndSms(authTokenHeader, exemption.getUserId());
+        //sendEmailAndSms(authTokenHeader, exemption.getUserId());
 
         return ResponseEntity.ok(new MessageResponse("An acknowledgement notifcation will be sent  to you as soon as you submit your  application.\" +\n" +
                 "                    \"Your Deferment application will be  reviewed and the outcome  of the deferment wil be sent \" +\n" +

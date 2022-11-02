@@ -10,6 +10,7 @@ import com.microservice.erp.services.impl.common.HeaderToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -37,16 +38,16 @@ public class CreateDefermentService implements ICreateDefermentService {
                 Set.of(ApprovalStatus.PENDING.value(), ApprovalStatus.APPROVED.value()), command.getToDate());
 
 
-//        if (defermentInfoExist) {
-//            return new ResponseEntity<>("Deferment is already saved.", HttpStatus.ALREADY_REPORTED);
-//        }
-//
-//
-//        if (!Objects.isNull(command.getProofDocuments())) {
-//            if (command.getProofDocuments().length > fileLength) {
-//                return new ResponseEntity<>("You can upload maximum of 5 files.", HttpStatus.ALREADY_REPORTED);
-//            }
-//        }
+        if (defermentInfoExist) {
+            return new ResponseEntity<>("Deferment is already saved.", HttpStatus.ALREADY_REPORTED);
+        }
+
+
+        if (!Objects.isNull(command.getProofDocuments())) {
+            if (command.getProofDocuments().length > fileLength) {
+                return new ResponseEntity<>("You can upload maximum of 5 files.", HttpStatus.ALREADY_REPORTED);
+            }
+        }
 
         var deferment = repository.save(
                 mapper.mapToEntity(
@@ -54,9 +55,9 @@ public class CreateDefermentService implements ICreateDefermentService {
                 )
         );
 
-        //repository.save(deferment);
+        repository.save(deferment);
 
-        sendEmailAndSms(authTokenHeader,deferment.getUserId());
+        //sendEmailAndSms(authTokenHeader,deferment.getUserId());
 
         return ResponseEntity.ok(new MessageResponse("Deferment is successfully saved"));
     }
@@ -68,11 +69,13 @@ public class CreateDefermentService implements ICreateDefermentService {
         String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + userId;
         ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
 
-        String emailmessage = "Dear, The verification code for Gyalsung system is";
+        String emailMessage = "Dear Pema Dechen,\n" +
+                "\n" +
+                "This is to acknowledge the receipt of your deferment application. Your Deferment application will be reviewed and the outcome of the deferment will be sent to you through your email within 10 days of the submission of your application. If you are not approved for deferment, you will have to complete the Gyalsung pre-enlistment procedure. \n";
 
-        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailmessage);
+        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailMessage);
 
-        String message = "Your OTP for Gyalsung Registration is ";
+        String message = "";
 
         restTemplate.exchange("http://172.30.16.213/g2csms/push.php?to=" + Objects.requireNonNull(userResponse.getBody()).getMobileNo() + "&msg=" + message, HttpMethod.GET, null, String.class);
     }

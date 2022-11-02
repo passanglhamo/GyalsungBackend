@@ -12,9 +12,9 @@ import java.util.Collection;
 import java.util.List;
 
 public interface IUpdateExemptionService {
-    ResponseEntity<?> approveByIds(@Valid UpdateExemptionCommand command);
+    ResponseEntity<?> approveByIds(String authHeader,@Valid UpdateExemptionCommand command);
 
-    ResponseEntity<?> rejectByIds(@Valid UpdateExemptionCommand command);
+    ResponseEntity<?> rejectByIds(String authHeader,@Valid UpdateExemptionCommand command);
 
     @Getter
     @Setter

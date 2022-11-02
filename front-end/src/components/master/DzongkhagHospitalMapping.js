@@ -19,6 +19,9 @@ import dzongkhagService from "../../services/dzongkhag.service";
 import hospitalService from "../../services/hospital.service";
 import TextField from "../FormsUI/Textfield";
 import {MenuItem} from "@material-ui/core";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import Collapse from "@material-ui/core/Collapse";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -57,6 +60,9 @@ const DzongkhagHospitalMapping = () => {
     const [dzongkhagList, setDzongkhagList] = useState([]);
     const [hospitalList, setHospitalList] = useState([]);
     const [defaultStatus, setDefaultStatus] = useState('A');
+    const [responseMsg, setResponseMsg] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
+
 
 
     const handleClose = () => {
@@ -180,8 +186,13 @@ const DzongkhagHospitalMapping = () => {
     /*================ Create method =============*/
     function create(fields, setSubmitting,resetForm) {
         dzongkhagHospitalMapService.save(JSON.stringify(fields))
-            .then(() => {
-                resetPage(resetForm);
+            .then((res) => {
+                if(res.status===208){
+                    setShowAlert(true);
+                    setResponseMsg(res.data);
+                }else{
+                    resetPage(resetForm);
+                }
             })
             .catch(() => {
                 setSubmitting(false);
@@ -386,6 +397,25 @@ const DzongkhagHospitalMapping = () => {
                                     <FormButton type="submit" buttonName="Submit">
                                     </FormButton>
                                 </DialogActions>
+                                {/*<Collapse in={showAlert}>*/}
+                                {/*    <Alert*/}
+                                {/*        severity='error'*/}
+                                {/*        action={*/}
+                                {/*            <IconButton*/}
+                                {/*                aria-label="close"*/}
+                                {/*                color="inherit"*/}
+                                {/*                size="small"*/}
+                                {/*                onClick={() => {*/}
+                                {/*                    setShowAlert(false);*/}
+                                {/*                }}*/}
+                                {/*            >*/}
+                                {/*                <CloseIcon fontSize="inherit" />*/}
+                                {/*            </IconButton>*/}
+                                {/*        }*/}
+                                {/*    >*/}
+                                {/*        {responseMsg}*/}
+                                {/*    </Alert>*/}
+                                {/*</Collapse>*/}
                             </form>
                         </Dialog>
                     </div>

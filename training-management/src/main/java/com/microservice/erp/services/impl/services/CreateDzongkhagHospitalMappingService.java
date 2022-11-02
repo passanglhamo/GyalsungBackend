@@ -1,9 +1,12 @@
 package com.microservice.erp.services.impl.services;
 
 import com.microservice.erp.domain.entities.DzongkhagHospitalMapping;
+import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.repository.IDzongkhagHospitalMappingRepository;
 import com.microservice.erp.services.iServices.ICreateDzongkhagHospitalMappingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +16,17 @@ public class CreateDzongkhagHospitalMappingService implements ICreateDzongkhagHo
     private final IDzongkhagHospitalMappingRepository repository;
 
     @Override
-    public DzongkhagHospitalMapping saveDzongkhagHospital(DzongkhagHospitalMapping dzongkhagHospitalMapping) {
-        return repository.save(dzongkhagHospitalMapping);
+    public ResponseEntity<?> saveDzongkhagHospital(DzongkhagHospitalMapping dzongkhagHospitalMapping) {
+
+//        boolean defermentInfoExist = repository.existsByDzongkhagIdAndHospitalId(dzongkhagHospitalMapping.getDzongkhagId(),
+//                dzongkhagHospitalMapping.getHospitalId());
+//
+//        if (defermentInfoExist) {
+//            return new ResponseEntity<>(new MessageResponse("Selected dzongkhag and hospital is already mapped"), HttpStatus.ALREADY_REPORTED);
+//        }
+
+        repository.save(dzongkhagHospitalMapping);
+
+        return ResponseEntity.ok(new MessageResponse("Data saved successfully"));
     }
 }
