@@ -2,9 +2,9 @@ import axios from "axios";
 import authHeader from "./auth-header";
 
 // const BASE_URL = "http://localhost:8080/hospitalScheduleTime";
-const BASE_URL = process.env.REACT_APP_BASE_URL + "api/training/management/hospitalScheduleTime";
+const BASE_URL = process.env.REACT_APP_BASE_URL + "api/medical/screening/hospitalScheduleDate";
 // const BASE_URL_TIMES = "http://localhost:8080/hospitalScheduleTimeLists";
-const BASE_URL_TIMES = process.env.REACT_APP_BASE_URL + "api/training/management/hospitalScheduleTimeLists";
+const BASE_URL_TIMES = process.env.REACT_APP_BASE_URL + "api/medical/screening/hospitalScheduleTimes";
 const save = (formData) => {
     return axios.post(BASE_URL, formData,
         {

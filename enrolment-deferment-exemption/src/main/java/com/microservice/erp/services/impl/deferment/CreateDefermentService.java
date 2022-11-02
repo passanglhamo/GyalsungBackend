@@ -1,14 +1,18 @@
 package com.microservice.erp.services.impl.deferment;
 
+import com.microservice.erp.domain.dto.feignClient.user.UserProfileDto;
 import com.microservice.erp.domain.mapper.deferment.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.helper.ApprovalStatus;
 import com.microservice.erp.services.helper.MessageResponse;
 import com.microservice.erp.services.iServices.deferment.ICreateDefermentService;
+import com.microservice.erp.services.impl.common.HeaderToken;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -21,35 +25,56 @@ public class CreateDefermentService implements ICreateDefermentService {
 
     private final IDefermentInfoRepository repository;
     private final DefermentMapper mapper;
-
+    private final SendEmailSms sendEmailSms;
+    private final HeaderToken headerToken;
     Integer fileLength = 5;
 
 
     @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> saveDeferment(HttpServletRequest request, CreateDefermentCommand command) {
+        String authTokenHeader = request.getHeader("Authorization");
         boolean defermentInfoExist = repository.existsByUserIdAndStatusInAndToDateGreaterThanEqual(command.getUserId(),
                 Set.of(ApprovalStatus.PENDING.value(), ApprovalStatus.APPROVED.value()), command.getToDate());
 
 
-        if (defermentInfoExist) {
-            return new ResponseEntity<>("Deferment is already saved.", HttpStatus.ALREADY_REPORTED);
-        }
+//        if (defermentInfoExist) {
+//            return new ResponseEntity<>("Deferment is already saved.", HttpStatus.ALREADY_REPORTED);
+//        }
+//
+//
+//        if (!Objects.isNull(command.getProofDocuments())) {
+//            if (command.getProofDocuments().length > fileLength) {
+//                return new ResponseEntity<>("You can upload maximum of 5 files.", HttpStatus.ALREADY_REPORTED);
+//            }
+//        }
 
-
-        if (!Objects.isNull(command.getProofDocuments())) {
-            if (command.getProofDocuments().length > fileLength) {
-                return new ResponseEntity<>("You can upload maximum of 5 files.", HttpStatus.ALREADY_REPORTED);
-            }
-        }
         var deferment = repository.save(
                 mapper.mapToEntity(
                         request, command
                 )
         );
 
-        repository.save(deferment);
+        //repository.save(deferment);
+
+        sendEmailAndSms(authTokenHeader,deferment.getUserId());
 
         return ResponseEntity.ok(new MessageResponse("Deferment is successfully saved"));
+    }
+
+    private void sendEmailAndSms(String authTokenHeader,Long userId){
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<String> httpRequest = headerToken.tokenHeader(authTokenHeader);
+
+        String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + userId;
+        ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
+
+        String emailmessage = "Dear, The verification code for Gyalsung system is";
+
+        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailmessage);
+
+        String message = "Your OTP for Gyalsung Registration is ";
+
+        restTemplate.exchange("http://172.30.16.213/g2csms/push.php?to=" + Objects.requireNonNull(userResponse.getBody()).getMobileNo() + "&msg=" + message, HttpMethod.GET, null, String.class);
     }
 
 
