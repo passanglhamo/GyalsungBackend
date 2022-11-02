@@ -14,15 +14,16 @@ const getAllDzongkhag = () => {
 };
 
 const getAllActiveHospitalsByDzongkhagId = (dzongkhagId) => {
-    return axios.get(BASE_URL + "api/training/management/hospitalScheduleTime/getAllActiveHospitalsByDzongkhagId"
+    return axios.get(BASE_URL + "api/training/management/dzongkhagHospitalMappings/getAllActiveHospitalsByDzongkhagId"
         , {
             params: { dzongkhagId }
             , headers: authHeader()
         });
 };
 
-const getAllAvailableTimeSlotByHospitalId = (hospitalId) => {
-    return axios.get(BASE_URL + "api/training/management/hospitalScheduleTime/getAllAvailableTimeSlotByHospitalId"
+const getAllAvailableTimeSlotByHospitalId = (hospitalId) => { 
+    // return axios.get(BASE_URL + "api/training/management/hospitalScheduleTime/getAllAvailableTimeSlotByHospitalId"
+    return axios.get(BASE_URL + "api/medical/screening/hospitalScheduleDate/getAllAvailableTimeSlotByHospitalId"
         , {
             params: {
                 hospitalId
@@ -30,12 +31,14 @@ const getAllAvailableTimeSlotByHospitalId = (hospitalId) => {
             , headers: authHeader()
         });
 };
-const bookMedicalAppointment = (dzongkhagId, mQuestionDtoList) => {
-    return axios.post("http://localhost:8086/api/training/management/common/bookMedicalAppointment"
-        , { dzongkhagId, mQuestionDtoList }
+
+const bookMedicalAppointment = (data) => {
+    return axios.post(BASE_URL + "api/medical/screening/medicalBooking/bookMedicalAppointment"
+        , data
         , {
-            headers: authHeaderMultipart()
-        });
+            headers: authHeader()
+        }
+    );
 };
 
 export default {

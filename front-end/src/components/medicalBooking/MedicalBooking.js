@@ -81,8 +81,8 @@ export const MedicalBooking = () => {
     const [answers, setAnswers] = useState({});
 
     useEffect(() => {
-        getAllDzongkhag();
         getAllMedicalQuestion();
+        getAllDzongkhag();
     }, []);
 
     useEffect(() => {
@@ -119,7 +119,8 @@ export const MedicalBooking = () => {
         );
     }
 
-    const getAllActiveHospitalsByDzongkhagId = () => {
+    const getAllActiveHospitalsByDzongkhagId = (selectedDzongkhagId) => {
+        // alert(selectedDzongkhagId)
         medicalbookingService.getAllActiveHospitalsByDzongkhagId(selectedDzongkhagId).then(
             response => {
                 setAllHospitals(response.data);
@@ -130,7 +131,7 @@ export const MedicalBooking = () => {
         );
     }
 
-    const getAllAvailableTimeSlotByHospitalId = () => {
+    const getAllAvailableTimeSlotByHospitalId = (selectedHospitalId) => {
         medicalbookingService.getAllAvailableTimeSlotByHospitalId(selectedHospitalId).then(
             async response => {
                 setAvailableDateTimeSlots(response.data);
@@ -171,13 +172,26 @@ export const MedicalBooking = () => {
     }
 
 
+    const toggleSwitch = (value, index) => {
+        if (allMedicalQuestion[index].isEnable === value) return;
+        const question = allMedicalQuestion.map((item, idx) => {
+            let { isEnable } = item;
+            if (index === idx) {
+                isEnable = value;
+            }
+            return { ...item, isEnable };
+        });
+        setAllMedicalQuestion(question);
+    };
+
     const handleDzongkhagChange = (e) => {
         setSelectedDzongkhagId(e.target.value);
-        getAllActiveHospitalsByDzongkhagId();
+        getAllActiveHospitalsByDzongkhagId(e.target.value);
     }
+
     const handleHospitalChange = (e) => {
         setSelectedHospitalId(e.target.value);
-        getAllAvailableTimeSlotByHospitalId();
+        getAllAvailableTimeSlotByHospitalId(e.target.value);
     }
 
     function getSteps() {
@@ -203,35 +217,28 @@ export const MedicalBooking = () => {
                         </mark>
                     </div>
 
-                    {allMedicalQuestion && allMedicalQuestion.map((items, idx) => {
-                        questionAndAnswer[items.id] = false;
+                    {allMedicalQuestion && allMedicalQuestion.map((item, idx) => {
                         return (
-                            // <MenuItem key={idx} value={items.id}><span>{items.name}</span></MenuItem>
-                            <div className='card mb-1'>
-                                <div className='card-body p-2'>
-                                    <div className='form-group row'>
-                                        <div className='col-md-10'>
-                                            <strong>{items.medicalQuestionName}</strong>
-                                        </div>
-                                        {/* Slider*/}
-                                        <div className='col-md-2'>
-                                            <strong> No </strong>
-                                            <label className="switch">
-                                                <input
-                                                    id={items.categoryId}
-                                                    type="checkbox"
-                                                    value={items.categoryId}
-                                                    onChange={(event) => {
-                                                        questionAndAnswer[items.categoryId] = event.target.checked;
-                                                    }}
+                            <>
+                                <div className='card mb-1'>
+                                    <div className='card-body p-2'>
+                                        <div className='form-group row'>
+                                            <div className='col-md-10'>
+                                                <strong>{item.medicalQuestionName}</strong>
+                                            </div>
+                                            {/* Slider*/}
+                                            <div className='col-md-2'>
+                                                <strong> No </strong>
+                                                <Switch onChange={() => { toggleSwitch(!item.isEnable, idx); }}
+                                                    value={item.isEnabled}
+                                                    keyV={idx}
                                                 />
-                                                <span className="slider round"></span>
-                                            </label>
-                                            <strong> Yes </strong>
+                                                <strong> Yes </strong>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </>
                         );
                     })}
                 </div>;
@@ -373,28 +380,36 @@ export const MedicalBooking = () => {
     };
 
     const handleSubmit = (e) => {
-        console.log(`medicalQuestionDtos: ${Object.entries(answers)}`);
-        console.log(`${selectedDzongkhagId}`);
-        console.log(`${selectedHospitalId}`);
-        console.log(`${selectedDate}`);
-        console.log(`${selectedTime}`);
-        const medicalQuestionDtos = new Map(Object.entries(answers));
-        console.log(`questions and answers: ${medicalQuestionDtos}`);
-
-        let dzongkhagId = selectedDzongkhagId;
+        // let dzongkhagId = selectedDzongkhagId;
         let hospitalId = selectedHospitalId;
         let appointmentDate = selectedDate;
         let appointmentTime = selectedTime;
 
-        let data = new FormData();
-        data.append("dzongkhagId", selectedDzongkhagId);
-        data.append("hospitalId", selectedHospitalId);
-        data.append("appointmentDate", selectedDate);
-        data.append("appointmentTime", selectedTime);
-        // for (var index = 0; index < uploadedFiles.length; index++) {
-        //     data.append("enrolmentInfoFiles", uploadedFiles[index]);
-        // }
-        // const data = { dzongkhagId, hospitalId, appointmentDate, appointmentTime };
+        const medicalQuestionDtos = [];
+        allMedicalQuestion.map((val, idx) => {
+            let question = {
+                medicalQuestionId: val.id,
+                checkStatus: val.isEnable === true ? 'Y' : 'N',
+            };
+            medicalQuestionDtos.push(question);
+        });
+
+        let dzongkhagId = "2";
+
+        const data = { dzongkhagId, medicalQuestionDtos };
+
+
+        medicalbookingService.bookMedicalAppointment(data).then(
+            response => {
+                // setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            },
+            error => {
+                console.log(
+                    (error.response && error.response.data && error.response.data.message) ||
+                    error.message || error.toString()
+                );
+            }
+        );
 
         medicalbookingService.bookMedicalAppointment(data).then(
             response => {
@@ -501,11 +516,6 @@ export const MedicalBooking = () => {
                                         {message} {responseMsg}
                                     </Alert>
                                 </Collapse>
-
-                                {/* <Button color="outline-success btn-sm" className="fa fa-pencil pull-right" size="sm"
-                                    onClick={() => { alert(agreeTerms) }}
-                                >   Check here
-                                </Button> */}
                             </div>
                         </Form>
                     </Box>
