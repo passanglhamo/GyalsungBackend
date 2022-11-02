@@ -5,15 +5,19 @@ import com.microservice.erp.services.iServices.IMedicalBookingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/medicalBooking")
 public class MedicalBookingController {
     private IMedicalBookingService iMedicalBookingService;
 
-    @GetMapping(value = "/bookMedicalAppointment")
-//    public ResponseEntity<?> bookMedicalAppointment( MedicalBookingDto medicalBookingDto) {
-    public ResponseEntity<?> bookMedicalAppointment( ) {
-//    public ResponseEntity<?> bookMedicalAppointment(@ModelAttribute MedicalDto medicalDto) {
+    @PostMapping(value = "/testApi")
+    public ResponseEntity<?> testApi() {
+        return ResponseEntity.ok("Hello tester");
+    }
+
+    @PostMapping(value = "/bookMedicalAppointment")
+    public ResponseEntity<?> bookMedicalAppointment(@RequestBody MedicalBookingDto medicalBookingDto) {
         return null;
     }
 }

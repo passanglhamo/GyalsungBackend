@@ -36,26 +36,22 @@ export const MedicalBooking = () => {
   };
 
   const handleSubmit = (e) => {
-    const questionDtos = [];
+    const medicalQuestionDtos = [];
     allMedicalQuestion.map((val, idx) => {
       let question = {
-        // medicalQuest  ionId: val.id,
+        medicalQuestionId: val.id,
         checkStatus: val.isEnable === true ? 'Y' : 'N',
       };
-      questionDtos.push(question);
+      medicalQuestionDtos.push(question);
     });
+    // console.log(medicalQuestionDtos)
 
-    console.log(questionDtos)
-    let dzongkhagId = 2;
+    let dzongkhagId = "2";
 
-    const data = { dzongkhagId, questionDtos };
-    // console.log(data)
+    const data = { dzongkhagId, medicalQuestionDtos };
 
-    // let data = new FormData();
-    // data.append("dzongkhagId", dzongkhagId);
-    // data.append("mQuestionDtoList", mQuestionDtoList);
 
-    medicalbookingService.bookMedicalAppointment(dzongkhagId, questionDtos).then(
+    medicalbookingService.bookMedicalAppointment(data).then(
       response => {
         // setActiveStep((prevActiveStep) => prevActiveStep + 1);
       },
