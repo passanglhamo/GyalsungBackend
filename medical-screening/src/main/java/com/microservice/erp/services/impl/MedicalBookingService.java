@@ -57,7 +57,7 @@ public class MedicalBookingService implements IMedicalBookingService {
         //       hospitalScheduleTime.setBookedBy(null);
 //        hospitalScheduleTime.setBookedDate(null);
 //        hospitalScheduleTime.setBookStatus('A');
-        iHospitalScheduleTimeRepository.save(hospitalScheduleTimeReset);
+//        iHospitalScheduleTimeRepository.save(hospitalScheduleTimeReset);
 
         HospitalScheduleTime hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDb, HospitalScheduleTime.class);
 //        hospitalScheduleTime.setBookedBy(2L);
