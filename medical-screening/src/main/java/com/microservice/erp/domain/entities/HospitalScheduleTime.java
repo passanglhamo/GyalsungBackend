@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,6 +25,19 @@ public class HospitalScheduleTime extends Auditable<Long, Long> {
     @Basic(optional = false)
     @Column(name = "end_time", columnDefinition = "varchar(255)")
     private String endTime;
+
+   /* @NotNull()
+    @Column(name = "book_status", columnDefinition = "char(1)")//A=Available, B=Booked, C=Checkup Done
+    private Character bookStatus;
+
+    @Column(name = "booked_by")//bookedBy=userId
+    private Long bookedBy;
+
+    @Column(name = "booked_date")
+    private LocalDate bookedDate;
+
+    @Column(name = "checkup_done_by")//checkUpDoneBy=userId which a is doctor
+    private Long checkupDoneBy;*/
 
     @ManyToOne
     @JoinColumn(name = "hospital_schedule_date_id", nullable = false)

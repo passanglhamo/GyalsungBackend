@@ -8,8 +8,12 @@ import com.microservice.erp.domain.repositories.IHospitalScheduleTimeRepository;
 import com.microservice.erp.domain.repositories.IMedicalSelfDeclarationRepository;
 import com.microservice.erp.services.iServices.IMedicalBookingService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.Date;
 
 @Service
 @AllArgsConstructor
@@ -19,7 +23,13 @@ public class MedicalBookingService implements IMedicalBookingService {
 
     @Override
     public ResponseEntity<?> bookMedicalAppointment(MedicalBookingDto medicalBookingDto) {
-        HospitalScheduleTime hospitalScheduleTime = new HospitalScheduleTime();
+        HospitalScheduleTime hospitalScheduleTimeDb = iHospitalScheduleTimeRepository.findById(medicalBookingDto.getScheduleTimeId()).get();
+        HospitalScheduleTime hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDb, HospitalScheduleTime.class);
+//        hospitalScheduleTime.setBookedBy(2L);
+//        hospitalScheduleTime.setBookedDate(LocalDate.now());
+//        hospitalScheduleTime.setBookStatus('B');
+//        iHospitalScheduleTimeRepository.save(hospitalScheduleTime);
+
         for (MedicalQuestionDto medicalQuestionDto : medicalBookingDto.getMedicalQuestionDtos()) {
             MedicalSelfDeclaration medicalSelfDeclaration = new MedicalSelfDeclaration();
             medicalSelfDeclaration.setUserId(2L);
@@ -28,6 +38,6 @@ public class MedicalBookingService implements IMedicalBookingService {
             medicalSelfDeclaration.setCheckStatus(medicalQuestionDto.getCheckStatus());
             iMedicalSelfDeclarationRepository.save(medicalSelfDeclaration);
         }
-        return null;
+        return ResponseEntity.ok("Appointment booked successfully.");
     }
 }
