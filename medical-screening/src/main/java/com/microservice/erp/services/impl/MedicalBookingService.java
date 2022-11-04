@@ -40,4 +40,33 @@ public class MedicalBookingService implements IMedicalBookingService {
         }
         return ResponseEntity.ok("Appointment booked successfully.");
     }
+
+    @Override
+    public ResponseEntity<?> getMedicalAppointmentDetail(Long userId) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> editMedicalAppointment(MedicalBookingDto medicalBookingDto) {
+
+
+        HospitalScheduleTime hospitalScheduleTimeDb = iHospitalScheduleTimeRepository.findById(medicalBookingDto.getScheduleTimeId()).get();
+
+        //todo: need to change book status of previous booking to A=Available
+        HospitalScheduleTime hospitalScheduleTimeReset = new ModelMapper().map(hospitalScheduleTimeDb, HospitalScheduleTime.class);
+        //       hospitalScheduleTime.setBookedBy(null);
+//        hospitalScheduleTime.setBookedDate(null);
+//        hospitalScheduleTime.setBookStatus('A');
+        iHospitalScheduleTimeRepository.save(hospitalScheduleTimeReset);
+
+        HospitalScheduleTime hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDb, HospitalScheduleTime.class);
+//        hospitalScheduleTime.setBookedBy(2L);
+//        hospitalScheduleTime.setBookedDate(LocalDate.now());
+//        hospitalScheduleTime.setBookStatus('B');
+
+//        iHospitalScheduleTimeRepository.save(hospitalScheduleTime);
+
+
+        return ResponseEntity.ok("Appointment edited successfully.");
+    }
 }

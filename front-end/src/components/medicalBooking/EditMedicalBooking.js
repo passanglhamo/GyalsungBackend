@@ -15,11 +15,10 @@ import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/Close';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { ArrowBack, ArrowForward, CheckCircle } from '@material-ui/icons';
-import ReactCountryFlag from "react-country-flag";
-import { Card, CardBody, Col, Label, FormGroup, } from 'reactstrap';
+import moment from 'moment';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Chip from '@mui/material/Chip';
 
-import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -27,6 +26,10 @@ import {
     faMedkit, faLocationDot, faHome, faPhone, faCheckCircle, faArrowLeft, faCloudDownload, faArrowRight, faChevronLeft, faChevronRight, faEdit, faIdBadge, faUser, faInfoCircle, faGraduationCap, faAward, faAdd,
     faLayerGroup, faHandsHolding, faHandsHelping, faFaceSmileBeam, faClock, faMale, faFemale, faBriefcase, faBook, faIdCard, faBirthdayCake, faLink, faLocation,
 } from "@fortawesome/free-solid-svg-icons";
+
+import Box from "@mui/material/Box";
+
+import FormControl from '@material-ui/core/FormControl';
 
 import medicalbookingService from "../../services/medicalbooking.service";
 
@@ -46,56 +49,258 @@ const useStyles = makeStyles((theme) => ({
 
 
 const EditMedicalBooking = () => {
+
     const classes = useStyles();
+    const [bookedHospitalName, setBookedHospitalName] = useState('Gidakom Hospital');
+    const [bookedDzongkhagName, setBookedDzongkhagName] = useState('Thimphu');
+    const [bookedDate, setBookedDate] = useState('Nov 10, 2022');
+    const [bookedTime, setBookedTime] = useState('02:00 PM - 04:00 PM');
+
+
+    const [successful, setSuccessful] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [responseMsg, setResponseMsg] = useState('');
+
     const [allDzongkhag, setAllDzongkhag] = useState([]);
     const [allHospitals, setAllHospitals] = useState([]);
     const [selectedDzongkhagId, setSelectedDzongkhagId] = useState('');
     const [selectedHospitalId, setSelectedHospitalId] = useState('');
 
+    const [availableDateTimeSlots, setAvailableDateTimeSlots] = useState([]);
+    const [tempAvailableDateTimeSlots, setTempAvailableDateTimeSlots] = useState([]);
+    const [availableDates, setAvailableDates] = useState([]);
+    const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
 
+    const [selectedDate, setSelectedDate] = useState(undefined);
+    const [selectedTime, setSelectedTime] = useState(undefined);
+    const [scheduleTimeId, setScheduleTimeId] = useState('');
+    const [allMedicalQuestion, setAllMedicalQuestion] = useState([]);
+
+    const dateFormat = "MMMM DD, YYYY";
+    const timeFormat = "hh:mm A";
+    let defaultDate = null;
+
+    useEffect(() => {
+        getAllMedicalQuestion();
+        getAllDzongkhag();
+    }, []);
+
+    useEffect(() => {
+        getAllActiveHospitalsByDzongkhagId();
+    }, [selectedDzongkhagId]);
+
+    useEffect(() => {
+        getAllAvailableAppointmentDateByHospitalId();
+    }, [selectedHospitalId]);
+
+    useEffect(() => {
+        getAvailableTimeSlots();
+    }, [selectedHospitalId]);
+
+    const getAllMedicalQuestion = () => {
+        medicalbookingService.getAllMedicalQuestion().then(
+            response => {
+                setAllMedicalQuestion(response.data);
+            },
+            error => {
+
+            }
+        );
+    }
+    const getAllDzongkhag = () => {
+        medicalbookingService.getAllDzongkhag().then(
+            response => {
+                setAllDzongkhag(response.data);
+            },
+            error => {
+
+            }
+        );
+    }
+
+    const getAllActiveHospitalsByDzongkhagId = (selectedDzongkhagId) => {
+        medicalbookingService.getAllActiveHospitalsByDzongkhagId(selectedDzongkhagId).then(
+            response => {
+                setAllHospitals(response.data);
+            },
+            error => {
+
+            }
+        );
+    }
+
+    const getAllAvailableAppointmentDateByHospitalId = (selectedHospitalId) => {
+        medicalbookingService.getAllAvailableAppointmentDateByHospitalId(selectedHospitalId).then(
+            async response => {
+                setAvailableDateTimeSlots(response.data);
+                let availableDates = [];
+                response.data.filter(element => {
+                    const isDuplicate = availableDates.includes(moment(element.appointmentDate).format(dateFormat));
+                    if (!isDuplicate) {
+                        availableDates.push(moment(element.appointmentDate).format(dateFormat));
+                        return true;
+                    }
+                    return false;
+                });
+                setAvailableDates(availableDates);
+                defaultDate = availableDates[0];
+            },
+            error => { }
+        );
+    }
+
+    const getAvailableTimeSlots = (date) => {
+        setSelectedDate(`${date}`);
+        setTempAvailableDateTimeSlots(availableDateTimeSlots.filter(item =>
+            moment(item.appointmentDate).format(dateFormat) === date)
+        );
+        let availableTimeSlots = [];
+        tempAvailableDateTimeSlots.map(timeSlot => {
+            timeSlot.hospitalScheduleTimeListDtos.map(item => {
+                availableTimeSlots.push(item);
+                return true;
+            });
+            setAvailableTimeSlots(availableTimeSlots);
+            return true;
+        })
+    }
 
     const handleDzongkhagChange = (e) => {
         setSelectedDzongkhagId(e.target.value);
-        // getAllActiveHospitalsByDzongkhagId(e.target.value);
+        getAllActiveHospitalsByDzongkhagId(e.target.value);
     }
+
     const handleHospitalChange = (e) => {
         setSelectedHospitalId(e.target.value);
-        // getAllAvailableTimeSlotByHospitalId();
+        getAllAvailableAppointmentDateByHospitalId(e.target.value);
     }
+
+    const handleSubmit = (e) => {
+        let dzongkhagId = selectedDzongkhagId;
+        let hospitalId = selectedHospitalId;
+
+        const medicalQuestionDtos = [];
+        allMedicalQuestion.map((val, idx) => {
+            let question = {
+                medicalQuestionId: val.id,
+                medicalQuestionName: val.medicalQuestionName,
+                checkStatus: val.isEnable === true ? 'Y' : 'N',
+            };
+            medicalQuestionDtos.push(question);
+        });
+
+        const data = { dzongkhagId, hospitalId, scheduleTimeId, medicalQuestionDtos };
+
+        medicalbookingService.editMedicalAppointment(data).then(
+            response => {
+                // setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            },
+            error => {
+                console.log(
+                    (error.response && error.response.data && error.response.data.message) ||
+                    error.message || error.toString()
+                );
+            }
+        );
+    };
+
+
     return (
-        <div className="col-md-12 row">
+        <div className="col-md-12 row"> 
+
             <div className="d-flex flex-wrap flex-column align-items-center justify-content-center">
                 <div className="col-md-10 text-muted">
                     <p>
-                        You have booked Tashigang Hospital on Oct 12, 2022 at 02:00 PM - 3:00 PM <br></br>
+                    You have booked {bookedHospitalName}, {bookedDzongkhagName} on {bookedDate}, {bookedTime} <br></br>
                     </p>
-                    <FormControl className={classes.root}>
-                        <InputLabel id="select-label required">Dzongkhag *</InputLabel>
-                        <Select labelId="select-ul-label" value={selectedDzongkhagId}
-                            onChange={handleDzongkhagChange}>
-                            {allDzongkhag && allDzongkhag.map((items, idx) => {
-                                return (
-                                    <MenuItem key={idx} value={items.dzongkhagId}><span>{items.dzongkhagName}</span></MenuItem>
-                                );
-                            })}
-                        </Select>
-                    </FormControl>
-
-                    <FormControl className={classes.root}>
-                        <InputLabel id="select-label required">Hospital *</InputLabel>
-                        <Select labelId="select-ul-label" value={selectedHospitalId}
-                            onChange={handleHospitalChange}>
-                            {allHospitals && allHospitals.map((items, idx) => {
-                                return (
-                                    <MenuItem key={idx} value={items.hospitalId}><span>{items.hospitalName}</span></MenuItem>
-                                );
-                            })}
-                        </Select>
-                    </FormControl>
+                    {/*Dzongkhag selection drop down*/}
+                    <div className="mb-2">
+                        <FormControl className={classes.root}>
+                            <InputLabel id="select-label required">Dzongkhag *</InputLabel>
+                            <Select labelId="select-ul-label" value={selectedDzongkhagId}
+                                onChange={handleDzongkhagChange}>
+                                {allDzongkhag && allDzongkhag.map((items, idx) => {
+                                    return (
+                                        <MenuItem key={idx} value={items.dzongkhagId}><span>{items.dzongkhagName}</span></MenuItem>
+                                    );
+                                })}
+                            </Select>
+                        </FormControl>
+                    </div>
+                    <div className="mb-2">
+                        <FormControl className={classes.root}>
+                            <InputLabel id="select-label required">Hospital *</InputLabel>
+                            <Select labelId="select-ul-label" value={selectedHospitalId}
+                                onChange={handleHospitalChange}>
+                                {allHospitals && allHospitals.map((items, idx) => {
+                                    return (
+                                        <MenuItem key={idx} value={items.hospitalId}><span>{items.hospitalName}</span></MenuItem>
+                                    );
+                                })}
+                            </Select>
+                        </FormControl>
+                    </div>
+                    <hr />
+                    <Box
+                        sx={{
+                            height: "20%",
+                            overflow: "scroll",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                        }}
+                    >
+                        {availableDates.map((date, index) => {
+                            return (
+                                <span className="animated fadeIn">
+                                    <Chip
+                                        clickable
+                                        key={`${date}`}
+                                        color="primary"
+                                        variant={selectedDate === `${date}` ? undefined : "outlined"}
+                                        label={date}
+                                        value={date}
+                                        onClick={(e) => getAvailableTimeSlots(date)}
+                                    /> </span>
+                            );
+                        })}
+                    </Box>
+                    <hr />
+                    <Box
+                        sx={{
+                            height: "20%",
+                            overflow: "scroll",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                        }}
+                    >
+                        {availableTimeSlots.map((data, index) => {
+                            const label = moment(data.startTime).format(timeFormat) + " - " +
+                                moment(data.endTime).format(timeFormat);
+                            return (
+                                <span className="animated fadeIn">
+                                    <Chip
+                                        clickable
+                                        key={label}
+                                        label={label}
+                                        value={label}
+                                        color="secondary"
+                                        variant={selectedTime === `${label}` ? undefined : "outlined"}
+                                        deleteIcon="Book it"
+                                        onClick={() => { setSelectedTime(`${label}`); setScheduleTimeId(data.id) }}
+                                    />
+                                    {'  '}
+                                </span>
+                            );
+                        })}
+                    </Box>
+                    <hr />
                 </div>
             </div>
         </div>
     )
 }
 
-export default EditMedicalBooking
+export default EditMedicalBooking;
