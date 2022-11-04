@@ -8,9 +8,9 @@ import java.util.List;
 @Setter
 @Getter
 public class MedicalBookingDto {
-//    private Long hospitalId;
-    private String dzongkhagId;
+    private Long hospitalId;
+    private Long dzongkhagId;
 //    private String appointmentDate;
-//    private String appointmentTime;
+    private Long scheduleTimeId;
      private List<MedicalQuestionDto> medicalQuestionDtos;
 }

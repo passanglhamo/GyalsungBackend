@@ -7,5 +7,6 @@ import lombok.Setter;
 @Getter
 public class MedicalQuestionDto {
     private Long medicalQuestionId;
+    private String medicalQuestionName;
     private Character checkStatus;
 }

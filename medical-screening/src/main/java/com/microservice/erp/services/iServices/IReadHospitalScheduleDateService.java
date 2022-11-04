@@ -8,5 +8,5 @@ import java.util.Collection;
 public interface IReadHospitalScheduleDateService {
     Collection<HospitalScheduleDateDto> getAllScheduleDateById(Long dzoHosId);
 
-    ResponseEntity<?> getAllAvailableTimeSlotByHospitalId(Long hospitalId);
+    ResponseEntity<?> getAllAvailableAppointmentDateByHospitalId(Long hospitalId);
 }

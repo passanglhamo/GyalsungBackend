@@ -72,6 +72,7 @@ export const MedicalBooking = () => {
 
     const [selectedDate, setSelectedDate] = useState(undefined);
     const [selectedTime, setSelectedTime] = useState(undefined);
+    const [scheduleTimeId, setScheduleTimeId] = useState('');
     const [allMedicalQuestion, setAllMedicalQuestion] = useState([]);
 
     const dateFormat = "MMMM DD, YYYY";
@@ -120,7 +121,6 @@ export const MedicalBooking = () => {
     }
 
     const getAllActiveHospitalsByDzongkhagId = (selectedDzongkhagId) => {
-        // alert(selectedDzongkhagId)
         medicalbookingService.getAllActiveHospitalsByDzongkhagId(selectedDzongkhagId).then(
             response => {
                 setAllHospitals(response.data);
@@ -358,7 +358,7 @@ export const MedicalBooking = () => {
                                                 color="secondary"
                                                 variant={selectedTime === `${label}` ? undefined : "outlined"}
                                                 deleteIcon="Book it"
-                                                onClick={() => setSelectedTime(`${label}`)}
+                                                onClick={() => { setSelectedTime(`${label}`); setScheduleTimeId(data.id) }}
                                             />
                                             {'  '}
                                         </span>
@@ -380,36 +380,20 @@ export const MedicalBooking = () => {
     };
 
     const handleSubmit = (e) => {
-        // let dzongkhagId = selectedDzongkhagId;
+        let dzongkhagId = selectedDzongkhagId;
         let hospitalId = selectedHospitalId;
-        let appointmentDate = selectedDate;
-        let appointmentTime = selectedTime;
 
         const medicalQuestionDtos = [];
         allMedicalQuestion.map((val, idx) => {
             let question = {
                 medicalQuestionId: val.id,
+                medicalQuestionName: val.medicalQuestionName,
                 checkStatus: val.isEnable === true ? 'Y' : 'N',
             };
             medicalQuestionDtos.push(question);
         });
 
-        let dzongkhagId = "2";
-
-        const data = { dzongkhagId, medicalQuestionDtos };
-
-
-        medicalbookingService.bookMedicalAppointment(data).then(
-            response => {
-                // setActiveStep((prevActiveStep) => prevActiveStep + 1);
-            },
-            error => {
-                console.log(
-                    (error.response && error.response.data && error.response.data.message) ||
-                    error.message || error.toString()
-                );
-            }
-        );
+        const data = { dzongkhagId, hospitalId, scheduleTimeId, medicalQuestionDtos };
 
         medicalbookingService.bookMedicalAppointment(data).then(
             response => {
