@@ -26,7 +26,7 @@ public class HospitalScheduleTime extends Auditable<Long, Long> {
     @Column(name = "end_time", columnDefinition = "varchar(255)")
     private String endTime;
 
-   /* @NotNull()
+    @NotNull()
     @Column(name = "book_status", columnDefinition = "char(1)")//A=Available, B=Booked, C=Checkup Done
     private Character bookStatus;
 
@@ -36,8 +36,8 @@ public class HospitalScheduleTime extends Auditable<Long, Long> {
     @Column(name = "booked_date")
     private LocalDate bookedDate;
 
-    @Column(name = "checkup_done_by")//checkUpDoneBy=userId which a is doctor
-    private Long checkupDoneBy;*/
+    @Column(name = "checkup_done_by")//checkUpDoneBy=userId which is doctor
+    private Long checkupDoneBy;
 
     @ManyToOne
     @JoinColumn(name = "hospital_schedule_date_id", nullable = false)

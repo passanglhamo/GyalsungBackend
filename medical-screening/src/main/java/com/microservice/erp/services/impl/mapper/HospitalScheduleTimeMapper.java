@@ -23,6 +23,10 @@ public class HospitalScheduleTimeMapper {
                                 new HospitalScheduleTime(
                                         ta.getStartTime(),
                                         ta.getEndTime(),
+                                        'A',
+                                        null,
+                                        null,
+                                        null,
                                         hospitalScheduleTime
                                 )
                         )
