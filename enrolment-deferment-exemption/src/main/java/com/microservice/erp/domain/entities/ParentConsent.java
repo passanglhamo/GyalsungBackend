@@ -13,12 +13,11 @@ import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 @Entity(name = "ede_parent_consent")
 @AttributeOverride(name = "id", column = @Column(name = "parent_consent_id"))
 public class ParentConsent extends Auditable<Long, Long> {
 
+    //region private variables
     @Basic(optional = false)
     @NotNull(message = "User Id not be null")
     @Column(name = "user_id")
@@ -33,5 +32,31 @@ public class ParentConsent extends Auditable<Long, Long> {
     @NotNull(message = "Parent/Guardian mobile number cannot not be null")
     @Column(name = "guardian_mobile_no", columnDefinition = "varchar(255)")
     private String guardianMobileNo;
+    //endregion
 
+    //region setters and getters
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getGuardianName() {
+        return guardianName;
+    }
+
+    public void setGuardianName(String guardianName) {
+        this.guardianName = guardianName;
+    }
+
+    public String getGuardianMobileNo() {
+        return guardianMobileNo;
+    }
+
+    public void setGuardianMobileNo(String guardianMobileNo) {
+        this.guardianMobileNo = guardianMobileNo;
+    }
+    //endregion
 }

@@ -16,12 +16,12 @@ public class ParentConsentController {
     private IParentConsentService parentConsentService;
 
     @PostMapping(value = "/receiveOtp")
-    public ResponseEntity<?> receiveOtp(@RequestBody ParentConsentDto parentConsentDto) {
+    public ResponseEntity<?> receiveOtp(@RequestBody ParentConsentDto parentConsentDto) throws Exception {
         return parentConsentService.receiveOtp(parentConsentDto);
     }
 
     @PostMapping(value = "/submitParentConsent")
-    public ResponseEntity<?> submitParentConsent(@RequestBody ParentConsentDto parentConsentDto) {
+    public ResponseEntity<?> submitParentConsent(@RequestBody ParentConsentDto parentConsentDto) throws Exception {
         return parentConsentService.submitParentConsent(parentConsentDto);
     }
 
