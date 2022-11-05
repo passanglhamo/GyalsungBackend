@@ -10,11 +10,10 @@ import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 @Entity(name = "ede_parent_consent_otp")
 public class ParentConsentOtp {
 
+    //region private variables
     @Id
     @Column(name = "user_Id")
     private Long userId;
@@ -28,4 +27,31 @@ public class ParentConsentOtp {
     @NotNull(message = "OTP cannot not be null")
     @Column(name = "otp", columnDefinition = "varchar(255)")
     private String otp;
+    //endregion
+
+    //region setters and getters
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getGuardianMobileNo() {
+        return guardianMobileNo;
+    }
+
+    public void setGuardianMobileNo(String guardianMobileNo) {
+        this.guardianMobileNo = guardianMobileNo;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+    //endregion
 }
