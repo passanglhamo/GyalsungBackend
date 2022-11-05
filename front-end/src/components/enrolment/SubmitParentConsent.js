@@ -7,7 +7,6 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import { useNavigate } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded';
-import profileService from "../../services/profile.service";
 import parentConsentService from "../../services/parentConsent.service";
 import { ArrowBack, ArrowForward, CheckCircle } from '@material-ui/icons';
 import LockOpenOutlinedIcon from '@material-ui/icons/LockOpenOutlined';
@@ -18,6 +17,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
 
 import CloseIcon from '@material-ui/icons/Close';
+import profileService from "../../services/profile.service";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,15 +34,16 @@ const SubmitParentConsent = () => {
     const classes = useStyles();
     const navigate = useNavigate();
     const { user: currentUser } = useSelector((state) => state.auth);
+    const [userInfo, setUserInfo] = useState([]);
+    const [fullName, setFullName] = useState('');
+    const [mobileNo, setMobileNo] = useState('');
     const [guardianName, setGuardianName] = useState('');
+    const [guardianEmail, setGuardianEmail] = useState('');
+    const [relationToGuardian, setRelationToGuardian] = useState('');
     const [guardianMobileNo, setGuardianMobileNo] = useState('');
     const [otp, setOtp] = useState('');
     const [showOtpErrorMsg, setShowOtpErrorMsg] = useState(false);
     const [otpErrorMsg, setOtpErrorMsg] = useState('');
-    const [showGuardianNameErrorMsg, setShowGuardianNameErrorMsg] = useState(false);
-    const [guardianNameErrorMsg, setGuardianNameErrorMsg] = useState('');
-    const [showMobileNoErrorMsg, setShowMobileNoErrorMsg] = useState(false);
-    const [mobileNoErrorMsg, setMobileNoErrorMsg] = useState('');
     const [showErrorMsg, setShowErrorMsg] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
     const [successfull, setSuccessfull] = useState(false);
@@ -52,17 +53,30 @@ const SubmitParentConsent = () => {
 
     let userId = currentUser.userId;
 
-    const handleGurdianNameChange = (e) => {
-        setGuardianName(e.target.value);
-        setGuardianNameErrorMsg('');
-        setShowGuardianNameErrorMsg(false);
+    useEffect(() => {
+        getProfileInfo();
+    }, []);
+
+    const getProfileInfo = () => {
+        profileService.getProfileInfo(userId).then(
+            response => {
+                setUserInfo(response.data);
+                setFullName(response.data.fullName);
+                setMobileNo(response.data.mobileNo);
+                setGuardianEmail(response.data.guardianEmail);
+                setRelationToGuardian(response.data.relationToGuardian);
+                setGuardianMobileNo(response.data.guardianMobileNo);
+                setGuardianName(response.data.guardianName);
+            },
+            error => {
+                console.log(
+                    (error.response && error.response.data && error.response.data.message) ||
+                    error.message || error.toString()
+                );
+            }
+        );
     };
 
-    const handleGurdianMobileNoChange = (e) => {
-        setGuardianMobileNo(e.target.value);
-        setMobileNoErrorMsg('');
-        setShowMobileNoErrorMsg(false);
-    };
 
     const handleOtpChange = (e) => {
         setOtp(e.target.value);
@@ -75,27 +89,20 @@ const SubmitParentConsent = () => {
     };
 
     const handleNext = (e) => {
-        if (guardianName.length < 1) {
-            setGuardianNameErrorMsg('Parent/Guardian name is required');
-            setShowGuardianNameErrorMsg(true);
-        }
-
-        if (guardianMobileNo.length < 7) {
-            setMobileNoErrorMsg('Parent/Guardian mobile number is required');
-            setShowMobileNoErrorMsg(true);
-        }
-        if (guardianName.length > 1 && guardianMobileNo.length > 7) {
-            receiveOtp();
-            setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        }
+        receiveOtp();
     }
 
     const receiveOtp = () => {
-        const data = { userId, guardianMobileNo };
+        const data = { userId, guardianMobileNo, fullName, guardianName, guardianEmail, relationToGuardian };
         parentConsentService.receiveOtp(data).then(
             response => {
+                setActiveStep((prevActiveStep) => prevActiveStep + 1);
             },
             error => {
+                setLoading(false);
+                setSuccessfull(false);
+                setShowErrorMsg(true);
+                setErrorMsg(error.response.data.message);
             }
         );
     }
@@ -107,7 +114,7 @@ const SubmitParentConsent = () => {
             setOtpErrorMsg('Enter 4 digit OTP');
         } else {
             setLoading(true);
-            const data = { userId, guardianName, guardianMobileNo, otp };
+            const data = { userId, fullName, guardianName, guardianMobileNo, mobileNo, guardianEmail, otp };
             parentConsentService.submitParentConsent(data).then(
                 response => {
                     //show success message
@@ -160,24 +167,23 @@ const SubmitParentConsent = () => {
                                         <div>
                                             {activeStep === 0 ? (<>
                                                 <div className='mb-2'>
-                                                    <TextField
-                                                        label="Parent/Guardian name"
-                                                        required
-                                                        error={showGuardianNameErrorMsg}
-                                                        helperText={showGuardianNameErrorMsg === true ? guardianNameErrorMsg : ''}
-                                                        value={guardianName}
-                                                        onChange={handleGurdianNameChange}
-                                                    />
+                                                    Guardian information
                                                 </div>
                                                 <div className='mb-2'>
-                                                    <TextField
-                                                        label="Parent/Guardian mobile number"
-                                                        required
-                                                        error={showMobileNoErrorMsg}
-                                                        helperText={showMobileNoErrorMsg === true ? mobileNoErrorMsg : ''}
-                                                        value={guardianMobileNo}
-                                                        onChange={handleGurdianMobileNoChange}
-                                                    />
+                                                    Name: <strong>{userInfo.guardianName}</strong>
+                                                </div>
+                                                <div className='mb-2'>
+                                                    Mobile Number: <strong>{userInfo.guardianMobileNo}</strong>
+                                                </div>
+                                                <div className='mb-2'>
+                                                    Email: <strong>{userInfo.guardianEmail}</strong>
+                                                </div>
+                                                <div className='mb-2'>
+                                                    Relation: <strong>{userInfo.relationToGuardian}</strong>
+                                                </div>
+                                                <div className='mb-2'>
+                                                    OTP will be sent to {userInfo.guardianMobileNo}. Please ask your guardian to share you the
+                                                    OTP.
                                                 </div></>)
                                                 : (<>
                                                     <div className='mb-2'>
@@ -200,10 +206,11 @@ const SubmitParentConsent = () => {
                                             }
                                         </div>
 
-                                        <div className="d-flex flex-wrap justify-content-between mb-4">
-                                            <small>
-                                                OTP will be sent to parent/guardian mobile number
-                                            </small>
+                                        <div className="d-flex flex-wrap justify-content-end mb-4">
+                                            {/* <small>
+                                                Please enter 4 digit OTP sent to guardian mobile number.
+                                            </small> */}
+                                            {/* <div></div> */}
 
                                             {activeStep === 0 ?
                                                 <Button variant="contained" color="primary" onClick={handleNext}>

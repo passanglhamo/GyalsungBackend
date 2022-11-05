@@ -29,16 +29,25 @@ public class ParentConsentService implements IParentConsentService {
 
     @Override
     public ResponseEntity<?> receiveOtp(ParentConsentDto parentConsentDto) {
+        ParentConsent parentConsentDb = parentConsentRepository.findByUserId(parentConsentDto.getUserId());
+        if (parentConsentDb != null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("You have already submitted parent or guardian consent."));
+        }
+
         Random random = new Random();
         int number = random.nextInt(9999);//max upto 9999
         String otp = String.format("%04d", number);
 
-        String message = "Your OTP for parent consent in Gyalsung Registration is " + otp + " " + "Please read legal terms and conditions before you share OTP.";
+        String message = "Dear " + parentConsentDto.getGuardianName() + ", "
+                + parentConsentDto.getFullName() + " has requested parent/guardian consent for Gyalsung Registration." +
+                " You have to share this OTP " + otp + " if you agree to send your son/daughter to Gyalsung training." +
+                " Please read legal terms and conditions before you share OTP.";
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.exchange("http://172.30.16.213/g2csms/push.php?to=" + parentConsentDto.getGuardianMobileNo() + "&msg=" + message, HttpMethod.GET, null, String.class);
         ParentConsentOtp parentConsentOtp = new ModelMapper().map(parentConsentDto, ParentConsentOtp.class);
         parentConsentOtp.setOtp(otp);
         parentConsentOtpRepository.save(parentConsentOtp);
+        //TODO:need to send email to guardian
         return ResponseEntity.ok(parentConsentOtp);
     }
 
@@ -55,6 +64,19 @@ public class ParentConsentService implements IParentConsentService {
         }
         ParentConsent parentConsent = new ModelMapper().map(parentConsentDto, ParentConsent.class);
         parentConsentRepository.save(parentConsent);
+        //TODO: need to send confirmation sms and email to user
+        String smsMessageToUser = "Dear " + parentConsentDto.getFullName() + ", " +
+                " Your parent/guardian consent for Gyalsung Registration has been submitted. Congratulations and" +
+                " we look forward to seeing you in the training.";
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.exchange("http://172.30.16.213/g2csms/push.php?to=" + parentConsentDto.getMobileNo() + "&msg=" + smsMessageToUser, HttpMethod.GET, null, String.class);
+
+        //TODO: need to send confirmation sms and email to guardian
+        String smsMessageToGuardian = "Dear " + parentConsentDto.getGuardianName() + ", " +
+                " Thank you for granting consent to " + parentConsentDto.getFullName() + " for Gyalsung Registration." +
+                " Congratulations and we look forward to seeing your son/daughter in the training.";
+        restTemplate.exchange("http://172.30.16.213/g2csms/push.php?to=" + parentConsentDto.getGuardianMobileNo() + "&msg=" + smsMessageToGuardian, HttpMethod.GET, null, String.class);
+
         return ResponseEntity.ok(new MessageResponse("Data saved successfully."));
     }
 
