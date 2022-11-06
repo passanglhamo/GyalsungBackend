@@ -1,99 +1,101 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from 'react-router-dom';
+import React, {useCallback, useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from 'react-router-dom';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Popover from '@material-ui/core/Popover';
-import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import LogoutIcon from '@material-ui/icons/PowerSettingsNewOutlined';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Tooltip from '@material-ui/core/Tooltip';
 import Fade from '@material-ui/core/Fade';
 import logo from '../img/logo.png';
-import { logout } from "../actions/auth";
-import { clearMessage } from "../actions/message";
-import { history } from "../helpers/history";
+import {logout} from "../actions/auth";
+import {clearMessage} from "../actions/message";
+import {history} from "../helpers/history";
 import EventBus from "../common/EventBus";
 import SideMenu from "./SideMenu";
 
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import PeopleIcon from '@material-ui/icons/People';
-import RepeatIcon from '@material-ui/icons/Repeat';
-import GroupAddIcon from '@material-ui/icons/GroupAdd';
-import LocalHospitalIcon from '@material-ui/icons/LocalHospital';
 import PersonIcon from '@material-ui/icons/Person';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import PanToolIcon from '@material-ui/icons/PanTool';
-import AutorenewIcon from '@material-ui/icons/Autorenew';
-import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import InfoIcon from '@material-ui/icons/Info';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import profileService from "../services/profile.service";
+import {tokens, useMode} from "../theme";
+import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
-    }, toolbar: {
+    },
+    toolbar: {
         paddingRight: 24, // keep right padding when drawer closed
-    }, toolbarIcon: {
+    },
+    toolbarIcon: {
         display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 8px', ...theme.mixins.toolbar,
-    }, appBar: {
+    },
+    appBar: {
         zIndex: theme.zIndex.drawer + 1, transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.leavingScreen,
         }),
-    }, appBarShift: {
+    },
+    appBarShift: {
         marginLeft: drawerWidth,
         width: `calc(100% - ${drawerWidth}px)`,
         transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen,
         }),
-    }, menuButton: {
+    },
+    menuButton: {
         marginRight: 36,
-    }, menuButtonHidden: {
+    },
+    menuButtonHidden: {
         display: 'none',
-    }, title: {
+    },
+    title: {
         flexGrow: 1,
-    }, drawerPaper: {
+    },
+    drawerPaper: {
         position: 'relative', whiteSpace: 'nowrap', width: drawerWidth, transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.enteringScreen,
         }),
-    }, drawerPaperClose: {
+    },
+    drawerPaperClose: {
         overflowX: 'hidden', transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp, duration: theme.transitions.duration.leavingScreen,
         }), width: theme.spacing(7), [theme.breakpoints.up('sm')]: {
             width: theme.spacing(9),
         },
-    }, appBarSpacer: theme.mixins.toolbar, content: {
+    },
+    appBarSpacer: theme.mixins.toolbar,
+    content: {
         flexGrow: 1, height: '100vh', overflow: 'auto',
-    }, container: {
+    },
+    container: {
         paddingTop: theme.spacing(4), paddingBottom: theme.spacing(4),
-    }, paper: {
+    },
+    paper: {
         padding: theme.spacing(2), display: 'flex', overflow: 'auto', flexDirection: 'column',
-    }, fixedHeight: {
+    },
+    fixedHeight: {
         height: 240,
     },
 }));
 
-
 const HeaderAuthenticated = () => {
+    const [theme, colorMode] = useMode();
+    const colors = tokens(theme.palette.mode);
+
     const classes = useStyles();
     const navigate = useNavigate();
     const [showModeratorBoard, setShowModeratorBoard] = useState(false);
@@ -103,7 +105,7 @@ const HeaderAuthenticated = () => {
     const [profilePhoto, setProfilePhoto] = useState([]);
     const [isProfileNull, setIsProfileNull] = useState(false);
     const [userInfo, setUserInfo] = useState([]);
-    const { user: currentUser } = useSelector((state) => state.auth);
+    const {user: currentUser} = useSelector((state) => state.auth);
     let userId = currentUser.userId;
     // let userId = "2";
     useEffect(() => {
@@ -140,7 +142,6 @@ const HeaderAuthenticated = () => {
             }
         );
     };
-
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -201,7 +202,7 @@ const HeaderAuthenticated = () => {
                 onClick={handleDrawerOpen}
                 className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
             >
-                <MenuIcon />
+                <MenuIcon/>
             </IconButton>
             <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                 Gyalsung རྒྱལ་སྲུང་།
@@ -224,9 +225,17 @@ const HeaderAuthenticated = () => {
                     alt="profile-img" className="profile-img-card-header"
                 /> */}
 
-                {isProfileNull == true ?
-                    <img src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" className="profile-img-card-header" alt="IMG" />
-                    : <img src={`data:image/jpeg;base64,${profilePhoto}`} className="profile-img-card-header" alt="IMG" />
+                {theme.palette.mode === "dark" ? (
+                    <DarkModeOutlinedIcon/>
+                ) : (
+                    <LightModeOutlinedIcon/>
+                )}{' '}
+
+                {isProfileNull === true ?
+                    <img src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" className="profile-img-card-header"
+                         alt="IMG"/>
+                    :
+                    <img src={`data:image/jpeg;base64,${profilePhoto}`} className="profile-img-card-header" alt="IMG"/>
                 }
             </IconButton>
 
@@ -255,7 +264,8 @@ const HeaderAuthenticated = () => {
                         color: "darkred",
                     }}
                 >
-                    <div className="d-flex flex-wrap flex-column align-items-center justify-content-center text-muted bg-gray">
+                    <div
+                        className="d-flex flex-wrap flex-column align-items-center justify-content-center text-muted bg-gray">
                         <div className="mb-2"></div>
                         <div className="mb-2">
                             <span> {userInfo.fullName}</span>
@@ -267,38 +277,47 @@ const HeaderAuthenticated = () => {
                             <span>{userInfo.mobileNo}</span>
                         </div>
                     </div>
-                    <Divider />
-                    <ListItem button onClick={() => { navigate("/gyalsupProfile"); setAnchorEl(null); }} >
-                        <ListItemText primary="Profile" />
+                    <Divider/>
+                    <ListItem button onClick={() => {
+                        navigate("/gyalsupProfile");
+                        setAnchorEl(null);
+                    }}>
+                        <ListItemText primary="Profile"/>
                         <ListItemIcon>
-                            <PersonIcon />
+                            <PersonIcon/>
                         </ListItemIcon>
                     </ListItem>
-                    <ListItem button onClick={() => { navigate("/helpCenter"); setAnchorEl(null); }} >
-                        <ListItemText primary="Help center" />
+                    <ListItem button onClick={() => {
+                        navigate("/helpCenter");
+                        setAnchorEl(null);
+                    }}>
+                        <ListItemText primary="Help center"/>
                         <ListItemIcon>
-                            <HelpOutlineIcon />
+                            <HelpOutlineIcon/>
                         </ListItemIcon>
                     </ListItem>
-                    <ListItem button onClick={() => { navigate("/medicalBooking"); setAnchorEl(null); }} >
-                        <ListItemText primary="About" />
+                    <ListItem button onClick={() => {
+                        navigate("/medicalBooking");
+                        setAnchorEl(null);
+                    }}>
+                        <ListItemText primary="About"/>
                         <ListItemIcon>
-                            <InfoOutlinedIcon />
+                            <InfoOutlinedIcon/>
                         </ListItemIcon>
                     </ListItem>
                     <ListItem button onClick={logOut}>
-                        <ListItemText primary="Logout" />
+                        <ListItemText primary="Logout"/>
                         <ListItemIcon>
-                            <ExitToAppIcon />
+                            <ExitToAppIcon/>
                         </ListItemIcon>
                     </ListItem>
-                    <Divider />
+                    <Divider/>
                 </div>
             </Popover>
 
-            <Tooltip arrow title="Logout" TransitionComponent={Fade} TransitionProps={{ timeout: 1000 }}>
+            <Tooltip arrow title="Logout" TransitionComponent={Fade} TransitionProps={{timeout: 1000}}>
                 <IconButton color="inherit" onClick={logOut}>
-                    <ExitToAppIcon />
+                    <ExitToAppIcon/>
                 </IconButton>
             </Tooltip>
         </Toolbar>
@@ -311,18 +330,18 @@ const HeaderAuthenticated = () => {
             open={open}
         >
             <div className={classes.toolbarIcon}>
-                <img src={logo} alt="logo" className="avater" style={{ width: 60, height: 60 }} />
+                <img src={logo} alt="logo" className="avater" style={{width: 60, height: 60}}/>
                 {/* <h5 className='text-muted'>Gyalsung</h5> */}
-                <Typography component="h1" variant="h6" color="inherit" noWrap style={{ color: '#6c757d' }}>
+                <Typography component="h1" variant="h6" color="inherit" noWrap style={{color: '#6c757d'}}>
                     Gyalsung
                 </Typography>
                 <IconButton onClick={handleDrawerClose}>
                     {/* <ChevronLeftIcon /> */}
-                    <MenuIcon />
+                    <MenuIcon/>
                 </IconButton>
             </div>
-            <Divider />
-            <SideMenu />
+            <Divider/>
+            <SideMenu/>
         </Drawer>
     </div>)
 }
