@@ -1,4 +1,4 @@
-package com.microservice.erp.services.helper;
+package com.microservice.erp.domain.helper;
 
 import lombok.SneakyThrows;
 import org.springframework.core.io.ClassPathResource;

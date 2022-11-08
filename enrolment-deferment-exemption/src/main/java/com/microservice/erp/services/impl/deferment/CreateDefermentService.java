@@ -3,9 +3,10 @@ package com.microservice.erp.services.impl.deferment;
 import com.microservice.erp.domain.dto.feignClient.user.UserProfileDto;
 import com.microservice.erp.domain.mapper.deferment.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
-import com.microservice.erp.services.helper.ApprovalStatus;
-import com.microservice.erp.services.helper.MailSender;
-import com.microservice.erp.services.helper.MessageResponse;
+import com.microservice.erp.domain.helper.ApprovalStatus;
+import com.microservice.erp.domain.helper.MailSender;
+import com.microservice.erp.domain.helper.MessageResponse;
+import com.microservice.erp.domain.helper.SmsSender;
 import com.microservice.erp.services.iServices.deferment.ICreateDefermentService;
 import com.microservice.erp.services.impl.common.HeaderToken;
 import lombok.RequiredArgsConstructor;
@@ -81,8 +82,8 @@ public class CreateDefermentService implements ICreateDefermentService {
         MailSender.sendMail(Objects.requireNonNull(userResponse.getBody()).getEmail(), null, null, emailMessage, subject);
 
 
+        SmsSender.sendSms(Objects.requireNonNull(userResponse.getBody()).getMobileNo() , emailMessage);
 
-        restTemplate.exchange("http://172.30.16.213/g2csms/push.php?to=" + Objects.requireNonNull(userResponse.getBody()).getMobileNo() + "&msg=" + emailMessage, HttpMethod.GET, null, String.class);
     }
 
 

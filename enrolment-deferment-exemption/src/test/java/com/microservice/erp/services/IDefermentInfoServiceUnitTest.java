@@ -1,5 +1,6 @@
 package com.microservice.erp.services;
 
+import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.mapper.deferment.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.deferment.ICreateDefermentService;
@@ -13,7 +14,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -24,6 +27,8 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {TestJPAH2Config.class})
@@ -53,20 +58,28 @@ public class IDefermentInfoServiceUnitTest {
 
     @Test
     public void happyPathTest() throws Exception {
-
         ICreateDefermentService.CreateDefermentCommand createCommand = createCommand();
-        ResponseEntity<?> response = service.saveDeferment(null, createCommand);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Bearer testingtoken");
+//        given(mapper.mapToEntity(request,createCommand)).willReturn(DefermentInfo.builder().build());
+        verify(mapper).mapToEntity(request,createCommand);
+        //verify(mapper,never()).mapToEntity(request,createCommand);
 
-        assertNotNull(response);
-        assertNotNull(response.getStatusCode());
-        assertEquals(200, response.getStatusCodeValue());
+        //ResponseEntity<?> response = service.saveDeferment(request, createCommand);
+
+
+       // assertNotNull(response);
+        //assertNotNull(response.getStatusCode());
+        //assertEquals(200, response.getStatusCodeValue());
     }
 
     @Test
     public void saveWithoutToDateTest() {
         ICreateDefermentService.CreateDefermentCommand createCommand = createCommand();
         createCommand.setToDate(null);
+
         Set<ConstraintViolation<ICreateDefermentService.CreateDefermentCommand>> violations = validator.validate(createCommand);
+
         assertEquals("Till date cannot be null", violations.stream().findFirst().get().getMessage());
 
     }
@@ -75,7 +88,9 @@ public class IDefermentInfoServiceUnitTest {
     public void saveWithoutReasonTest() {
         ICreateDefermentService.CreateDefermentCommand createCommand = createCommand();
         createCommand.setReasonId(null);
+
         Set<ConstraintViolation<ICreateDefermentService.CreateDefermentCommand>> violations = validator.validate(createCommand);
+
         assertEquals("Reason cannot be null", violations.stream().findFirst().get().getMessage());
     }
 
@@ -83,7 +98,9 @@ public class IDefermentInfoServiceUnitTest {
     public void saveWithoutUserIdTest() {
         ICreateDefermentService.CreateDefermentCommand createCommand = createCommand();
         createCommand.setUserId(null);
+
         Set<ConstraintViolation<ICreateDefermentService.CreateDefermentCommand>> violations = validator.validate(createCommand);
+
         assertEquals("User id cannot be null", violations.stream().findFirst().get().getMessage());
     }
 

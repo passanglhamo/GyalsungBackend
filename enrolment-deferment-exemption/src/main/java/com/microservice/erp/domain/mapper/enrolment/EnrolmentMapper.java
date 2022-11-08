@@ -3,8 +3,8 @@ package com.microservice.erp.domain.mapper.enrolment;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.domain.entities.EnrolmentFileInfo;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
-import com.microservice.erp.services.helper.FileUploadDTO;
-import com.microservice.erp.services.helper.FileUploadToExternalLocation;
+import com.microservice.erp.domain.helper.FileUploadDTO;
+import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
