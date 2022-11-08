@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class DzongkhagDto {
-    private Integer dzongkhagId;
-    private Integer geogId;
-    private String dzongkhagName;
+public class HospitalDto {
+    private Integer hospitalId;
+    private String hospitalName;
 }
