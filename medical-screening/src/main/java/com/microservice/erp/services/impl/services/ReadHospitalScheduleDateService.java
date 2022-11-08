@@ -3,7 +3,7 @@ package com.microservice.erp.services.impl.services;
 import com.microservice.erp.domain.dto.HospitalScheduleDateDto;
 import com.microservice.erp.domain.entities.HospitalScheduleDate;
 import com.microservice.erp.domain.repositories.IHospitalScheduleDateRepository;
-import com.microservice.erp.services.helper.MessageResponse;
+import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.services.iServices.IReadHospitalScheduleDateService;
 import com.microservice.erp.services.impl.mapper.HospitalScheduleTimeMapper;
 import lombok.RequiredArgsConstructor;

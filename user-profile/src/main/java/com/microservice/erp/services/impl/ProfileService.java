@@ -5,12 +5,9 @@ import com.microservice.erp.domain.dto.GeogDto;
 import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.*;
-import com.microservice.erp.domain.helper.FileUploadDTO;
-import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
-import com.microservice.erp.domain.helper.MailSender;
-import com.microservice.erp.domain.helper.ResponseMessage;
+import com.microservice.erp.domain.helper.*;
 import com.microservice.erp.domain.repositories.*;
- import com.microservice.erp.services.iServices.IProfileService;
+import com.microservice.erp.services.iServices.IProfileService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
@@ -82,8 +79,7 @@ public class ProfileService implements IProfileService {
         String otp = String.format("%04d", number);
 
         String message = "Your OTP for Gyalsung System is " + otp;
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.exchange("http://172.30.16.213/g2csms/push.php?to=" + userProfileDto.getMobileNo() + "&msg=" + message, HttpMethod.GET, null, String.class);
+        SmsSender.sendSms(userProfileDto.getMobileNo(), message);
         ChangeMobileNoSmsOtp changeMobileNoSmsOtp = new ChangeMobileNoSmsOtp();
         changeMobileNoSmsOtp.setUserId(userProfileDto.getUserId());
         changeMobileNoSmsOtp.setMobileNo(userProfileDto.getMobileNo());

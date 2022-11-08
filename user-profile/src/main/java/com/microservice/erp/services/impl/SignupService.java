@@ -6,6 +6,7 @@ import com.microservice.erp.domain.entities.SignupEmailVerificationCode;
 import com.microservice.erp.domain.entities.SignupSmsOtp;
 import com.microservice.erp.domain.entities.UserInfo;
 import com.microservice.erp.domain.helper.MailSender;
+import com.microservice.erp.domain.helper.SmsSender;
 import com.microservice.erp.domain.repositories.ISignupEmailVerificationCodeRepository;
 import com.microservice.erp.domain.repositories.ISignupSmsOtpRepository;
 import com.microservice.erp.domain.dto.CitizenDetailDto;
@@ -61,15 +62,12 @@ public class SignupService implements ISignupService {
         Random random = new Random();
         int number = random.nextInt(9999);//max upto 9999
         String otp = String.format("%04d", number);
-
         String message = "Your OTP for Gyalsung Registration is " + otp;
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.exchange("http://172.30.16.213/g2csms/push.php?to=" + notificationRequestDto.getMobileNo() + "&msg=" + message, HttpMethod.GET, null, String.class);
         SignupSmsOtp signupSmsOtp = new SignupSmsOtp();
         signupSmsOtp.setMobileNo(notificationRequestDto.getMobileNo());
         signupSmsOtp.setOtp(otp);
-//        iSignupSmsOtpRepository.deleteById(notificationRequestDto.getMobileNo());
         iSignupSmsOtpRepository.save(signupSmsOtp);
+        SmsSender.sendSms(notificationRequestDto.getMobileNo(), message);
         return ResponseEntity.ok(signupSmsOtp);
     }
 
