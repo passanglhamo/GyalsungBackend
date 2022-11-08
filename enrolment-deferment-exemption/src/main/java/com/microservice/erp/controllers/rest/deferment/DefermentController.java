@@ -28,7 +28,7 @@ public class DefermentController {
 
     @PostMapping
     public ResponseEntity<?> saveDeferment(HttpServletRequest request, @ModelAttribute ICreateDefermentService.
-            CreateDefermentCommand command) throws IOException {
+            CreateDefermentCommand command) throws Exception {
         return service.saveDeferment(request, command);
     }
 

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 public interface ICreateExemptionService {
-    ResponseEntity<?> saveExemption(HttpServletRequest request, CreateExemptionCommand command) throws IOException;
+    ResponseEntity<?> saveExemption(HttpServletRequest request, CreateExemptionCommand command) throws Exception;
 
     @Getter
     @Setter

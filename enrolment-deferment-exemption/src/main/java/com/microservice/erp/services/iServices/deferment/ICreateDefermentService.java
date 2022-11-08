@@ -21,7 +21,7 @@ import java.util.Date;
 @Validated
 public interface ICreateDefermentService {
 
-    ResponseEntity<?> saveDeferment(HttpServletRequest request, @Valid CreateDefermentCommand command) throws IOException;
+    ResponseEntity<?> saveDeferment(HttpServletRequest request, @Valid CreateDefermentCommand command) throws Exception;
 
     @Getter
     @Setter

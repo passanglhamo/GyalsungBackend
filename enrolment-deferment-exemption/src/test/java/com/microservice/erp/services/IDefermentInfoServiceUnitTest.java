@@ -52,7 +52,7 @@ public class IDefermentInfoServiceUnitTest {
     }
 
     @Test
-    public void happyPathTest() {
+    public void happyPathTest() throws Exception {
 
         ICreateDefermentService.CreateDefermentCommand createCommand = createCommand();
         ResponseEntity<?> response = service.saveDeferment(null, createCommand);
