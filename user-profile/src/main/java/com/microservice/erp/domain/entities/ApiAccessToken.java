@@ -1,25 +1,14 @@
 package com.microservice.erp.domain.entities;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.math.BigInteger;
 
-@Setter
-@Getter
-//@Entity
-//@Table(name = "api_access_token")
 
 @Entity(name = "api_access_token")
 //@AttributeOverride(name = "id", column = @Column(name = "USERID"))
 public class ApiAccessToken extends Auditable<Long, Long> {
     //region private variables
-    /*@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;*/
-
     @Column(name = "access_token")
     private String access_token;
 
@@ -36,4 +25,45 @@ public class ApiAccessToken extends Auditable<Long, Long> {
     private BigInteger created_on;
     //endregion
 
+    //region setters and getters
+    public String getAccess_token() {
+        return access_token;
+    }
+
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    public String getToken_type() {
+        return token_type;
+    }
+
+    public void setToken_type(String token_type) {
+        this.token_type = token_type;
+    }
+
+    public Integer getExpires_in() {
+        return expires_in;
+    }
+
+    public void setExpires_in(Integer expires_in) {
+        this.expires_in = expires_in;
+    }
+
+    public BigInteger getCreated_on() {
+        return created_on;
+    }
+
+    public void setCreated_on(BigInteger created_on) {
+        this.created_on = created_on;
+    }
+    //endregion
 }

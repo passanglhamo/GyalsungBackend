@@ -18,9 +18,9 @@ public class MedicalBookingController {
         return iMedicalBookingService.bookMedicalAppointment(medicalBookingDto);
     }
 
-    @PostMapping(value = "/getMedicalAppointmentDetail")
-    public ResponseEntity<?> getMedicalAppointmentDetail(@RequestParam("userId") Long userId) {
-        return iMedicalBookingService.getMedicalAppointmentDetail(userId);
+    @GetMapping(value = "/getMedicalAppointmentDetail")
+    public ResponseEntity<?> getMedicalAppointmentDetail(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") Long userId) {
+        return iMedicalBookingService.getMedicalAppointmentDetail(authHeader, userId);
     }
 
     @PostMapping(value = "/editMedicalAppointment")

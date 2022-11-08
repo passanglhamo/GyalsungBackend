@@ -45,7 +45,7 @@ public class SignupController {
     }
 
     @PostMapping("/receiveEmailVcode")
-    public ResponseEntity<?> receiveEmailVcode(@RequestBody NotificationRequestDto notificationRequestDto) {
+    public ResponseEntity<?> receiveEmailVcode(@RequestBody NotificationRequestDto notificationRequestDto) throws Exception {
         return iSignupService.receiveEmailVcode(notificationRequestDto);
     }
 

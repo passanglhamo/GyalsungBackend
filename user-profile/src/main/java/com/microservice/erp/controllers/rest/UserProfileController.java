@@ -62,7 +62,7 @@ public class UserProfileController {
     }
 
     @PostMapping("/receiveEmailVcode")
-    public ResponseEntity<?> receiveEmailVcode(@RequestBody UserProfileDto userProfileDto) {
+    public ResponseEntity<?> receiveEmailVcode(@RequestBody UserProfileDto userProfileDto) throws Exception {
         return iProfileService.receiveEmailVcode(userProfileDto);
     }
 

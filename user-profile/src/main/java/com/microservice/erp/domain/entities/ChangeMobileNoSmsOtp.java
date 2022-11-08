@@ -1,14 +1,10 @@
 package com.microservice.erp.domain.entities;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@Setter
-@Getter
+
 @Entity(name = "change_mobile_no_sms_otp")
 public class ChangeMobileNoSmsOtp {
     //region private variables
@@ -23,4 +19,29 @@ public class ChangeMobileNoSmsOtp {
     private String otp;
     //endregion
 
+    //region setters and getters
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
+    }
+
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+    //endregion
 }

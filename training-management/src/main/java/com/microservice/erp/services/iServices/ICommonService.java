@@ -12,4 +12,8 @@ public interface ICommonService {
     ResponseEntity<?> getDzongkhagByDzongkhagId(Integer dzongkhagId);
 
     ResponseEntity<?> getAllHospitals();
+
+    ResponseEntity<?> getHospitalById(Integer hospitalId);
+
+    ResponseEntity<?> getHospitalMappingByHospitalId(Integer hospitalId);
 }

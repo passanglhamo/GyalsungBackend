@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 public interface IMedicalBookingService {
     ResponseEntity<?> bookMedicalAppointment(MedicalBookingDto medicalBookingDto);
 
-    ResponseEntity<?> getMedicalAppointmentDetail(Long userId);
+    ResponseEntity<?> getMedicalAppointmentDetail(String authHeader, Long userId);
+
     ResponseEntity<?> editMedicalAppointment(MedicalBookingDto medicalBookingDto);
 }

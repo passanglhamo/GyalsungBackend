@@ -1,4 +1,4 @@
-package com.microservice.erp.services.helper;
+package com.microservice.erp.domain.helper;
 
 public class MessageResponse {
   private String message;

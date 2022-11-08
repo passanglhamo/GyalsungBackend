@@ -3,8 +3,10 @@ package com.microservice.erp.services.impl.deferment;
 import com.microservice.erp.domain.dto.feignClient.user.UserProfileDto;
 import com.microservice.erp.domain.mapper.deferment.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
-import com.microservice.erp.services.helper.ApprovalStatus;
-import com.microservice.erp.services.helper.MessageResponse;
+import com.microservice.erp.domain.helper.ApprovalStatus;
+import com.microservice.erp.domain.helper.MailSender;
+import com.microservice.erp.domain.helper.MessageResponse;
+import com.microservice.erp.domain.helper.SmsSender;
 import com.microservice.erp.services.iServices.deferment.ICreateDefermentService;
 import com.microservice.erp.services.impl.common.HeaderToken;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +28,11 @@ public class CreateDefermentService implements ICreateDefermentService {
 
     private final IDefermentInfoRepository repository;
     private final DefermentMapper mapper;
-    private final SendEmailSms sendEmailSms;
     private final HeaderToken headerToken;
     Integer fileLength = 5;
 
 
-    @Transactional(rollbackOn = Exception.class)
+    @Transactional
     public ResponseEntity<?> saveDeferment(HttpServletRequest request, CreateDefermentCommand command) {
         String authTokenHeader = request.getHeader("Authorization");
         boolean defermentInfoExist = repository.existsByUserIdAndStatusInAndToDateGreaterThanEqual(command.getUserId(),
@@ -57,28 +58,34 @@ public class CreateDefermentService implements ICreateDefermentService {
 
         repository.save(deferment);
 
-        //sendEmailAndSms(authTokenHeader,deferment.getUserId());
+        try {
+            sendEmailAndSms(authTokenHeader,deferment.getUserId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return ResponseEntity.ok(new MessageResponse("Deferment is successfully saved"));
     }
 
-    private void sendEmailAndSms(String authTokenHeader,Long userId){
+    private void sendEmailAndSms(String authTokenHeader,Long userId) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authTokenHeader);
 
         String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + userId;
         ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
+        String subject = "Acknowledged for Deferment";
 
-        String emailMessage = "Dear Pema Dechen,\n" +
+        String emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName()+",\n"+
                 "\n" +
-                "This is to acknowledge the receipt of your deferment application. Your Deferment application will be reviewed and the outcome of the deferment will be sent to you through your email within 10 days of the submission of your application. If you are not approved for deferment, you will have to complete the Gyalsung pre-enlistment procedure. \n";
+                "This is to acknowledge the receipt of your deferment application. Your deferment application will be reviewed and the outcome of the deferment will be sent to you through your email within 10 days of the submission of your application. If you are not approved for deferment, you will have to complete the Gyalsung pre-enlistment procedure. \n";
 
-        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailMessage);
+        MailSender.sendMail(Objects.requireNonNull(userResponse.getBody()).getEmail(), null, null, emailMessage, subject);
 
-        String message = "";
 
-        restTemplate.exchange("http://172.30.16.213/g2csms/push.php?to=" + Objects.requireNonNull(userResponse.getBody()).getMobileNo() + "&msg=" + message, HttpMethod.GET, null, String.class);
+        SmsSender.sendSms(Objects.requireNonNull(userResponse.getBody()).getMobileNo() , emailMessage);
+
     }
+
 
 
 }

@@ -246,12 +246,14 @@
             <version>3.1.0</version>
         </dependency>
         <!-- data mapper end-->
-        <!--        mail sender start-->
+
+        <!-- Mail start-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
         </dependency>
-        <!--        mail sender end-->
+        <!-- Mail end-->
 
 
         <!--fileupload start-->

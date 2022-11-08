@@ -5,11 +5,8 @@ import com.microservice.erp.domain.dto.GeogDto;
 import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.*;
-import com.microservice.erp.domain.helper.FileUploadDTO;
-import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
-import com.microservice.erp.domain.helper.ResponseMessage;
+import com.microservice.erp.domain.helper.*;
 import com.microservice.erp.domain.repositories.*;
-import com.microservice.erp.services.EmailSenderService;
 import com.microservice.erp.services.iServices.IProfileService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtils;
@@ -35,7 +32,6 @@ public class ProfileService implements IProfileService {
     private final IUserInfoRepository iUserInfoRepository;
     private final IChangeMobileNoSmsOtpRepository iChangeMobileNoSmsOtpRepository;
     private final IChangeEmailVerificationCodeRepository iChangeEmailVerificationCodeRepository;
-    private final EmailSenderService emailSenderService;
 
     private final PasswordEncoder encoder;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -83,8 +79,7 @@ public class ProfileService implements IProfileService {
         String otp = String.format("%04d", number);
 
         String message = "Your OTP for Gyalsung System is " + otp;
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.exchange("http://172.30.16.213/g2csms/push.php?to=" + userProfileDto.getMobileNo() + "&msg=" + message, HttpMethod.GET, null, String.class);
+        SmsSender.sendSms(userProfileDto.getMobileNo(), message);
         ChangeMobileNoSmsOtp changeMobileNoSmsOtp = new ChangeMobileNoSmsOtp();
         changeMobileNoSmsOtp.setUserId(userProfileDto.getUserId());
         changeMobileNoSmsOtp.setMobileNo(userProfileDto.getMobileNo());
@@ -157,10 +152,12 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto) {
+    public ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto) throws Exception {
         String verificationCode = generateVerificationCode(6);
 
-        emailSenderService.sendSimpleEmail(userProfileDto.getEmail(), "Email verification", "Dear, The verification code to change email for Gyalsung system is " + verificationCode);
+        String subject = "Email verification";
+        String message = "Dear, The verification code to change email for Gyalsung system is " + verificationCode;
+        MailSender.sendMail(userProfileDto.getEmail(), null, null, message, subject);
 
         ChangeEmailVerificationCode changeEmailVerificationCode = new ChangeEmailVerificationCode();
         changeEmailVerificationCode.setUserId(userProfileDto.getUserId());
