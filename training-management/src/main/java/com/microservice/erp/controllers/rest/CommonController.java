@@ -38,4 +38,15 @@ public class CommonController {
     public ResponseEntity<?> allHospitals() {
         return iCommonService.getAllHospitals();
     }
+
+    @GetMapping("/getHospitalById")
+    public ResponseEntity<?> getHospitalById(@RequestParam("hospitalId") Integer hospitalId) {
+        return iCommonService.getHospitalById(hospitalId);
+    }
+
+    @GetMapping("/getHospitalMappingByHospitalId")
+    public ResponseEntity<?> getHospitalMappingByHospitalId(@RequestParam("hospitalId") Integer hospitalId) {
+        return iCommonService.getHospitalMappingByHospitalId(hospitalId);
+    }
+
 }

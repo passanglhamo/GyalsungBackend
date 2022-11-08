@@ -40,6 +40,15 @@ const bookMedicalAppointment = (data) => {
     );
 };
 
+const getMedicalAppointmentDetail = (userId) => {
+    return axios.get(BASE_URL + "api/medical/screening/medicalBooking/getMedicalAppointmentDetail"
+        , {
+            params: {
+                userId
+            }
+            , headers: authHeader()
+        });
+};
 const editMedicalAppointment = (data) => {
     return axios.post(BASE_URL + "api/medical/screening/medicalBooking/editMedicalAppointment"
         , data
@@ -55,5 +64,6 @@ export default {
     , getAllActiveHospitalsByDzongkhagId
     , getAllAvailableAppointmentDateByHospitalId
     , bookMedicalAppointment
+    , getMedicalAppointmentDetail
     , editMedicalAppointment
 };

@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
         minWidth: '100%',
     },
 }));
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });

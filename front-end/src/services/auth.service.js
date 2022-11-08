@@ -17,7 +17,8 @@ const resetPassword = (password, email, requestId) => {
 };
 
 const register = (data) => {
-  return axios.post(BASE_URL + "signup/signup", data);
+  // return axios.post(BASE_URL + "signup/signup", data);
+  return axios.post( "http://127.0.0.1:8084/api/user/profile/signup/signup", data);
 };
 
 const login = (username, password) => {

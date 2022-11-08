@@ -51,10 +51,11 @@ const useStyles = makeStyles((theme) => ({
 const EditMedicalBooking = () => {
 
     const classes = useStyles();
-    const [bookedHospitalName, setBookedHospitalName] = useState('Gidakom Hospital');
-    const [bookedDzongkhagName, setBookedDzongkhagName] = useState('Thimphu');
-    const [bookedDate, setBookedDate] = useState('Nov 10, 2022');
-    const [bookedTime, setBookedTime] = useState('02:00 PM - 04:00 PM');
+    const [bookedHospitalName, setBookedHospitalName] = useState('');
+    const [bookedDzongkhagName, setBookedDzongkhagName] = useState('');
+    const [bookedDate, setBookedDate] = useState('');
+    const [bookedStartTime, setBookedStartTime] = useState('');
+    const [bookedEndTime, setBookedEndTime] = useState('');
 
 
     const [successful, setSuccessful] = useState(false);
@@ -77,11 +78,16 @@ const EditMedicalBooking = () => {
     const [scheduleTimeId, setScheduleTimeId] = useState('');
     const [allMedicalQuestion, setAllMedicalQuestion] = useState([]);
 
+    const { user: currentUser } = useSelector((state) => state.auth);
+
+    let userId = currentUser.userId;
+
     const dateFormat = "MMMM DD, YYYY";
     const timeFormat = "hh:mm A";
     let defaultDate = null;
 
     useEffect(() => {
+        getMedicalAppointmentDetail();
         getAllMedicalQuestion();
         getAllDzongkhag();
     }, []);
@@ -98,6 +104,20 @@ const EditMedicalBooking = () => {
         getAvailableTimeSlots();
     }, [selectedHospitalId]);
 
+    const getMedicalAppointmentDetail = () => {
+        medicalbookingService.getMedicalAppointmentDetail(userId).then(
+            response => {
+                setBookedHospitalName(response.data.hospitalName);
+                setBookedDzongkhagName(response.data.dzongkhagName);
+                setBookedDate(response.data.appointmentDate);
+                setBookedStartTime(response.data.startTime);
+                setBookedEndTime(response.data.endTime);
+            },
+            error => {
+
+            }
+        );
+    }
     const getAllMedicalQuestion = () => {
         medicalbookingService.getAllMedicalQuestion().then(
             response => {
@@ -207,12 +227,13 @@ const EditMedicalBooking = () => {
 
 
     return (
-        <div className="col-md-12 row"> 
+        <div className="col-md-12 row">
 
             <div className="d-flex flex-wrap flex-column align-items-center justify-content-center">
                 <div className="col-md-10 text-muted">
                     <p>
-                    You have booked {bookedHospitalName}, {bookedDzongkhagName} on {bookedDate}, {bookedTime} <br></br>
+                        You have booked {bookedHospitalName}, {bookedDzongkhagName} on {moment(bookedDate).format('MMM MM, YYYY')}
+                        {' '} from  {moment(bookedStartTime).format(timeFormat)} - {moment(bookedEndTime).format(timeFormat)} <br></br>
                     </p>
                     {/*Dzongkhag selection drop down*/}
                     <div className="mb-2">
@@ -298,12 +319,12 @@ const EditMedicalBooking = () => {
                     </Box>
 
                     <Button variant="contained" color="primary" onClick={handleSubmit}
-                                            disabled={loading}>
-                                            {loading && (
-                                                <span className="spinner-border spinner-border-sm"></span>
-                                            )}
-                                             Submit
-                                        </Button> 
+                        disabled={loading}>
+                        {loading && (
+                            <span className="spinner-border spinner-border-sm"></span>
+                        )}
+                        Submit
+                    </Button>
                     <hr />
                 </div>
             </div>

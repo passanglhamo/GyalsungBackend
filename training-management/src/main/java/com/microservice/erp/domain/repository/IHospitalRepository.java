@@ -18,4 +18,5 @@ public interface IHospitalRepository extends JpaRepository<Hospital, Integer> {
 
     List<Hospital> findAllByOrderByHospitalNameAsc();
 
+    Hospital findByHospitalId(Integer hospitalId);
 }
