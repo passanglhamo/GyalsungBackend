@@ -51,11 +51,11 @@ const useStyles = makeStyles((theme) => ({
 const EditMedicalBooking = () => {
 
     const classes = useStyles();
-    const [bookedHospitalName, setBookedHospitalName] = useState('Gidakom Hospital');
-    const [bookedDzongkhagName, setBookedDzongkhagName] = useState('Thimphu');
-    const [bookedDate, setBookedDate] = useState('Nov 10, 2022');
-    const [bookedStartTime, setBookedStartTime] = useState('02:00 PM - 04:00 PM');
-    const [bookedEndTime, setBookedEndTime] = useState('02:00 PM - 04:00 PM');
+    const [bookedHospitalName, setBookedHospitalName] = useState('');
+    const [bookedDzongkhagName, setBookedDzongkhagName] = useState('');
+    const [bookedDate, setBookedDate] = useState('');
+    const [bookedStartTime, setBookedStartTime] = useState('');
+    const [bookedEndTime, setBookedEndTime] = useState('');
 
 
     const [successful, setSuccessful] = useState(false);
@@ -79,7 +79,7 @@ const EditMedicalBooking = () => {
     const [allMedicalQuestion, setAllMedicalQuestion] = useState([]);
 
     const { user: currentUser } = useSelector((state) => state.auth);
- 
+
     let userId = currentUser.userId;
 
     const dateFormat = "MMMM DD, YYYY";
@@ -232,7 +232,8 @@ const EditMedicalBooking = () => {
             <div className="d-flex flex-wrap flex-column align-items-center justify-content-center">
                 <div className="col-md-10 text-muted">
                     <p>
-                        You have booked {bookedHospitalName}, {bookedDzongkhagName} on {bookedDate}, {bookedStartTime} <br></br>
+                        You have booked {bookedHospitalName}, {bookedDzongkhagName} on {moment(bookedDate).format('MMM MM, YYYY')}
+                        {' '} from  {moment(bookedStartTime).format(timeFormat)} - {moment(bookedEndTime).format(timeFormat)} <br></br>
                     </p>
                     {/*Dzongkhag selection drop down*/}
                     <div className="mb-2">
