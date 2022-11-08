@@ -27,7 +27,7 @@ public class ExemptionController {
 
     @PostMapping
     public ResponseEntity<?> saveExemption(HttpServletRequest request, @ModelAttribute
-    ICreateExemptionService.CreateExemptionCommand command) throws  IOException {
+    ICreateExemptionService.CreateExemptionCommand command) throws Exception {
         return service.saveExemption(request, command);
     }
 

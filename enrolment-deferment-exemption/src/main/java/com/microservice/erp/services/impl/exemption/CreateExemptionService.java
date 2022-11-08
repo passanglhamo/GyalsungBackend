@@ -4,10 +4,10 @@ import com.microservice.erp.domain.dto.feignClient.user.UserProfileDto;
 import com.microservice.erp.domain.mapper.exemption.ExemptionMapper;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
 import com.microservice.erp.services.helper.ApprovalStatus;
+import com.microservice.erp.services.helper.MailSender;
 import com.microservice.erp.services.helper.MessageResponse;
 import com.microservice.erp.services.iServices.exemption.ICreateExemptionService;
 import com.microservice.erp.services.impl.common.HeaderToken;
-//import com.microservice.erp.services.impl.deferment.SendEmailSms;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -18,7 +18,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.util.Objects;
 import java.util.Set;
 
@@ -27,11 +26,11 @@ import java.util.Set;
 public class CreateExemptionService implements ICreateExemptionService {
     private final IExemptionInfoRepository repository;
     private final ExemptionMapper mapper;
-//    private final SendEmailSms sendEmailSms;
+    //    private final SendEmailSms sendEmailSms;
     private final HeaderToken headerToken;
 
     @Transactional(rollbackOn = Exception.class)
-    public ResponseEntity<?> saveExemption(HttpServletRequest request, CreateExemptionCommand command) throws IOException {
+    public ResponseEntity<?> saveExemption(HttpServletRequest request, CreateExemptionCommand command) throws Exception {
         String authTokenHeader = request.getHeader("Authorization");
 
         boolean exemptionInfoExist = repository.existsByUserIdAndStatusIn(command.getUserId(),
@@ -48,7 +47,7 @@ public class CreateExemptionService implements ICreateExemptionService {
 
         repository.save(exemption);
 
-        //sendEmailAndSms(authTokenHeader, exemption.getUserId());
+        sendEmailAndSms(authTokenHeader, exemption.getUserId());
 
         return ResponseEntity.ok(new MessageResponse("An acknowledgement notifcation will be sent  to you as soon as you submit your  application.\" +\n" +
                 "                    \"Your Deferment application will be  reviewed and the outcome  of the deferment wil be sent \" +\n" +
@@ -56,19 +55,23 @@ public class CreateExemptionService implements ICreateExemptionService {
                 "                    \" Gyalsung pre-enlistment procedure"));
     }
 
-    private void sendEmailAndSms(String authTokenHeader, Long userId) {
+    private void sendEmailAndSms(String authTokenHeader, Long userId) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authTokenHeader);
 
         String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + userId;
         ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
 
-        String emailmessage = "Dear, The verification code for Gyalsung system is";
+        String subject = "Acknowledged for Exemption";
 
-//        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailmessage);
+        String emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
+                "\n" +
+                "This is to acknowledge the receipt of your exemption application. Your exemption application will be reviewed and the outcome of the exemption will be sent to you through your email within 10 days of the submission of your application. If you are not approved for exemption, you will have to complete the Gyalsung pre-enlistment procedure. \n";
 
-        String message = "Your OTP for Gyalsung Registration is ";
 
-        restTemplate.exchange("http://172.30.16.213/g2csms/push.php?to=" + Objects.requireNonNull(userResponse.getBody()).getMobileNo() + "&msg=" + message, HttpMethod.GET, null, String.class);
+        MailSender.sendMail(Objects.requireNonNull(userResponse.getBody()).getEmail(), null, null, emailMessage, subject);
+
+
+        restTemplate.exchange("http://172.30.16.213/g2csms/push.php?to=" + Objects.requireNonNull(userResponse.getBody()).getMobileNo() + "&msg=" + emailMessage, HttpMethod.GET, null, String.class);
     }
 }
