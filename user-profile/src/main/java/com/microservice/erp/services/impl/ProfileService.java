@@ -7,10 +7,10 @@ import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.*;
 import com.microservice.erp.domain.helper.FileUploadDTO;
 import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
+import com.microservice.erp.domain.helper.MailSender;
 import com.microservice.erp.domain.helper.ResponseMessage;
 import com.microservice.erp.domain.repositories.*;
-import com.microservice.erp.services.EmailSenderService;
-import com.microservice.erp.services.iServices.IProfileService;
+ import com.microservice.erp.services.iServices.IProfileService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
@@ -35,7 +35,6 @@ public class ProfileService implements IProfileService {
     private final IUserInfoRepository iUserInfoRepository;
     private final IChangeMobileNoSmsOtpRepository iChangeMobileNoSmsOtpRepository;
     private final IChangeEmailVerificationCodeRepository iChangeEmailVerificationCodeRepository;
-    private final EmailSenderService emailSenderService;
 
     private final PasswordEncoder encoder;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -157,10 +156,12 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto) {
+    public ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto) throws Exception {
         String verificationCode = generateVerificationCode(6);
 
-        emailSenderService.sendSimpleEmail(userProfileDto.getEmail(), "Email verification", "Dear, The verification code to change email for Gyalsung system is " + verificationCode);
+        String subject = "Email verification";
+        String message = "Dear, The verification code to change email for Gyalsung system is " + verificationCode;
+        MailSender.sendMail(userProfileDto.getEmail(), null, null, message, subject);
 
         ChangeEmailVerificationCode changeEmailVerificationCode = new ChangeEmailVerificationCode();
         changeEmailVerificationCode.setUserId(userProfileDto.getUserId());

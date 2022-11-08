@@ -9,17 +9,6 @@ spring:
         persistence:
           validation:
             mode: "none"
-  mail:
-    host: "smtp.gmail.com"
-    port: 587
-    username: "dhi.bhutan.bt@gmail.com"
-    password: "czconvqzibicectb"
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-              enable: true
   servlet:
     multipart:
       enabled: true

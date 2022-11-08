@@ -24,7 +24,7 @@ public interface IProfileService {
 
     ResponseEntity<?> receiveOtp(UserProfileDto userProfileDto);
 
-    ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto);
+    ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto) throws Exception;
 
     ResponseEntity<?> changePassword(UserProfileDto userProfileDto);
 

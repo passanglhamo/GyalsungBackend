@@ -7,7 +7,7 @@ import com.microservice.erp.services.helper.ApprovalStatus;
 import com.microservice.erp.services.helper.MessageResponse;
 import com.microservice.erp.services.iServices.exemption.ICreateExemptionService;
 import com.microservice.erp.services.impl.common.HeaderToken;
-import com.microservice.erp.services.impl.deferment.SendEmailSms;
+//import com.microservice.erp.services.impl.deferment.SendEmailSms;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -27,7 +27,7 @@ import java.util.Set;
 public class CreateExemptionService implements ICreateExemptionService {
     private final IExemptionInfoRepository repository;
     private final ExemptionMapper mapper;
-    private final SendEmailSms sendEmailSms;
+//    private final SendEmailSms sendEmailSms;
     private final HeaderToken headerToken;
 
     @Transactional(rollbackOn = Exception.class)
@@ -65,7 +65,7 @@ public class CreateExemptionService implements ICreateExemptionService {
 
         String emailmessage = "Dear, The verification code for Gyalsung system is";
 
-        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailmessage);
+//        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailmessage);
 
         String message = "Your OTP for Gyalsung Registration is ";
 

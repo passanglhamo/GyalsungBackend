@@ -27,7 +27,7 @@ public class UpdateDefermentService implements IUpdateDefermentService {
     private final DefermentMapper mapper;
     private final HeaderToken headerToken;
 
-    private final SendEmailSms sendEmailSms;
+//    private final SendEmailSms sendEmailSms;
 
     @Override
     public ResponseEntity<?> approveByIds(String authHeader, UpdateDefermentCommand command) {
@@ -87,7 +87,7 @@ public class UpdateDefermentService implements IUpdateDefermentService {
 
         String emailMessage = "Dear, The verification code for Gyalsung system is";
 
-        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailMessage);
+//        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailMessage);
     }
 
 }

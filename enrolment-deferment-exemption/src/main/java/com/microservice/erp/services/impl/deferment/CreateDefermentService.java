@@ -26,7 +26,7 @@ public class CreateDefermentService implements ICreateDefermentService {
 
     private final IDefermentInfoRepository repository;
     private final DefermentMapper mapper;
-    private final SendEmailSms sendEmailSms;
+//    private final SendEmailSms sendEmailSms;
     private final HeaderToken headerToken;
     Integer fileLength = 5;
 
@@ -73,7 +73,7 @@ public class CreateDefermentService implements ICreateDefermentService {
                 "\n" +
                 "This is to acknowledge the receipt of your deferment application. Your Deferment application will be reviewed and the outcome of the deferment will be sent to you through your email within 10 days of the submission of your application. If you are not approved for deferment, you will have to complete the Gyalsung pre-enlistment procedure. \n";
 
-        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailMessage);
+//        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailMessage);
 
         String message = "";
 

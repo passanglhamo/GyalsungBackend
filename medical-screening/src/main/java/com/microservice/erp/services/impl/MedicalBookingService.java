@@ -25,10 +25,10 @@ public class MedicalBookingService implements IMedicalBookingService {
     public ResponseEntity<?> bookMedicalAppointment(MedicalBookingDto medicalBookingDto) {
         HospitalScheduleTime hospitalScheduleTimeDb = iHospitalScheduleTimeRepository.findById(medicalBookingDto.getScheduleTimeId()).get();
         HospitalScheduleTime hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDb, HospitalScheduleTime.class);
-//        hospitalScheduleTime.setBookedBy(2L);
-//        hospitalScheduleTime.setBookedDate(LocalDate.now());
-//        hospitalScheduleTime.setBookStatus('B');
-//        iHospitalScheduleTimeRepository.save(hospitalScheduleTime);
+        hospitalScheduleTime.setBookedBy(2L);
+        hospitalScheduleTime.setBookedDate(LocalDate.now());
+        hospitalScheduleTime.setBookStatus('B');
+        iHospitalScheduleTimeRepository.save(hospitalScheduleTime);
 
         for (MedicalQuestionDto medicalQuestionDto : medicalBookingDto.getMedicalQuestionDtos()) {
             MedicalSelfDeclaration medicalSelfDeclaration = new MedicalSelfDeclaration();
@@ -48,23 +48,22 @@ public class MedicalBookingService implements IMedicalBookingService {
 
     @Override
     public ResponseEntity<?> editMedicalAppointment(MedicalBookingDto medicalBookingDto) {
-
-
+        HospitalScheduleTime hospitalScheduleTimeDbByUserId = iHospitalScheduleTimeRepository.findByBookedBy(medicalBookingDto.getUserId());
         HospitalScheduleTime hospitalScheduleTimeDb = iHospitalScheduleTimeRepository.findById(medicalBookingDto.getScheduleTimeId()).get();
 
         //todo: need to change book status of previous booking to A=Available
-        HospitalScheduleTime hospitalScheduleTimeReset = new ModelMapper().map(hospitalScheduleTimeDb, HospitalScheduleTime.class);
-        //       hospitalScheduleTime.setBookedBy(null);
-//        hospitalScheduleTime.setBookedDate(null);
-//        hospitalScheduleTime.setBookStatus('A');
-//        iHospitalScheduleTimeRepository.save(hospitalScheduleTimeReset);
+        HospitalScheduleTime hospitalScheduleTimeReset = new ModelMapper().map(hospitalScheduleTimeDbByUserId, HospitalScheduleTime.class);
+        hospitalScheduleTimeReset.setBookedBy(null);
+        hospitalScheduleTimeReset.setBookedDate(null);
+        hospitalScheduleTimeReset.setBookStatus('A');
+        iHospitalScheduleTimeRepository.save(hospitalScheduleTimeReset);
 
         HospitalScheduleTime hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDb, HospitalScheduleTime.class);
-//        hospitalScheduleTime.setBookedBy(2L);
-//        hospitalScheduleTime.setBookedDate(LocalDate.now());
-//        hospitalScheduleTime.setBookStatus('B');
+        hospitalScheduleTime.setBookedBy(2L);
+        hospitalScheduleTime.setBookedDate(LocalDate.now());
+        hospitalScheduleTime.setBookStatus('B');
 
-//        iHospitalScheduleTimeRepository.save(hospitalScheduleTime);
+        iHospitalScheduleTimeRepository.save(hospitalScheduleTime);
 
 
         return ResponseEntity.ok("Appointment edited successfully.");

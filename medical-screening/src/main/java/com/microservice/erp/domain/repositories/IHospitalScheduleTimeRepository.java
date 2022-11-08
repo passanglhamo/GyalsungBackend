@@ -8,4 +8,5 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @CrossOrigin(origins = "*")
 @Repository
 public interface IHospitalScheduleTimeRepository extends JpaRepository<HospitalScheduleTime,Long> {
+    HospitalScheduleTime findByBookedBy(Long userId);
 }

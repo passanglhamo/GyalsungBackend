@@ -8,7 +8,7 @@ import com.microservice.erp.services.helper.ApprovalStatus;
 import com.microservice.erp.services.helper.MessageResponse;
 import com.microservice.erp.services.iServices.exemption.IUpdateExemptionService;
 import com.microservice.erp.services.impl.common.HeaderToken;
-import com.microservice.erp.services.impl.deferment.SendEmailSms;
+//import com.microservice.erp.services.impl.deferment.SendEmailSms;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -29,7 +29,7 @@ public class UpdateExemptionService implements IUpdateExemptionService {
 
     private final HeaderToken headerToken;
 
-    private final SendEmailSms sendEmailSms;
+//    private final SendEmailSms sendEmailSms;
 
 
     @Override
@@ -90,7 +90,7 @@ public class UpdateExemptionService implements IUpdateExemptionService {
 
         String emailMessage = "Dear, The verification code for Gyalsung system is";
 
-        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailMessage);
+//        sendEmailSms.sendEmail(Objects.requireNonNull(userResponse.getBody()).getEmail(), emailMessage);
     }
 
 }

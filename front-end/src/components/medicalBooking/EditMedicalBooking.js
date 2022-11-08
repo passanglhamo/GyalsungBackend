@@ -296,6 +296,14 @@ const EditMedicalBooking = () => {
                             );
                         })}
                     </Box>
+
+                    <Button variant="contained" color="primary" onClick={handleSubmit}
+                                            disabled={loading}>
+                                            {loading && (
+                                                <span className="spinner-border spinner-border-sm"></span>
+                                            )}
+                                             Submit
+                                        </Button> 
                     <hr />
                 </div>
             </div>

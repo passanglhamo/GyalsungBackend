@@ -5,13 +5,13 @@ import com.microservice.erp.domain.entities.ApiAccessToken;
 import com.microservice.erp.domain.entities.SignupEmailVerificationCode;
 import com.microservice.erp.domain.entities.SignupSmsOtp;
 import com.microservice.erp.domain.entities.UserInfo;
+import com.microservice.erp.domain.helper.MailSender;
 import com.microservice.erp.domain.repositories.ISignupEmailVerificationCodeRepository;
 import com.microservice.erp.domain.repositories.ISignupSmsOtpRepository;
 import com.microservice.erp.domain.dto.CitizenDetailDto;
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
-import com.microservice.erp.services.EmailSenderService;
 import com.microservice.erp.services.iServices.ISignupService;
 import com.squareup.okhttp.OkHttpClient;
 import lombok.AllArgsConstructor;
@@ -45,7 +45,6 @@ public class SignupService implements ISignupService {
     private final ISignupSmsOtpRepository iSignupSmsOtpRepository;
     private final ISignupEmailVerificationCodeRepository iSignupEmailVerificationCodeRepository;
     private final IUserInfoRepository iUserInfoRepository;
-    private final EmailSenderService emailSenderService;
     private final PasswordEncoder encoder;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -88,13 +87,16 @@ public class SignupService implements ISignupService {
     }
 
     @Override
-    public ResponseEntity<?> receiveEmailVcode(NotificationRequestDto notificationRequestDto) {
+    public ResponseEntity<?> receiveEmailVcode(NotificationRequestDto notificationRequestDto) throws Exception {
         UserInfo userInfoDB = iUserInfoRepository.findByEmail(notificationRequestDto.getEmail());
         if (userInfoDB != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
         String verificationCode = generateVerificationCode(6);
-        emailSenderService.sendSimpleEmail(notificationRequestDto.getEmail(), "Email verification", "Dear, The verification code for Gyalsung system is " + verificationCode);
+
+        String subject = "Email verification";
+        String message = "Dear, The verification code for Gyalsung system is " + verificationCode;
+        MailSender.sendMail(notificationRequestDto.getEmail(), null, null, message, subject);
 
         SignupEmailVerificationCode signupEmailVerificationCode = new SignupEmailVerificationCode();
         signupEmailVerificationCode.setEmail(notificationRequestDto.getEmail());
