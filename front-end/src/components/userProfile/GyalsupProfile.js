@@ -1,27 +1,34 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { useSelector } from "react-redux";
+import React, {useEffect, useState} from "react";
+import {useSelector} from "react-redux";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
-    faEnvelope, faLocationDot, faHome, faPhone, faEdit, faAward, faHandsHelping
-    , faClock, faMale, faFemale, faBriefcase, faBook, faIdCard, faBirthdayCake
-    , faLink, faLocation, faUnlock
+    faBirthdayCake,
+    faBriefcase,
+    faClock,
+    faEnvelope,
+    faFemale,
+    faHandsHelping,
+    faHome,
+    faIdCard,
+    faLink,
+    faLocationDot,
+    faMale,
+    faPhone,
+    faUnlock
 } from "@fortawesome/free-solid-svg-icons";
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles, withStyles} from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
-import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import GroupIcon from '@material-ui/icons/Group';
 import PersonIcon from '@material-ui/icons/Person';
 import LinkIcon from '@material-ui/icons/Link';
-import SchoolIcon from '@material-ui/icons/School';
-import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded';
@@ -29,12 +36,10 @@ import LockOpenOutlinedIcon from '@material-ui/icons/LockOpenOutlined';
 import EditLocationOutlinedIcon from '@material-ui/icons/EditLocationOutlined';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import profileService from "../../services/profile.service";
-import { ImageViewer } from "react-image-viewer-dv";
-import Button from '@material-ui/core/Button';
+import {ImageViewer} from "react-image-viewer-dv";
 import fileDownload from "js-file-download";
-import axios from "axios";
 
 const AntTabs = withStyles({
     root: {
@@ -87,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
 
 const GyalsupProfile = () => {
     const classes = useStyles();
-    const { user: currentUser } = useSelector((state) => state.auth);
+    const {user: currentUser} = useSelector((state) => state.auth);
 
     const [userInfo, setUserInfo] = useState([]);
     // const [presentDzongkhagName, setPresentDzongkhagName] = useState('');
@@ -179,7 +184,7 @@ const GyalsupProfile = () => {
             //this refers to file
             const profilePicture = this.files[0];
             if (profilePicture) {
-                const data = { userId, profilePicture };
+                const data = {userId, profilePicture};
                 profileService.changeProfilePic(data).then(
                     response => {
                         // const reader = new FileReader(); //FileReader is a predefined function of JS
@@ -206,19 +211,19 @@ const GyalsupProfile = () => {
                         <div className="d-flex flex-wrap flex-column align-items-center justify-content-center">
                             <div className="profile-pic-div">
                                 {isProfileNull == true ?
-                                    <img src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" id="profilePhoto" alt="IMG" />
+                                    <img src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" id="profilePhoto" alt="IMG"/>
                                     : <div>
                                         <ImageViewer>
-                                            <img src={`data:image/jpeg;base64,${profilePhoto}`} id="profilePhoto" alt="IMG" />
+                                            <img src={`data:image/jpeg;base64,${profilePhoto}`} id="profilePhoto"
+                                                 alt="IMG"/>
                                         </ImageViewer>
                                     </div>
                                 }
-                                <input type="file" id="profileImg" accept="image/png, image/jpeg" />
+                                <input type="file" id="profileImg" accept="image/png, image/jpeg"/>
                                 <div id="uploadProfilePicBtn">
                                     <label htmlFor="profileImg">Change Profile</label>
                                 </div>
                             </div>
-
 
                             {/* <div className="mb-2">
                                 <Button size="small" variant="contained" color="primary" onClick={downloadFile}>
@@ -234,59 +239,69 @@ const GyalsupProfile = () => {
                             </div>
                         </div>
                         <div className="mb-2">
-                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faLocationDot} /> Lives in </span> <strong className="text-muted">{presentAddress}</strong>
+                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon
+                                icon={faLocationDot}/> Lives in </span> <strong
+                            className="text-muted">{presentAddress}</strong>
                         </div>
                         <div className="mb-2">
-                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faPhone} /></span> <strong className="text-muted">{userInfo.mobileNo}</strong>
+                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon
+                                icon={faPhone}/></span> <strong className="text-muted">{userInfo.mobileNo}</strong>
                         </div>
                         <div className="mb-2">
-                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faEnvelope} /></span> <strong className="text-muted">{userInfo.email}</strong>
+                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faEnvelope}/></span>
+                            <strong className="text-muted">{userInfo.email}</strong>
                         </div>
                         <div className="dropdown-divider"></div>
                         <div className="mb-2">
-                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faIdCard} /> CID </span> <strong className="text-muted">{userInfo.cid}</strong><br></br>
+                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faIdCard}/> CID </span>
+                            <strong className="text-muted">{userInfo.cid}</strong><br></br>
                         </div>
                         <div className="mb-2">
-                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faUnlock} /> Username </span> <strong className="text-muted">{userInfo.username}</strong><br></br>
+                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faUnlock}/> Username </span>
+                            <strong className="text-muted">{userInfo.username}</strong><br></br>
                         </div>
                         <div className="mb-2">
-                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faMale} /> Gender </span> <strong className="text-muted">{userInfo.sex}</strong><br></br>
+                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faMale}/> Gender </span>
+                            <strong className="text-muted">{userInfo.sex}</strong><br></br>
                         </div>
                         <div className="mb-2">
-                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faBirthdayCake} /> Born on </span>
+                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon
+                                icon={faBirthdayCake}/> Born on </span>
                             <strong className="text-muted">
                                 {moment(userInfo.dob).format('MMM MM, YYYY')}</strong><br></br>
                         </div>
                         <div className="mb-2">
-                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faHome} /> From </span> <strong className="text-muted">{permanantAddress}</strong><br></br>
+                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faHome}/> From </span>
+                            <strong className="text-muted">{permanantAddress}</strong><br></br>
                         </div>
                         <div className="mb-2">
-                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faClock} /> Joined on </span>
+                            <span className="text-muted text-sm-right mb-0 mb-sm-3"><FontAwesomeIcon icon={faClock}/> Joined on </span>
                             <strong className="text-muted">{moment(userInfo.createdDate).format('MMM MM, YYYY')}
                             </strong><br></br>
                         </div>
                         <hr></hr>
                         <div className="d-flex justify-content-between align-items-center">
-                            <strong className="text-muted text-sm-left mb-0 mb-sm-3"><FontAwesomeIcon icon={faLink} /> Social media </strong>
+                            <strong className="text-muted text-sm-left mb-0 mb-sm-3"><FontAwesomeIcon
+                                icon={faLink}/> Social media </strong>
                         </div>
                         <div className="mb-2">
                             <a className="text-muted text-sm-right mb-0 mb-sm-3"
-                                href={userInfo.socialMediaLink1}
-                                target="_blank">
+                               href={userInfo.socialMediaLink1}
+                               target="_blank">
                                 {userInfo.socialMediaLink1}
                             </a>
                         </div>
                         <div className="mb-2">
                             <a className="text-muted text-sm-right mb-0 mb-sm-3"
-                                href={userInfo.socialMediaLink2}
-                                target="_blank">
+                               href={userInfo.socialMediaLink2}
+                               target="_blank">
                                 {userInfo.socialMediaLink2}
                             </a>
                         </div>
                         <div className="mb-2">
                             <a className="text-muted text-sm-right mb-0 mb-sm-3"
-                                href={userInfo.socialMediaLink3}
-                                target="_blank">
+                               href={userInfo.socialMediaLink3}
+                               target="_blank">
                                 {userInfo.socialMediaLink3}
                             </a>
                         </div>
@@ -296,11 +311,11 @@ const GyalsupProfile = () => {
             <div className="col-md-8">
                 <div className="card">
                     <div className="card-body">
-                        <div >
+                        <div>
                             <AntTabs value={tabValue} onChange={toggleTab} aria-label="Tabs">
-                                <AntTab label="General information" />
-                                <AntTab label="General setting" />
-                                <AntTab label="Security setting" />
+                                <AntTab label="General information"/>
+                                <AntTab label="General setting"/>
+                                <AntTab label="Security setting"/>
                             </AntTabs>
                             <div className='mb-2'></div>
                             <div hidden={tabValue !== 0} className="general-info-tab">
@@ -312,17 +327,19 @@ const GyalsupProfile = () => {
                                 <div className="dropdown-divider"></div>
                                 <div className="mb-2">
                                     <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                        <FontAwesomeIcon icon={faPhone} /></span> Phone: <strong className="text-muted">{userInfo.mobileNo}</strong>
+                                        <FontAwesomeIcon icon={faPhone}/></span> Phone: <strong
+                                    className="text-muted">{userInfo.mobileNo}</strong>
                                 </div>
                                 <div className="mb-2">
                                     <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                        <FontAwesomeIcon icon={faEnvelope} /></span> Email: <strong className="text-muted">{userInfo.email}</strong>
+                                        <FontAwesomeIcon icon={faEnvelope}/></span> Email: <strong
+                                    className="text-muted">{userInfo.email}</strong>
                                 </div>
                                 <div className="mb-2">
                                     <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                        <FontAwesomeIcon icon={faLocationDot} /></span>
+                                        <FontAwesomeIcon icon={faLocationDot}/></span>
                                     Address: <strong className="text-muted">{presentAddress}
-                                    </strong>
+                                </strong>
                                 </div>
                                 <hr></hr>
                                 <div className="d-flex justify-content-between align-items-center">
@@ -335,54 +352,54 @@ const GyalsupProfile = () => {
                                     <div className="col-md-6">
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faMale} /></span> Father's Name:
+                                                <FontAwesomeIcon icon={faMale}/></span> Father's Name:
                                             <strong className="text-muted"> {userInfo.fatherName}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faIdCard} /></span> Father's CID:
+                                                <FontAwesomeIcon icon={faIdCard}/></span> Father's CID:
                                             <strong className="text-muted"> {userInfo.fatherCid}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faBriefcase} /></span> Father's Occupation:
+                                                <FontAwesomeIcon icon={faBriefcase}/></span> Father's Occupation:
                                             <strong className="text-muted"> {userInfo.fatherOccupation}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faPhone} /></span> Father's Phone:
+                                                <FontAwesomeIcon icon={faPhone}/></span> Father's Phone:
                                             <strong className="text-muted"> {userInfo.fatherMobileNo}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faEnvelope} /></span> Father's Email:
+                                                <FontAwesomeIcon icon={faEnvelope}/></span> Father's Email:
                                             <strong className="text-muted"> {userInfo.fatherEmail}</strong>
                                         </div>
                                     </div>
                                     <div className="col-md-6">
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faFemale} /></span> Mother's Name:
+                                                <FontAwesomeIcon icon={faFemale}/></span> Mother's Name:
                                             <strong className="text-muted"> {userInfo.motherName}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faIdCard} /></span> Mother's CID:
+                                                <FontAwesomeIcon icon={faIdCard}/></span> Mother's CID:
                                             <strong className="text-muted"> {userInfo.motherCid}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faBriefcase} /></span> Mother's Occupation:
+                                                <FontAwesomeIcon icon={faBriefcase}/></span> Mother's Occupation:
                                             <strong className="text-muted"> {userInfo.motherOccupation}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faPhone} /></span> Mother's Phone:
+                                                <FontAwesomeIcon icon={faPhone}/></span> Mother's Phone:
                                             <strong className="text-muted"> {userInfo.motherMobileNo}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faEnvelope} /></span> Mother's Email:
+                                                <FontAwesomeIcon icon={faEnvelope}/></span> Mother's Email:
                                             <strong className="text-muted"> {userInfo.motherEmail}</strong>
                                         </div>
                                     </div>
@@ -397,32 +414,32 @@ const GyalsupProfile = () => {
                                     <div className="col-7">
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faMale} /></span> Guardian's Name:
+                                                <FontAwesomeIcon icon={faMale}/></span> Guardian's Name:
                                             <strong className="text-muted"> {userInfo.guardianName}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faIdCard} /></span> Guardian's CID:
+                                                <FontAwesomeIcon icon={faIdCard}/></span> Guardian's CID:
                                             <strong className="text-muted"> {userInfo.guardianCid}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faBriefcase} /></span> Guardian's Occupation:
+                                                <FontAwesomeIcon icon={faBriefcase}/></span> Guardian's Occupation:
                                             <strong className="text-muted"> {userInfo.guardianOccupation}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faPhone} /></span> Guardian's Phone:
+                                                <FontAwesomeIcon icon={faPhone}/></span> Guardian's Phone:
                                             <strong className="text-muted"> {userInfo.guardianMobileNo}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faEnvelope} /></span> Guardian's Email:
+                                                <FontAwesomeIcon icon={faEnvelope}/></span> Guardian's Email:
                                             <strong className="text-muted"> {userInfo.guardianEmail}</strong>
                                         </div>
                                         <div className="mb-2">
                                             <span className="text-muted text-sm-right mb-0 mb-sm-3">
-                                                <FontAwesomeIcon icon={faHandsHelping} /></span> Relation to Guardian:
+                                                <FontAwesomeIcon icon={faHandsHelping}/></span> Relation to Guardian:
                                             <strong className="text-muted"> {userInfo.relationToGuardian}</strong>
                                         </div>
                                     </div>
@@ -443,48 +460,52 @@ const GyalsupProfile = () => {
                                     <ListItem button onClick={() => navigate("/editCurrentAddress")}>
                                         <ListItemAvatar>
                                             <Avatar>
-                                                <LocationOnIcon />
+                                                <LocationOnIcon/>
                                             </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary="Edit current address" secondary="Country and place where you currently live" />
-                                        <ChevronRightRoundedIcon />
+                                        <ListItemText primary="Edit current address"
+                                                      secondary="Country and place where you currently live"/>
+                                        <ChevronRightRoundedIcon/>
                                     </ListItem>
                                     <ListItem button onClick={() => navigate("/editParentInfo")}>
                                         <ListItemAvatar>
                                             <Avatar>
-                                                <GroupIcon />
+                                                <GroupIcon/>
                                             </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary="Edit parent information" secondary="Parent's contact detail and occupation" />
-                                        <ChevronRightRoundedIcon />
+                                        <ListItemText primary="Edit parent information"
+                                                      secondary="Parent's contact detail and occupation"/>
+                                        <ChevronRightRoundedIcon/>
                                     </ListItem>
                                     <ListItem button onClick={() => navigate("/editGuardianInfo")}>
                                         <ListItemAvatar>
                                             <Avatar>
-                                                <PersonIcon />
+                                                <PersonIcon/>
                                             </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary="Edit guardian information" secondary="Guardian's contact detail, occupation and your relation to guardian" />
-                                        <ChevronRightRoundedIcon />
+                                        <ListItemText primary="Edit guardian information"
+                                                      secondary="Guardian's contact detail, occupation and your relation to guardian"/>
+                                        <ChevronRightRoundedIcon/>
                                     </ListItem>
-
                                     <ListItem button onClick={() => navigate("/editSocialMediaLink")}>
                                         <ListItemAvatar>
                                             <Avatar>
-                                                <LinkIcon />
+                                                <LinkIcon/>
                                             </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary="Edit social media links" secondary="Facebook, Linked etc" />
-                                        <ChevronRightRoundedIcon />
+                                        <ListItemText primary="Edit social media links"
+                                                      secondary="Facebook, Linked etc"/>
+                                        <ChevronRightRoundedIcon/>
                                     </ListItem>
                                     <ListItem button onClick={() => navigate("/editSynceCensusRecord")}>
                                         <ListItemAvatar>
                                             <Avatar>
-                                                <EditLocationOutlinedIcon />
+                                                <EditLocationOutlinedIcon/>
                                             </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary="Update census records" secondary="If your CID, name and permanant address are changed in national census record" />
-                                        <ChevronRightRoundedIcon />
+                                        <ListItemText primary="Update census records"
+                                                      secondary="If your CID, name and permanant address are changed in national census record"/>
+                                        <ChevronRightRoundedIcon/>
                                     </ListItem>
                                 </List>
                             </div>
@@ -493,38 +514,42 @@ const GyalsupProfile = () => {
                                     <ListItem button onClick={() => navigate("/editMobileNo")}>
                                         <ListItemAvatar>
                                             <Avatar>
-                                                <PhoneAndroidIcon />
+                                                <PhoneAndroidIcon/>
                                             </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary="Change mobile number" secondary="Required correct mobile number" />
-                                        <ChevronRightRoundedIcon />
+                                        <ListItemText primary="Change mobile number"
+                                                      secondary="Required correct mobile number"/>
+                                        <ChevronRightRoundedIcon/>
                                     </ListItem>
                                     <ListItem button onClick={() => navigate("/editEmailAddress")}>
                                         <ListItemAvatar>
                                             <Avatar>
-                                                <MailOutlineIcon />
+                                                <MailOutlineIcon/>
                                             </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary="Change email address" secondary="Required valid email address" />
-                                        <ChevronRightRoundedIcon />
+                                        <ListItemText primary="Change email address"
+                                                      secondary="Required valid email address"/>
+                                        <ChevronRightRoundedIcon/>
                                     </ListItem>
                                     <ListItem button onClick={() => navigate("/editUsername")}>
                                         <ListItemAvatar>
                                             <Avatar>
-                                                <LockOpenOutlinedIcon />
+                                                <LockOpenOutlinedIcon/>
                                             </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary="Set username" secondary="Unique username is required to login" />
-                                        <ChevronRightRoundedIcon />
+                                        <ListItemText primary="Set username"
+                                                      secondary="Unique username is required to login"/>
+                                        <ChevronRightRoundedIcon/>
                                     </ListItem>
                                     <ListItem button onClick={() => navigate("/editPasswordChange")}>
                                         <ListItemAvatar>
                                             <Avatar>
-                                                <VpnKeyIcon />
+                                                <VpnKeyIcon/>
                                             </Avatar>
                                         </ListItemAvatar>
-                                        <ListItemText primary="Change password" secondary="Recommend strong and secured password" />
-                                        <ChevronRightRoundedIcon />
+                                        <ListItemText primary="Change password"
+                                                      secondary="Recommend strong and secured password"/>
+                                        <ChevronRightRoundedIcon/>
                                     </ListItem>
                                 </List>
                             </div>
