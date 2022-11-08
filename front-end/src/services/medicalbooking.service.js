@@ -49,6 +49,7 @@ const getMedicalAppointmentDetail = (userId) => {
             , headers: authHeader()
         });
 };
+
 const editMedicalAppointment = (data) => {
     return axios.post(BASE_URL + "api/medical/screening/medicalBooking/editMedicalAppointment"
         , data
@@ -56,6 +57,16 @@ const editMedicalAppointment = (data) => {
             headers: authHeader()
         }
     );
+};
+
+const getPreviousSelfDeclaration = (userId) => {
+    return axios.get(BASE_URL + "api/medical/screening/medicalBooking/getPreviousSelfDeclaration"
+        , {
+            params: {
+                userId
+            }
+            , headers: authHeader()
+        });
 };
 
 export default {
@@ -66,4 +77,5 @@ export default {
     , bookMedicalAppointment
     , getMedicalAppointmentDetail
     , editMedicalAppointment
+    , getPreviousSelfDeclaration
 };
