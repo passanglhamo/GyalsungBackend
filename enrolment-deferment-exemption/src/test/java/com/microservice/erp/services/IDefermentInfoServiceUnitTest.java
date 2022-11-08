@@ -1,6 +1,5 @@
 package com.microservice.erp.services;
 
-import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.mapper.deferment.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.deferment.ICreateDefermentService;
@@ -14,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -26,9 +24,7 @@ import java.util.Date;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.then;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {TestJPAH2Config.class})
@@ -61,14 +57,16 @@ public class IDefermentInfoServiceUnitTest {
         ICreateDefermentService.CreateDefermentCommand createCommand = createCommand();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Authorization", "Bearer testingtoken");
+        ResponseEntity<?> response = service.saveDeferment(request, createCommand);
 //        given(mapper.mapToEntity(request,createCommand)).willReturn(DefermentInfo.builder().build());
-        verify(mapper).mapToEntity(request,createCommand);
+        //verify(mapper).mapToEntity(request,createCommand);
+        then(mapper).should().mapToEntity(request, createCommand);//verify whether method is called in mock component
         //verify(mapper,never()).mapToEntity(request,createCommand);
 
-        //ResponseEntity<?> response = service.saveDeferment(request, createCommand);
 
 
-       // assertNotNull(response);
+
+        // assertNotNull(response);
         //assertNotNull(response.getStatusCode());
         //assertEquals(200, response.getStatusCodeValue());
     }
