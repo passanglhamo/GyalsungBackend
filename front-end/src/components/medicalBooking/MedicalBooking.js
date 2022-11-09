@@ -57,6 +57,7 @@ export const MedicalBooking = () => {
     const steps = getSteps();
     const [activeStep, setActiveStep] = useState(0);
     const [successful, setSuccessful] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
     const [loading, setLoading] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [responseMsg, setResponseMsg] = useState('');
@@ -381,6 +382,7 @@ export const MedicalBooking = () => {
     };
 
     const handleSubmit = (e) => {
+        setLoading(true);
         let dzongkhagId = selectedDzongkhagId;
         let hospitalId = selectedHospitalId;
 
@@ -398,9 +400,16 @@ export const MedicalBooking = () => {
 
         medicalbookingService.bookMedicalAppointment(data).then(
             response => {
+                setLoading(false);
+                setSuccessful(true);
+                setShowAlert(false);
                 setActiveStep((prevActiveStep) => prevActiveStep + 1);
             },
             error => {
+                setLoading(false);
+                setSuccessful(false);
+                setErrorMsg(error.response.data.message);
+                setShowAlert(true);
                 console.log(
                     (error.response && error.response.data && error.response.data.message) ||
                     error.message || error.toString()
@@ -498,7 +507,7 @@ export const MedicalBooking = () => {
                                             </IconButton>
                                         }
                                     >
-                                        {message} {responseMsg}
+                                        {errorMsg}
                                     </Alert>
                                 </Collapse>
                             </div>

@@ -5,6 +5,7 @@ import com.microservice.erp.domain.entities.HospitalScheduleDate;
 import com.microservice.erp.domain.entities.HospitalScheduleTime;
 import com.microservice.erp.domain.entities.MedicalSelfDeclaration;
 import com.microservice.erp.domain.helper.MailSender;
+import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.helper.SmsSender;
 import com.microservice.erp.domain.repositories.IHospitalScheduleDateRepository;
 import com.microservice.erp.domain.repositories.IHospitalScheduleTimeRepository;
@@ -32,6 +33,11 @@ public class MedicalBookingService implements IMedicalBookingService {
 
     @Override
     public ResponseEntity<?> bookMedicalAppointment(String authHeader, MedicalBookingDto medicalBookingDto) throws Exception {
+        HospitalScheduleTime hospitalScheduleTimeByUserId = iHospitalScheduleTimeRepository.findByBookedBy(medicalBookingDto.getUserId());
+        if (hospitalScheduleTimeByUserId != null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("You have already booked an appointment. " +
+                    "Go to change appointment and change it if you want to chane your appointment."));
+        }
         HospitalScheduleTime hospitalScheduleTimeDb = iHospitalScheduleTimeRepository.findById(medicalBookingDto.getScheduleTimeId()).get();
         HospitalScheduleTime hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDb, HospitalScheduleTime.class);
         hospitalScheduleTime.setBookedBy(medicalBookingDto.getUserId());//todo:need to get userId from CurrentUser Object after completing authorization
@@ -76,10 +82,7 @@ public class MedicalBookingService implements IMedicalBookingService {
         String appointmentStartTime = sdf1.format(parseDateStartTime);
         String appointmentEndTime = sdf1.format(parseDateEndTime);
 
-        String message = "Dear " + Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName() + ", " +
-                "You have booked medical screening appointment for Gyalsung at " + hospitalName + ", " + dzongkhagName + ", " +
-                "on " + appointmentDate + " from " + appointmentStartTime + " to " + appointmentEndTime + ". " +
-                "Please report before 30 minutes on " + appointmentDate;
+        String message = "Dear " + Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName() + ", " + "You have booked medical screening appointment for Gyalsung at " + hospitalName + ", " + dzongkhagName + ", " + "on " + appointmentDate + " from " + appointmentStartTime + " to " + appointmentEndTime + ". " + "Please report before 30 minutes on " + appointmentDate;
         SmsSender.sendSms(Objects.requireNonNull(userInfoDtoResponse.getBody()).getMobileNo(), message);
         String subject = "Medical Screening Appointment";
         MailSender.sendMail(userInfoDtoResponse.getBody().getEmail(), null, null, message, subject);
