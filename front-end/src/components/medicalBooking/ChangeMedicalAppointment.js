@@ -48,7 +48,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 const ChangeMedicalAppointment = () => {
-
     const classes = useStyles();
     const navigate = useNavigate();
     const [bookedHospitalName, setBookedHospitalName] = useState('');
@@ -76,7 +75,6 @@ const ChangeMedicalAppointment = () => {
     const [selectedDate, setSelectedDate] = useState(undefined);
     const [selectedTime, setSelectedTime] = useState(undefined);
     const [scheduleTimeId, setScheduleTimeId] = useState('');
-    const [allMedicalQuestion, setAllMedicalQuestion] = useState([]);
 
     const { user: currentUser } = useSelector((state) => state.auth);
 
@@ -88,7 +86,6 @@ const ChangeMedicalAppointment = () => {
 
     useEffect(() => {
         getMedicalAppointmentDetail();
-        getAllMedicalQuestion();
         getAllDzongkhag();
     }, []);
 
@@ -118,16 +115,7 @@ const ChangeMedicalAppointment = () => {
             }
         );
     }
-    const getAllMedicalQuestion = () => {
-        medicalbookingService.getAllMedicalQuestion().then(
-            response => {
-                setAllMedicalQuestion(response.data);
-            },
-            error => {
 
-            }
-        );
-    }
     const getAllDzongkhag = () => {
         medicalbookingService.getAllDzongkhag().then(
             response => {
@@ -200,17 +188,7 @@ const ChangeMedicalAppointment = () => {
         let dzongkhagId = selectedDzongkhagId;
         let hospitalId = selectedHospitalId;
 
-        const medicalQuestionDtos = [];
-        allMedicalQuestion.map((val, idx) => {
-            let question = {
-                medicalQuestionId: val.id,
-                medicalQuestionName: val.medicalQuestionName,
-                checkStatus: val.isEnable === true ? 'Y' : 'N',
-            };
-            medicalQuestionDtos.push(question);
-        });
-
-        const data = { dzongkhagId, hospitalId, scheduleTimeId, medicalQuestionDtos };
+        const data = { dzongkhagId, hospitalId, scheduleTimeId };
 
         medicalbookingService.changeMedicalAppointment(data).then(
             response => {

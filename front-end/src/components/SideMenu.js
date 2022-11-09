@@ -91,7 +91,7 @@ const SideMenu = () => {
                 </ListItemIcon>
                 <ListItemText primary="Medical Booking" />
             </ListItem>
-            <ListItem button onClick={() => navigate("/editMedicalBooking")}>
+            <ListItem button onClick={() => navigate("/changeMedicalAppointment")}>
                 <ListItemIcon>
                     <LocalHospitalIcon />
                 </ListItemIcon>
