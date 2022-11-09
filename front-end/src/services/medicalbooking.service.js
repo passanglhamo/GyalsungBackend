@@ -50,8 +50,8 @@ const getMedicalAppointmentDetail = (userId) => {
         });
 };
 
-const editMedicalAppointment = (data) => {
-    return axios.post(BASE_URL + "api/medical/screening/medicalBooking/editMedicalAppointment"
+const changeMedicalAppointment = (data) => {
+    return axios.post(BASE_URL + "api/medical/screening/medicalBooking/changeMedicalAppointment"
         , data
         , {
             headers: authHeader()
@@ -85,7 +85,7 @@ export default {
     , getAllAvailableAppointmentDateByHospitalId
     , bookMedicalAppointment
     , getMedicalAppointmentDetail
-    , editMedicalAppointment
+    , changeMedicalAppointment
     , getPreviousSelfDeclaration
     , resubmitSelfDeclaration
 };

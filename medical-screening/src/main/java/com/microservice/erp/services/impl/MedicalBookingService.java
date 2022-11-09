@@ -76,7 +76,7 @@ public class MedicalBookingService implements IMedicalBookingService {
     }
 
     @Override
-    public ResponseEntity<?> editMedicalAppointment(MedicalBookingDto medicalBookingDto) {
+    public ResponseEntity<?> changeMedicalAppointment(MedicalBookingDto medicalBookingDto) {
         HospitalScheduleTime hospitalScheduleTimeDbByUserId = iHospitalScheduleTimeRepository.findByBookedBy(medicalBookingDto.getUserId());
         HospitalScheduleTime hospitalScheduleTimeDb = iHospitalScheduleTimeRepository.findById(medicalBookingDto.getScheduleTimeId()).get();
 

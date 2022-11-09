@@ -23,9 +23,9 @@ public class MedicalBookingController {
         return iMedicalBookingService.getMedicalAppointmentDetail(authHeader, userId);
     }
 
-    @PostMapping(value = "/editMedicalAppointment")
-    public ResponseEntity<?> editMedicalAppointment(@RequestBody MedicalBookingDto medicalBookingDto) {
-        return iMedicalBookingService.editMedicalAppointment(medicalBookingDto);
+    @PostMapping(value = "/changeMedicalAppointment")
+    public ResponseEntity<?> changeMedicalAppointment(@RequestBody MedicalBookingDto medicalBookingDto) {
+        return iMedicalBookingService.changeMedicalAppointment(medicalBookingDto);
     }
 
     @GetMapping(value = "/getPreviousSelfDeclaration")

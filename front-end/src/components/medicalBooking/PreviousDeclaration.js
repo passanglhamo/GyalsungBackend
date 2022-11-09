@@ -30,7 +30,7 @@ const PreviousDeclaration = () => {
             <div className="col-md-12 row mb-2">
                 <div className="d-flex justify-content-between align-items-center">
                     <div>
-                        <Button variant="contained" color="primary" size="small" onClick={() => navigate("/editMedicalBooking")}>
+                        <Button variant="contained" color="primary" size="small" onClick={() => navigate("/changeMedicalAppointment")}>
                             <ChevronLeftRoundedIcon /> Go back </Button>
                     </div>
                 </div>

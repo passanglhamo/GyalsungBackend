@@ -16,7 +16,7 @@ import GyalsupProfile from './components/userProfile/GyalsupProfile';
 import Enrolment from './components/enrolment/Enrolment';
 import ApplyDeferment from './components/deferment/ApplyDeferment';
 import MedicalBooking from './components/medicalBooking/MedicalBooking';
-import EditMedicalBooking from './components/medicalBooking/EditMedicalBooking';
+import ChangeMedicalAppointment from './components/medicalBooking/ChangeMedicalAppointment';
 import ApplyExemption from './components/Exemption/ApplyExemption';
 import RegisteredUser from './components/RegisteredUser';
 
@@ -168,7 +168,7 @@ const App = () => {
                                 <Route path="/applyExemption" element={<ApplyExemption />}></Route>
                                 <Route path="/exemptionList" element={<ExemptionList />}></Route>
                                 <Route path="/medicalBooking" element={<MedicalBooking />}></Route>
-                                <Route path="/editMedicalBooking" element={<EditMedicalBooking />}></Route>
+                                <Route path="/changeMedicalAppointment" element={<ChangeMedicalAppointment />}></Route>
                                 <Route path="/previousDeclaration" element={<PreviousDeclaration />}></Route>
                                 <Route path="/resubmitSelfDeclaration" element={<ResubmitSelfDeclaration />}></Route>
                                 <Route path="/gyalsupProfile" element={<GyalsupProfile />}></Route>

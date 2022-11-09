@@ -8,7 +8,7 @@ public interface IMedicalBookingService {
 
     ResponseEntity<?> getMedicalAppointmentDetail(String authHeader, Long userId);
 
-    ResponseEntity<?> editMedicalAppointment(MedicalBookingDto medicalBookingDto);
+    ResponseEntity<?> changeMedicalAppointment(MedicalBookingDto medicalBookingDto);
 
     ResponseEntity<?> getPreviousSelfDeclaration(String authHeader, Long userId);
     ResponseEntity<?> resubmitSelfDeclaration(MedicalBookingDto medicalBookingDto);

@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const EditMedicalBooking = () => {
+const ChangeMedicalAppointment = () => {
 
     const classes = useStyles();
     const navigate = useNavigate();
@@ -212,7 +212,7 @@ const EditMedicalBooking = () => {
 
         const data = { dzongkhagId, hospitalId, scheduleTimeId, medicalQuestionDtos };
 
-        medicalbookingService.editMedicalAppointment(data).then(
+        medicalbookingService.changeMedicalAppointment(data).then(
             response => {
                 // setActiveStep((prevActiveStep) => prevActiveStep + 1);
             },
@@ -338,4 +338,4 @@ const EditMedicalBooking = () => {
     )
 }
 
-export default EditMedicalBooking;
+export default ChangeMedicalAppointment;
