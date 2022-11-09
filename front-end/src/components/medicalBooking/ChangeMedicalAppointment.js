@@ -185,16 +185,20 @@ const ChangeMedicalAppointment = () => {
     }
 
     const handleSubmit = (e) => {
+        setLoading(true);
         let dzongkhagId = selectedDzongkhagId;
         let hospitalId = selectedHospitalId;
 
-        const data = { dzongkhagId, hospitalId, scheduleTimeId };
+        const data = { userId, dzongkhagId, hospitalId, scheduleTimeId };
 
         medicalbookingService.changeMedicalAppointment(data).then(
             response => {
-                // setActiveStep((prevActiveStep) => prevActiveStep + 1);
+                setLoading(false);
+                setSuccessful(true);
+                getMedicalAppointmentDetail();
             },
             error => {
+                setLoading(false);
                 console.log(
                     (error.response && error.response.data && error.response.data.message) ||
                     error.message || error.toString()
@@ -218,97 +222,105 @@ const ChangeMedicalAppointment = () => {
                                 Click here to check your self-declaration
                             </span>
                         </div>
-                        {/*Dzongkhag selection drop down*/}
-                        <div className="mb-2">
-                            <FormControl className={classes.root}>
-                                <InputLabel id="select-label required">Dzongkhag *</InputLabel>
-                                <Select labelId="select-ul-label" value={selectedDzongkhagId}
-                                    onChange={handleDzongkhagChange}>
-                                    {allDzongkhag && allDzongkhag.map((items, idx) => {
-                                        return (
-                                            <MenuItem key={idx} value={items.dzongkhagId}><span>{items.dzongkhagName}</span></MenuItem>
-                                        );
-                                    })}
-                                </Select>
-                            </FormControl>
-                        </div>
-                        <div className="mb-2">
-                            <FormControl className={classes.root}>
-                                <InputLabel id="select-label required">Hospital *</InputLabel>
-                                <Select labelId="select-ul-label" value={selectedHospitalId}
-                                    onChange={handleHospitalChange}>
-                                    {allHospitals && allHospitals.map((items, idx) => {
-                                        return (
-                                            <MenuItem key={idx} value={items.hospitalId}><span>{items.hospitalName}</span></MenuItem>
-                                        );
-                                    })}
-                                </Select>
-                            </FormControl>
-                        </div>
-                        <hr />
-                        <Box
-                            sx={{
-                                height: "20%",
-                                overflow: "scroll",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 1,
-                            }}
-                        >
-                            {availableDates.map((date, index) => {
-                                return (
-                                    <span className="animated fadeIn">
-                                        <Chip
-                                            clickable
-                                            key={`${date}`}
-                                            color="primary"
-                                            variant={selectedDate === `${date}` ? undefined : "outlined"}
-                                            label={date}
-                                            value={date}
-                                            onClick={(e) => getAvailableTimeSlots(date)}
-                                        /> </span>
-                                );
-                            })}
-                        </Box>
-                        <hr />
-                        <Box
-                            sx={{
-                                height: "20%",
-                                overflow: "scroll",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 1,
-                            }}
-                        >
-                            {availableTimeSlots.map((data, index) => {
-                                const label = moment(data.startTime).format(timeFormat) + " - " +
-                                    moment(data.endTime).format(timeFormat);
-                                return (
-                                    <span className="animated fadeIn">
-                                        <Chip
-                                            clickable
-                                            key={label}
-                                            label={label}
-                                            value={label}
-                                            color="secondary"
-                                            variant={selectedTime === `${label}` ? undefined : "outlined"}
-                                            deleteIcon="Book it"
-                                            onClick={() => { setSelectedTime(`${label}`); setScheduleTimeId(data.id) }}
-                                        />
-                                        {'  '}
-                                    </span>
-                                );
-                            })}
-                        </Box>
+                        {successful === true ? (<>
+                            <div className='text-center alert alert-success text-success animated bounceIn'>
+                                <h5><CheckCircle /> Confirmation!</h5>
+                                <strong> You have successfully changed your medical appointment.</strong>
+                            </div>
+                        </>
+                        ) : (<>
+                            <div className="mb-2">
+                                <FormControl className={classes.root}>
+                                    <InputLabel id="select-label required">Dzongkhag *</InputLabel>
+                                    <Select labelId="select-ul-label" value={selectedDzongkhagId}
+                                        onChange={handleDzongkhagChange}>
+                                        {allDzongkhag && allDzongkhag.map((items, idx) => {
+                                            return (
+                                                <MenuItem key={idx} value={items.dzongkhagId}><span>{items.dzongkhagName}</span></MenuItem>
+                                            );
+                                        })}
+                                    </Select>
+                                </FormControl>
+                            </div>
+                            <div className="mb-2">
+                                <FormControl className={classes.root}>
+                                    <InputLabel id="select-label required">Hospital *</InputLabel>
+                                    <Select labelId="select-ul-label" value={selectedHospitalId}
+                                        onChange={handleHospitalChange}>
+                                        {allHospitals && allHospitals.map((items, idx) => {
+                                            return (
+                                                <MenuItem key={idx} value={items.hospitalId}><span>{items.hospitalName}</span></MenuItem>
+                                            );
+                                        })}
+                                    </Select>
+                                </FormControl>
+                            </div>
+                            <hr />
+                            <Box
+                                sx={{
+                                    height: "20%",
+                                    overflow: "scroll",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                }}
+                            >
+                                {availableDates.map((date, index) => {
+                                    return (
+                                        <span className="animated fadeIn">
+                                            <Chip
+                                                clickable
+                                                key={`${date}`}
+                                                color="primary"
+                                                variant={selectedDate === `${date}` ? undefined : "outlined"}
+                                                label={date}
+                                                value={date}
+                                                onClick={(e) => getAvailableTimeSlots(date)}
+                                            /> </span>
+                                    );
+                                })}
+                            </Box>
+                            <hr />
+                            <Box
+                                sx={{
+                                    height: "20%",
+                                    overflow: "scroll",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                }}
+                            >
+                                {availableTimeSlots.map((data, index) => {
+                                    const label = moment(data.startTime).format(timeFormat) + " - " +
+                                        moment(data.endTime).format(timeFormat);
+                                    return (
+                                        <span className="animated fadeIn">
+                                            <Chip
+                                                clickable
+                                                key={label}
+                                                label={label}
+                                                value={label}
+                                                color="secondary"
+                                                variant={selectedTime === `${label}` ? undefined : "outlined"}
+                                                deleteIcon="Book it"
+                                                onClick={() => { setSelectedTime(`${label}`); setScheduleTimeId(data.id) }}
+                                            />
+                                            {'  '}
+                                        </span>
+                                    );
+                                })}
+                            </Box>
 
-                        <Button variant="contained" color="primary" onClick={handleSubmit}
-                            disabled={loading}>
-                            {loading && (
-                                <span className="spinner-border spinner-border-sm"></span>
-                            )}
-                            Submit
-                        </Button>
-                        <hr />
+                            <Button variant="contained" color="primary" onClick={handleSubmit}
+                                disabled={loading}>
+                                {loading && (
+                                    <span className="spinner-border spinner-border-sm"></span>
+                                )}
+                                Submit
+                            </Button>
+                            <hr />
+                        </>
+                        )}
                     </div>
                 </div>
             </div>
