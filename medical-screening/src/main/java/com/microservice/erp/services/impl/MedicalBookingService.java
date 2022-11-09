@@ -80,7 +80,7 @@ public class MedicalBookingService implements IMedicalBookingService {
         HospitalScheduleTime hospitalScheduleTimeDbByUserId = iHospitalScheduleTimeRepository.findByBookedBy(medicalBookingDto.getUserId());
         HospitalScheduleTime hospitalScheduleTimeDb = iHospitalScheduleTimeRepository.findById(medicalBookingDto.getScheduleTimeId()).get();
 
-        //todo: need to change book status of previous booking to A=Available
+        // to change book status of previous booking to A=Available
         HospitalScheduleTime hospitalScheduleTimeReset = new ModelMapper().map(hospitalScheduleTimeDbByUserId, HospitalScheduleTime.class);
         hospitalScheduleTimeReset.setBookedBy(null);
         hospitalScheduleTimeReset.setBookedDate(null);
