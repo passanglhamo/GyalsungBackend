@@ -15,9 +15,6 @@ import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-@Builder
-@EqualsAndHashCode
 @Entity(name = "ede_deferment_info")
 @AttributeOverride(name = "id", column = @Column(name = "deferment_id"))
 public class DefermentInfo extends Auditable<Long, Long> {
@@ -66,4 +63,68 @@ public class DefermentInfo extends Auditable<Long, Long> {
             fetch = FetchType.LAZY
     )
     private Set<DefermentFileInfo> files;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public Long getReasonId() {
+        return reasonId;
+    }
+
+    public void setReasonId(Long reasonId) {
+        this.reasonId = reasonId;
+    }
+
+    public String getApprovalRemarks() {
+        return approvalRemarks;
+    }
+
+    public void setApprovalRemarks(String approvalRemarks) {
+        this.approvalRemarks = approvalRemarks;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public Character getStatus() {
+        return status;
+    }
+
+    public void setStatus(Character status) {
+        this.status = status;
+    }
+
+    public Set<DefermentFileInfo> getFiles() {
+        return files;
+    }
+
+    public void setFiles(Set<DefermentFileInfo> files) {
+        this.files = files;
+    }
 }
