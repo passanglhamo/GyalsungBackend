@@ -59,6 +59,7 @@ import ParentConsentList from './components/enrolment/ParentConsentList';
 import { ColorModeContext, tokens, useMode } from "./theme";
 import PreviousDeclaration from './components/medicalBooking/PreviousDeclaration';
 import ResubmitSelfDeclaration from './components/medicalBooking/ResubmitSelfDeclaration';
+import AppointmentList from './components/medicalBooking/AppointmentList';
 
 const drawerWidth = 240;
 
@@ -169,6 +170,7 @@ const App = () => {
                                 <Route path="/exemptionList" element={<ExemptionList />}></Route>
                                 <Route path="/medicalBooking" element={<MedicalBooking />}></Route>
                                 <Route path="/changeMedicalAppointment" element={<ChangeMedicalAppointment />}></Route>
+                                <Route path="/appointmentList" element={<AppointmentList />}></Route>
                                 <Route path="/previousDeclaration" element={<PreviousDeclaration />}></Route>
                                 <Route path="/resubmitSelfDeclaration" element={<ResubmitSelfDeclaration />}></Route>
                                 <Route path="/gyalsupProfile" element={<GyalsupProfile />}></Route>
