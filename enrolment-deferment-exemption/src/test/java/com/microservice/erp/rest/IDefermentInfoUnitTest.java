@@ -33,10 +33,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @TestPropertySource(locations = "classpath:h2-db.properties")
 public class IDefermentInfoUnitTest {
 
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Autowired
     MockMvc mockMvc;
@@ -49,6 +45,13 @@ public class IDefermentInfoUnitTest {
 
     @InjectMocks
     private DefermentController controller;
+
+    @Before
+    public void setup() {
+
+        MockitoAnnotations.initMocks(this);
+
+    }
 
 
     @Test
