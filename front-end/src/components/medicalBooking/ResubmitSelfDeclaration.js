@@ -1,36 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { ChevronLeft, ChevronRight } from '@material-ui/icons';
-import { makeStyles } from '@material-ui/core/styles';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import Form from "react-validation/build/form";
-import Alert from '@material-ui/lab/Alert';
-import IconButton from '@material-ui/core/IconButton';
-import Collapse from '@material-ui/core/Collapse';
-import CloseIcon from '@material-ui/icons/Close';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { ArrowBack, ArrowForward, CheckCircle } from '@material-ui/icons';
-import moment from 'moment';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Chip from '@mui/material/Chip';
-
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import {
-    faMedkit, faLocationDot, faHome, faPhone, faCheckCircle, faArrowLeft, faCloudDownload, faArrowRight, faChevronLeft, faChevronRight, faEdit, faIdBadge, faUser, faInfoCircle, faGraduationCap, faAward, faAdd,
-    faLayerGroup, faHandsHolding, faHandsHelping, faFaceSmileBeam, faClock, faMale, faFemale, faBriefcase, faBook, faIdCard, faBirthdayCake, faLink, faLocation,
-} from "@fortawesome/free-solid-svg-icons";
-
-import Box from "@mui/material/Box";
-
-import FormControl from '@material-ui/core/FormControl';
 import { Switch } from "@mui/material";
 import medicalbookingService from "../../services/medicalbooking.service";
 
@@ -78,6 +51,7 @@ const ResubmitSelfDeclaration = () => {
     };
 
     const handleSubmit = (e) => {
+        setLoading(true);
         const medicalQuestionDtos = [];
         allMedicalQuestion.map((val, idx) => {
             let question = {
@@ -88,17 +62,16 @@ const ResubmitSelfDeclaration = () => {
             medicalQuestionDtos.push(question);
         });
 
-        console.log(medicalQuestionDtos)
         const data = { userId, medicalQuestionDtos };
 
         medicalbookingService.resubmitSelfDeclaration(data).then(
             response => {
+                setSuccessful(true);
+                setLoading(false);
             },
             error => {
-                console.log(
-                    (error.response && error.response.data && error.response.data.message) ||
-                    error.message || error.toString()
-                );
+                setLoading(false);
+                setSuccessful(false);
             }
         );
     };
@@ -117,44 +90,53 @@ const ResubmitSelfDeclaration = () => {
             </div>
 
             <div className="col-md-12 row">
-                {allMedicalQuestion && allMedicalQuestion.map((item, idx) => {
-                    return (
-                        <>
-                            <div className='card mb-1'>
-                                <div className='card-body p-2'>
-                                    <div className='form-group row'>
-                                        <div className='col-md-10'>
-                                            <strong>{item.medicalQuestionName}</strong>
-                                        </div>
-                                        {/* Slider*/}
-                                        <div className='col-md-2'>
-                                            <strong> No </strong>
-                                            <Switch onChange={() => { toggleSwitch(!item.isEnable, idx); }}
-                                                value={item.isEnabled}
-                                                keyV={idx}
-                                            />
-                                            <strong> Yes </strong>
+                {successful === true ? (<>
+                    <div className='text-center alert alert-success text-success animated bounceIn'>
+                        <h5><CheckCircle /> Confirmation!</h5>
+                        <strong> You have successfully resubmitted medical self-declaration.</strong>
+                    </div>
+                </>
+                ) : (<>
+                    {allMedicalQuestion && allMedicalQuestion.map((item, idx) => {
+                        return (
+                            <>
+                                <div className='card mb-1'>
+                                    <div className='card-body p-2'>
+                                        <div className='form-group row'>
+                                            <div className='col-md-10'>
+                                                <strong>{item.medicalQuestionName}</strong>
+                                            </div>
+                                            {/* Slider*/}
+                                            <div className='col-md-2'>
+                                                <strong> No </strong>
+                                                <Switch onChange={() => { toggleSwitch(!item.isEnable, idx); }}
+                                                    value={item.isEnabled}
+                                                    keyV={idx}
+                                                />
+                                                <strong> Yes </strong>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </>
-                    );
-                })}
-                <div className="col-md-12 row">
-                    <div className="mb-2">
-                        This is replace your previous self-declaration. Please decide before you resubmit.
+                            </>
+                        );
+                    })}
+                    <div className="col-md-12 row">
+                        <div className="mb-2">
+                            This is replace your previous self-declaration. Please decide before you resubmit.
+                        </div>
+                        <div className="col-md-4">
+                            <Button variant="contained" color="primary" onClick={handleSubmit}
+                                disabled={loading}>
+                                {loading && (
+                                    <span className="spinner-border spinner-border-sm"></span>
+                                )}
+                                Submit
+                            </Button>
+                        </div>
                     </div>
-                    <div className="col-md-4">
-                        <Button variant="contained" color="primary" onClick={handleSubmit}
-                            disabled={loading}>
-                            {loading && (
-                                <span className="spinner-border spinner-border-sm"></span>
-                            )}
-                            Submit
-                        </Button>
-                    </div>
-                </div>
+                </>
+                )}
             </div>
         </>
     )
