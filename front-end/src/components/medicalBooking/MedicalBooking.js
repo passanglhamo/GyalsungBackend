@@ -74,7 +74,9 @@ export const MedicalBooking = () => {
     const [selectedTime, setSelectedTime] = useState(undefined);
     const [scheduleTimeId, setScheduleTimeId] = useState('');
     const [allMedicalQuestion, setAllMedicalQuestion] = useState([]);
+    const { user: currentUser } = useSelector((state) => state.auth);
 
+    let userId = currentUser.userId;
     const dateFormat = "MMMM DD, YYYY";
     const timeFormat = "hh:mm A";
     let defaultDate = null;
@@ -101,7 +103,7 @@ export const MedicalBooking = () => {
     const getAllMedicalQuestion = () => {
         medicalbookingService.getAllMedicalQuestion().then(
             response => {
-                setAllMedicalQuestion(response.data); 
+                setAllMedicalQuestion(response.data);
             },
             error => {
 
@@ -392,7 +394,7 @@ export const MedicalBooking = () => {
             medicalQuestionDtos.push(question);
         });
 
-        const data = { dzongkhagId, hospitalId, scheduleTimeId, medicalQuestionDtos };
+        const data = { userId, dzongkhagId, hospitalId, scheduleTimeId, medicalQuestionDtos };
 
         medicalbookingService.bookMedicalAppointment(data).then(
             response => {
