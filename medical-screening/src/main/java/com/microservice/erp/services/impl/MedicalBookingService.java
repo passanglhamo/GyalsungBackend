@@ -106,9 +106,16 @@ public class MedicalBookingService implements IMedicalBookingService {
 
     @Override
     public ResponseEntity<?> resubmitSelfDeclaration(MedicalBookingDto medicalBookingDto) {
-
-
-        return ResponseEntity.ok("Appointment edited successfully.");
+        iMedicalSelfDeclarationRepository.deleteAllByUserId(medicalBookingDto.getUserId());
+        for (MedicalQuestionDto medicalQuestionDto : medicalBookingDto.getMedicalQuestionDtos()) {
+            MedicalSelfDeclaration medicalSelfDeclaration = new MedicalSelfDeclaration();
+            medicalSelfDeclaration.setUserId(2L);
+            medicalSelfDeclaration.setMedicalQuestionnaireId(medicalQuestionDto.getMedicalQuestionId());
+            medicalSelfDeclaration.setMedicalQuestionName(medicalQuestionDto.getMedicalQuestionName());
+            medicalSelfDeclaration.setCheckStatus(medicalQuestionDto.getCheckStatus());
+            iMedicalSelfDeclarationRepository.save(medicalSelfDeclaration);
+        }
+        return ResponseEntity.ok("Resubmitted successfully.");
     }
 
 }
