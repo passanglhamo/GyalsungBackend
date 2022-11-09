@@ -71,21 +71,21 @@ public class MedicalBookingService implements IMedicalBookingService {
 
         LocalDate appointmentDate = hospitalScheduleTimeDb.getBookedDate();
 
-        String timeFormat = "HH:mm a";
-        String startTime = hospitalScheduleTimeDb.getStartTime();
-        String endTime = hospitalScheduleTimeDb.getEndTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        SimpleDateFormat sdf1 = new SimpleDateFormat(timeFormat);
-        Date parseDateStartTime = sdf.parse(startTime);
-        Date parseDateEndTime = sdf.parse(endTime);
+//        String timeFormat = "HH:mm a";
+//        String startTime = hospitalScheduleTimeDb.getStartTime();
+//        String endTime = hospitalScheduleTimeDb.getEndTime();
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+//        SimpleDateFormat sdf1 = new SimpleDateFormat(timeFormat);
+//        Date parseDateStartTime = sdf.parse(startTime);
+//        Date parseDateEndTime = sdf.parse(endTime);
+//
+//        String appointmentStartTime = sdf1.format(parseDateStartTime);
+//        String appointmentEndTime = sdf1.format(parseDateEndTime);
 
-        String appointmentStartTime = sdf1.format(parseDateStartTime);
-        String appointmentEndTime = sdf1.format(parseDateEndTime);
-
-        String message = "Dear " + Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName() + ", " + "You have booked medical screening appointment for Gyalsung at " + hospitalName + ", " + dzongkhagName + ", " + "on " + appointmentDate + " from " + appointmentStartTime + " to " + appointmentEndTime + ". " + "Please report before 30 minutes on " + appointmentDate;
-        SmsSender.sendSms(Objects.requireNonNull(userInfoDtoResponse.getBody()).getMobileNo(), message);
-        String subject = "Medical Screening Appointment";
-        MailSender.sendMail(userInfoDtoResponse.getBody().getEmail(), null, null, message, subject);
+//        String message = "Dear " + Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName() + ", " + "You have booked medical screening appointment for Gyalsung at " + hospitalName + ", " + dzongkhagName + ", " + "on " + appointmentDate + " from " + appointmentStartTime + " to " + appointmentEndTime + ". " + "Please report before 30 minutes on " + appointmentDate;
+//        SmsSender.sendSms(Objects.requireNonNull(userInfoDtoResponse.getBody()).getMobileNo(), message);
+//        String subject = "Medical Screening Appointment";
+//        MailSender.sendMail(userInfoDtoResponse.getBody().getEmail(), null, null, message, subject);
 
         return ResponseEntity.ok("Appointment booked successfully.");
     }
