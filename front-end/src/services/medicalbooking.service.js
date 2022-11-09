@@ -69,6 +69,15 @@ const getPreviousSelfDeclaration = (userId) => {
         });
 };
 
+const resubmitSelfDeclaration = (data) => {
+    return axios.post(BASE_URL + "api/medical/screening/medicalBooking/resubmitSelfDeclaration"
+        , data
+        , {
+            headers: authHeader()
+        }
+    );
+};
+
 export default {
     getAllMedicalQuestion
     , getAllDzongkhag
@@ -78,4 +87,5 @@ export default {
     , getMedicalAppointmentDetail
     , editMedicalAppointment
     , getPreviousSelfDeclaration
+    , resubmitSelfDeclaration
 };

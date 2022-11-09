@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -96,4 +97,18 @@ public class MedicalBookingService implements IMedicalBookingService {
 
         return ResponseEntity.ok("Appointment edited successfully.");
     }
+
+    @Override
+    public ResponseEntity<?> getPreviousSelfDeclaration(String authHeader, Long userId) {
+        List<MedicalSelfDeclaration> medicalSelfDeclarationList = iMedicalSelfDeclarationRepository.findByUserIdOrderByMedicalQuestionNameAsc(userId);
+        return ResponseEntity.ok(medicalSelfDeclarationList);
+    }
+
+    @Override
+    public ResponseEntity<?> resubmitSelfDeclaration(MedicalBookingDto medicalBookingDto) {
+
+
+        return ResponseEntity.ok("Appointment edited successfully.");
+    }
+
 }

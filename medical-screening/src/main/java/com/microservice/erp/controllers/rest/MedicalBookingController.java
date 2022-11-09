@@ -28,4 +28,13 @@ public class MedicalBookingController {
         return iMedicalBookingService.editMedicalAppointment(medicalBookingDto);
     }
 
+    @GetMapping(value = "/getPreviousSelfDeclaration")
+    public ResponseEntity<?> getPreviousSelfDeclaration(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") Long userId) {
+        return iMedicalBookingService.getPreviousSelfDeclaration(authHeader, userId);
+    }
+
+    @PostMapping(value = "/resubmitSelfDeclaration")
+    public ResponseEntity<?> resubmitSelfDeclaration(@RequestBody MedicalBookingDto medicalBookingDto) {
+        return iMedicalBookingService.resubmitSelfDeclaration(medicalBookingDto);
+    }
 }

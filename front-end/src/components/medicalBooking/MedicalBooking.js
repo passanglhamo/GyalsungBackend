@@ -101,8 +101,7 @@ export const MedicalBooking = () => {
     const getAllMedicalQuestion = () => {
         medicalbookingService.getAllMedicalQuestion().then(
             response => {
-                setAllMedicalQuestion(response.data);
-                console.log(response.data);
+                setAllMedicalQuestion(response.data); 
             },
             error => {
 
