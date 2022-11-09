@@ -19,12 +19,12 @@ public class HospitalScheduleTime extends Auditable<Long, Long> {
     @NotNull(message = "Appointment start time cannot be null")
     @Basic(optional = false)
     @Column(name = "start_time", columnDefinition = "varchar(255)")
-    private String startTime;
+    private Date startTime;
 
     @NotNull(message = "Appointment end time cannot be null")
     @Basic(optional = false)
     @Column(name = "end_time", columnDefinition = "varchar(255)")
-    private String endTime;
+    private Date endTime;
 
     @NotNull()
     @Column(name = "book_status", columnDefinition = "char(1)")//A=Available, B=Booked, C=Checkup Done

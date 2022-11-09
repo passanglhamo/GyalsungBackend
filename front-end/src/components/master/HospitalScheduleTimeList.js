@@ -298,8 +298,8 @@ const HospitalScheduleTimeList = () => {
                                     <Paper>
                                     {
                                         scheduleTimeList.map((data, index) => {
-                                            const label = moment(data.startTime).format(timeFormat) + "-" +
-                                                moment(data.endTime).format(timeFormat);
+                                            const label = moment(data.startDateTime).format(timeFormat) + "-" +
+                                                moment(data.endDateTime).format(timeFormat);
                                             return (
                                                 <div>
                                                     <Chip
@@ -308,8 +308,8 @@ const HospitalScheduleTimeList = () => {
                                                         onDelete={() => handleDelete(data.id)}
                                                         icon={<ModeEditIcon onClick={() => {
                                                             setId(data.id)
-                                                            setStartTime(data.startTime)
-                                                            setEndTime(data.endTime)
+                                                            setStartTime(data.startDateTime)
+                                                            setEndTime(data.endDateTime)
                                                             setOpen(true);
                                                         }}/>}
                                                     />

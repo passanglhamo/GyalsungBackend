@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,15 +16,23 @@ public class HospitalScheduleTimeDto {
     private Long id;
     private String startTime;
     private String endTime;
+    private Date startDateTime;
+    private Date endDateTime;
+
 
     public static HospitalScheduleTimeDto withId(
             Long id,
             String startTime,
-            String endTime) {
+            String endTime,
+            Date startDateTime,
+            Date endDateTime) {
         return new HospitalScheduleTimeDto(
                 id,
                 startTime,
-                endTime
+                endTime,
+                startDateTime,
+                endDateTime
+
         );
     }
 }

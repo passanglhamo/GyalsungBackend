@@ -5,14 +5,18 @@ import com.microservice.erp.domain.dto.HospitalScheduleTimeDto;
 import com.microservice.erp.domain.entities.HospitalScheduleDate;
 import com.microservice.erp.domain.entities.HospitalScheduleTime;
 import com.microservice.erp.domain.helper.AppointmentStatus;
+import com.microservice.erp.domain.helper.DateConversion;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class HospitalScheduleTimeMapper {
-
     public HospitalScheduleDate mapToEntity(HospitalScheduleDateDto hospitalScheduleTimeDto) {
         HospitalScheduleDate hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDto, HospitalScheduleDate.class);
         hospitalScheduleTime.setStatus(AppointmentStatus.Available.value());
@@ -21,8 +25,8 @@ public class HospitalScheduleTimeMapper {
                         .stream()
                         .map(ta ->
                                 new HospitalScheduleTime(
-                                        ta.getStartTime(),
-                                        ta.getEndTime(),
+                                        DateConversion.convertToDate(ta.getStartTime()),
+                                        DateConversion.convertToDate(ta.getEndTime()),
                                         'A',
                                         null,
                                         null,
@@ -46,6 +50,8 @@ public class HospitalScheduleTimeMapper {
                         .map(ta ->
                                 HospitalScheduleTimeDto.withId(
                                         ta.getId(),
+                                        null,
+                                        null,
                                         ta.getStartTime(),
                                         ta.getEndTime()
                                 )
@@ -53,5 +59,6 @@ public class HospitalScheduleTimeMapper {
                         .collect(Collectors.toUnmodifiableSet())
         );
     }
+
 
 }
