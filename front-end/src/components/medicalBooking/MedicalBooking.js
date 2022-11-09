@@ -57,6 +57,7 @@ export const MedicalBooking = () => {
     const steps = getSteps();
     const [activeStep, setActiveStep] = useState(0);
     const [successful, setSuccessful] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
     const [loading, setLoading] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [responseMsg, setResponseMsg] = useState('');
@@ -74,7 +75,9 @@ export const MedicalBooking = () => {
     const [selectedTime, setSelectedTime] = useState(undefined);
     const [scheduleTimeId, setScheduleTimeId] = useState('');
     const [allMedicalQuestion, setAllMedicalQuestion] = useState([]);
+    const { user: currentUser } = useSelector((state) => state.auth);
 
+    let userId = currentUser.userId;
     const dateFormat = "MMMM DD, YYYY";
     const timeFormat = "hh:mm A";
     let defaultDate = null;
@@ -102,7 +105,6 @@ export const MedicalBooking = () => {
         medicalbookingService.getAllMedicalQuestion().then(
             response => {
                 setAllMedicalQuestion(response.data);
-                console.log(response.data);
             },
             error => {
 
@@ -380,6 +382,7 @@ export const MedicalBooking = () => {
     };
 
     const handleSubmit = (e) => {
+        setLoading(true);
         let dzongkhagId = selectedDzongkhagId;
         let hospitalId = selectedHospitalId;
 
@@ -393,13 +396,20 @@ export const MedicalBooking = () => {
             medicalQuestionDtos.push(question);
         });
 
-        const data = { dzongkhagId, hospitalId, scheduleTimeId, medicalQuestionDtos };
+        const data = { userId, dzongkhagId, hospitalId, scheduleTimeId, medicalQuestionDtos };
 
         medicalbookingService.bookMedicalAppointment(data).then(
             response => {
+                setLoading(false);
+                setSuccessful(true);
+                setShowAlert(false);
                 setActiveStep((prevActiveStep) => prevActiveStep + 1);
             },
             error => {
+                setLoading(false);
+                setSuccessful(false);
+                setErrorMsg(error.response.data.message);
+                setShowAlert(true);
                 console.log(
                     (error.response && error.response.data && error.response.data.message) ||
                     error.message || error.toString()
@@ -497,7 +507,7 @@ export const MedicalBooking = () => {
                                             </IconButton>
                                         }
                                     >
-                                        {message} {responseMsg}
+                                        {errorMsg}
                                     </Alert>
                                 </Collapse>
                             </div>

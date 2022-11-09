@@ -50,8 +50,8 @@ const getMedicalAppointmentDetail = (userId) => {
         });
 };
 
-const editMedicalAppointment = (data) => {
-    return axios.post(BASE_URL + "api/medical/screening/medicalBooking/editMedicalAppointment"
+const changeMedicalAppointment = (data) => {
+    return axios.post(BASE_URL + "api/medical/screening/medicalBooking/changeMedicalAppointment"
         , data
         , {
             headers: authHeader()
@@ -69,6 +69,15 @@ const getPreviousSelfDeclaration = (userId) => {
         });
 };
 
+const resubmitSelfDeclaration = (data) => {
+    return axios.post(BASE_URL + "api/medical/screening/medicalBooking/resubmitSelfDeclaration"
+        , data
+        , {
+            headers: authHeader()
+        }
+    );
+};
+
 export default {
     getAllMedicalQuestion
     , getAllDzongkhag
@@ -76,6 +85,7 @@ export default {
     , getAllAvailableAppointmentDateByHospitalId
     , bookMedicalAppointment
     , getMedicalAppointmentDetail
-    , editMedicalAppointment
+    , changeMedicalAppointment
     , getPreviousSelfDeclaration
+    , resubmitSelfDeclaration
 };

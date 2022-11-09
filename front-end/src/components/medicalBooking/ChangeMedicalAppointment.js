@@ -18,7 +18,6 @@ import { ArrowBack, ArrowForward, CheckCircle } from '@material-ui/icons';
 import moment from 'moment';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Chip from '@mui/material/Chip';
-
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -48,9 +47,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const EditMedicalBooking = () => {
-
+const ChangeMedicalAppointment = () => {
     const classes = useStyles();
+    const navigate = useNavigate();
     const [bookedHospitalName, setBookedHospitalName] = useState('');
     const [bookedDzongkhagName, setBookedDzongkhagName] = useState('');
     const [bookedDate, setBookedDate] = useState('');
@@ -76,7 +75,6 @@ const EditMedicalBooking = () => {
     const [selectedDate, setSelectedDate] = useState(undefined);
     const [selectedTime, setSelectedTime] = useState(undefined);
     const [scheduleTimeId, setScheduleTimeId] = useState('');
-    const [allMedicalQuestion, setAllMedicalQuestion] = useState([]);
 
     const { user: currentUser } = useSelector((state) => state.auth);
 
@@ -88,7 +86,6 @@ const EditMedicalBooking = () => {
 
     useEffect(() => {
         getMedicalAppointmentDetail();
-        getAllMedicalQuestion();
         getAllDzongkhag();
     }, []);
 
@@ -118,16 +115,7 @@ const EditMedicalBooking = () => {
             }
         );
     }
-    const getAllMedicalQuestion = () => {
-        medicalbookingService.getAllMedicalQuestion().then(
-            response => {
-                setAllMedicalQuestion(response.data);
-            },
-            error => {
 
-            }
-        );
-    }
     const getAllDzongkhag = () => {
         medicalbookingService.getAllDzongkhag().then(
             response => {
@@ -197,26 +185,20 @@ const EditMedicalBooking = () => {
     }
 
     const handleSubmit = (e) => {
+        setLoading(true);
         let dzongkhagId = selectedDzongkhagId;
         let hospitalId = selectedHospitalId;
 
-        const medicalQuestionDtos = [];
-        allMedicalQuestion.map((val, idx) => {
-            let question = {
-                medicalQuestionId: val.id,
-                medicalQuestionName: val.medicalQuestionName,
-                checkStatus: val.isEnable === true ? 'Y' : 'N',
-            };
-            medicalQuestionDtos.push(question);
-        });
+        const data = { userId, dzongkhagId, hospitalId, scheduleTimeId };
 
-        const data = { dzongkhagId, hospitalId, scheduleTimeId, medicalQuestionDtos };
-
-        medicalbookingService.editMedicalAppointment(data).then(
+        medicalbookingService.changeMedicalAppointment(data).then(
             response => {
-                // setActiveStep((prevActiveStep) => prevActiveStep + 1);
+                setLoading(false);
+                setSuccessful(true);
+                getMedicalAppointmentDetail();
             },
             error => {
+                setLoading(false);
                 console.log(
                     (error.response && error.response.data && error.response.data.message) ||
                     error.message || error.toString()
@@ -225,111 +207,125 @@ const EditMedicalBooking = () => {
         );
     };
 
-
     return (
-        <div className="col-md-12 row">
+        <>
+            <div className="col-md-12 row">
+                <div className="d-flex flex-wrap flex-column align-items-center justify-content-center">
+                    <div className="col-md-10 text-muted">
+                        <div>
+                            <span>
+                                You have booked {bookedHospitalName}, {bookedDzongkhagName} on {moment(bookedDate).format('MMM MM, YYYY')}
+                                {' '} from  {moment(bookedStartTime).format(timeFormat)} - {moment(bookedEndTime).format(timeFormat)} <br></br>
+                            </span>
 
-            <div className="d-flex flex-wrap flex-column align-items-center justify-content-center">
-                <div className="col-md-10 text-muted">
-                    <p>
-                        You have booked {bookedHospitalName}, {bookedDzongkhagName} on {moment(bookedDate).format('MMM MM, YYYY')}
-                        {' '} from  {moment(bookedStartTime).format(timeFormat)} - {moment(bookedEndTime).format(timeFormat)} <br></br>
-                    </p>
-                    {/*Dzongkhag selection drop down*/}
-                    <div className="mb-2">
-                        <FormControl className={classes.root}>
-                            <InputLabel id="select-label required">Dzongkhag *</InputLabel>
-                            <Select labelId="select-ul-label" value={selectedDzongkhagId}
-                                onChange={handleDzongkhagChange}>
-                                {allDzongkhag && allDzongkhag.map((items, idx) => {
+                            <span onClick={() => navigate("/previousDeclaration")}>
+                                Click here to check your self-declaration
+                            </span>
+                        </div>
+                        {successful === true ? (<>
+                            <div className='text-center alert alert-success text-success animated bounceIn'>
+                                <h5><CheckCircle /> Confirmation!</h5>
+                                <strong> You have successfully changed your medical appointment.</strong>
+                            </div>
+                        </>
+                        ) : (<>
+                            <div className="mb-2">
+                                <FormControl className={classes.root}>
+                                    <InputLabel id="select-label required">Dzongkhag *</InputLabel>
+                                    <Select labelId="select-ul-label" value={selectedDzongkhagId}
+                                        onChange={handleDzongkhagChange}>
+                                        {allDzongkhag && allDzongkhag.map((items, idx) => {
+                                            return (
+                                                <MenuItem key={idx} value={items.dzongkhagId}><span>{items.dzongkhagName}</span></MenuItem>
+                                            );
+                                        })}
+                                    </Select>
+                                </FormControl>
+                            </div>
+                            <div className="mb-2">
+                                <FormControl className={classes.root}>
+                                    <InputLabel id="select-label required">Hospital *</InputLabel>
+                                    <Select labelId="select-ul-label" value={selectedHospitalId}
+                                        onChange={handleHospitalChange}>
+                                        {allHospitals && allHospitals.map((items, idx) => {
+                                            return (
+                                                <MenuItem key={idx} value={items.hospitalId}><span>{items.hospitalName}</span></MenuItem>
+                                            );
+                                        })}
+                                    </Select>
+                                </FormControl>
+                            </div>
+                            <hr />
+                            <Box
+                                sx={{
+                                    height: "20%",
+                                    overflow: "scroll",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                }}
+                            >
+                                {availableDates.map((date, index) => {
                                     return (
-                                        <MenuItem key={idx} value={items.dzongkhagId}><span>{items.dzongkhagName}</span></MenuItem>
+                                        <span className="animated fadeIn">
+                                            <Chip
+                                                clickable
+                                                key={`${date}`}
+                                                color="primary"
+                                                variant={selectedDate === `${date}` ? undefined : "outlined"}
+                                                label={date}
+                                                value={date}
+                                                onClick={(e) => getAvailableTimeSlots(date)}
+                                            /> </span>
                                     );
                                 })}
-                            </Select>
-                        </FormControl>
-                    </div>
-                    <div className="mb-2">
-                        <FormControl className={classes.root}>
-                            <InputLabel id="select-label required">Hospital *</InputLabel>
-                            <Select labelId="select-ul-label" value={selectedHospitalId}
-                                onChange={handleHospitalChange}>
-                                {allHospitals && allHospitals.map((items, idx) => {
+                            </Box>
+                            <hr />
+                            <Box
+                                sx={{
+                                    height: "20%",
+                                    overflow: "scroll",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                }}
+                            >
+                                {availableTimeSlots.map((data, index) => {
+                                    const label = moment(data.startTime).format(timeFormat) + " - " +
+                                        moment(data.endTime).format(timeFormat);
                                     return (
-                                        <MenuItem key={idx} value={items.hospitalId}><span>{items.hospitalName}</span></MenuItem>
+                                        <span className="animated fadeIn">
+                                            <Chip
+                                                clickable
+                                                key={label}
+                                                label={label}
+                                                value={label}
+                                                color="secondary"
+                                                variant={selectedTime === `${label}` ? undefined : "outlined"}
+                                                deleteIcon="Book it"
+                                                onClick={() => { setSelectedTime(`${label}`); setScheduleTimeId(data.id) }}
+                                            />
+                                            {'  '}
+                                        </span>
                                     );
                                 })}
-                            </Select>
-                        </FormControl>
-                    </div>
-                    <hr />
-                    <Box
-                        sx={{
-                            height: "20%",
-                            overflow: "scroll",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                        }}
-                    >
-                        {availableDates.map((date, index) => {
-                            return (
-                                <span className="animated fadeIn">
-                                    <Chip
-                                        clickable
-                                        key={`${date}`}
-                                        color="primary"
-                                        variant={selectedDate === `${date}` ? undefined : "outlined"}
-                                        label={date}
-                                        value={date}
-                                        onClick={(e) => getAvailableTimeSlots(date)}
-                                    /> </span>
-                            );
-                        })}
-                    </Box>
-                    <hr />
-                    <Box
-                        sx={{
-                            height: "20%",
-                            overflow: "scroll",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                        }}
-                    >
-                        {availableTimeSlots.map((data, index) => {
-                            const label = moment(data.startTime).format(timeFormat) + " - " +
-                                moment(data.endTime).format(timeFormat);
-                            return (
-                                <span className="animated fadeIn">
-                                    <Chip
-                                        clickable
-                                        key={label}
-                                        label={label}
-                                        value={label}
-                                        color="secondary"
-                                        variant={selectedTime === `${label}` ? undefined : "outlined"}
-                                        deleteIcon="Book it"
-                                        onClick={() => { setSelectedTime(`${label}`); setScheduleTimeId(data.id) }}
-                                    />
-                                    {'  '}
-                                </span>
-                            );
-                        })}
-                    </Box>
+                            </Box>
 
-                    <Button variant="contained" color="primary" onClick={handleSubmit}
-                        disabled={loading}>
-                        {loading && (
-                            <span className="spinner-border spinner-border-sm"></span>
+                            <Button variant="contained" color="primary" onClick={handleSubmit}
+                                disabled={loading}>
+                                {loading && (
+                                    <span className="spinner-border spinner-border-sm"></span>
+                                )}
+                                Submit
+                            </Button>
+                            <hr />
+                        </>
                         )}
-                        Submit
-                    </Button>
-                    <hr />
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 
-export default EditMedicalBooking;
+export default ChangeMedicalAppointment;

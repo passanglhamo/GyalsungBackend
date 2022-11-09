@@ -14,8 +14,8 @@ public class MedicalBookingController {
     private IMedicalBookingService iMedicalBookingService;
 
     @PostMapping(value = "/bookMedicalAppointment")
-    public ResponseEntity<?> bookMedicalAppointment(@RequestBody MedicalBookingDto medicalBookingDto) {
-        return iMedicalBookingService.bookMedicalAppointment(medicalBookingDto);
+    public ResponseEntity<?> bookMedicalAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody MedicalBookingDto medicalBookingDto) throws Exception {
+        return iMedicalBookingService.bookMedicalAppointment(authHeader, medicalBookingDto);
     }
 
     @GetMapping(value = "/getMedicalAppointmentDetail")
@@ -23,9 +23,18 @@ public class MedicalBookingController {
         return iMedicalBookingService.getMedicalAppointmentDetail(authHeader, userId);
     }
 
-    @PostMapping(value = "/editMedicalAppointment")
-    public ResponseEntity<?> editMedicalAppointment(@RequestBody MedicalBookingDto medicalBookingDto) {
-        return iMedicalBookingService.editMedicalAppointment(medicalBookingDto);
+    @PostMapping(value = "/changeMedicalAppointment")
+    public ResponseEntity<?> changeMedicalAppointment(@RequestBody MedicalBookingDto medicalBookingDto) {
+        return iMedicalBookingService.changeMedicalAppointment(medicalBookingDto);
     }
 
+    @GetMapping(value = "/getPreviousSelfDeclaration")
+    public ResponseEntity<?> getPreviousSelfDeclaration(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") Long userId) {
+        return iMedicalBookingService.getPreviousSelfDeclaration(authHeader, userId);
+    }
+
+    @PostMapping(value = "/resubmitSelfDeclaration")
+    public ResponseEntity<?> resubmitSelfDeclaration(@RequestBody MedicalBookingDto medicalBookingDto) {
+        return iMedicalBookingService.resubmitSelfDeclaration(medicalBookingDto);
+    }
 }
