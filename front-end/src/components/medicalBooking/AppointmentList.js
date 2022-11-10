@@ -91,7 +91,7 @@ const AppointmentList = () => {
         medicalbookingService.getAllBookingDateByHospitalIdAndYear(selectedHospitalId, selectedYear).then(
             async response => {
                 setAvailableDates(response.data);
-                // getAvailableTimeSlots(availableDates[0]); 
+                getAvailableTimeSlots(response.data[0].hospital_schedule_date_id);
             },
             error => { }
         );
