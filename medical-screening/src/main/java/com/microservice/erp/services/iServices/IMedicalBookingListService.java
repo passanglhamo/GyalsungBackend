@@ -2,6 +2,10 @@ package com.microservice.erp.services.iServices;
 
 import org.springframework.http.ResponseEntity;
 
+import java.math.BigInteger;
+
 public interface IMedicalBookingListService {
-    ResponseEntity<?> getAllBookingByHospitalIdAndYear(Long hospitalId, String year);
+    ResponseEntity<?> getAllBookingDateByHospitalIdAndYear(BigInteger hospitalId, BigInteger year);
+
+    ResponseEntity<?> getTimeSlotsByScheduleDateId(BigInteger hospitalScheduleDateId);
 }

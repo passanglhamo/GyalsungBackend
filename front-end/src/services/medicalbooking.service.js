@@ -77,12 +77,22 @@ const resubmitSelfDeclaration = (data) => {
         }
     );
 };
-const getAllBookingByHospitalIdAndYear = (hospitalId, year) => {
-    return axios.get(BASE_URL + "api/medical/screening/hospitalScheduleDate/getAllBookingByHospitalIdAndYear"
+
+const getAllBookingDateByHospitalIdAndYear = (hospitalId, year) => {
+    return axios.get(BASE_URL + "api/medical/screening/medicalBookingList/getAllBookingDateByHospitalIdAndYear"
         , {
             params: {
                 hospitalId,
                 year
+            }
+            , headers: authHeader()
+        });
+};
+const getTimeSlotsByScheduleDateId = (hospitalScheduleDateId) => {
+    return axios.get(BASE_URL + "api/medical/screening/medicalBookingList/getTimeSlotsByScheduleDateId"
+        , {
+            params: {
+                hospitalScheduleDateId
             }
             , headers: authHeader()
         });
@@ -98,5 +108,6 @@ export default {
     , changeMedicalAppointment
     , getPreviousSelfDeclaration
     , resubmitSelfDeclaration
-    , getAllBookingByHospitalIdAndYear
+    , getAllBookingDateByHospitalIdAndYear
+    , getTimeSlotsByScheduleDateId
 };

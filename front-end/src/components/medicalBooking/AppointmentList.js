@@ -22,8 +22,6 @@ const AppointmentList = () => {
     const [allYear, setAllYear] = useState([{ "year": 2022 }, { "year": 2023 }]);
     const [selectedYear, setSelectedYear] = useState('');
 
-    const [availableDateTimeSlots, setAvailableDateTimeSlots] = useState([]);
-    const [tempAvailableDateTimeSlots, setTempAvailableDateTimeSlots] = useState([]);
     const [availableDates, setAvailableDates] = useState([]);
     const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
 
@@ -53,7 +51,7 @@ const AppointmentList = () => {
     }
 
     const handleHospitalChange = (e) => {
-        setSelectedHospitalId(e.target.value); 
+        setSelectedHospitalId(e.target.value);
     }
 
     const handleYearChangeChange = (e) => {
@@ -82,42 +80,36 @@ const AppointmentList = () => {
         );
     }
 
-    const getAllBookingByHospitalIdAndYear = () => {
-        medicalbookingService.getAllBookingByHospitalIdAndYear(selectedHospitalId, selectedYear).then(
+    const handleSearch = () => {
+        getAllBookingDateByHospitalIdAndYear();
+    };
+
+    const getAllBookingDateByHospitalIdAndYear = () => {
+        medicalbookingService.getAllBookingDateByHospitalIdAndYear(selectedHospitalId, selectedYear).then(
             async response => {
-                setAvailableDateTimeSlots(response.data);
-                let availableDates = [];
-                response.data.filter(element => {
-                    const isDuplicate = availableDates.includes(moment(element.appointmentDate).format(dateFormat));
-                    if (!isDuplicate) {
-                        availableDates.push(moment(element.appointmentDate).format(dateFormat));
-                        return true;
-                    }
-                    return false;
-                });
-                setAvailableDates(availableDates);
-                defaultDate = availableDates[0];
-                // getAvailableTimeSlots(availableDates[0]);
+                setAvailableDates(response.data);
+                // getAvailableTimeSlots(availableDates[0]); 
             },
             error => { }
         );
-
     }
 
-    const getAvailableTimeSlots = (date) => {
-        setSelectedDate(`${date}`);
-        setTempAvailableDateTimeSlots(availableDateTimeSlots.filter(item =>
-            moment(item.appointmentDate).format(dateFormat) === date)
+    const getAvailableTimeSlots = (hospitalScheduleDateId) => {
+        medicalbookingService.getTimeSlotsByScheduleDateId(hospitalScheduleDateId).then(
+            async response => {
+                setAvailableTimeSlots(response.data);
+            },
+            error => { }
         );
-        let availableTimeSlots = [];
-        tempAvailableDateTimeSlots.map(timeSlot => {
-            timeSlot.hospitalScheduleTimeListDtos.map(item => {
-                availableTimeSlots.push(item);
-                return true;
-            });
-            setAvailableTimeSlots(availableTimeSlots);
-            return true;
-        });
+    }
+
+    const getBookingDetail = (hos_schedule_time_id) => {
+        medicalbookingService.getBookingDetail(hos_schedule_time_id).then(
+            async response => {
+                // setAvailableTimeSlots(response.data);
+            },
+            error => { }
+        );
     }
 
 
@@ -150,7 +142,7 @@ const AppointmentList = () => {
                     );
                 })}
             </TextField>
-            <Button variant="outlined">Search</Button>
+            <Button variant="outlined" onClick={handleSearch}>Search</Button>
         </Box>
         <br />
         <Box maxHeight="25vh">
@@ -159,11 +151,13 @@ const AppointmentList = () => {
                     <Box border={1}><Typography align="center">Available Dates</Typography></Box>
                     <Box border={1} maxHeight="20vh" sx={{ overflowY: "scroll" }}>
                         <List>
-                            <ListItemButton>22nd Jan 2023</ListItemButton>
-                            <ListItemButton>23rd Jan 2023</ListItemButton>
-                            <ListItemButton>24th Jan 2023</ListItemButton>
-                            <ListItemButton>25th Jan 2023</ListItemButton>
-                            <ListItemButton>26th Jan 2023</ListItemButton>
+                            {availableDates && availableDates.map((item, idx) => {
+                                return (
+                                    <ListItemButton key={idx} value={item.appointment_date} onClick={() => getAvailableTimeSlots(item.hospital_schedule_date_id)}>
+                                        {moment(item.appointment_date).format('MMM MM, YYYY')}
+                                    </ListItemButton>
+                                );
+                            })}
                         </List>
                     </Box>
                 </Box>
@@ -171,13 +165,16 @@ const AppointmentList = () => {
                     <Box border={1}><Typography align="center">Available Time</Typography></Box>
                     <Box border={1} maxHeight="20vh" sx={{ overflowY: "scroll" }}>
                         <List>
-                            <ListItemButton>09:15 AM</ListItemButton>
-                            <ListItemButton>10:15 AM</ListItemButton>
-                            <ListItemButton>11:15 AM</ListItemButton>
-                            <ListItemButton>01:15 PM</ListItemButton>
-                            <ListItemButton>02:15 PM</ListItemButton>
-                            <ListItemButton>03:15 PM</ListItemButton>
-                            <ListItemButton>04:15 PM</ListItemButton>
+                            {availableTimeSlots && availableTimeSlots.map((item, idx) => {
+                                const label = moment(item.start_time).format(timeFormat) + " - " + moment(item.end_time).format(timeFormat);
+                                return (
+                                    <ListItemButton key={idx}
+                                        onClick={() => getBookingDetail(item.hos_schedule_time_id)}
+                                    >
+                                        {item.book_status === 'A' ? <span className="successMsg">{label}</span> : <span className="warningMsg">{label}</span>}
+                                    </ListItemButton>
+                                );
+                            })}
                         </List>
                     </Box>
                 </Box>

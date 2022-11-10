@@ -18,7 +18,7 @@ public class HospitalScheduleDate extends Auditable<Long, Long> {
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "hospitalId")
+    @Column(name = "hospital_id")
     private Long hospitalId;
 
     @NotNull(message = "Appointment date cannot be null")

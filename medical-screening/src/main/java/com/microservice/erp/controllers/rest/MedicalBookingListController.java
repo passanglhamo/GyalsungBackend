@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
+
 @CrossOrigin(origins = "*")
 @RestController
 @AllArgsConstructor
@@ -15,9 +17,15 @@ import org.springframework.web.bind.annotation.*;
 public class MedicalBookingListController {
     private IMedicalBookingListService iMedicalBookingListService;
 
-    @GetMapping(value = "/getAllBookingByHospitalIdAndYear")
-    public ResponseEntity<?> getAllBookingByHospitalIdAndYear(@RequestParam("hospitalId") Long hospitalId
-            , @RequestParam("year") String year) {
-        return iMedicalBookingListService.getAllBookingByHospitalIdAndYear(hospitalId, year);
+    @GetMapping(value = "/getAllBookingDateByHospitalIdAndYear")
+    public ResponseEntity<?> getAllBookingDateByHospitalIdAndYear(@RequestParam("hospitalId") BigInteger hospitalId
+            , @RequestParam("year") BigInteger year) {
+        return iMedicalBookingListService.getAllBookingDateByHospitalIdAndYear(hospitalId, year);
+    }
+
+    @GetMapping(value = "/getTimeSlotsByScheduleDateId")
+    public ResponseEntity<?> getTimeSlotsByScheduleDateId(@RequestParam("hospitalScheduleDateId")
+                                                          BigInteger hospitalScheduleDateId) {
+        return iMedicalBookingListService.getTimeSlotsByScheduleDateId(hospitalScheduleDateId);
     }
 }
