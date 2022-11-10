@@ -29,6 +29,7 @@ public class ReadHospitalScheduleDateService implements IReadHospitalScheduleDat
 
     @Override
     public ResponseEntity<?> getAllAvailableAppointmentDateByHospitalId(Long hospitalId) {
+        //todo:need to get only available dates, need to check in hospital time schedule table where bookStatus = A
         Collection<HospitalScheduleDate> hospitalScheduleTimes = repository.findByHospitalIdOrderByAppointmentDateAsc(hospitalId);
         if (hospitalScheduleTimes.size() > 0) {
             return ResponseEntity.ok(hospitalScheduleTimes

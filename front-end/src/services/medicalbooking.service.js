@@ -77,6 +77,16 @@ const resubmitSelfDeclaration = (data) => {
         }
     );
 };
+const getAllBookingByHospitalIdAndYear = (hospitalId, year) => {
+    return axios.get(BASE_URL + "api/medical/screening/hospitalScheduleDate/getAllBookingByHospitalIdAndYear"
+        , {
+            params: {
+                hospitalId,
+                year
+            }
+            , headers: authHeader()
+        });
+};
 
 export default {
     getAllMedicalQuestion
@@ -88,4 +98,5 @@ export default {
     , changeMedicalAppointment
     , getPreviousSelfDeclaration
     , resubmitSelfDeclaration
+    , getAllBookingByHospitalIdAndYear
 };
