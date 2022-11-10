@@ -24,8 +24,8 @@ public class MedicalBookingController {
     }
 
     @PostMapping(value = "/changeMedicalAppointment")
-    public ResponseEntity<?> changeMedicalAppointment(@RequestBody MedicalBookingDto medicalBookingDto) {
-        return iMedicalBookingService.changeMedicalAppointment(medicalBookingDto);
+    public ResponseEntity<?> changeMedicalAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody MedicalBookingDto medicalBookingDto) throws Exception {
+        return iMedicalBookingService.changeMedicalAppointment(authHeader, medicalBookingDto);
     }
 
     @GetMapping(value = "/getPreviousSelfDeclaration")

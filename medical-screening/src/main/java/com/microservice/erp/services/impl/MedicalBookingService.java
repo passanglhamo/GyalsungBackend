@@ -20,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
@@ -71,22 +73,19 @@ public class MedicalBookingService implements IMedicalBookingService {
 
         LocalDate appointmentDate = hospitalScheduleTimeDb.getBookedDate();
 
-//        String timeFormat = "HH:mm a";
-//        String startTime = hospitalScheduleTimeDb.getStartTime();
-//        String endTime = hospitalScheduleTimeDb.getEndTime();
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-//        SimpleDateFormat sdf1 = new SimpleDateFormat(timeFormat);
-//        Date parseDateStartTime = sdf.parse(startTime);
-//        Date parseDateEndTime = sdf.parse(endTime);
-//
-//        String appointmentStartTime = sdf1.format(parseDateStartTime);
-//        String appointmentEndTime = sdf1.format(parseDateEndTime);
+        String startTime = hospitalScheduleTimeDb.getStartTime().toString();
+        String endTime = hospitalScheduleTimeDb.getEndTime().toString();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateFormat timeFormat = new SimpleDateFormat("hh:mm aa");
+        Date dateStart = df.parse(startTime);
+        Date dateEnd = df.parse(endTime);
+        String appointmentStartTime = timeFormat.format(dateStart);
+        String appointmentEndTime = timeFormat.format(dateEnd);
 
-//        String message = "Dear " + Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName() + ", " + "You have booked medical screening appointment for Gyalsung at " + hospitalName + ", " + dzongkhagName + ", " + "on " + appointmentDate + " from " + appointmentStartTime + " to " + appointmentEndTime + ". " + "Please report before 30 minutes on " + appointmentDate;
-//        SmsSender.sendSms(Objects.requireNonNull(userInfoDtoResponse.getBody()).getMobileNo(), message);
-//        String subject = "Medical Screening Appointment";
-//        MailSender.sendMail(userInfoDtoResponse.getBody().getEmail(), null, null, message, subject);
-
+        String message = "Dear " + Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName() + ", " + "You have booked medical screening appointment for Gyalsung at " + hospitalName + ", " + dzongkhagName + ", " + "on " + appointmentDate + " from " + appointmentStartTime + " to " + appointmentEndTime + ". " + "Please report before 30 minutes on " + appointmentDate;
+        SmsSender.sendSms(Objects.requireNonNull(userInfoDtoResponse.getBody()).getMobileNo(), message);
+        String subject = "Medical Screening Appointment";
+        MailSender.sendMail(userInfoDtoResponse.getBody().getEmail(), null, null, message, subject);
         return ResponseEntity.ok("Appointment booked successfully.");
     }
 
@@ -117,7 +116,7 @@ public class MedicalBookingService implements IMedicalBookingService {
     }
 
     @Override
-    public ResponseEntity<?> changeMedicalAppointment(MedicalBookingDto medicalBookingDto) {
+    public ResponseEntity<?> changeMedicalAppointment(String authHeader, MedicalBookingDto medicalBookingDto) throws Exception {
         HospitalScheduleTime hospitalScheduleTimeDbByUserId = iHospitalScheduleTimeRepository.findByBookedBy(medicalBookingDto.getUserId());
         HospitalScheduleTime hospitalScheduleTimeDb = iHospitalScheduleTimeRepository.findById(medicalBookingDto.getScheduleTimeId()).get();
 
@@ -134,7 +133,37 @@ public class MedicalBookingService implements IMedicalBookingService {
         hospitalScheduleTime.setBookStatus('B');
         iHospitalScheduleTimeRepository.save(hospitalScheduleTime);
 
-        //todo:send sms/email
+        //to send sms/email
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + medicalBookingDto.getUserId();
+        ResponseEntity<UserInfoDto> userInfoDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserInfoDto.class);
+
+        String hospitalUrl = "http://localhost:81/api/training/management/common/getHospitalById?hospitalId=" + hospitalScheduleTimeDb.getHospitalScheduleDate().getHospitalId();
+        ResponseEntity<HospitalDto> hospitalDtoResponse = restTemplate.exchange(hospitalUrl, HttpMethod.GET, request, HospitalDto.class);
+        String hospitalName = Objects.requireNonNull(hospitalDtoResponse.getBody()).getHospitalName();
+
+        String dzongkhagUrl = "http://localhost:81/api/training/management/common/getHospitalMappingByHospitalId?hospitalId=" + hospitalScheduleTimeDb.getHospitalScheduleDate().getHospitalId();
+        ResponseEntity<DzongkhagDto> dzongkhagDtoResponse = restTemplate.exchange(dzongkhagUrl, HttpMethod.GET, request, DzongkhagDto.class);
+        String dzongkhagName = Objects.requireNonNull(dzongkhagDtoResponse.getBody()).getDzongkhagName();
+
+        LocalDate appointmentDate = hospitalScheduleTimeDb.getBookedDate();
+
+        String startTime = hospitalScheduleTimeDb.getStartTime().toString();
+        String endTime = hospitalScheduleTimeDb.getEndTime().toString();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateFormat timeFormat = new SimpleDateFormat("hh:mm aa");
+        Date dateStart = df.parse(startTime);
+        Date dateEnd = df.parse(endTime);
+        String appointmentStartTime = timeFormat.format(dateStart);
+        String appointmentEndTime = timeFormat.format(dateEnd);
+
+        String message = "Dear " + Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName() + ", " + "You have changed medical screening appointment for Gyalsung at " + hospitalName + ", " + dzongkhagName + ", " + "on " + appointmentDate + " from " + appointmentStartTime + " to " + appointmentEndTime + ". " + "Please report before 30 minutes on " + appointmentDate;
+        SmsSender.sendSms(Objects.requireNonNull(userInfoDtoResponse.getBody()).getMobileNo(), message);
+        String subject = "Changed Medical Screening Appointment";
+        MailSender.sendMail(userInfoDtoResponse.getBody().getEmail(), null, null, message, subject);
         return ResponseEntity.ok("Appointment edited successfully.");
     }
 
