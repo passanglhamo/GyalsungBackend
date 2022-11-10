@@ -293,20 +293,33 @@ const ChangeMedicalAppointment = () => {
                                 {availableTimeSlots.map((data, index) => {
                                     const label = moment(data.startDateTime).format(timeFormat) + " - " +
                                         moment(data.endDateTime).format(timeFormat);
-                                    return (
-                                        <span className="animated fadeIn">
-                                            <Chip
-                                                clickable
-                                                key={label}
-                                                label={label}
-                                                value={label}
-                                                color="secondary"
-                                                variant={selectedTime === `${label}` ? undefined : "outlined"}
-                                                deleteIcon="Book it"
-                                                onClick={() => { setSelectedTime(`${label}`); setScheduleTimeId(data.id) }}
-                                            />
-                                            {'  '}
-                                        </span>
+                                    return (<>
+                                        {data.bookedStatus === 'B' ?
+                                            <span className="animated fadeIn">
+                                                <Chip
+                                                    key={label}
+                                                    label={label}
+                                                    value={label}
+                                                    disabled
+                                                    variant="outlined"
+                                                />
+                                                {'  '}
+                                            </span> :
+                                            <span className="animated fadeIn">
+                                                <Chip
+                                                    clickable
+                                                    key={label}
+                                                    label={label}
+                                                    value={label}
+                                                    color="secondary"
+                                                    variant={selectedTime === `${label}` ? undefined : "outlined"}
+                                                    deleteIcon="Book it"
+                                                    onClick={() => { setSelectedTime(`${label}`); setScheduleTimeId(data.id) }}
+                                                />
+                                                {'  '}
+                                            </span>
+                                        }
+                                    </>
                                     );
                                 })}
                             </Box>

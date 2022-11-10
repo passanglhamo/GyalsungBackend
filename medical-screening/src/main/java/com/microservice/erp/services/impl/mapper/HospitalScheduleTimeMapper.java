@@ -39,6 +39,7 @@ public class HospitalScheduleTimeMapper {
 
         return hospitalScheduleTime;
     }
+
     public HospitalScheduleDateDto mapToDomain(HospitalScheduleDate hospitalScheduleTime) {
         return HospitalScheduleDateDto.withId(
                 hospitalScheduleTime.getId(),
@@ -49,11 +50,12 @@ public class HospitalScheduleTimeMapper {
                         .stream()
                         .map(ta ->
                                 HospitalScheduleTimeDto.withId(
-                                        ta.getId(),
-                                        null,
-                                        null,
-                                        ta.getStartTime(),
-                                        ta.getEndTime()
+                                        ta.getId()
+                                        , null
+                                        , null
+                                        , ta.getStartTime()
+                                        , ta.getEndTime()
+                                        , ta.getBookStatus()
                                 )
                         )
                         .collect(Collectors.toUnmodifiableSet())

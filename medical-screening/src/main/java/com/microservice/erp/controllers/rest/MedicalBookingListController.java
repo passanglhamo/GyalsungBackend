@@ -32,10 +32,8 @@ public class MedicalBookingListController {
 
     @GetMapping(value = "/getBookingDetail")
     public ResponseEntity<?> getBookingDetail(@RequestHeader("Authorization") String authHeader,
-                                              @RequestParam("hospitalScheduleTimeId")
-                                              BigInteger hospitalScheduleTimeId,
-                                              @RequestParam("bookedById")
-                                              Long bookedById) {
+                                              @RequestParam("hospitalScheduleTimeId") BigInteger hospitalScheduleTimeId,
+                                              @RequestParam("bookedById") Long bookedById) {
         return iMedicalBookingListService.getBookingDetail(authHeader, hospitalScheduleTimeId, bookedById);
     }
 }

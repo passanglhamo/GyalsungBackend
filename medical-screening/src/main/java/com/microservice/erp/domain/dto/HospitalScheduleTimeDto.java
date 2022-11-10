@@ -18,6 +18,7 @@ public class HospitalScheduleTimeDto {
     private String endTime;
     private Date startDateTime;
     private Date endDateTime;
+    private Character bookedStatus;
 
 
     public static HospitalScheduleTimeDto withId(
@@ -25,13 +26,15 @@ public class HospitalScheduleTimeDto {
             String startTime,
             String endTime,
             Date startDateTime,
-            Date endDateTime) {
+            Date endDateTime
+            , Character bookedStatus) {
         return new HospitalScheduleTimeDto(
                 id,
                 startTime,
                 endTime,
                 startDateTime,
-                endDateTime
+                endDateTime,
+                bookedStatus
 
         );
     }

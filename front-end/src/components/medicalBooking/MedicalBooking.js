@@ -281,23 +281,8 @@ export const MedicalBooking = () => {
                                 </FormControl>
                             </div>
                             <hr />
-                            {/*Available dates for appointment*/}
-                            {/*<div className="mb-2">*/}
-                            {/*    {availableDates.map((date) => {*/}
-                            {/*        return (*/}
-                            {/*            <span className="animated fadeIn"><Chip clickable*/}
-                            {/*                key={date}*/}
-                            {/*                color="primary" variant="outlined"*/}
-                            {/*                label={date}*/}
-                            {/*                value={date}*/}
-                            {/*                onClick={(e) => getAvailableTimeSlots(date)}*/}
-                            {/*            /> </span>*/}
-                            {/*        );*/}
-                            {/*    })}*/}
-                            {/*</div>*/}
-                            {/*new appointment dates*/}
+
                             <Box
-                                // border={1}
                                 sx={{
                                     height: "20%",
                                     overflow: "scroll",
@@ -321,24 +306,8 @@ export const MedicalBooking = () => {
                                     );
                                 })}
                             </Box>
-                            {/*<br/>*/}
                             <hr />
-                            {/*Available time for  appointment date*/}
-                            {/*<div className="mb-2">*/}
-                            {/*    {availableTimeSlots.map((data, index) => {*/}
-                            {/*        const label = moment(data.startTime).format(timeFormat) + " - " +*/}
-                            {/*            moment(data.endTime).format(timeFormat);*/}
-                            {/*        return (*/}
-                            {/*            <span className="animated fadeIn">*/}
-                            {/*                <Chip clickable key={label} label={label} value={label} color="secondary" variant="outlined"*/}
-                            {/*                    deleteIcon="Book it" />*/}
-                            {/*                {'  '}*/}
-                            {/*            </span>*/}
-                            {/*        );*/}
-                            {/*    })}*/}
-                            {/*</div>*/}
                             <Box
-                                // border={1}
                                 sx={{
                                     height: "20%",
                                     overflow: "scroll",
@@ -350,20 +319,32 @@ export const MedicalBooking = () => {
                                 {availableTimeSlots.map((data, index) => {
                                     const label = moment(data.startDateTime).format(timeFormat) + " - " +
                                         moment(data.endDateTime).format(timeFormat);
-                                    return (
-                                        <span className="animated fadeIn">
-                                            <Chip
-                                                clickable
-                                                key={label}
-                                                label={label}
-                                                value={label}
-                                                color="secondary"
-                                                variant={selectedTime === `${label}` ? undefined : "outlined"}
-                                                deleteIcon="Book it"
-                                                onClick={() => { setSelectedTime(`${label}`); setScheduleTimeId(data.id) }}
-                                            />
-                                            {'  '}
-                                        </span>
+                                    return (<>
+                                        {data.bookedStatus === 'B' ?
+                                            <span className="animated fadeIn">
+                                                <Chip
+                                                    key={label}
+                                                    label={label}
+                                                    value={label}
+                                                    variant="outlined"
+                                                    disabled
+                                                />
+                                                {'  '}
+                                            </span> :
+                                            <span className="animated fadeIn">
+                                                <Chip
+                                                    clickable
+                                                    key={label}
+                                                    label={label}
+                                                    value={label}
+                                                    color="secondary"
+                                                    variant={selectedTime === `${label}` ? undefined : "outlined"}
+                                                    deleteIcon="Book it"
+                                                    onClick={() => { setSelectedTime(`${label}`); setScheduleTimeId(data.id) }}
+                                                />
+                                                {'  '}
+                                            </span>}
+                                    </>
                                     );
                                 })}
                             </Box>
