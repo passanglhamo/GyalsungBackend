@@ -16,4 +16,5 @@ public class MedicalBookingListDto {
     private Date end_time;
     private Character book_status;
     private BigInteger booked_by;
+    private String fullName;
 }

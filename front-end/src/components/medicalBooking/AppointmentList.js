@@ -10,8 +10,12 @@ import { FormControl, InputLabel, Box, List, ListItemButton, Select, MenuItem, S
 import { CheckBox } from "@mui/icons-material";
 import TextField from "@mui/material/TextField";
 import moment from 'moment';
-// import Select from '@material-ui/core/Select';
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
+import Slide from '@material-ui/core/Slide';
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const AppointmentList = () => {
 
@@ -24,11 +28,10 @@ const AppointmentList = () => {
 
     const [availableDates, setAvailableDates] = useState([]);
     const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
-
-    const [selectedDate, setSelectedDate] = useState(undefined);
-    const [selectedTime, setSelectedTime] = useState(undefined);
-    const [scheduleTimeId, setScheduleTimeId] = useState('');
+    const [open, setOpen] = useState(false);
+    const [bookedByFullName, setBookedByFullName] = useState('');
     const [allMedicalQuestion, setAllMedicalQuestion] = useState([]);
+
     const { user: currentUser } = useSelector((state) => state.auth);
 
     let userId = currentUser.userId;
@@ -103,16 +106,20 @@ const AppointmentList = () => {
         );
     }
 
-    const getBookingDetail = (hos_schedule_time_id) => {
-        medicalbookingService.getBookingDetail(hos_schedule_time_id).then(
+    const getBookingDetail = (hos_schedule_time_id, booked_by, fullName) => {
+        setOpen(true);
+        setBookedByFullName(fullName);
+        medicalbookingService.getBookingDetail(hos_schedule_time_id, booked_by).then(
             async response => {
-                // setAvailableTimeSlots(response.data);
+                setAllMedicalQuestion(response.data);
             },
             error => { }
         );
     }
 
-
+    const handleClose = () => {
+        setOpen(false);
+    };
     return <Box display="flex" flexDirection="column" gap={1}>
         <Box display="flex" flexDirection={{ xs: "column", md: "row" }} gap={1}>
             <TextField fullWidth select label="Dzongkhag" placeholder="Dzongkhag" size="small" required
@@ -154,7 +161,7 @@ const AppointmentList = () => {
                             {availableDates && availableDates.map((item, idx) => {
                                 return (
                                     <ListItemButton key={idx} value={item.appointment_date} onClick={() => getAvailableTimeSlots(item.hospital_schedule_date_id)}>
-                                        {moment(item.appointment_date).format('MMM MM, YYYY')}
+                                        {moment(item.appointment_date).format('MMM D, YYYY')}
                                     </ListItemButton>
                                 );
                             })}
@@ -168,10 +175,10 @@ const AppointmentList = () => {
                             {availableTimeSlots && availableTimeSlots.map((item, idx) => {
                                 const label = moment(item.start_time).format(timeFormat) + " - " + moment(item.end_time).format(timeFormat);
                                 return (
-                                    <ListItemButton key={idx}
-                                        onClick={() => getBookingDetail(item.hos_schedule_time_id)}
-                                    >
-                                        {item.book_status === 'A' ? <span className="successMsg">{label}</span> : <span className="warningMsg">{label}</span>}
+                                    <ListItemButton key={idx}>
+                                        {item.book_status === 'A' ? <span className="successMsg">{label}</span> :
+                                            <div><span className="warningMsg">{label} </span><span
+                                                onClick={() => getBookingDetail(item.hos_schedule_time_id, item.booked_by, item.fullName)}> Booked by {item.fullName}</span></div>}
                                     </ListItemButton>
                                 );
                             })}
@@ -180,7 +187,42 @@ const AppointmentList = () => {
                 </Box>
             </Stack>
         </Box><br />
-        {/* <Box><Button variant="outlined">Submit</Button></Box> */}
+
+        <Dialog
+            open={open}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-slide-title"
+            aria-describedby="alert-dialog-slide-description"
+        >
+            <DialogTitle id="alert-dialog-slide-title">{"Self-declaration"}</DialogTitle>
+            <DialogContent>
+                <div className="col-md-12 row">
+                    <p>{bookedByFullName} has submitted following response</p>
+                    {allMedicalQuestion && allMedicalQuestion.map((item, idx) => {
+                        return (
+                            <>
+                                <div className='card mb-1'>
+                                    <div className='card-body p-2'>
+                                        <div className='form-group row'>
+                                            <span>{idx + 1}) {item.medicalQuestionName}</span>
+                                            <span>Response: {item.checkStatus === 'Y' ? 'Yes' : 'No'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        );
+                    })}
+                </div>
+
+            </DialogContent>
+            <DialogActions>
+                <Button color="secondary" variant="contained" onClick={handleClose}>
+                    Cancel
+                </Button>
+            </DialogActions>
+        </Dialog>
     </Box>;
 }
 

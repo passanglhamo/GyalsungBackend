@@ -7,5 +7,7 @@ import java.math.BigInteger;
 public interface IMedicalBookingListService {
     ResponseEntity<?> getAllBookingDateByHospitalIdAndYear(BigInteger hospitalId, BigInteger year);
 
-    ResponseEntity<?> getTimeSlotsByScheduleDateId(BigInteger hospitalScheduleDateId);
+    ResponseEntity<?> getTimeSlotsByScheduleDateId(String authHeader, BigInteger hospitalScheduleDateId);
+
+    ResponseEntity<?> getBookingDetail(String authHeader, BigInteger hospitalScheduleTimeId, Long bookedById);
 }

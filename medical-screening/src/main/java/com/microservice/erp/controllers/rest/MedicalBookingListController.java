@@ -24,8 +24,18 @@ public class MedicalBookingListController {
     }
 
     @GetMapping(value = "/getTimeSlotsByScheduleDateId")
-    public ResponseEntity<?> getTimeSlotsByScheduleDateId(@RequestParam("hospitalScheduleDateId")
+    public ResponseEntity<?> getTimeSlotsByScheduleDateId(@RequestHeader("Authorization") String authHeader,
+                                                          @RequestParam("hospitalScheduleDateId")
                                                           BigInteger hospitalScheduleDateId) {
-        return iMedicalBookingListService.getTimeSlotsByScheduleDateId(hospitalScheduleDateId);
+        return iMedicalBookingListService.getTimeSlotsByScheduleDateId(authHeader, hospitalScheduleDateId);
+    }
+
+    @GetMapping(value = "/getBookingDetail")
+    public ResponseEntity<?> getBookingDetail(@RequestHeader("Authorization") String authHeader,
+                                              @RequestParam("hospitalScheduleTimeId")
+                                              BigInteger hospitalScheduleTimeId,
+                                              @RequestParam("bookedById")
+                                              Long bookedById) {
+        return iMedicalBookingListService.getBookingDetail(authHeader, hospitalScheduleTimeId, bookedById);
     }
 }

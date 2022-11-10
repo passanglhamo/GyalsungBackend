@@ -98,6 +98,17 @@ const getTimeSlotsByScheduleDateId = (hospitalScheduleDateId) => {
         });
 };
 
+const getBookingDetail = (hospitalScheduleTimeId, bookedById) => { 
+    return axios.get(BASE_URL + "api/medical/screening/medicalBookingList/getBookingDetail"
+        , {
+            params: {
+                hospitalScheduleTimeId
+                , bookedById
+            }
+            , headers: authHeader()
+        });
+};
+
 export default {
     getAllMedicalQuestion
     , getAllDzongkhag
@@ -110,4 +121,5 @@ export default {
     , resubmitSelfDeclaration
     , getAllBookingDateByHospitalIdAndYear
     , getTimeSlotsByScheduleDateId
+    , getBookingDetail
 };
