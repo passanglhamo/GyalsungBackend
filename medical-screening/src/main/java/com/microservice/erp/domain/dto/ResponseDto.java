@@ -11,6 +11,6 @@ public class ResponseDto {
     private String hospitalName;
     private String dzongkhagName;
     private Date appointmentDate;
-    private String startTime;
-    private String endTime;
+    private Date startTime;
+    private Date endTime;
 }

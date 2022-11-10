@@ -94,8 +94,8 @@ public class MedicalBookingService implements IMedicalBookingService {
     public ResponseEntity<?> getMedicalAppointmentDetail(String authHeader, Long userId) {
         ResponseDto responseDto = new ResponseDto();
         HospitalScheduleTime hospitalScheduleTime = iHospitalScheduleTimeRepository.findByBookedBy(userId);
-        //responseDto.setStartTime(hospitalScheduleTime.getStartTime());
-        //responseDto.setEndTime(hospitalScheduleTime.getEndTime());
+        responseDto.setStartTime(hospitalScheduleTime.getStartTime());
+        responseDto.setEndTime(hospitalScheduleTime.getEndTime());
 
         HospitalScheduleDate hospitalScheduleDate = iHospitalScheduleDateRepository.getMyBookingDate(userId);
         responseDto.setAppointmentDate(hospitalScheduleDate.getAppointmentDate());

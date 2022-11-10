@@ -291,8 +291,8 @@ const ChangeMedicalAppointment = () => {
                                 }}
                             >
                                 {availableTimeSlots.map((data, index) => {
-                                    const label = moment(data.startTime).format(timeFormat) + " - " +
-                                        moment(data.endTime).format(timeFormat);
+                                    const label = moment(data.startDateTime).format(timeFormat) + " - " +
+                                        moment(data.endDateTime).format(timeFormat);
                                     return (
                                         <span className="animated fadeIn">
                                             <Chip
