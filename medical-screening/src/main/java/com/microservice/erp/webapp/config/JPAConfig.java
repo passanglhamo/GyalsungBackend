@@ -11,27 +11,28 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Optional;
+import java.util.Properties;
 
 @Configuration
 @EnableJpaAuditing
 @EnableTransactionManagement
-@EnableJpaRepositories(
-        basePackages = {"com.microservice.erp.domain.repositories"}
-)
-@PropertySource("classpath:mysql-db.properties")
-@PropertySource("classpath:h2-db.properties")
-@PropertySource("classpath:postgres-db.properties")
+@PropertySources({
+        @PropertySource("classpath:postgres-db.properties"),
+        @PropertySource("classpath:dbscript/commonDao.mssql.properties")
+})
+@EnableJpaRepositories("com.microservice.erp")
 public class JPAConfig {
-
-    private Environment env;
+    private final Environment env;
 
     public JPAConfig(Environment env) {
         this.env = env;
@@ -53,21 +54,20 @@ public class JPAConfig {
         return new JdbcTemplate(dataSource);
     }
 
-    @Primary @Bean
-    public DataSource dataSource(){
-        DataSource dataSource = DataSourceBuilder
-                .create()
-                .username(username)
-                .password(password)
-                .url(url)
-                .driverClassName(driverClassName)
-                .build();
+    @Bean
+    public DataSource dataSource() {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(driverClassName);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
         return dataSource;
     }
 
-    @Primary @Bean
+    @Primary
+    @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-            EntityManagerFactoryBuilder builder, DataSource dataSource){
+            EntityManagerFactoryBuilder builder, DataSource dataSource) {
         return builder
                 .dataSource(dataSource)
                 .packages("com.microservice.erp.domain.entities")
@@ -75,9 +75,21 @@ public class JPAConfig {
                 .build();
     }
 
-    @Primary @Bean
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource());
+        em.setPackagesToScan("com.microservice.erp");
+        em.setJpaVendorAdapter(vendorAdapter);
+        em.setJpaProperties(additionalProperties());
+        return em;
+    }
+
+    @Primary
+    @Bean
     public PlatformTransactionManager transactionManager(
-            EntityManagerFactory entityManagerFactory){
+            EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 
@@ -86,4 +98,10 @@ public class JPAConfig {
         return () -> Optional.ofNullable(new Username("GOD-ADMIN-USERNAME"));
     }
 
+    private Properties additionalProperties() {
+        Properties properties = new Properties();
+        properties.setProperty("hibernate.hbm2ddl.auto", env.getProperty("spring.jpa.hibernate.ddl-auto"));
+        properties.setProperty("hibernate.dialect", env.getProperty("spring.jpa.properties.hibernate.dialect"));
+        return properties;
+    }
 }

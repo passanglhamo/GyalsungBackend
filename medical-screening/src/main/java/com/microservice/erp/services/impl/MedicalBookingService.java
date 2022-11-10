@@ -1,5 +1,6 @@
 package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dao.MedicalBookingListDao;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.HospitalScheduleDate;
 import com.microservice.erp.domain.entities.HospitalScheduleTime;
@@ -32,6 +33,7 @@ public class MedicalBookingService implements IMedicalBookingService {
     private final IHospitalScheduleDateRepository iHospitalScheduleDateRepository;
     private final IHospitalScheduleTimeRepository iHospitalScheduleTimeRepository;
     private final IMedicalSelfDeclarationRepository iMedicalSelfDeclarationRepository;
+    private final MedicalBookingListDao medicalBookingListDao;
 
     @Override
     public ResponseEntity<?> bookMedicalAppointment(String authHeader, MedicalBookingDto medicalBookingDto) throws Exception {
