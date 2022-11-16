@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.ParseException;
+import java.util.Date;
 
 public interface IProfileService {
 
@@ -49,4 +51,7 @@ public interface IProfileService {
     ResponseEntity<?> changeProfilePic(HttpServletRequest request, UserProfileDto userProfileDto) throws IOException;
 
     ResponseEntity<?> getRegisteredUsers();
+
+    ResponseEntity<?> getAllUsersEligibleForTraining(Date paramDate, Integer paramAge);
+
 }

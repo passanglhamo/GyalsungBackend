@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.controllers.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,10 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+*/
 /**
  * @author Rajib Kumer Ghosh
  *
- */
+ *//*
+
 
 @RestController
 @RequestMapping("/notify")
@@ -31,3 +34,4 @@ public class NotificationInfoController {
         return ResponseEntity.ok(mapper.writeValueAsString(msg));
     }
 }
+*/

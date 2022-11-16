@@ -10,19 +10,22 @@ import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "not_notice_configuration")
-@AttributeOverride(name = "id", column = @Column(name = "notice_configuration_id"))
-public class NoticeConfiguration extends Auditable<Long, Long> {
+@Builder
+@EqualsAndHashCode
+@Entity(name = "notice_send_info")
+@AttributeOverride(name = "id", column = @Column(name = "notice_send_info_id"))
+public class SendNoticeInfo extends Auditable<Long, Long> {
+
+    //region private variables
+    @NotNull(message = "Year cannot be null.")
+    @Basic(optional = false)
+    @Column(name = "year", columnDefinition = "varchar(4)")
+    private String year;
 
     @NotNull(message = "Notice configuration name cannot be null.")
     @Basic(optional = false)
     @Column(name = "notice_name", columnDefinition = "varchar(255)")
     private String noticeName;
-
-    //@NotNull(message = "Notice configuration body cannot be null.")
-    //@Basic(optional = false)
-    @Column(name = "notice_body",columnDefinition = "varchar(255)")
-    private String noticeBody;
 
     @Basic(optional = false)
     @Column(name = "class_id", columnDefinition = "char(2)")
@@ -39,6 +42,16 @@ public class NoticeConfiguration extends Auditable<Long, Long> {
     @Basic(optional = false)
     @Column(name = "send_email")
     private Boolean sendEmail;
+    //endregion
+
+    //region setters and getters
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
 
     public String getNoticeName() {
         return noticeName;
@@ -46,14 +59,6 @@ public class NoticeConfiguration extends Auditable<Long, Long> {
 
     public void setNoticeName(String noticeName) {
         this.noticeName = noticeName;
-    }
-
-    public String getNoticeBody() {
-        return noticeBody;
-    }
-
-    public void setNoticeBody(String noticeBody) {
-        this.noticeBody = noticeBody;
     }
 
     public String getClassId() {
@@ -87,4 +92,5 @@ public class NoticeConfiguration extends Auditable<Long, Long> {
     public void setSendEmail(Boolean sendEmail) {
         this.sendEmail = sendEmail;
     }
+    //endregion
 }

@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.entities;
 
 import lombok.*;
@@ -7,10 +8,12 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+*/
 /**
  * @author Rajib Kumer Ghosh
  *
- */
+ *//*
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,3 +48,4 @@ public class NotificationInfo extends Auditable<Long, Long> {
     @Column(name = "STATUS")
     private String status;
 }
+*/
