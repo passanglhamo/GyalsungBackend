@@ -15,16 +15,15 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode
 @Entity(name = "tms_notice_configuration")
 @AttributeOverride(name = "id", column = @Column(name = "notice_configuration_id"))
-public class NoticeConfiguration extends Auditable<Long,Long>{
-
+public class NoticeConfiguration extends Auditable<Long, Long> {
 
     @NotNull(message = "Notice configuration name cannot be null.")
     @Basic(optional = false)
-    @Column(name = "notice_name",columnDefinition = "varchar(255)")
+    @Column(name = "notice_name", columnDefinition = "varchar(255)")
     private String noticeName;
 
     @Basic(optional = false)
-    @Column(name = "class_id",columnDefinition = "char(2)")
+    @Column(name = "class_id", columnDefinition = "char(2)")
     private String classId;
 
     @Basic(optional = false)
