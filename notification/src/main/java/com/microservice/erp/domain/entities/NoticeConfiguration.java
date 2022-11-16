@@ -10,10 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-@Builder
-@EqualsAndHashCode
-@Entity(name = "tms_notice_configuration")
+@Entity(name = "not_notice_configuration")
 @AttributeOverride(name = "id", column = @Column(name = "notice_configuration_id"))
 public class NoticeConfiguration extends Auditable<Long,Long>{
 
@@ -22,6 +19,11 @@ public class NoticeConfiguration extends Auditable<Long,Long>{
     @Basic(optional = false)
     @Column(name = "notice_name",columnDefinition = "varchar(255)")
     private String noticeName;
+
+    //@NotNull(message = "Notice configuration body cannot be null.")
+    //@Basic(optional = false)
+    @Column(name = "notice_body",columnDefinition = "varchar(255)")
+    private String noticeBody;
 
     @Basic(optional = false)
     @Column(name = "class_id",columnDefinition = "char(2)")
@@ -39,4 +41,51 @@ public class NoticeConfiguration extends Auditable<Long,Long>{
     @Column(name = "send_email")
     private Boolean sendEmail;
 
+    public String getNoticeName() {
+        return noticeName;
+    }
+
+    public void setNoticeName(String noticeName) {
+        this.noticeName = noticeName;
+    }
+
+    public String getNoticeBody() {
+        return noticeBody;
+    }
+
+    public void setNoticeBody(String noticeBody) {
+        this.noticeBody = noticeBody;
+    }
+
+    public String getClassId() {
+        return classId;
+    }
+
+    public void setClassId(String classId) {
+        this.classId = classId;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Boolean getSendSms() {
+        return sendSms;
+    }
+
+    public void setSendSms(Boolean sendSms) {
+        this.sendSms = sendSms;
+    }
+
+    public Boolean getSendEmail() {
+        return sendEmail;
+    }
+
+    public void setSendEmail(Boolean sendEmail) {
+        this.sendEmail = sendEmail;
+    }
 }
