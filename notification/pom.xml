@@ -263,7 +263,13 @@
         </dependency>
         <!--        mail sender end-->
 
-
+        <!-- Mail start-->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        <!-- Mail end-->
         <!--fileupload start-->
         <dependency>
             <groupId>commons-io</groupId>

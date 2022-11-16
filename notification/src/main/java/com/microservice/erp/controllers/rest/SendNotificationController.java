@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 @RestController
 @AllArgsConstructor
-@RequestMapping("/sendNotification")
+@RequestMapping("/notice")
 public class SendNotificationController {
     private ISendNotificationService iSendNotificationService;
 
