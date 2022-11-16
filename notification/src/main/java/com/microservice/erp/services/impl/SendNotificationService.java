@@ -32,9 +32,12 @@ public class SendNotificationService implements ISendNotificationService {
         //todo: logic to send notification
         //get all eligible users by date and age
         NoticeConfiguration noticeConfigurationDb = iNoticeConfigurationRepository.findById(noticeDto.getNoticeConfigurationId()).get();
+        SendNoticeInfo sendNoticeInfo = new ModelMapper().map(noticeConfigurationDb, SendNoticeInfo.class);
+        sendNoticeInfo.setYear(noticeDto.getYear());
+        sendNoticeInfoRepository.save(sendNoticeInfo);
+
         String paramDate = noticeDto.getYear() + "/12/31"; //converted to date 31st december and append selected year from UI
         Integer paramAge = noticeConfigurationDb.getAge();
-
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
@@ -42,13 +45,11 @@ public class SendNotificationService implements ISendNotificationService {
         String url = "http://localhost:81/api/user/profile/userProfile/getAllUsersEligibleForTraining?paramDate=" + paramDate + "&paramAge=" + paramAge;
         ResponseEntity<UserProfileDto[]> userDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserProfileDto[].class);
 
+        String smsBody = "";
+        String emailBody = "";
         for (UserProfileDto userProfileDto : Objects.requireNonNull(userDtoResponse.getBody())) {
             //todo: send email and sms
         }
-
-        SendNoticeInfo sendNoticeInfo = new ModelMapper().map(noticeConfigurationDb, SendNoticeInfo.class);
-        sendNoticeInfo.setYear(noticeDto.getYear());
-        sendNoticeInfoRepository.save(sendNoticeInfo);
         return ResponseEntity.ok("Notification sent successfully.");
     }
 }
