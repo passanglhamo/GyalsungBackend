@@ -45,6 +45,7 @@ public class SendNotificationService implements ISendNotificationService {
         String url = "http://localhost:81/api/user/profile/userProfile/getAllUsersEligibleForTraining?paramDate=" + paramDate + "&paramAge=" + paramAge;
         ResponseEntity<UserProfileDto[]> userDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserProfileDto[].class);
 
+        //todo:need to check message content, might need to get notice body from notice configuration, passang l will add notice body
         String smsBody = "";
         String emailBody = "";
         for (UserProfileDto userProfileDto : Objects.requireNonNull(userDtoResponse.getBody())) {
