@@ -1,13 +1,16 @@
+/*
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.repositories.INotificationInfoRepository;
 import com.microservice.erp.services.iServices.INotificationInfoService;
 import org.springframework.stereotype.Service;
 
+*/
 /**
  * @author Rajib Kumer Ghosh
  *
- */
+ *//*
+
 
 @Service
 public class NotificationInfoService implements INotificationInfoService {
@@ -29,3 +32,4 @@ public class NotificationInfoService implements INotificationInfoService {
         return msg;
     }
 }
+*/
