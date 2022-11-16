@@ -1,7 +1,8 @@
-package com.microservice.erp.services.impl.services;
+package com.microservice.erp.services.services;
+
 
 import com.microservice.erp.domain.entities.NoticeConfiguration;
-import com.microservice.erp.domain.repository.INoticeConfigurationRepository;
+import com.microservice.erp.domain.repositories.INoticeConfigurationRepository;
 import com.microservice.erp.services.iServices.ICreateNoticeConfigurationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
