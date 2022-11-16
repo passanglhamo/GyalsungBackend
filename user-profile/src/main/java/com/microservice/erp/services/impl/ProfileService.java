@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
@@ -403,6 +404,12 @@ public class ProfileService implements IProfileService {
     @Override
     public ResponseEntity<?> getRegisteredUsers() {
         List<UserInfo> userInfos = iUserInfoRepository.findAll();
+        return ResponseEntity.ok(userInfos);
+    }
+
+    @Override
+    public ResponseEntity<?> getAllUsersEligibleForTraining(Date paramDate, Integer paramAge) {
+        List<UserInfo> userInfos = iUserInfoRepository.getAllUsersEligibleForTraining(paramDate, paramAge);
         return ResponseEntity.ok(userInfos);
     }
 }

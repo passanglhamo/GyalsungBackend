@@ -4,5 +4,5 @@ import com.microservice.erp.domain.dto.NoticeDto;
 import org.springframework.http.ResponseEntity;
 
 public interface ISendNotificationService {
-    ResponseEntity<?> sendNotification(NoticeDto noticeDto);
+    ResponseEntity<?> sendNotification(String authHeader, NoticeDto noticeDto);
 }

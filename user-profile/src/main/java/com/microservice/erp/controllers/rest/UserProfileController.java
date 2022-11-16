@@ -13,7 +13,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.ParseException;
+import java.util.Date;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -129,6 +131,18 @@ public class UserProfileController {
     @GetMapping("/getRegisteredUsers")
     public ResponseEntity<?> getRegisteredUsers() {
         return iProfileService.getRegisteredUsers();
+    }
+
+    /**
+     * this api is used for sending notifications in notification service, Initial Notification,
+     * Reminder Notification and Final Notifications
+     *
+     * @return -- ResponseEntity<?>
+     */
+    @GetMapping("/getAllUsersEligibleForTraining")
+    public ResponseEntity<?> getAllUsersEligibleForTraining(@RequestParam("paramDate") Date paramDate
+            , @RequestParam("paramAge") Integer paramAge) {
+        return iProfileService.getAllUsersEligibleForTraining(paramDate, paramAge);
     }
 
 }
