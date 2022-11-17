@@ -5,4 +5,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface ISendNotificationService {
     ResponseEntity<?> sendNotification(String authHeader, NoticeDto noticeDto);
+
+    ResponseEntity<?> checkNoticeAlreadySentOrNot(String year, Long noticeConfigurationId);
 }

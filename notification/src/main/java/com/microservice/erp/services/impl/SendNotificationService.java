@@ -4,6 +4,7 @@ import com.microservice.erp.domain.dto.NoticeDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.NoticeConfiguration;
 import com.microservice.erp.domain.entities.SendNoticeInfo;
+import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.repositories.INoticeConfigurationRepository;
 import com.microservice.erp.domain.repositories.SendNoticeInfoRepository;
 import com.microservice.erp.services.iServices.ISendNotificationService;
@@ -18,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -27,13 +29,28 @@ public class SendNotificationService implements ISendNotificationService {
     private SendNoticeInfoRepository sendNoticeInfoRepository;
 
     @Override
+    public ResponseEntity<?> checkNoticeAlreadySentOrNot(String year, Long noticeConfigurationId) {
+        List<SendNoticeInfo> sendNoticeInfoDb = sendNoticeInfoRepository.findByNoticeConfigurationIdAndYear(noticeConfigurationId,year);
+        if (sendNoticeInfoDb.size() > 0) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Notification for the year " + year + " was already sent."));
+        }
+        return ResponseEntity.ok("");
+    }
+
     public ResponseEntity<?> sendNotification(String authHeader, NoticeDto noticeDto) {
 
         //todo: logic to send notification
         //get all eligible users by date and age
         NoticeConfiguration noticeConfigurationDb = iNoticeConfigurationRepository.findById(noticeDto.getNoticeConfigurationId()).get();
-        SendNoticeInfo sendNoticeInfo = new ModelMapper().map(noticeConfigurationDb, SendNoticeInfo.class);
+        SendNoticeInfo sendNoticeInfo = new SendNoticeInfo();
+        sendNoticeInfo.setNoticeConfigurationId(noticeDto.getNoticeConfigurationId());
         sendNoticeInfo.setYear(noticeDto.getYear());
+        sendNoticeInfo.setNoticeName(noticeConfigurationDb.getNoticeName());
+        sendNoticeInfo.setNoticeBody(noticeConfigurationDb.getNoticeBody());
+        sendNoticeInfo.setClassId(noticeConfigurationDb.getClassId());
+        sendNoticeInfo.setAge(noticeConfigurationDb.getAge());
+        sendNoticeInfo.setSendSms(noticeConfigurationDb.getSendSms());
+        sendNoticeInfo.setSendEmail(noticeConfigurationDb.getSendEmail());
         sendNoticeInfoRepository.save(sendNoticeInfo);
 
         String paramDate = noticeDto.getYear() + "/12/31"; //converted to date 31st december and append selected year from UI
