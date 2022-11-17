@@ -9,5 +9,6 @@ public class NoticeDto {
     //region private variables
     private Long noticeConfigurationId;
     private String year;
+    private String noticeName;
     //endregion
 }

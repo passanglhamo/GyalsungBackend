@@ -4,5 +4,7 @@ import com.microservice.erp.domain.dto.NoticeDto;
 import org.springframework.http.ResponseEntity;
 
 public interface ISendNotificationService {
-    ResponseEntity<?> sendNotification(String authHeader, NoticeDto noticeDto);
+    ResponseEntity<?> sendNotification(String authHeader, NoticeDto noticeDto) throws Exception;
+
+    ResponseEntity<?> checkNoticeAlreadySentOrNot(String year, Long noticeConfigurationId);
 }

@@ -17,6 +17,9 @@ import javax.validation.constraints.NotNull;
 public class SendNoticeInfo extends Auditable<Long, Long> {
 
     //region private variables
+    @NotNull()
+    @Column(name = "notice_configuration_id")
+    private Long noticeConfigurationId;
     @NotNull(message = "Year cannot be null.")
     @Basic(optional = false)
     @Column(name = "year", columnDefinition = "varchar(4)")
@@ -26,6 +29,9 @@ public class SendNoticeInfo extends Auditable<Long, Long> {
     @Basic(optional = false)
     @Column(name = "notice_name", columnDefinition = "varchar(255)")
     private String noticeName;
+
+    @Column(name = "notice_body", columnDefinition = "varchar(10000)")
+    private String noticeBody;
 
     @Basic(optional = false)
     @Column(name = "class_id", columnDefinition = "char(2)")
@@ -45,6 +51,15 @@ public class SendNoticeInfo extends Auditable<Long, Long> {
     //endregion
 
     //region setters and getters
+
+    public Long getNoticeConfigurationId() {
+        return noticeConfigurationId;
+    }
+
+    public void setNoticeConfigurationId(Long noticeConfigurationId) {
+        this.noticeConfigurationId = noticeConfigurationId;
+    }
+
     public String getYear() {
         return year;
     }
@@ -59,6 +74,14 @@ public class SendNoticeInfo extends Auditable<Long, Long> {
 
     public void setNoticeName(String noticeName) {
         this.noticeName = noticeName;
+    }
+
+    public String getNoticeBody() {
+        return noticeBody;
+    }
+
+    public void setNoticeBody(String noticeBody) {
+        this.noticeBody = noticeBody;
     }
 
     public String getClassId() {
@@ -92,5 +115,6 @@ public class SendNoticeInfo extends Auditable<Long, Long> {
     public void setSendEmail(Boolean sendEmail) {
         this.sendEmail = sendEmail;
     }
+
     //endregion
 }
