@@ -14,9 +14,6 @@ import java.util.Objects;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-@Builder
-@EqualsAndHashCode
 @Entity(name = "tms_medical_question_category")
 @AttributeOverride(name = "id", column = @Column(name = "medical_question_category_id"))
 public class MedicalQuestionCategory extends Auditable<Long, Long> {
@@ -31,4 +28,19 @@ public class MedicalQuestionCategory extends Auditable<Long, Long> {
     @Column(name = "status",columnDefinition = "char(1)")
     private String status;
 
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

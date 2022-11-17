@@ -15,9 +15,6 @@ import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-@Builder
-@EqualsAndHashCode
 @Entity(name = "tms_training_academy_capacity")
 @AttributeOverride(name = "id", column = @Column(name = "training_academy_capacity_id"))
 public class TrainingAcademyCapacity extends Auditable<Long, Long> {
@@ -48,4 +45,43 @@ public class TrainingAcademyCapacity extends Auditable<Long, Long> {
     @Column(name = "status")
     private String status;
 
+    public Integer getAcademyId() {
+        return academyId;
+    }
+
+    public void setAcademyId(Integer academyId) {
+        this.academyId = academyId;
+    }
+
+    public String getTrainingYear() {
+        return trainingYear;
+    }
+
+    public void setTrainingYear(String trainingYear) {
+        this.trainingYear = trainingYear;
+    }
+
+    public Integer getMaleCapacityAmount() {
+        return maleCapacityAmount;
+    }
+
+    public void setMaleCapacityAmount(Integer maleCapacityAmount) {
+        this.maleCapacityAmount = maleCapacityAmount;
+    }
+
+    public Integer getFemaleCapacityAmount() {
+        return femaleCapacityAmount;
+    }
+
+    public void setFemaleCapacityAmount(Integer femaleCapacityAmount) {
+        this.femaleCapacityAmount = femaleCapacityAmount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

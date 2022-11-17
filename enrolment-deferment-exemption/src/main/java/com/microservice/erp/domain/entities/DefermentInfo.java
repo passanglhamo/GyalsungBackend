@@ -34,7 +34,6 @@ public class DefermentInfo extends Auditable<Long, Long> {
     private Date fromDate = new java.sql.Date(new Date().getTime());
 
     @NotNull(message = "Till date cannot be null")
-    //@Future(message = "Till Date Of Schedule Must Be Greater Then Now")
     @Basic(optional = false)
     @Column(name = "to_date")
     @Temporal(TemporalType.DATE)
