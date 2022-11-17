@@ -4,7 +4,9 @@ import com.microservice.erp.domain.dto.NoticeDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.NoticeConfiguration;
 import com.microservice.erp.domain.entities.SendNoticeInfo;
+import com.microservice.erp.domain.helper.MailSender;
 import com.microservice.erp.domain.helper.MessageResponse;
+import com.microservice.erp.domain.helper.SmsSender;
 import com.microservice.erp.domain.repositories.INoticeConfigurationRepository;
 import com.microservice.erp.domain.repositories.SendNoticeInfoRepository;
 import com.microservice.erp.services.iServices.ISendNotificationService;
@@ -30,16 +32,15 @@ public class SendNotificationService implements ISendNotificationService {
 
     @Override
     public ResponseEntity<?> checkNoticeAlreadySentOrNot(String year, Long noticeConfigurationId) {
-        List<SendNoticeInfo> sendNoticeInfoDb = sendNoticeInfoRepository.findByNoticeConfigurationIdAndYear(noticeConfigurationId,year);
+        List<SendNoticeInfo> sendNoticeInfoDb = sendNoticeInfoRepository.findByNoticeConfigurationIdAndYear(noticeConfigurationId, year);
         if (sendNoticeInfoDb.size() > 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Notification for the year " + year + " was already sent."));
         }
         return ResponseEntity.ok("");
     }
 
-    public ResponseEntity<?> sendNotification(String authHeader, NoticeDto noticeDto) {
+    public ResponseEntity<?> sendNotification(String authHeader, NoticeDto noticeDto) throws Exception {
 
-        //todo: logic to send notification
         //get all eligible users by date and age
         NoticeConfiguration noticeConfigurationDb = iNoticeConfigurationRepository.findById(noticeDto.getNoticeConfigurationId()).get();
         SendNoticeInfo sendNoticeInfo = new SendNoticeInfo();
@@ -62,11 +63,13 @@ public class SendNotificationService implements ISendNotificationService {
         String url = "http://localhost:81/api/user/profile/userProfile/getAllUsersEligibleForTraining?paramDate=" + paramDate + "&paramAge=" + paramAge;
         ResponseEntity<UserProfileDto[]> userDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserProfileDto[].class);
 
-        //todo:need to check message content, might need to get notice body from notice configuration, passang l will add notice body
-        String smsBody = "";
-        String emailBody = "";
         for (UserProfileDto userProfileDto : Objects.requireNonNull(userDtoResponse.getBody())) {
-            //todo: send email and sms
+            String smsBody = noticeConfigurationDb.getNoticeBody();
+            String emailBody = "Dear " + userProfileDto.getFullName() + ", " + noticeConfigurationDb.getNoticeBody();
+
+            SmsSender.sendSms(userProfileDto.getMobileNo(), smsBody);
+            String subject = noticeConfigurationDb.getNoticeName();
+            MailSender.sendMail(userProfileDto.getEmail(), null, null, emailBody, subject);
         }
         return ResponseEntity.ok("Notification sent successfully.");
     }

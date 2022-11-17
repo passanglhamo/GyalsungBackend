@@ -21,7 +21,7 @@ public class SendNotificationController {
     }
 
     @PostMapping(value = "/sendNotification")
-    public ResponseEntity<?> sendNotification(@RequestHeader("Authorization") String authHeader, @RequestBody NoticeDto noticeDto) {
+    public ResponseEntity<?> sendNotification(@RequestHeader("Authorization") String authHeader, @RequestBody NoticeDto noticeDto) throws Exception {
         return iSendNotificationService.sendNotification(authHeader, noticeDto);
     }
 }
