@@ -1,4 +1,4 @@
-package com.microservice.erp.controllers.rest.enrolment;
+package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
@@ -22,11 +22,17 @@ public class EnrolmentController {
 
     private IEnrolmentInfoService iEnrolmentInfoService;
 
+    @RequestMapping(value = "/getRegistrationDateInfo", method = RequestMethod.GET)
+    public ResponseEntity<?> getRegistrationDateInfo() {
+        return iEnrolmentInfoService.getRegistrationDateInfo();
+    }
+
     @RequestMapping(value = "/downloadParentConsentForm", method = RequestMethod.GET)
     public ResponseEntity<?> downloadFile(@RequestParam("url") String url) {
         FileSystemResource file = new FileSystemResource(new File(url));
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
+
     @PostMapping(value = "/save", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> save(HttpServletRequest request, @ModelAttribute EnrolmentDto enrolmentDto) throws ParseException, IOException {
         return iEnrolmentInfoService.save(request, enrolmentDto);

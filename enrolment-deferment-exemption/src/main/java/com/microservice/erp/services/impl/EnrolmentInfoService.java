@@ -1,9 +1,11 @@
-package com.microservice.erp.services.impl.enrolment;
+package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
+import com.microservice.erp.domain.entities.RegistrationDateInfo;
 import com.microservice.erp.domain.mapper.enrolment.EnrolmentMapper;
 import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.domain.helper.MessageResponse;
+import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,13 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     private IEnrolmentInfoRepository iEnrolmentInfoRepository;
     private final EnrolmentMapper enrolmentMapper;
+    private final IRegistrationDateInfoRepository iRegistrationDateInfoRepository;
+
+    @Override
+    public ResponseEntity<?> getRegistrationDateInfo() {
+        RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus('A');
+        return ResponseEntity.ok(registrationDateInfo);
+    }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
@@ -33,4 +42,5 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
         return ResponseEntity.ok(new MessageResponse("Enrolled successfully."));
     }
+
 }

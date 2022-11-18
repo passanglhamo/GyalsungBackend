@@ -23,6 +23,7 @@ public class MedicalBookingListDao extends BaseDao {
     }
 
 
+
     @Transactional
     public List<MedicalBookingListDto> getAllBookingDateByHospitalIdAndYear(BigInteger hospitalId, BigInteger year) {
         String sqlQuery = environment.getProperty("CommonDao.getAllBookingDateByHospitalIdAndYear");

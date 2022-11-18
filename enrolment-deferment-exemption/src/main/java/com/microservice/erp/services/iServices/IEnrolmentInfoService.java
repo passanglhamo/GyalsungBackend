@@ -14,4 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 public interface IEnrolmentInfoService {
 
     ResponseEntity<?> save(HttpServletRequest request, EnrolmentDto enrolmentDto);
+
+    ResponseEntity<?> getRegistrationDateInfo();
 }
