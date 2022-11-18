@@ -22,9 +22,9 @@ public class EnrolmentController {
 
     private IEnrolmentInfoService iEnrolmentInfoService;
 
-    @RequestMapping(value = "/getActiveRegistrationInfo", method = RequestMethod.GET)
-    public ResponseEntity<?> getActiveRegistrationInfo() {
-        return iEnrolmentInfoService.getActiveRegistrationInfo();
+    @RequestMapping(value = "/getRegistrationDateInfo", method = RequestMethod.GET)
+    public ResponseEntity<?> getRegistrationDateInfo() {
+        return iEnrolmentInfoService.getRegistrationDateInfo();
     }
 
     @RequestMapping(value = "/downloadParentConsentForm", method = RequestMethod.GET)

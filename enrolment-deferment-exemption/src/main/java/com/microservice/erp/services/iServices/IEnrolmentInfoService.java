@@ -15,5 +15,5 @@ public interface IEnrolmentInfoService {
 
     ResponseEntity<?> save(HttpServletRequest request, EnrolmentDto enrolmentDto);
 
-    ResponseEntity<?> getActiveRegistrationInfo();
+    ResponseEntity<?> getRegistrationDateInfo();
 }

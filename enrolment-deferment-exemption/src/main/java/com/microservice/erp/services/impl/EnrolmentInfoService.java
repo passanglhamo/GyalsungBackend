@@ -27,7 +27,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     private final IRegistrationDateInfoRepository iRegistrationDateInfoRepository;
 
     @Override
-    public ResponseEntity<?> getActiveRegistrationInfo() {
+    public ResponseEntity<?> getRegistrationDateInfo() {
         RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus('A');
         return ResponseEntity.ok(registrationDateInfo);
     }
