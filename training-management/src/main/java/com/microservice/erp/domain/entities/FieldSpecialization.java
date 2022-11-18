@@ -15,9 +15,6 @@ import java.util.Objects;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-@Builder
-@EqualsAndHashCode
 @Entity(name = "tms_field_specialization")
 @AttributeOverride(name = "id", column = @Column(name = "field_specialization_id"))
 public class FieldSpecialization extends Auditable<Long, Long> {
@@ -40,4 +37,35 @@ public class FieldSpecialization extends Auditable<Long, Long> {
     @Column(name = "status",columnDefinition = "char(1)")
     private Character status;
 
+    public String getFieldSpecName() {
+        return fieldSpecName;
+    }
+
+    public void setFieldSpecName(String fieldSpecName) {
+        this.fieldSpecName = fieldSpecName;
+    }
+
+    public Boolean getMathRequired() {
+        return mathRequired;
+    }
+
+    public void setMathRequired(Boolean mathRequired) {
+        this.mathRequired = mathRequired;
+    }
+
+    public Boolean getDefaultCourse() {
+        return defaultCourse;
+    }
+
+    public void setDefaultCourse(Boolean defaultCourse) {
+        this.defaultCourse = defaultCourse;
+    }
+
+    public Character getStatus() {
+        return status;
+    }
+
+    public void setStatus(Character status) {
+        this.status = status;
+    }
 }

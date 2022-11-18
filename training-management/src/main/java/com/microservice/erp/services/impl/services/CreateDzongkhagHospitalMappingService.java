@@ -27,6 +27,6 @@ public class CreateDzongkhagHospitalMappingService implements ICreateDzongkhagHo
 
         repository.save(dzongkhagHospitalMapping);
 
-        return ResponseEntity.ok(new MessageResponse("Data saved successfully"));
+        return ResponseEntity.ok(new MessageResponse("Dzongkhag and hospital mapped successfully"));
     }
 }
