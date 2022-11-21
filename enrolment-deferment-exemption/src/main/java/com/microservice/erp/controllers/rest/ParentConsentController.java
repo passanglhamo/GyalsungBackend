@@ -1,4 +1,4 @@
-package com.microservice.erp.controllers.rest.parentConsent;
+package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.parentConsent.ParentConsentDto;
 import com.microservice.erp.services.iServices.parentConsent.IParentConsentService;

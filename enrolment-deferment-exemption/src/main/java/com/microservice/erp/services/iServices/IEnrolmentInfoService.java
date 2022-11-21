@@ -7,13 +7,9 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * @author Rajib Kumer Ghosh
- */
-
 public interface IEnrolmentInfoService {
 
-    ResponseEntity<?> save(HttpServletRequest request, EnrolmentDto enrolmentDto);
-
     ResponseEntity<?> getRegistrationDateInfo();
+    ResponseEntity<?> saveEnrolment(HttpServletRequest request, EnrolmentDto enrolmentDto);
+
 }

@@ -14,5 +14,5 @@ import java.util.List;
 @Getter
 public class EnrolmentDto {
     private Long userId;
-    private MultipartFile[] enrolmentInfoFiles;
+    private List<EnrolmentCourses> enrolmentCourses;
 }

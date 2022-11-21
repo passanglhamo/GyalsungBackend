@@ -33,9 +33,9 @@ public class EnrolmentController {
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @PostMapping(value = "/save", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> save(HttpServletRequest request, @ModelAttribute EnrolmentDto enrolmentDto) throws ParseException, IOException {
-        return iEnrolmentInfoService.save(request, enrolmentDto);
+    @PostMapping(value = "/saveEnrolment")
+    public ResponseEntity<?> saveEnrolment(HttpServletRequest request, @RequestBody EnrolmentDto enrolmentDto) {
+        return iEnrolmentInfoService.saveEnrolment(request, enrolmentDto);
     }
 
 }
