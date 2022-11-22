@@ -11,7 +11,7 @@ public class MedicalBookingDto {
     private Long userId;
     private Long hospitalId;
     private Long dzongkhagId;
-//    private String appointmentDate;
+    //    private String appointmentDate;
     private Long scheduleTimeId;
-     private List<MedicalQuestionDto> medicalQuestionDtos;
+    private List<MedicalQuestionDto> medicalQuestionDtos;
 }

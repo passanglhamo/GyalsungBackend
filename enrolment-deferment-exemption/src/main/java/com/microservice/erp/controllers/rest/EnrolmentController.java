@@ -5,14 +5,11 @@ import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -34,8 +31,8 @@ public class EnrolmentController {
     }
 
     @PostMapping(value = "/saveEnrolment")
-    public ResponseEntity<?> saveEnrolment(HttpServletRequest request, @RequestBody EnrolmentDto enrolmentDto) {
-        return iEnrolmentInfoService.saveEnrolment(request, enrolmentDto);
+    public ResponseEntity<?> saveEnrolment(@RequestBody EnrolmentDto enrolmentDto) {
+        return iEnrolmentInfoService.saveEnrolment(enrolmentDto);
     }
 
 }

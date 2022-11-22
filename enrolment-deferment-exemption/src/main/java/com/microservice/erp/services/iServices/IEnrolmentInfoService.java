@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface IEnrolmentInfoService {
 
     ResponseEntity<?> getRegistrationDateInfo();
-    ResponseEntity<?> saveEnrolment(HttpServletRequest request, EnrolmentDto enrolmentDto);
+
+    ResponseEntity<?> saveEnrolment(EnrolmentDto enrolmentDto);
 
 }
