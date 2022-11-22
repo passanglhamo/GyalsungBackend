@@ -1,7 +1,5 @@
 package com.microservice.erp.domain.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.microservice.erp.domain.helper.DateHandler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +7,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.util.Date;
 
 @Getter
@@ -16,12 +15,12 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EnlistmentScheduleDto {
-    private Long id;
-    @JsonDeserialize(using = DateHandler.class)
+    private BigInteger id;
+    //@JsonDeserialize(using = DateHandler.class)
     @NotNull
     @NotEmpty
     private Date fromDate;
-    @JsonDeserialize(using = DateHandler.class)
+    //@JsonDeserialize(using = DateHandler.class)
     @NotNull
     @NotEmpty
     private Date toDate;

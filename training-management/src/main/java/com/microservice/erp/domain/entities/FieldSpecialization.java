@@ -7,6 +7,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.util.Objects;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity(name = "tms_field_specialization")
 @AttributeOverride(name = "id", column = @Column(name = "field_specialization_id"))
-public class FieldSpecialization extends Auditable<Long, Long> {
+public class FieldSpecialization extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)
     @NotNull(message = "Particular cannot be null")

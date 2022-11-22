@@ -7,6 +7,7 @@ import com.microservice.erp.services.iServices.IReadMedicalCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -16,7 +17,7 @@ public class ReadMedicalCategoryService implements IReadMedicalCategoryService {
     private final IMedicalQuestionCategoryRepository repository;
 
     @Override
-    public MedicalQuestionCategory getAllMedicalCategoriesById(Long id) {
+    public MedicalQuestionCategory getAllMedicalCategoriesById(BigInteger id) {
         return repository.findById(id).get();
     }
 

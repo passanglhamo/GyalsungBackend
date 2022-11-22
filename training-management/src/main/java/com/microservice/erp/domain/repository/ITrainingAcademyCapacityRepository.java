@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  */
 
 @Repository
-public interface ITrainingAcademyCapacityRepository extends JpaRepository<TrainingAcademyCapacity, Long> {
+public interface ITrainingAcademyCapacityRepository extends JpaRepository<TrainingAcademyCapacity, BigInteger> {
     TrainingAcademyCapacity findByTrainingYear(String trainingYear);
 
     List<TrainingAcademyCapacity> findAll();

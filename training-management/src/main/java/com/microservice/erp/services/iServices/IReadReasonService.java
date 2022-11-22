@@ -2,6 +2,7 @@ package com.microservice.erp.services.iServices;
 
 import com.microservice.erp.domain.entities.Reason;
 
+import java.math.BigInteger;
 import java.util.List;
 
 public interface IReadReasonService {
@@ -9,5 +10,5 @@ public interface IReadReasonService {
 
     List<Reason> getAllReasonByStatus(String status);
 
-    Reason getAllReasonById(Long id);
+    Reason getAllReasonById(BigInteger id);
 }

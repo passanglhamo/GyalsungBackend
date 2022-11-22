@@ -6,6 +6,7 @@ import com.microservice.erp.services.iServices.IReadReasonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -24,7 +25,7 @@ public class ReadReasonService implements IReadReasonService {
     }
 
     @Override
-    public Reason getAllReasonById(Long id) {
+    public Reason getAllReasonById(BigInteger id) {
         return repository.findById(id).get();
     }
 

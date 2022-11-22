@@ -4,11 +4,13 @@ import com.microservice.erp.domain.dto.EnlistmentScheduleDto;
 import com.microservice.erp.domain.entities.EnlistmentSchedule;
 import com.microservice.erp.services.iServices.ICreateEnlistmentScheduleService;
 import com.microservice.erp.services.iServices.IReadEnlistmentScheduleService;
+import com.microservice.erp.services.iServices.IUpdateEnlistmentScheduleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class EnlistmentScheduleController {
 
     private final ICreateEnlistmentScheduleService service;
     private final IReadEnlistmentScheduleService readService;
+    private final IUpdateEnlistmentScheduleService updateService;
 
     @PostMapping
     public ResponseEntity<?> saveEnlistment(@RequestBody EnlistmentScheduleDto enlistmentScheduleDto)
@@ -34,8 +37,15 @@ public class EnlistmentScheduleController {
     }
 
     @GetMapping("/getEnlistmentScheduleById")
-    public EnlistmentSchedule getEnlistmentScheduleById(@RequestParam("id") Long id) {
+    public EnlistmentSchedule getEnlistmentScheduleById(@RequestParam("id") BigInteger id) {
         return readService.getEnlistmentScheduleById(id);
+    }
+
+    @PutMapping("/updateEnlistmentSchedule/{id}")
+    public ResponseEntity<?> updateEnlistment(@PathVariable BigInteger id,@RequestBody EnlistmentScheduleDto enlistmentScheduleDto)
+            throws IOException, ParseException {
+
+        return updateService.updateEnlistmentSchedule(enlistmentScheduleDto);
     }
 
 }

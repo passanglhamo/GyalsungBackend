@@ -6,6 +6,7 @@ import com.microservice.erp.services.iServices.IReadEnlistmentScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -21,7 +22,7 @@ public class ReadEnlistmentScheduleService implements IReadEnlistmentScheduleSer
 
 
     @Override
-    public EnlistmentSchedule getEnlistmentScheduleById(Long id) {
+    public EnlistmentSchedule getEnlistmentScheduleById(BigInteger id) {
         return repository.findById(id).get();
     }
 }

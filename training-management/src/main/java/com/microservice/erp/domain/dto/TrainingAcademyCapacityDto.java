@@ -7,13 +7,14 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class TrainingAcademyCapacityDto {
-    private Long id;
+    private BigInteger id;
     @NotNull
     private Integer academyId;
     @NotNull
@@ -27,7 +28,7 @@ public class TrainingAcademyCapacityDto {
     private String status;
 
     public static TrainingAcademyCapacityDto withId(
-            Long id,
+            BigInteger id,
             Integer academyId,
             String trainingYear,
             Integer maleCapacityAmount,

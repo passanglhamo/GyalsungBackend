@@ -24,7 +24,7 @@ public class HospitalScheduleDate extends Auditable<Long, Long> {
     @NotNull(message = "Appointment date cannot be null")
     @Basic(optional = false)
     @Column(name = "appointment_date")
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date appointmentDate = new java.sql.Date(new Date().getTime());
 
     @NotNull

@@ -6,6 +6,7 @@ import com.microservice.erp.services.iServices.IReadMedicalQuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -19,7 +20,7 @@ public class ReadMedicalQuestionService implements IReadMedicalQuestionService {
     }
 
     @Override
-    public MedicalQuestionnaire getAllMedicalQuestionnaireById(Long id) {
+    public MedicalQuestionnaire getAllMedicalQuestionnaireById(BigInteger id) {
         return repository.findById(id).get();
     }
 }

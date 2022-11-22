@@ -7,12 +7,13 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "not_notice_configuration")
 @AttributeOverride(name = "id", column = @Column(name = "notice_configuration_id"))
-public class NoticeConfiguration extends Auditable<Long, Long> {
+public class NoticeConfiguration extends Auditable<BigInteger, Long> {
 
     @NotNull(message = "Notice configuration name cannot be null.")
     @Basic(optional = false)

@@ -7,6 +7,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 
 /**
  * @author Rajib Kumer Ghosh
@@ -14,12 +15,9 @@ import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-@Builder
-@EqualsAndHashCode
 @Entity(name = "tms_medical_questionnaire")
 @AttributeOverride(name = "id", column = @Column(name = "medical_questionnaire_id"))
-public class MedicalQuestionnaire extends Auditable<Long, Long> {
+public class MedicalQuestionnaire extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)
     @NotNull(message = "Medical Questionnaire cannot be null.")
@@ -35,5 +33,30 @@ public class MedicalQuestionnaire extends Auditable<Long, Long> {
     @Basic(optional = false)
     @Column(name = "status",columnDefinition = "char(1)")
     private String status;
+
+    public String getMedicalQuestionName() {
+        return medicalQuestionName;
+    }
+
+    public void setMedicalQuestionName(String medicalQuestionName) {
+        this.medicalQuestionName = medicalQuestionName;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
 
 }

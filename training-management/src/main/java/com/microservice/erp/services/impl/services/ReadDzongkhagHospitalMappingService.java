@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -25,7 +26,7 @@ public class ReadDzongkhagHospitalMappingService implements IReadDzongkhagHospit
     }
 
     @Override
-    public DzongkhagHospitalMapping getAllDzongkhagHospitalById(Long id) {
+    public DzongkhagHospitalMapping getAllDzongkhagHospitalById(BigInteger id) {
         return repository.findById(id).get();
     }
 

@@ -7,6 +7,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +20,7 @@ public class SendNoticeInfo extends Auditable<Long, Long> {
     //region private variables
     @NotNull()
     @Column(name = "notice_configuration_id")
-    private Long noticeConfigurationId;
+    private BigInteger noticeConfigurationId;
     @NotNull(message = "Year cannot be null.")
     @Basic(optional = false)
     @Column(name = "year", columnDefinition = "varchar(4)")
@@ -52,11 +53,12 @@ public class SendNoticeInfo extends Auditable<Long, Long> {
 
     //region setters and getters
 
-    public Long getNoticeConfigurationId() {
+
+    public BigInteger getNoticeConfigurationId() {
         return noticeConfigurationId;
     }
 
-    public void setNoticeConfigurationId(Long noticeConfigurationId) {
+    public void setNoticeConfigurationId(BigInteger noticeConfigurationId) {
         this.noticeConfigurationId = noticeConfigurationId;
     }
 

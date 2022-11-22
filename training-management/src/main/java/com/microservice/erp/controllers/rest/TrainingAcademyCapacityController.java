@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Collection;
 
@@ -33,7 +34,7 @@ public class TrainingAcademyCapacityController {
     }
 
     @GetMapping("/getAllTrainingAcaCapById")
-    public TrainingAcademyCapacity getAllTrainingAcaCapById(@RequestParam("id") Long id) {
+    public TrainingAcademyCapacity getAllTrainingAcaCapById(@RequestParam("id") BigInteger id) {
         return readService.getAllTrainingAcaCapById(id);
     }
 }

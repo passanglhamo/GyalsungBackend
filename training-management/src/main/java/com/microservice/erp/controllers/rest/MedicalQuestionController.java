@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigInteger;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,7 @@ public class MedicalQuestionController {
     }
 
     @GetMapping("/getAllMedicalQuestionnaireById")
-    public MedicalQuestionnaire getAllMedicalQuestionnaireById(@RequestParam("id") Long id) {
+    public MedicalQuestionnaire getAllMedicalQuestionnaireById(@RequestParam("id") BigInteger id) {
         return readService.getAllMedicalQuestionnaireById(id);
     }
 }

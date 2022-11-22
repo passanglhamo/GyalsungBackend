@@ -8,6 +8,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 
 /**
  * @author Rajib Kumer Ghosh
@@ -17,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Entity(name = "tms_training_academy_capacity")
 @AttributeOverride(name = "id", column = @Column(name = "training_academy_capacity_id"))
-public class TrainingAcademyCapacity extends Auditable<Long, Long> {
+public class TrainingAcademyCapacity extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)
     @NotNull(message = "Name must not be null")

@@ -6,6 +6,7 @@ import com.microservice.erp.services.iServices.IReadNoticeConfigurationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -15,7 +16,7 @@ public class ReadNoticeConfigurationService implements IReadNoticeConfigurationS
     private final INoticeConfigurationRepository repository;
 
     @Override
-    public NoticeConfiguration getAllNoticeConfigurationById(Long id) {
+    public NoticeConfiguration getAllNoticeConfigurationById(BigInteger id) {
         return repository.findById(id).get();
     }
 

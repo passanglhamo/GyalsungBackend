@@ -6,6 +6,7 @@ import com.microservice.erp.services.iServices.IReadTrainingAcademyCapacityServi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -18,7 +19,7 @@ public class ReadTrainingAcademyCapacityService implements IReadTrainingAcademyC
     }
 
     @Override
-    public TrainingAcademyCapacity getAllTrainingAcaCapById(Long id) {
+    public TrainingAcademyCapacity getAllTrainingAcaCapById(BigInteger id) {
         return repository.findById(id).get();
     }
 }
