@@ -15,6 +15,8 @@ public class EnrolmentInfo extends Auditable<Long, Long> {
     @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "year")
+    private String year;
     @Column(name = "training_academy_id")
     private Integer trainingAcademyId;
 
@@ -39,12 +41,21 @@ public class EnrolmentInfo extends Auditable<Long, Long> {
     //endregion
 
     //region setters and getters
+
     public Long getUserId() {
         return userId;
     }
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
 
     public Integer getTrainingAcademyId() {
@@ -86,5 +97,6 @@ public class EnrolmentInfo extends Auditable<Long, Long> {
     public void setEnrolmentCoursePreferences(Set<EnrolmentCoursePreference> enrolmentCoursePreferences) {
         this.enrolmentCoursePreferences = enrolmentCoursePreferences;
     }
+
     //endregion
 }

@@ -11,17 +11,20 @@ import java.util.List;
 @NoArgsConstructor
 public class EnrolmentDto {
     private Long userId;
+    private String year;
     private Character status;
     private Date enrolledOn;
     private List<EnrolmentCoursesDto> enrolmentCoursesDtos;
 
     public static EnrolmentDto withId(
             Long userId,
+            String year,
             Character status,
             Date enrolledOn,
             List<EnrolmentCoursesDto> enrolmentCoursesDtos) {
         return new EnrolmentDto(
                 userId,
+                year,
                 status,
                 enrolledOn,
                 enrolmentCoursesDtos

@@ -40,11 +40,11 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         if (enrolmentInfoDb != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("You have already enrolled."));
         }
+        RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus('A');
+        enrolmentDto.setYear(registrationDateInfo.getRegistrationYear());
         enrolmentDto.setStatus('P');//P=Pending, D=Deferred, E=Exempted, A=Approved, which means training academy allocated
         enrolmentDto.setEnrolledOn(new Date());
-        var enrolmentInfo = iEnrolmentInfoRepository.save(
-                enrolmentMapper.mapToEntity(enrolmentDto)
-        );
+        var enrolmentInfo = iEnrolmentInfoRepository.save(enrolmentMapper.mapToEntity(enrolmentDto));
         iEnrolmentInfoRepository.save(enrolmentInfo);
         return ResponseEntity.ok(new MessageResponse("Enrolled successfully."));
     }
