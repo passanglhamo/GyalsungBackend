@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.entities;
 
 
@@ -6,9 +7,11 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+*/
 /**
  * @author Rajib Kumer Ghosh
- */
+ *//*
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,3 +46,4 @@ public class EnrolmentFileInfo extends Auditable<Long, Long> {
     private EnrolmentInfo enrolment;
 
 }
+*/
