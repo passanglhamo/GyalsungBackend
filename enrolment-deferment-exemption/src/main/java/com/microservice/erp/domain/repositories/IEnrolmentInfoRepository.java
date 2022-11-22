@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @author Rajib Kumer Ghosh
- *
  */
 
 @Repository
 public interface IEnrolmentInfoRepository extends JpaRepository<EnrolmentInfo, Long> {
+    EnrolmentInfo findByUserId(Long userId);
 }
