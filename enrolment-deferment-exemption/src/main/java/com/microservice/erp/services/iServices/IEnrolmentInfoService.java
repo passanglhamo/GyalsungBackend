@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
 
 public interface IEnrolmentInfoService {
 
@@ -13,5 +14,6 @@ public interface IEnrolmentInfoService {
 
     ResponseEntity<?> saveEnrolment(EnrolmentDto enrolmentDto);
 
-    ResponseEntity<?> getEnrolmentListByYearAndCourseId(String authHeader, String year, String courseId);
+    ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId
+            , Integer coursePreferenceNumber);
 }

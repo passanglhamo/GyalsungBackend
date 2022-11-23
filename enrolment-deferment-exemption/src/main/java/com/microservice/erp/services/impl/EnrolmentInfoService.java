@@ -1,5 +1,7 @@
 package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dao.EnrolmentDao;
+import com.microservice.erp.domain.dto.EnrolmentListDto;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
@@ -10,11 +12,19 @@ import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -25,6 +35,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     private EnrolmentMapper enrolmentMapper;
     private final IRegistrationDateInfoRepository iRegistrationDateInfoRepository;
+    private EnrolmentDao enrolmentDao;
 
     @Override
     public ResponseEntity<?> getRegistrationDateInfo() {
@@ -50,7 +61,37 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     }
 
     @Override
-    public ResponseEntity<?> getEnrolmentListByYearAndCourseId(String authHeader, String year, String courseId) {
-        return null;
+    public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId,
+                                                                       Integer coursePreferenceNumber) {
+        List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, courseId
+                , coursePreferenceNumber);
+
+        List<EnrolmentListDto> enrolmentList = new ArrayList<>();
+        //to get user detail from m-user-service
+        enrolmentListDtos.forEach(item -> {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", authHeader);
+            HttpEntity<String> request = new HttpEntity<>(headers);
+            String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUser_id();
+            ResponseEntity<EnrolmentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, EnrolmentListDto.class);
+            EnrolmentListDto enrolmentListDto = new EnrolmentListDto();
+            enrolmentListDto.setUser_id(item.getUser_id());
+            enrolmentListDto.setFull_name(Objects.requireNonNull(response.getBody()).getFull_name());
+            enrolmentListDto.setCid(response.getBody().getCid());
+            enrolmentListDto.setDob(response.getBody().getDob());
+
+            enrolmentListDto.setEnrolment_id(item.getEnrolment_id());
+            enrolmentListDto.setEnrolled_on(item.getEnrolled_on());
+            enrolmentListDto.setRemarks(item.getRemarks());
+            enrolmentListDto.setStatus(item.getStatus());
+            enrolmentListDto.setTraining_academy_id(item.getTraining_academy_id());
+            enrolmentListDto.setYear(item.getYear());
+            enrolmentListDto.setPreference_number(item.getPreference_number());
+            enrolmentListDto.setCourse_id(item.getCourse_id());
+            enrolmentList.add(enrolmentListDto);
+        });
+
+        return ResponseEntity.ok(enrolmentList);
     }
 }
