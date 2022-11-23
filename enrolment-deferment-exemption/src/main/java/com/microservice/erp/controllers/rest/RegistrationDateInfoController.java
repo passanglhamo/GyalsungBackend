@@ -2,7 +2,7 @@ package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
 import com.microservice.erp.services.iServices.ICreateRegistrationDateInfoService;
-import com.microservice.erp.services.iServices.deferment.IReadRegistrationDateInfoService;
+import com.microservice.erp.services.iServices.IReadRegistrationDateInfoService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

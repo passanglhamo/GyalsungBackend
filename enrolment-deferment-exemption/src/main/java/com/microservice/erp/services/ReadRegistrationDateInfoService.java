@@ -2,7 +2,7 @@ package com.microservice.erp.services;
 
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
-import com.microservice.erp.services.iServices.deferment.IReadRegistrationDateInfoService;
+import com.microservice.erp.services.iServices.IReadRegistrationDateInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
