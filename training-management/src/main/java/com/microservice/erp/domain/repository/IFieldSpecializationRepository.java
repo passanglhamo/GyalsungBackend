@@ -8,14 +8,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.math.BigInteger;
 import java.util.List;
 
-/**
- * @author Rajib Kumer Ghosh
- */
-
 @Repository
 public interface IFieldSpecializationRepository extends JpaRepository<FieldSpecialization, BigInteger> {
     List<FieldSpecialization> findAllByStatusOrderByFieldSpecNameAsc(Character status);
 
     List<FieldSpecialization> findAllByMathRequiredOrderByFieldSpecNameAsc(boolean defaultCourse);
+
     List<FieldSpecialization> findAllByDefaultCourseOrderByFieldSpecNameAsc(boolean defaultCourse);
+    List<FieldSpecialization> findAllByOrderByFieldSpecNameAsc();
 }
