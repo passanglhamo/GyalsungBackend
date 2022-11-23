@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigInteger;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -89,7 +90,7 @@ public class UpdateExemptionService implements IUpdateExemptionService {
 
     }
 
-    private void sendEmailAndSms(String authHeader, Long userId, Character status) throws Exception {
+    private void sendEmailAndSms(String authHeader, BigInteger userId, Character status) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authHeader);
 

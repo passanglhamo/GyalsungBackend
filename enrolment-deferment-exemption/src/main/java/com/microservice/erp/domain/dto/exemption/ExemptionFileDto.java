@@ -2,9 +2,11 @@ package com.microservice.erp.domain.dto.exemption;
 
 import lombok.Data;
 
+import java.math.BigInteger;
+
 @Data(staticConstructor = "withId")
 public class ExemptionFileDto {
-    private final Long id;
+    private final BigInteger id;
 
     private final String filePath;
 

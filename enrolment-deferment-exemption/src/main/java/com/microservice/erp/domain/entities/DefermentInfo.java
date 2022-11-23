@@ -5,24 +5,24 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
 /**
  * @author Rajib Kumer Ghosh
- *
  */
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "ede_deferment_info")
 @AttributeOverride(name = "id", column = @Column(name = "deferment_id"))
-public class DefermentInfo extends Auditable<Long, Long> {
+public class DefermentInfo extends Auditable<BigInteger, Long> {
 
     @NotNull(message = "User id cannot be null")
     @Basic(optional = false)
     @Column(name = "user_id")
-    private Long userId;
+    private BigInteger userId;
 
 //    @NotNull
 //    @Basic(optional = false)
@@ -41,18 +41,18 @@ public class DefermentInfo extends Auditable<Long, Long> {
 
     @Basic(optional = false)
     @NotNull(message = "Reasons cannot be null")
-    @Column(name = "reason_id",columnDefinition = "varchar(255)")
-    private Long reasonId;
+    @Column(name = "reason_id", columnDefinition = "varchar(255)")
+    private BigInteger reasonId;
 
-    @Column(name = "approval_remarks",columnDefinition = "varchar(255)")
+    @Column(name = "approval_remarks", columnDefinition = "varchar(255)")
     private String approvalRemarks;
 
-    @Column(name = "remarks",columnDefinition = "varchar(255)")
+    @Column(name = "remarks", columnDefinition = "varchar(255)")
     private String remarks;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "status",columnDefinition = "char(1)")
+    @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
 
     @OneToMany(
@@ -63,11 +63,11 @@ public class DefermentInfo extends Auditable<Long, Long> {
     )
     private Set<DefermentFileInfo> files;
 
-    public Long getUserId() {
+    public BigInteger getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(BigInteger userId) {
         this.userId = userId;
     }
 
@@ -87,11 +87,11 @@ public class DefermentInfo extends Auditable<Long, Long> {
         this.toDate = toDate;
     }
 
-    public Long getReasonId() {
+    public BigInteger getReasonId() {
         return reasonId;
     }
 
-    public void setReasonId(Long reasonId) {
+    public void setReasonId(BigInteger reasonId) {
         this.reasonId = reasonId;
     }
 

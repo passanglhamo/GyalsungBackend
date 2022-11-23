@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 
@@ -19,9 +20,9 @@ import java.util.Date;
 @NoArgsConstructor
 public class ExemptionDto {
 
-    private Long id;
-    private Long userId;
-    private Long reasonId;
+    private BigInteger id;
+    private BigInteger userId;
+    private BigInteger reasonId;
     private String approvalRemarks;
     private Character status;
     private String remarks;
@@ -34,9 +35,9 @@ public class ExemptionDto {
     private String sex;
 
     public static ExemptionDto withId(
-            Long id,
-            Long userId,
-            Long reasonId,
+            BigInteger id,
+            BigInteger userId,
+            BigInteger reasonId,
             String approvalRemarks,
             Character status,
             String remarks,

@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.http.ResponseEntity;
 
 import javax.validation.Valid;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,6 +25,6 @@ public interface IUpdateExemptionService {
 
         private String remarks;
 
-        private List<Long> exemptionIds;
+        private List<BigInteger> exemptionIds;
     }
 }

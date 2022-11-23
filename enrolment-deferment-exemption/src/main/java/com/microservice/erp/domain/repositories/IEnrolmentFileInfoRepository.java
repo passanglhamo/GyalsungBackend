@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface IEnrolmentFileInfoRepository extends JpaRepository<EnrolmentFileInfo, Long> {
+public interface IEnrolmentFileInfoRepository extends JpaRepository<EnrolmentFileInfo, BigInteger> {
 }
 */

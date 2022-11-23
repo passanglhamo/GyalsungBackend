@@ -1,7 +1,5 @@
 package com.microservice.erp.domain.entities;
 
-import io.swagger.models.parameters.SerializableParameter;
-
 import javax.persistence.*;
 
 @MappedSuperclass

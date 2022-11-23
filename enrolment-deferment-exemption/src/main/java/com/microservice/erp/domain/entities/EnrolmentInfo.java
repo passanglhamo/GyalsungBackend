@@ -2,18 +2,19 @@ package com.microservice.erp.domain.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
 
 @Entity(name = "ede_enrolment_info")
 @AttributeOverride(name = "id", column = @Column(name = "enrolment_id"))
-public class EnrolmentInfo extends Auditable<Long, Long> {
+public class EnrolmentInfo extends Auditable<BigInteger, Long> {
 
     //region private variables
     @NotNull(message = "User id cannot be null")
     @Column(name = "user_id")
-    private Long userId;
+    private BigInteger userId;
 
     @Column(name = "year")
     private String year;
@@ -42,11 +43,11 @@ public class EnrolmentInfo extends Auditable<Long, Long> {
 
     //region setters and getters
 
-    public Long getUserId() {
+    public BigInteger getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(BigInteger userId) {
         this.userId = userId;
     }
 

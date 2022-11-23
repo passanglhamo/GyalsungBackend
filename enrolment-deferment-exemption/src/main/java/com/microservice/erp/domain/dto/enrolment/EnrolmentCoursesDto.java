@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 @Getter
@@ -13,14 +14,14 @@ import java.util.Date;
 @NoArgsConstructor
 public class EnrolmentCoursesDto {
     //region private variables
-    private Long courseId;
-    private Long userId;
+    private BigInteger courseId;
+    private BigInteger userId;
     private Integer preferenceNumber;
     //endregion
 
     public static EnrolmentCoursesDto withId(
-            Long courseId,
-            Long userId,
+            BigInteger courseId,
+            BigInteger userId,
             Integer preferenceNumber) {
         return new EnrolmentCoursesDto(
                 courseId, userId, preferenceNumber

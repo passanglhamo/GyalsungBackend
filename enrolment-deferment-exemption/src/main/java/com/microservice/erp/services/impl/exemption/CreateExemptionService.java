@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.math.BigInteger;
 import java.util.Objects;
 import java.util.Set;
 
@@ -56,7 +57,7 @@ public class CreateExemptionService implements ICreateExemptionService {
                 "                    \" Gyalsung pre-enlistment procedure"));
     }
 
-    private void sendEmailAndSms(String authTokenHeader, Long userId) throws Exception {
+    private void sendEmailAndSms(String authTokenHeader, BigInteger userId) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authTokenHeader);
 
@@ -72,6 +73,6 @@ public class CreateExemptionService implements ICreateExemptionService {
 
         MailSender.sendMail(Objects.requireNonNull(userResponse.getBody()).getEmail(), null, null, emailMessage, subject);
 
-        SmsSender.sendSms(Objects.requireNonNull(userResponse.getBody()).getMobileNo() , emailMessage);
+        SmsSender.sendSms(Objects.requireNonNull(userResponse.getBody()).getMobileNo(), emailMessage);
     }
 }

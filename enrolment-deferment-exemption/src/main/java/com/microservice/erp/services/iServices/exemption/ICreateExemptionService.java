@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.math.BigInteger;
 
 public interface ICreateExemptionService {
     ResponseEntity<?> saveExemption(HttpServletRequest request, CreateExemptionCommand command) throws Exception;
@@ -19,9 +20,9 @@ public interface ICreateExemptionService {
     @NoArgsConstructor
     class CreateExemptionCommand {
 
-        private Long id;
-        private Long userId;
-        private Long reasonId;
+        private BigInteger id;
+        private BigInteger userId;
+        private BigInteger reasonId;
         private String approvalRemarks;
         private Character status;
         private String remarks;

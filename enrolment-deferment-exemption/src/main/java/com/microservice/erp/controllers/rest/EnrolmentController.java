@@ -24,15 +24,19 @@ public class EnrolmentController {
         return iEnrolmentInfoService.getRegistrationDateInfo();
     }
 
-    @RequestMapping(value = "/downloadParentConsentForm", method = RequestMethod.GET)
-    public ResponseEntity<?> downloadFile(@RequestParam("url") String url) {
-        FileSystemResource file = new FileSystemResource(new File(url));
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
-    }
+//    @RequestMapping(value = "/downloadParentConsentForm", method = RequestMethod.GET)
+//    public ResponseEntity<?> downloadFile(@RequestParam("url") String url) {
+//        FileSystemResource file = new FileSystemResource(new File(url));
+//        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+//    }
 
     @PostMapping(value = "/saveEnrolment")
     public ResponseEntity<?> saveEnrolment(@RequestBody EnrolmentDto enrolmentDto) {
         return iEnrolmentInfoService.saveEnrolment(enrolmentDto);
     }
 
+//    @RequestMapping(value = "/getEnrolmentList", method = RequestMethod.GET)
+//    public ResponseEntity<?> getEnrolmentList(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") Long userId) {
+//        return iEnrolmentInfoService.saveEnrolment(authHeader);
+//     }
 }

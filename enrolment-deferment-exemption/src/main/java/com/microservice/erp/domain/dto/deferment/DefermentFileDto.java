@@ -1,6 +1,9 @@
 package com.microservice.erp.domain.dto.deferment;
 
 import lombok.Data;
+
+import java.math.BigInteger;
+
 /**
  * Created by : Passang Lhamo
  * Creation Date : 25/09/2022
@@ -8,7 +11,7 @@ import lombok.Data;
 @Data(staticConstructor = "withId")
 public class DefermentFileDto {
 
-    private final Long id;
+    private final BigInteger id;
 
     private final String filePath;
 

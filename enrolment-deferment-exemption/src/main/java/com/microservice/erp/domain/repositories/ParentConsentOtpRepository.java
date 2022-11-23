@@ -3,7 +3,9 @@ package com.microservice.erp.domain.repositories;
 import com.microservice.erp.domain.entities.ParentConsentOtp;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ParentConsentOtpRepository extends JpaRepository<ParentConsentOtp, Long> {
+import java.math.BigInteger;
 
-    ParentConsentOtp findByUserId(Long userId);
+public interface ParentConsentOtpRepository extends JpaRepository<ParentConsentOtp, BigInteger> {
+
+    ParentConsentOtp findByUserId(BigInteger userId);
 }

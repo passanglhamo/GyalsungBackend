@@ -10,18 +10,19 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "ede_parent_consent")
 @AttributeOverride(name = "id", column = @Column(name = "parent_consent_id"))
-public class ParentConsent extends Auditable<Long, Long> {
+public class ParentConsent extends Auditable<BigInteger, Long> {
 
     //region private variables
     @Basic(optional = false)
     @NotNull(message = "User Id not be null")
     @Column(name = "user_id")
-    private Long userId;
+    private BigInteger userId;
 
     @Basic(optional = false)
     @NotNull(message = "Parent/Guardian name not be null")
@@ -35,11 +36,12 @@ public class ParentConsent extends Auditable<Long, Long> {
     //endregion
 
     //region setters and getters
-    public Long getUserId() {
+
+    public BigInteger getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(BigInteger userId) {
         this.userId = userId;
     }
 
@@ -58,5 +60,6 @@ public class ParentConsent extends Auditable<Long, Long> {
     public void setGuardianMobileNo(String guardianMobileNo) {
         this.guardianMobileNo = guardianMobileNo;
     }
-    //endregion
+
+    // endregion
 }
