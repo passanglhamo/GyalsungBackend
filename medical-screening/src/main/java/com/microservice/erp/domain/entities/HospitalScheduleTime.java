@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -14,7 +15,7 @@ import java.util.Date;
 @Setter
 @Entity(name = "tms_hos_schedule_time")
 @AttributeOverride(name = "id", column = @Column(name = "hos_schedule_time_id"))
-public class HospitalScheduleTime extends Auditable<Long, Long> {
+public class HospitalScheduleTime extends Auditable<BigInteger, Long> {
 
     @NotNull(message = "Appointment start time cannot be null")
     @Basic(optional = false)
@@ -33,13 +34,13 @@ public class HospitalScheduleTime extends Auditable<Long, Long> {
     private Character bookStatus;
 
     @Column(name = "booked_by")//bookedBy=userId
-    private Long bookedBy;
+    private BigInteger bookedBy;
 
     @Column(name = "booked_date")
     private LocalDate bookedDate;
 
     @Column(name = "checkup_done_by")//checkUpDoneBy=userId which is doctor
-    private Long checkupDoneBy;
+    private BigInteger checkupDoneBy;
 
     @ManyToOne
     @JoinColumn(name = "hospital_schedule_date_id", nullable = false)

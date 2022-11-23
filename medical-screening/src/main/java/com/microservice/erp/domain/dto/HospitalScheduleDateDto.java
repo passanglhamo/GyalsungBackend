@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -14,15 +15,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HospitalScheduleDateDto {
-    private Long id;
-    private Long hospitalId;
+    private BigInteger id;
+    private BigInteger hospitalId;
     private Date appointmentDate;
     private List<HospitalScheduleTimeDto> hospitalScheduleTimeList;
     private Collection<HospitalScheduleTimeDto> hospitalScheduleTimeListDtos;
 
     public static HospitalScheduleDateDto withId(
-            Long id,
-            Long hospitalId,
+            BigInteger id,
+            BigInteger hospitalId,
             Date appointmentDate,
             List<HospitalScheduleTimeDto> hospitalScheduleTimeList,
             Collection<HospitalScheduleTimeDto> hospitalScheduleTimeListDtos) {

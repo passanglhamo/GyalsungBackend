@@ -6,7 +6,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "*")
+import java.math.BigInteger;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/medicalBooking")
@@ -19,7 +20,7 @@ public class MedicalBookingController {
     }
 
     @GetMapping(value = "/getMedicalAppointmentDetail")
-    public ResponseEntity<?> getMedicalAppointmentDetail(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") Long userId) {
+    public ResponseEntity<?> getMedicalAppointmentDetail(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") BigInteger userId) {
         return iMedicalBookingService.getMedicalAppointmentDetail(authHeader, userId);
     }
 
@@ -29,7 +30,7 @@ public class MedicalBookingController {
     }
 
     @GetMapping(value = "/getPreviousSelfDeclaration")
-    public ResponseEntity<?> getPreviousSelfDeclaration(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") Long userId) {
+    public ResponseEntity<?> getPreviousSelfDeclaration(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") BigInteger userId) {
         return iMedicalBookingService.getPreviousSelfDeclaration(authHeader, userId);
     }
 
