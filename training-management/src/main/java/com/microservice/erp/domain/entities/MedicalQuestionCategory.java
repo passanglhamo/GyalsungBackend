@@ -10,13 +10,10 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 
-/**
- * @author Rajib Kumer Ghosh
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tms_medical_question_category")
-@AttributeOverride(name = "id", column = @Column(name = "medical_question_category_id"))
+@AttributeOverride(name = "id", column = @Column(name = "medical_question_category_id",columnDefinition = "bigint"))
 public class MedicalQuestionCategory extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)

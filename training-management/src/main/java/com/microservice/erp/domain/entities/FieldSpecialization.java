@@ -10,14 +10,10 @@ import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 import java.util.Objects;
 
-/**
- * @author Rajib Kumer Ghosh
- */
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tms_field_specialization")
-@AttributeOverride(name = "id", column = @Column(name = "field_specialization_id"))
+@AttributeOverride(name = "id", column = @Column(name = "field_specialization_id",columnDefinition = "bigint"))
 public class FieldSpecialization extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)

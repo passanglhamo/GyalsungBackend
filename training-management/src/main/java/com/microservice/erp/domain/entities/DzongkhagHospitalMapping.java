@@ -12,17 +12,17 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tms_dzongkhag_hospital_mapping")
-@AttributeOverride(name = "id", column = @Column(name = "dzongkhag_hospital_mapping_id"))
+@AttributeOverride(name = "id", column = @Column(name = "dzongkhag_hospital_mapping_id",columnDefinition = "bigint"))
 public class DzongkhagHospitalMapping extends Auditable<BigInteger,Long>{
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "dzongkhag_id")
+    @Column(name = "dzongkhag_id",columnDefinition = "int")
     private Integer dzongkhagId;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "hospital_id")
+    @Column(name = "hospital_id",columnDefinition = "int")
     private Integer hospitalId;
 
     @NotNull

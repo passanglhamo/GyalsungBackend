@@ -8,27 +8,23 @@ import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 import java.util.Date;
 
-/**
- * @author Rajib Kumer Ghosh
- */
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tms_enlistment_schedule")
-@AttributeOverride(name = "id", column = @Column(name = "enlistment_schedule_id"))
+@AttributeOverride(name = "id", column = @Column(name = "enlistment_schedule_id",columnDefinition = "bigint"))
 public class EnlistmentSchedule extends Auditable<BigInteger, Long> {
 
     @NotNull(message = "From date cannot be null")
     // @Future(message = "From date of schedule should be greater than current date")
     @Basic(optional = false)
-    @Column(name = "from_date")
+    @Column(name = "from_date",columnDefinition = "date")
     @Temporal(TemporalType.DATE)
     private Date fromDate = new java.sql.Date(new Date().getTime());
 
     @NotNull(message = "To date cannot be null")
     // @Future(message = "To date of schedule should be greater than current date")
     @Basic(optional = false)
-    @Column(name = "to_date")
+    @Column(name = "to_date",columnDefinition = "date")
     @Temporal(TemporalType.DATE)
     private Date toDate = new java.sql.Date(new Date().getTime());
 

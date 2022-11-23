@@ -41,9 +41,9 @@ public class EnlistmentScheduleController {
         return readService.getEnlistmentScheduleById(id);
     }
 
-    @PutMapping("/updateEnlistmentSchedule/{id}")
-    public ResponseEntity<?> updateEnlistment(@PathVariable BigInteger id,@RequestBody EnlistmentScheduleDto enlistmentScheduleDto)
-            throws IOException, ParseException {
+    @PutMapping("/updateEnlistmentSchedule")
+    public ResponseEntity<?> updateEnlistment(@RequestBody
+    EnlistmentScheduleDto enlistmentScheduleDto) {
 
         return updateService.updateEnlistmentSchedule(enlistmentScheduleDto);
     }
