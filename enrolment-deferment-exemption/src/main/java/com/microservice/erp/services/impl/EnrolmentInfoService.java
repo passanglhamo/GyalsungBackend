@@ -57,6 +57,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         enrolmentDto.setEnrolledOn(new Date());
         var enrolmentInfo = iEnrolmentInfoRepository.save(enrolmentMapper.mapToEntity(enrolmentDto));
         iEnrolmentInfoRepository.save(enrolmentInfo);
+        //todo:send email and sms
         return ResponseEntity.ok(new MessageResponse("Enrolled successfully."));
     }
 
@@ -91,6 +92,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             enrolmentListDto.setCourse_id(item.getCourse_id());
             enrolmentList.add(enrolmentListDto);
         });
+        //todo: need to get training academy name  if training academy_id is not null
 
         return ResponseEntity.ok(enrolmentList);
     }

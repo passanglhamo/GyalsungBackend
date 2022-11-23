@@ -2,6 +2,7 @@ package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
+import com.microservice.erp.services.iServices.IUpdateDefermentService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -43,4 +44,12 @@ public class EnrolmentController {
             , @RequestParam("coursePreferenceNumber") Integer coursePreferenceNumber) {
         return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, courseId, coursePreferenceNumber);
     }
+
+//    @PostMapping(value = "/allocateTraining")
+//    public ResponseEntity<?> allocateTraining(@RequestHeader("Authorization") String authHeader,
+//                                          @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
+//
+//        return iEnrolmentInfoService.allocateTraining(authHeader,command);
+//    }
+
 }
