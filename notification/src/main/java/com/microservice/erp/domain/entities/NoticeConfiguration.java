@@ -12,7 +12,7 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "not_notice_configuration")
-@AttributeOverride(name = "id", column = @Column(name = "notice_configuration_id"))
+@AttributeOverride(name = "id", column = @Column(name = "notice_configuration_id", columnDefinition = "bigint"))
 public class NoticeConfiguration extends Auditable<BigInteger, Long> {
 
     @NotNull(message = "Notice configuration name cannot be null.")
@@ -30,7 +30,7 @@ public class NoticeConfiguration extends Auditable<BigInteger, Long> {
     private String classId;
 
     @Basic(optional = false)
-    @Column(name = "age")
+    @Column(name = "age" ,columnDefinition = "int")
     private Integer age;
 
     @Basic(optional = false)

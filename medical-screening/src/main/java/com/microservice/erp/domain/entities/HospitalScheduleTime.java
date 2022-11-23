@@ -14,7 +14,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity(name = "tms_hos_schedule_time")
-@AttributeOverride(name = "id", column = @Column(name = "hos_schedule_time_id"))
+@AttributeOverride(name = "id", column = @Column(name = "hos_schedule_time_id", columnDefinition = "bigint"))
 public class HospitalScheduleTime extends Auditable<BigInteger, Long> {
 
     @NotNull(message = "Appointment start time cannot be null")
@@ -33,13 +33,13 @@ public class HospitalScheduleTime extends Auditable<BigInteger, Long> {
     @Column(name = "book_status", columnDefinition = "char(1)")//A=Available, B=Booked, C=Checkup Done
     private Character bookStatus;
 
-    @Column(name = "booked_by")//bookedBy=userId
+    @Column(name = "booked_by", columnDefinition = "bigint")//bookedBy=userId
     private BigInteger bookedBy;
 
     @Column(name = "booked_date")
     private LocalDate bookedDate;
 
-    @Column(name = "checkup_done_by")//checkUpDoneBy=userId which is doctor
+    @Column(name = "checkup_done_by", columnDefinition = "bigint")//checkUpDoneBy=userId which is doctor
     private BigInteger checkupDoneBy;
 
     @ManyToOne

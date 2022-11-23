@@ -15,5 +15,14 @@ public class EnlistmentScheduleMapper {
         return enlistmentSchedule;
     }
 
+    public EnlistmentSchedule mapToUpdateEntity(EnlistmentScheduleDto enlistmentScheduleDto) {
+        EnlistmentSchedule enlistmentSchedule = new EnlistmentSchedule();
+        enlistmentSchedule.setId(enlistmentScheduleDto.getId());
+        enlistmentSchedule.setFromDate(enlistmentScheduleDto.getFromDate());
+        enlistmentSchedule.setToDate(enlistmentScheduleDto.getToDate());
+        enlistmentSchedule.setStatus(enlistmentScheduleDto.getStatus());
+        return enlistmentSchedule;
+    }
+
 
 }

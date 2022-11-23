@@ -12,12 +12,12 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tms_hospital_schedule_date")
-@AttributeOverride(name = "id", column = @Column(name = "hospital_schedule_date_id"))
+@AttributeOverride(name = "id", column = @Column(name = "hospital_schedule_date_id", columnDefinition = "bigint"))
 public class HospitalScheduleDate extends Auditable<BigInteger, Long> {
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "hospital_id")
+    @Column(name = "hospital_id" , columnDefinition = "bigint")
     private BigInteger hospitalId;
 
     @NotNull(message = "Appointment date cannot be null")

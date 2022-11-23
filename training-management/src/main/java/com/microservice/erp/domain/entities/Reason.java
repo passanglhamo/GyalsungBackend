@@ -12,7 +12,7 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tms_reason")
-@AttributeOverride(name = "id", column = @Column(name = "reason_id"))
+@AttributeOverride(name = "id", column = @Column(name = "reason_id",columnDefinition = "bigint"))
 public class Reason extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)

@@ -9,16 +9,16 @@ import java.math.BigInteger;
 @Setter
 @Getter
 @Entity(name = "med_medical_self_declaration")
-@AttributeOverride(name = "id", column = @Column(name = "self_declaration_id"))
+@AttributeOverride(name = "id", column = @Column(name = "self_declaration_id", columnDefinition = "bigint"))
 public class MedicalSelfDeclaration extends Auditable<BigInteger, Long> {
 
     //region private variables
     @NotNull
-    @Column(name = "user_id")
+    @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
     @NotNull
-    @Column(name = "medical_questionnaire_id")
+    @Column(name = "medical_questionnaire_id", columnDefinition = "bigint")
     private BigInteger medicalQuestionnaireId;
 
     @NotNull(message = "Medical Questionnaire cannot be null.")

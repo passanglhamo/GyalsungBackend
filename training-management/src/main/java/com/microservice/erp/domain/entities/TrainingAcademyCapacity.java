@@ -10,14 +10,10 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 
-/**
- * @author Rajib Kumer Ghosh
- */
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tms_training_academy_capacity")
-@AttributeOverride(name = "id", column = @Column(name = "training_academy_capacity_id"))
+@AttributeOverride(name = "id", column = @Column(name = "training_academy_capacity_id",columnDefinition = "int"))
 public class TrainingAcademyCapacity extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)
@@ -32,18 +28,18 @@ public class TrainingAcademyCapacity extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)
     @NotNull(message = "Capacity must not be null")
-    @Column(name = "male_capacity_amount")
+    @Column(name = "male_capacity_amount",columnDefinition = "int")
     private Integer maleCapacityAmount;
 
     @Basic(optional = false)
     @NotNull(message = "Capacity must not be null")
-    @Column(name = "female_capacity_amount")
+    @Column(name = "female_capacity_amount",columnDefinition = "int")
     private Integer femaleCapacityAmount;
 
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "status")
+    @Column(name = "status",columnDefinition = "char(1)")
     private String status;
 
     public Integer getAcademyId() {

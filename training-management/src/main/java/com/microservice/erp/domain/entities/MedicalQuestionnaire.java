@@ -9,14 +9,10 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 
-/**
- * @author Rajib Kumer Ghosh
- */
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tms_medical_questionnaire")
-@AttributeOverride(name = "id", column = @Column(name = "medical_questionnaire_id"))
+@AttributeOverride(name = "id", column = @Column(name = "medical_questionnaire_id",columnDefinition = "bigint"))
 public class MedicalQuestionnaire extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)
@@ -26,8 +22,8 @@ public class MedicalQuestionnaire extends Auditable<BigInteger, Long> {
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "medical_question_category_id")
-    private Long categoryId;
+    @Column(name = "medical_question_category_id",columnDefinition = "bigint")
+    private BigInteger categoryId;
 
     @NotNull
     @Basic(optional = false)
@@ -42,11 +38,11 @@ public class MedicalQuestionnaire extends Auditable<BigInteger, Long> {
         this.medicalQuestionName = medicalQuestionName;
     }
 
-    public Long getCategoryId() {
+    public BigInteger getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
+    public void setCategoryId(BigInteger categoryId) {
         this.categoryId = categoryId;
     }
 
