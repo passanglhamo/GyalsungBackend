@@ -9,6 +9,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -19,7 +20,7 @@ import java.util.*;
 @AllArgsConstructor
 @Entity(name = "SYS_USERINFO")
 @AttributeOverride(name = "id", column = @Column(name = "user_id"))
-public class UserInfo extends Auditable<Long, Long> {
+public class UserInfo extends Auditable<BigInteger, Long> {
 
     @NotNull(message = "Username must not be null.")
     @Basic(optional = false)
@@ -81,7 +82,7 @@ public class UserInfo extends Auditable<Long, Long> {
     @Column(name = "present_country", columnDefinition = "varchar(255)")
     private String presentCountry;
 
-//    @OneToOne(cascade = CascadeType.ALL)
+    //    @OneToOne(cascade = CascadeType.ALL)
 //    @JoinColumn(name = "present_dzongkhag_id", referencedColumnName = "dzongkhag_id")
 //    private Dzongkhag presentDzongkhag;
 //

@@ -3,6 +3,7 @@ package com.microservice.erp.domain.entities;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.math.BigInteger;
 
 
 @Entity(name = "change_mobile_no_sms_otp")
@@ -10,7 +11,7 @@ public class ChangeMobileNoSmsOtp {
     //region private variables
     @Id
     @Column(name = "user_id")
-    private Long userId;
+    private BigInteger userId;
 
     @Column(name = "mobile_no", columnDefinition = "varchar(50)")
     private String mobileNo;
@@ -20,11 +21,11 @@ public class ChangeMobileNoSmsOtp {
     //endregion
 
     //region setters and getters
-    public Long getUserId() {
+    public BigInteger getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(BigInteger userId) {
         this.userId = userId;
     }
 

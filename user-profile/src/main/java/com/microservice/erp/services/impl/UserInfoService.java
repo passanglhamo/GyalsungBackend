@@ -40,10 +40,10 @@ public class UserInfoService implements IUserInfoService {
 
     @Override
     public boolean remove(Long userid) {
-        if (repository.existsById(userid)){
-            repository.deleteById(userid);
-            return true;
-        }
+//        if (repository.existsById(userid)){
+//            repository.deleteById(userid);
+//            return true;
+//        }
         return false;
     }
 
@@ -54,14 +54,16 @@ public class UserInfoService implements IUserInfoService {
 
     @Override
     public UserInfo findByUserID(Long userId) {
-        Optional<UserInfo> isFound = repository.findById(userId);
+//        Optional<UserInfo> isFound = repository.findById(userId);
+        Optional<UserInfo> isFound =null;
         if (isFound.isPresent()) return isFound.get();
         else return null;
     }
 
     @Override
     public List<UserInfo> findAllByUserID(List<Long> userId) {
-        return repository.findAllById(userId);
+//        return repository.findAllById(userId);
+        return null;
     }
 
     @Override

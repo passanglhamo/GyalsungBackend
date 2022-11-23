@@ -12,9 +12,9 @@ import java.util.Date;
 
 public interface IProfileService {
 
-    ResponseEntity<?> getProfileInfo(String authHeader, Long userId);
+    ResponseEntity<?> getProfileInfo(String authHeader, BigInteger userId);
 
-    ResponseEntity<?> getProfilePicture(Long userId) throws IOException;
+    ResponseEntity<?> getProfilePicture(BigInteger userId) throws IOException;
 
     ResponseEntity<?> changeUsername(UserProfileDto userProfileDto);
 

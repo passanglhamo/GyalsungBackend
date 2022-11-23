@@ -4,15 +4,15 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.math.BigInteger;
 
 /**
  * @author Rajib Kumer Ghosh
- *
  */
 
 //@Entity(name = "SYS_USERPROFILE")
 //@AttributeOverride(name = "id", column = @Column(name = "USERID"))
-public class UserProfile extends Auditable<Long, Long> {
+public class UserProfile extends Auditable<BigInteger, Long> {
 
     @Id
     @Column(name = "USERID")

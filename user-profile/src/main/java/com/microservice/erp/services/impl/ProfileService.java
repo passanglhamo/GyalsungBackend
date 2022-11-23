@@ -40,7 +40,7 @@ public class ProfileService implements IProfileService {
 
 
     @Override
-    public ResponseEntity<?> getProfileInfo(String authHeader, Long userId) {
+    public ResponseEntity<?> getProfileInfo(String authHeader, BigInteger userId) {
         UserInfo userInfo = iUserInfoRepository.findById(userId).get();
         UserProfileDto userProfileDto = new ModelMapper().map(userInfo, UserProfileDto.class);
         userProfileDto.setPassword(null);
@@ -61,7 +61,7 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public ResponseEntity<?> getProfilePicture(Long userId) throws IOException {
+    public ResponseEntity<?> getProfilePicture(BigInteger userId) throws IOException {
         UserInfo userInfo = iUserInfoRepository.findById(userId).get();
         String profilePictureUrl = userInfo.getProfilePictureUrl();
         if (profilePictureUrl == null) {

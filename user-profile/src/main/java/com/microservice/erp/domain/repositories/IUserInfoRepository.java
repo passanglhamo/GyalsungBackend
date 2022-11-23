@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 @Repository
-public interface IUserInfoRepository extends JpaRepository<UserInfo, Long> {
+public interface IUserInfoRepository extends JpaRepository<UserInfo, BigInteger> {
     //List<UserInfo> findByName(String name);
     //long countByName(String name);
 

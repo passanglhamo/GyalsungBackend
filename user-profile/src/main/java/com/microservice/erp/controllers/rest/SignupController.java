@@ -13,6 +13,7 @@ import org.wso2.client.api.ApiException;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class SignupController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) throws ParseException {
-         return iSignupService.signup(signupRequestDto);
+        return iSignupService.signup(signupRequestDto);
     }
 
     @PostMapping("/signin")
@@ -66,8 +67,8 @@ public class SignupController {
         roles.add("USER");
 
         return ResponseEntity.ok(new JwtResponse("staticToken",
-                2L,
-                "Ngawng Zepa",
+                new BigInteger("2"),
+                "Ngawang Zepa",
                 "11514000454",
                 'M',
                 "17302667",

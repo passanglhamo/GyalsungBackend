@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -19,7 +20,7 @@ import java.util.Objects;
 
 @Entity(name = "SYS_USERINFO_A")
 @AttributeOverride(name = "id", column = @Column(name = "AUDIT_SERIAL_NO"))
-public class UserInfo_A extends Auditable<Long, Long> {
+public class UserInfo_A extends Auditable<BigInteger, Long> {
 
     /*@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
