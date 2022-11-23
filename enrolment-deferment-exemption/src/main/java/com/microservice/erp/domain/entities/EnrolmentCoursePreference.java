@@ -11,22 +11,22 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "ede_enrolment_course_preference")
-@AttributeOverride(name = "id", column = @Column(name = "enrolment_course_preference_id"))
+@AttributeOverride(name = "id", column = @Column(name = "enrolment_course_preference_id", columnDefinition = "bigint"))
 public class EnrolmentCoursePreference extends Auditable<BigInteger, Long> {
 
     //region private variables
-    @Column(name = "course_id")
+    @Column(name = "course_id", columnDefinition = "bigint")
     private BigInteger courseId;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
     @NotNull(message = "Priority number cannot not be null")
-    @Column(name = "preference_number")
+    @Column(name = "preference_number", columnDefinition = "int")
     private Integer preferenceNumber;
 
     @ManyToOne
-    @JoinColumn(name = "enrolment_id", nullable = false)
+    @JoinColumn(name = "enrolment_id", nullable = false, columnDefinition = "bigint")
     private EnrolmentInfo enrolment;
     //endregion
 

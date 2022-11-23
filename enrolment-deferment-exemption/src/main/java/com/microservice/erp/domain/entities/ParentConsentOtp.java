@@ -16,7 +16,7 @@ public class ParentConsentOtp {
 
     //region private variables
     @Id
-    @Column(name = "user_Id")
+    @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
     @Basic(optional = false)

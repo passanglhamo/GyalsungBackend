@@ -6,19 +6,18 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
-
 @Entity(name = "ede_enrolment_info")
-@AttributeOverride(name = "id", column = @Column(name = "enrolment_id"))
+@AttributeOverride(name = "id", column = @Column(name = "enrolment_id", columnDefinition = "bigint"))
 public class EnrolmentInfo extends Auditable<BigInteger, Long> {
 
     //region private variables
     @NotNull(message = "User id cannot be null")
-    @Column(name = "user_id")
+    @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
-    @Column(name = "year")
+    @Column(name = "year", columnDefinition = "char(4)")
     private String year;
-    @Column(name = "training_academy_id")
+    @Column(name = "training_academy_id", columnDefinition = "int")
     private Integer trainingAcademyId;
 
     @NotNull(message = "Enrolled on cannot be null")

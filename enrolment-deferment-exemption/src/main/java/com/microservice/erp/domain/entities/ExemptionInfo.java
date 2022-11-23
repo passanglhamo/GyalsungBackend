@@ -17,12 +17,13 @@ import java.util.Set;
 @Builder
 @EqualsAndHashCode
 @Entity(name = "ede_exemption_info")
-@AttributeOverride(name = "id", column = @Column(name = "exemption_id"))
+@AttributeOverride(name = "id", column = @Column(name = "exemption_id", columnDefinition = "bigint"))
 public class ExemptionInfo extends Auditable<BigInteger, Long> {
 
+    //region private variables
     @NotNull(message = "User id cannot be null")
     @Basic(optional = false)
-    @Column(name = "user_id")
+    @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
     @NotNull(message = "Application date cannot be null")
@@ -31,22 +32,21 @@ public class ExemptionInfo extends Auditable<BigInteger, Long> {
     @Temporal(TemporalType.DATE)
     private Date applicationDate = new java.sql.Date(new Date().getTime());
 
-
     @Basic(optional = false)
-    @NotNull(message = "Reasons cannot be null")
-    @Column(name = "reason_id",columnDefinition = "varchar(255)")
+    @NotNull(message = "Reason id cannot be null")
+    @Column(name = "reason_id", columnDefinition = "bigint")
     private BigInteger reasonId;
 
-    @Column(name = "approval_remarks",columnDefinition = "varchar(255)")
+    @Column(name = "approval_remarks", columnDefinition = "varchar(255)")
     private String approvalRemarks;
 
 
-    @Column(name = "remarks",columnDefinition = "varchar(255)")
+    @Column(name = "remarks", columnDefinition = "varchar(255)")
     private String remarks;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "status",columnDefinition = "char(1)")
+    @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
 
     @OneToMany(
@@ -56,7 +56,9 @@ public class ExemptionInfo extends Auditable<BigInteger, Long> {
             fetch = FetchType.LAZY
     )
     private Set<ExemptionFileInfo> files;
+    //endregion
 
+    //region setters and getters
     public BigInteger getUserId() {
         return userId;
     }
@@ -112,4 +114,5 @@ public class ExemptionInfo extends Auditable<BigInteger, Long> {
     public void setFiles(Set<ExemptionFileInfo> files) {
         this.files = files;
     }
+    //endregion
 }

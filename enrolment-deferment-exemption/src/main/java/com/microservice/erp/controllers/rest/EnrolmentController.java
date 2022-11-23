@@ -35,8 +35,10 @@ public class EnrolmentController {
         return iEnrolmentInfoService.saveEnrolment(enrolmentDto);
     }
 
-//    @RequestMapping(value = "/getEnrolmentList", method = RequestMethod.GET)
-//    public ResponseEntity<?> getEnrolmentList(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") Long userId) {
-//        return iEnrolmentInfoService.saveEnrolment(authHeader);
-//     }
+    @RequestMapping(value = "/getEnrolmentListByYearAndCourseId", method = RequestMethod.GET)
+    public ResponseEntity<?> getEnrolmentListByYearAndCourseId(@RequestHeader("Authorization") String authHeader
+            , @RequestParam("year") String year
+            , @RequestParam("courseId") String courseId) {
+        return iEnrolmentInfoService.getEnrolmentListByYearAndCourseId(authHeader, year, courseId);
+    }
 }

@@ -15,13 +15,13 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "ede_parent_consent")
-@AttributeOverride(name = "id", column = @Column(name = "parent_consent_id"))
+@AttributeOverride(name = "id", column = @Column(name = "parent_consent_id", columnDefinition = "bigint"))
 public class ParentConsent extends Auditable<BigInteger, Long> {
 
     //region private variables
     @Basic(optional = false)
     @NotNull(message = "User Id not be null")
-    @Column(name = "user_id")
+    @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
     @Basic(optional = false)
