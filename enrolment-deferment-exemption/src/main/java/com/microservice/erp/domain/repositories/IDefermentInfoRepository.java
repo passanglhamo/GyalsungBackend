@@ -4,6 +4,7 @@ import com.microservice.erp.domain.entities.DefermentInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 
@@ -12,9 +13,9 @@ import java.util.Date;
  */
 
 
-public interface IDefermentInfoRepository extends JpaRepository<DefermentInfo, Long> {
+public interface IDefermentInfoRepository extends JpaRepository<DefermentInfo, BigInteger> {
 
- boolean  existsByUserIdAndStatusInAndToDateGreaterThanEqual(Long userId, Collection<Character> status,
-                                                                         Date toDate);
+ boolean  existsByUserIdAndStatusInAndToDateGreaterThanEqual(BigInteger userId, Collection<Character> status,
+                                                             Date toDate);
 
 }

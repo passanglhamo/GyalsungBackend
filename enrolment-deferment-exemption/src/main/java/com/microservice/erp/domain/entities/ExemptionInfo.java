@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
@@ -13,17 +14,16 @@ import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
 @EqualsAndHashCode
 @Entity(name = "ede_exemption_info")
 @AttributeOverride(name = "id", column = @Column(name = "exemption_id"))
-public class ExemptionInfo extends Auditable<Long, Long> {
+public class ExemptionInfo extends Auditable<BigInteger, Long> {
 
     @NotNull(message = "User id cannot be null")
     @Basic(optional = false)
     @Column(name = "user_id")
-    private Long userId;
+    private BigInteger userId;
 
     @NotNull(message = "Application date cannot be null")
     @Basic(optional = false)
@@ -35,7 +35,7 @@ public class ExemptionInfo extends Auditable<Long, Long> {
     @Basic(optional = false)
     @NotNull(message = "Reasons cannot be null")
     @Column(name = "reason_id",columnDefinition = "varchar(255)")
-    private Long reasonId;
+    private BigInteger reasonId;
 
     @Column(name = "approval_remarks",columnDefinition = "varchar(255)")
     private String approvalRemarks;
@@ -56,4 +56,60 @@ public class ExemptionInfo extends Auditable<Long, Long> {
             fetch = FetchType.LAZY
     )
     private Set<ExemptionFileInfo> files;
+
+    public BigInteger getUserId() {
+        return userId;
+    }
+
+    public void setUserId(BigInteger userId) {
+        this.userId = userId;
+    }
+
+    public Date getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(Date applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
+    public BigInteger getReasonId() {
+        return reasonId;
+    }
+
+    public void setReasonId(BigInteger reasonId) {
+        this.reasonId = reasonId;
+    }
+
+    public String getApprovalRemarks() {
+        return approvalRemarks;
+    }
+
+    public void setApprovalRemarks(String approvalRemarks) {
+        this.approvalRemarks = approvalRemarks;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public Character getStatus() {
+        return status;
+    }
+
+    public void setStatus(Character status) {
+        this.status = status;
+    }
+
+    public Set<ExemptionFileInfo> getFiles() {
+        return files;
+    }
+
+    public void setFiles(Set<ExemptionFileInfo> files) {
+        this.files = files;
+    }
 }

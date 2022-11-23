@@ -1,12 +1,14 @@
 package com.microservice.erp.domain.dto.deferment;
 
-import io.swagger.models.auth.In;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by : Passang Lhamo
@@ -17,10 +19,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DefermentDto {
-    private  Long id;
+    private BigInteger id;
     private  Date fromDate;
-    private  Long userId;
-    private  Long reasonId;
+    private  BigInteger userId;
+    private  BigInteger reasonId;
     private  String approvalRemarks;
     private  Date toDate;
     private  Character status;
@@ -34,10 +36,10 @@ public class DefermentDto {
     private String sex;
 
         public static DefermentDto withId(
-                Long id,
+                BigInteger id,
                 Date fromDate,
-                Long userId,
-                Long reasonId,
+                BigInteger userId,
+                BigInteger reasonId,
                 String approvalRemarks,
                 Date toDate,
                 Character status,

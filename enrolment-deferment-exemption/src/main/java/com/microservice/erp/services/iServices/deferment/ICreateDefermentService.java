@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -28,11 +29,11 @@ public interface ICreateDefermentService {
     @AllArgsConstructor
     @NoArgsConstructor
     class CreateDefermentCommand {
-        private Long id;
+        private BigInteger id;
         @NotNull(message = "User id cannot be null")
-        private Long userId;
+        private BigInteger userId;
         @NotNull(message = "Reason cannot be null")
-        private Long reasonId;
+        private BigInteger reasonId;
         private String approvalRemarks;
         @NotNull(message = "Till date cannot be null")
         private Date toDate;

@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.math.BigInteger;
 import java.util.Objects;
 import java.util.Set;
 
@@ -59,7 +60,7 @@ public class CreateDefermentService implements ICreateDefermentService {
         repository.save(deferment);
 
         try {
-            sendEmailAndSms(authTokenHeader,deferment.getUserId());
+            sendEmailAndSms(authTokenHeader, deferment.getUserId());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -67,7 +68,7 @@ public class CreateDefermentService implements ICreateDefermentService {
         return ResponseEntity.ok(new MessageResponse("Deferment is successfully saved"));
     }
 
-    private void sendEmailAndSms(String authTokenHeader,Long userId) throws Exception {
+    private void sendEmailAndSms(String authTokenHeader, BigInteger userId) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authTokenHeader);
 
@@ -75,17 +76,16 @@ public class CreateDefermentService implements ICreateDefermentService {
         ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
         String subject = "Acknowledged for Deferment";
 
-        String emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName()+",\n"+
+        String emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
                 "\n" +
                 "This is to acknowledge the receipt of your deferment application. Your deferment application will be reviewed and the outcome of the deferment will be sent to you through your email within 10 days of the submission of your application. If you are not approved for deferment, you will have to complete the Gyalsung pre-enlistment procedure. \n";
 
         MailSender.sendMail(Objects.requireNonNull(userResponse.getBody()).getEmail(), null, null, emailMessage, subject);
 
 
-        SmsSender.sendSms(Objects.requireNonNull(userResponse.getBody()).getMobileNo() , emailMessage);
+        SmsSender.sendSms(Objects.requireNonNull(userResponse.getBody()).getMobileNo(), emailMessage);
 
     }
-
 
 
 }

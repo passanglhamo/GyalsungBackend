@@ -5,17 +5,18 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "ede_registration_date_info")
 @AttributeOverride(name = "id", column = @Column(name = "registration_date_id"))
-public class RegistrationDateInfo extends Auditable<Long, Long>  {
+public class RegistrationDateInfo extends Auditable<BigInteger, Long> {
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "registration_year",columnDefinition = "char(4)")
+    @Column(name = "registration_year", columnDefinition = "char(4)")
     private String registrationYear;
 
     @Column(name = "from_date")
@@ -30,7 +31,7 @@ public class RegistrationDateInfo extends Auditable<Long, Long>  {
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "status",columnDefinition = "char(1)")
+    @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
 
     public String getRegistrationYear() {

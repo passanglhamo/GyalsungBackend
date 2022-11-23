@@ -2,6 +2,7 @@ package com.microservice.erp.domain.dto.enrolment;
 
 import lombok.*;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -10,14 +11,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EnrolmentDto {
-    private Long userId;
+    private BigInteger userId;
     private String year;
     private Character status;
     private Date enrolledOn;
     private List<EnrolmentCoursesDto> enrolmentCoursesDtos;
 
     public static EnrolmentDto withId(
-            Long userId,
+            BigInteger userId,
             String year,
             Character status,
             Date enrolledOn,

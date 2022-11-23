@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -57,7 +58,7 @@ public class ReadDefermentService implements IReadDefermentService {
     }
 
     @Override
-    public ResponseEntity<?> downloadFiles(Long defermentId, HttpServletResponse response) {
+    public ResponseEntity<?> downloadFiles(BigInteger defermentId, HttpServletResponse response) {
         DefermentFileInfo defermentFile = repositoryFile.findById(defermentId).get();
         ResponseMessage responseMessage = new ResponseMessage();
         String uploadFilePath = defermentFile.getFilePath();

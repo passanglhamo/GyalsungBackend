@@ -4,13 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 @Setter
 @Getter
 public class UserProfileDto {
     //region private variables
-    private Long userId;
+    private BigInteger userId;
     private String username;
     private String fullName;
     private String sex;

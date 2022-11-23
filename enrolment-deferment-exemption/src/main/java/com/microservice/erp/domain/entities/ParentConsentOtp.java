@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +17,7 @@ public class ParentConsentOtp {
     //region private variables
     @Id
     @Column(name = "user_Id")
-    private Long userId;
+    private BigInteger userId;
 
     @Basic(optional = false)
     @NotNull(message = "Parent/Guardian mobile number cannot not be null")
@@ -30,11 +31,12 @@ public class ParentConsentOtp {
     //endregion
 
     //region setters and getters
-    public Long getUserId() {
+
+    public BigInteger getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(BigInteger userId) {
         this.userId = userId;
     }
 
@@ -53,5 +55,6 @@ public class ParentConsentOtp {
     public void setOtp(String otp) {
         this.otp = otp;
     }
+
     //endregion
 }
