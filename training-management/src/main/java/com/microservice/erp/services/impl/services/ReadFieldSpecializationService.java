@@ -34,6 +34,7 @@ public class ReadFieldSpecializationService implements IReadFieldSpecializationS
             return ResponseEntity.badRequest().body(new MessageResponse("Data not found"));
         }
     }
+
     @Override
     public ResponseEntity<?> getAllDefaultCourses() {
         List<FieldSpecialization> fieldSpecializations = repository.findAllByDefaultCourseOrderByFieldSpecNameAsc(true);
@@ -46,6 +47,6 @@ public class ReadFieldSpecializationService implements IReadFieldSpecializationS
 
     @Override
     public List<FieldSpecialization> getAllFieldSpecList() {
-        return repository.findAll();
+        return repository.findAllByOrderByFieldSpecNameAsc();
     }
 }

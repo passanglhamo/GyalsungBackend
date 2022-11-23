@@ -19,7 +19,7 @@ import java.util.*;
 @Getter
 @AllArgsConstructor
 @Entity(name = "SYS_USERINFO")
-@AttributeOverride(name = "id", column = @Column(name = "user_id"))
+@AttributeOverride(name = "id", column = @Column(name = "user_id", columnDefinition = "bigint"))
 public class UserInfo extends Auditable<BigInteger, Long> {
 
     @NotNull(message = "Username must not be null.")

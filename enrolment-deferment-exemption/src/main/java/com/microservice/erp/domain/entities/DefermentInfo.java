@@ -9,25 +9,17 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
-/**
- * @author Rajib Kumer Ghosh
- */
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "ede_deferment_info")
-@AttributeOverride(name = "id", column = @Column(name = "deferment_id"))
+@AttributeOverride(name = "id", column = @Column(name = "deferment_id", columnDefinition = "bigint"))
 public class DefermentInfo extends Auditable<BigInteger, Long> {
 
+    //region private variables
     @NotNull(message = "User id cannot be null")
     @Basic(optional = false)
-    @Column(name = "user_id")
+    @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
-
-//    @NotNull
-//    @Basic(optional = false)
-//    @Column(name = "deferment_year")
-//    private String defermentYear;
 
     @Column(name = "from_date")
     @Temporal(TemporalType.DATE)
@@ -41,7 +33,7 @@ public class DefermentInfo extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)
     @NotNull(message = "Reasons cannot be null")
-    @Column(name = "reason_id", columnDefinition = "varchar(255)")
+    @Column(name = "reason_id", columnDefinition = "bigint")
     private BigInteger reasonId;
 
     @Column(name = "approval_remarks", columnDefinition = "varchar(255)")
@@ -62,6 +54,7 @@ public class DefermentInfo extends Auditable<BigInteger, Long> {
             fetch = FetchType.LAZY
     )
     private Set<DefermentFileInfo> files;
+    //endregion
 
     public BigInteger getUserId() {
         return userId;

@@ -6,16 +6,12 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 
-/**
- * @author Rajib Kumer Ghosh
- */
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity(name = "ede_deferment_file_info")
-@AttributeOverride(name = "id", column = @Column(name = "deferment_file_id"))
+@AttributeOverride(name = "id", column = @Column(name = "deferment_file_id", columnDefinition = "bigint"))
 public class DefermentFileInfo extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)
@@ -34,6 +30,6 @@ public class DefermentFileInfo extends Auditable<BigInteger, Long> {
     private String fileName;
 
     @ManyToOne
-    @JoinColumn(name = "deferment_id", nullable = false)
+    @JoinColumn(name = "deferment_id", nullable = false, columnDefinition = "bigint")
     private DefermentInfo deferment;
 }

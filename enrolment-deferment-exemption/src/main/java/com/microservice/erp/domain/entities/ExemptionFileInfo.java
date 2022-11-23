@@ -16,9 +16,10 @@ import java.math.BigInteger;
 @Getter
 @Setter
 @Entity(name = "ede_exemption_file_info")
-@AttributeOverride(name = "id", column = @Column(name = "exemption_file_id"))
+@AttributeOverride(name = "id", column = @Column(name = "exemption_file_id", columnDefinition = "bigint"))
 public class ExemptionFileInfo extends Auditable<BigInteger, Long> {
 
+    //region private variables
     @Basic(optional = false)
     @NotNull(message = "File path cannot be null")
     @Column(name = "file_path", columnDefinition = "varchar(255)")
@@ -34,12 +35,8 @@ public class ExemptionFileInfo extends Auditable<BigInteger, Long> {
     @Column(name = "file_name", columnDefinition = "varchar(255)")
     private String fileName;
 
-//    @Basic(optional = false)
-//    @NotNull
-//    @Column(name = "STATUS")
-//    private String status;
-
     @ManyToOne
-    @JoinColumn(name = "exemption_id", nullable = false)
+    @JoinColumn(name = "exemption_id", nullable = false, columnDefinition = "bigint")
     private ExemptionInfo exemption;
+    //endregion
 }

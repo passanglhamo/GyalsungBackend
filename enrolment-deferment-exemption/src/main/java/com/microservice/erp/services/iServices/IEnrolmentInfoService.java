@@ -13,4 +13,5 @@ public interface IEnrolmentInfoService {
 
     ResponseEntity<?> saveEnrolment(EnrolmentDto enrolmentDto);
 
+    ResponseEntity<?> getEnrolmentListByYearAndCourseId(String authHeader, String year, String courseId);
 }

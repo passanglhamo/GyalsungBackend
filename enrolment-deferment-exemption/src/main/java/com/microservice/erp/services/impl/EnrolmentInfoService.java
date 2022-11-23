@@ -49,4 +49,8 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         return ResponseEntity.ok(new MessageResponse("Enrolled successfully."));
     }
 
+    @Override
+    public ResponseEntity<?> getEnrolmentListByYearAndCourseId(String authHeader, String year, String courseId) {
+        return null;
+    }
 }

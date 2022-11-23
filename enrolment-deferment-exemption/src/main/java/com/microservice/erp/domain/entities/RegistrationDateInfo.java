@@ -11,9 +11,10 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "ede_registration_date_info")
-@AttributeOverride(name = "id", column = @Column(name = "registration_date_id"))
+@AttributeOverride(name = "id", column = @Column(name = "registration_date_id", columnDefinition = "bigint"))
 public class RegistrationDateInfo extends Auditable<BigInteger, Long> {
 
+    //region private variables
     @NotNull
     @Basic(optional = false)
     @Column(name = "registration_year", columnDefinition = "char(4)")
@@ -33,7 +34,9 @@ public class RegistrationDateInfo extends Auditable<BigInteger, Long> {
     @Basic(optional = false)
     @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
+    //endregion
 
+    //region setters and getters
     public String getRegistrationYear() {
         return registrationYear;
     }
@@ -65,5 +68,6 @@ public class RegistrationDateInfo extends Auditable<BigInteger, Long> {
     public void setStatus(Character status) {
         this.status = status;
     }
+    //endregion
 
 }
