@@ -3,6 +3,7 @@ package com.microservice.erp.services.impl;
 import com.microservice.erp.domain.entities.Dzongkhag;
 import com.microservice.erp.domain.entities.Geog;
 import com.microservice.erp.domain.entities.Hospital;
+import com.microservice.erp.domain.entities.TrainingAcademy;
 import com.microservice.erp.domain.repository.IDzongkhagRepository;
 import com.microservice.erp.domain.repository.IGeogRepository;
 import com.microservice.erp.domain.repository.IHospitalRepository;
@@ -67,6 +68,7 @@ public class CommonService implements ICommonService {
 
     @Override
     public ResponseEntity<?> getAllTrainingAcademies() {
-        return ResponseEntity.ok(trainingAcademyRepository.findAll());
+        List<TrainingAcademy> trainingAcademies = trainingAcademyRepository.findAllByOrderByNameAsc();
+        return ResponseEntity.ok(trainingAcademies);
     }
 }
