@@ -10,7 +10,7 @@ import java.math.BigInteger;
 public class ChangeMobileNoSmsOtp {
     //region private variables
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
     @Column(name = "mobile_no", columnDefinition = "varchar(50)")

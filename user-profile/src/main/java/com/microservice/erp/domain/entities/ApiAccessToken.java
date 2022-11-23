@@ -9,19 +9,19 @@ import java.math.BigInteger;
 //@AttributeOverride(name = "id", column = @Column(name = "USERID"))
 public class ApiAccessToken extends Auditable<BigInteger, Long> {
     //region private variables
-    @Column(name = "access_token")
+    @Column(name = "access_token", columnDefinition = "varchar(255)")
     private String access_token;
 
-    @Column(name = "scope")
+    @Column(name = "scope", columnDefinition = "varchar(255)")
     private String scope;
 
-    @Column(name = "token_type")
+    @Column(name = "token_type", columnDefinition = "varchar(255)")
     private String token_type;
 
-    @Column(name = "expires_in")
+    @Column(name = "expires_in", columnDefinition = "int")
     private Integer expires_in;
 
-    @Column(name = "created_on")
+    @Column(name = "created_on", columnDefinition = "bigint")
     private BigInteger created_on;
     //endregion
 
