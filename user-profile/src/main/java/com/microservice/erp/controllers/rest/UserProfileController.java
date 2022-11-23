@@ -34,12 +34,12 @@ public class UserProfileController {
     }
 
     @RequestMapping(value = "/getProfilePicture", method = RequestMethod.GET)
-    public ResponseEntity<?> getProfilePicture(@RequestParam("userId") Long userId) throws IOException {
+    public ResponseEntity<?> getProfilePicture(@RequestParam("userId") BigInteger userId) throws IOException {
         return iProfileService.getProfilePicture(userId);
     }
 
     @GetMapping("/getProfileInfo")
-    public ResponseEntity<?> getProfileInfo(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") Long userId) {
+    public ResponseEntity<?> getProfileInfo(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") BigInteger userId) {
         return iProfileService.getProfileInfo(authHeader, userId);
     }
 

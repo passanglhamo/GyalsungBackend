@@ -6,7 +6,9 @@ import lombok.Setter;
 @Setter
 @Getter
 public class DzongkhagDto {
+    //region private variables
     private Integer dzongkhagId;
     private Integer geogId;
     private String dzongkhagName;
+    //endregion
 }

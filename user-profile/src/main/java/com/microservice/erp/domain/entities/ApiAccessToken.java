@@ -7,7 +7,7 @@ import java.math.BigInteger;
 
 @Entity(name = "api_access_token")
 //@AttributeOverride(name = "id", column = @Column(name = "USERID"))
-public class ApiAccessToken extends Auditable<Long, Long> {
+public class ApiAccessToken extends Auditable<BigInteger, Long> {
     //region private variables
     @Column(name = "access_token")
     private String access_token;

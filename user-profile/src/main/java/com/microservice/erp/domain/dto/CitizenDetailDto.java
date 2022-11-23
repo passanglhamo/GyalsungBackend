@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CitizenDetailDto {
+    //region private variables
     private String fullName;
     private String gender;
     private String cid;
@@ -23,5 +24,6 @@ public class CitizenDetailDto {
     private String dzongkhagName;
     private String houseNo;
     private String thramNo;
+    //endregion
 
 }

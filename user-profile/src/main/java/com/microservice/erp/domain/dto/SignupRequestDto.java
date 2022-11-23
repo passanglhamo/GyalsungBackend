@@ -8,6 +8,7 @@ import java.util.Date;
 @Setter
 @Getter
 public class SignupRequestDto {
+    //region private variables
     private String fullName;
     private String sex;
     private String cid;
@@ -28,4 +29,5 @@ public class SignupRequestDto {
     private String permanentDzongkhag;
     private String permanentGeog;
     private String permanentPlaceName;
- }
+    //endregion
+}

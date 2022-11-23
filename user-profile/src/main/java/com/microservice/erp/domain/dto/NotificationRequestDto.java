@@ -1,11 +1,14 @@
 package com.microservice.erp.domain.dto;
 
 public class NotificationRequestDto {
+    //region private variables
     private String mobileNo;
     private String otp;
     private String email;
     private String verificationCode;
+    //endregion
 
+    //region private variables
     public String getMobileNo() {
         return mobileNo;
     }
@@ -37,4 +40,5 @@ public class NotificationRequestDto {
     public void setVerificationCode(String verificationCode) {
         this.verificationCode = verificationCode;
     }
+    //endregion
 }
