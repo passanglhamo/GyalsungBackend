@@ -1,8 +1,8 @@
 package com.microservice.erp.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microservice.erp.controllers.rest.deferment.DefermentController;
-import com.microservice.erp.services.iServices.deferment.ICreateDefermentService;
+import com.microservice.erp.controllers.rest.DefermentController;
+import com.microservice.erp.services.iServices.ICreateDefermentService;
 import com.microservice.erp.webapp.WebApplicationTest;
 import com.microservice.erp.webapp.config.BeanConfig;
 import com.microservice.erp.webapp.config.TestJPAH2Config;

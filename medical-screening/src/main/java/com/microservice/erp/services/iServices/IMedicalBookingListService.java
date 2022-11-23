@@ -9,5 +9,5 @@ public interface IMedicalBookingListService {
 
     ResponseEntity<?> getTimeSlotsByScheduleDateId(String authHeader, BigInteger hospitalScheduleDateId);
 
-    ResponseEntity<?> getBookingDetail(String authHeader, BigInteger hospitalScheduleTimeId, Long bookedById);
+    ResponseEntity<?> getBookingDetail(String authHeader, BigInteger hospitalScheduleTimeId, BigInteger bookedById);
 }

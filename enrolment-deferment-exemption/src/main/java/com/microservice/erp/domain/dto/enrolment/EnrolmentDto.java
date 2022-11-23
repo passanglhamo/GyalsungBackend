@@ -1,5 +1,6 @@
 package com.microservice.erp.domain.dto.enrolment;
 
+import com.microservice.erp.domain.dto.EnrolmentCoursesDto;
 import lombok.*;
 
 import java.math.BigInteger;

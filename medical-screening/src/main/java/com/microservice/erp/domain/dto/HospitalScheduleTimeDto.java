@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 @Getter
@@ -13,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class HospitalScheduleTimeDto {
 
-    private Long id;
+    private BigInteger id;
     private String startTime;
     private String endTime;
     private Date startDateTime;
@@ -22,7 +23,7 @@ public class HospitalScheduleTimeDto {
 
 
     public static HospitalScheduleTimeDto withId(
-            Long id,
+            BigInteger id,
             String startTime,
             String endTime,
             Date startDateTime,

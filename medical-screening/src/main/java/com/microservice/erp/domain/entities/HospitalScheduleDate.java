@@ -1,25 +1,24 @@
 package com.microservice.erp.domain.entities;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-@Builder
-@EqualsAndHashCode
 @Entity(name = "tms_hospital_schedule_date")
 @AttributeOverride(name = "id", column = @Column(name = "hospital_schedule_date_id"))
-public class HospitalScheduleDate extends Auditable<Long, Long> {
+public class HospitalScheduleDate extends Auditable<BigInteger, Long> {
 
     @NotNull
     @Basic(optional = false)
     @Column(name = "hospital_id")
-    private Long hospitalId;
+    private BigInteger hospitalId;
 
     @NotNull(message = "Appointment date cannot be null")
     @Basic(optional = false)
@@ -40,4 +39,35 @@ public class HospitalScheduleDate extends Auditable<Long, Long> {
     )
     private Set<HospitalScheduleTime> hospitalScheduleTimeLists;
 
+    public BigInteger getHospitalId() {
+        return hospitalId;
+    }
+
+    public void setHospitalId(BigInteger hospitalId) {
+        this.hospitalId = hospitalId;
+    }
+
+    public Date getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(Date appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    public Character getStatus() {
+        return status;
+    }
+
+    public void setStatus(Character status) {
+        this.status = status;
+    }
+
+    public Set<HospitalScheduleTime> getHospitalScheduleTimeLists() {
+        return hospitalScheduleTimeLists;
+    }
+
+    public void setHospitalScheduleTimeLists(Set<HospitalScheduleTime> hospitalScheduleTimeLists) {
+        this.hospitalScheduleTimeLists = hospitalScheduleTimeLists;
+    }
 }

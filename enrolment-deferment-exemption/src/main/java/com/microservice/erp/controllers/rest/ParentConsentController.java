@@ -1,12 +1,10 @@
 package com.microservice.erp.controllers.rest;
 
-import com.microservice.erp.domain.dto.parentConsent.ParentConsentDto;
-import com.microservice.erp.services.iServices.parentConsent.IParentConsentService;
+import com.microservice.erp.domain.dto.ParentConsentDto;
+import com.microservice.erp.services.iServices.IParentConsentService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @CrossOrigin(origins = "*")
 @RestController

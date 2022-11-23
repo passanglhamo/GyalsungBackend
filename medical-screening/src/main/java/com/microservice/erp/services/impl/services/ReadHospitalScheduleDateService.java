@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ public class ReadHospitalScheduleDateService implements IReadHospitalScheduleDat
     private final IHospitalScheduleDateRepository repository;
     private final HospitalScheduleTimeMapper mapper;
 
-    public Collection<HospitalScheduleDateDto> getAllScheduleDateById(Long dzoHosId) {
+    public Collection<HospitalScheduleDateDto> getAllScheduleDateById(BigInteger dzoHosId) {
         return repository.findAllByHospitalId(dzoHosId)
                 .stream()
                 .map(mapper::mapToDomain)

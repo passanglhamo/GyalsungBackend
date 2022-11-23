@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -93,7 +94,7 @@ public class MedicalBookingService implements IMedicalBookingService {
     }
 
     @Override
-    public ResponseEntity<?> getMedicalAppointmentDetail(String authHeader, Long userId) {
+    public ResponseEntity<?> getMedicalAppointmentDetail(String authHeader, BigInteger userId) {
         ResponseDto responseDto = new ResponseDto();
         HospitalScheduleTime hospitalScheduleTime = iHospitalScheduleTimeRepository.findByBookedBy(userId);
         responseDto.setStartTime(hospitalScheduleTime.getStartTime());
@@ -171,7 +172,7 @@ public class MedicalBookingService implements IMedicalBookingService {
     }
 
     @Override
-    public ResponseEntity<?> getPreviousSelfDeclaration(String authHeader, Long userId) {
+    public ResponseEntity<?> getPreviousSelfDeclaration(String authHeader, BigInteger userId) {
         List<MedicalSelfDeclaration> medicalSelfDeclarationList = iMedicalSelfDeclarationRepository.findByUserIdOrderByMedicalQuestionNameAsc(userId);
         return ResponseEntity.ok(medicalSelfDeclarationList);
     }

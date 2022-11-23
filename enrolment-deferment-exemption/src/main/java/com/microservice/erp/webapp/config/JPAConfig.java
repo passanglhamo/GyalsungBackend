@@ -26,9 +26,9 @@ import java.util.Optional;
 @EnableJpaRepositories(
         basePackages = {"com.microservice.erp.domain.repositories"}
 )
-//@PropertySource("classpath:mysql-db.properties")
-//@PropertySource("classpath:h2-db.properties")
-//@PropertySource("classpath:postgres-db.properties")
+@PropertySource("classpath:mysql-db.properties")
+@PropertySource("classpath:h2-db.properties")
+@PropertySource("classpath:postgres-db.properties")
 public class JPAConfig {
 
     private Environment env;

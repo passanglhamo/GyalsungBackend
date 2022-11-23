@@ -68,7 +68,7 @@ public class MedicalBookingListService implements IMedicalBookingListService {
     }
 
     @Override
-    public ResponseEntity<?> getBookingDetail(String authHeader, BigInteger hospitalScheduleTimeId, Long bookedById) {
+    public ResponseEntity<?> getBookingDetail(String authHeader, BigInteger hospitalScheduleTimeId, BigInteger bookedById) {
         List<MedicalSelfDeclaration> medicalSelfDeclarationList = iMedicalSelfDeclarationRepository.findByUserIdOrderByMedicalQuestionNameAsc(bookedById);
         return ResponseEntity.ok(medicalSelfDeclarationList);
     }

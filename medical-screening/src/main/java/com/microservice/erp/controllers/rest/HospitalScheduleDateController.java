@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Collection;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/hospitalScheduleDate")
 @AllArgsConstructor
@@ -32,7 +32,7 @@ public class HospitalScheduleDateController {
 
     @GetMapping(value = "/getAllScheduleTimesById", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.OK)
-    public Collection<HospitalScheduleDateDto> getAllScheduleTimesById(@RequestParam("dzoHosId") Long dzoHosId) {
+    public Collection<HospitalScheduleDateDto> getAllScheduleTimesById(@RequestParam("dzoHosId") BigInteger dzoHosId) {
         return readService.getAllScheduleDateById(dzoHosId);
     }
 

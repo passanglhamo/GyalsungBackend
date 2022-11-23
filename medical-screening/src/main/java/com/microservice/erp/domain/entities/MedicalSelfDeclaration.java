@@ -4,21 +4,22 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 
 @Setter
 @Getter
 @Entity(name = "med_medical_self_declaration")
 @AttributeOverride(name = "id", column = @Column(name = "self_declaration_id"))
-public class MedicalSelfDeclaration extends Auditable<Long, Long> {
+public class MedicalSelfDeclaration extends Auditable<BigInteger, Long> {
 
     //region private variables
     @NotNull
     @Column(name = "user_id")
-    private Long userId;
+    private BigInteger userId;
 
     @NotNull
     @Column(name = "medical_questionnaire_id")
-    private Long medicalQuestionnaireId;
+    private BigInteger medicalQuestionnaireId;
 
     @NotNull(message = "Medical Questionnaire cannot be null.")
     @Column(name = "medical_question_name", columnDefinition = "varchar(255)")
