@@ -11,15 +11,13 @@ import java.math.BigInteger;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@EqualsAndHashCode
 @Entity(name = "notice_send_info")
-@AttributeOverride(name = "id", column = @Column(name = "notice_send_info_id"))
-public class SendNoticeInfo extends Auditable<Long, Long> {
+@AttributeOverride(name = "id", column = @Column(name = "notice_send_info_id", columnDefinition = "bigint"))
+public class SendNoticeInfo extends Auditable<BigInteger, Long> {
 
     //region private variables
     @NotNull()
-    @Column(name = "notice_configuration_id")
+    @Column(name = "notice_configuration_id", columnDefinition = "bigint")
     private BigInteger noticeConfigurationId;
     @NotNull(message = "Year cannot be null.")
     @Basic(optional = false)
@@ -39,7 +37,7 @@ public class SendNoticeInfo extends Auditable<Long, Long> {
     private String classId;
 
     @Basic(optional = false)
-    @Column(name = "age")
+    @Column(name = "age" ,columnDefinition = "int")
     private Integer age;
 
     @Basic(optional = false)
