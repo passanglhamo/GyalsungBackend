@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
+import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +25,12 @@ public class ParentConsent extends Auditable<BigInteger, Long> {
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
+    @NotNull(message = "Year cannot not be null")
+    @Column(name = "year", columnDefinition = "varchar(4)")
+    private String year;
+
+    @Column(name = "submitted_on")
+    private Date submittedOn;
     @Basic(optional = false)
     @NotNull(message = "Parent/Guardian name not be null")
     @Column(name = "guardian_name", columnDefinition = "varchar(255)")
@@ -43,6 +50,22 @@ public class ParentConsent extends Auditable<BigInteger, Long> {
 
     public void setUserId(BigInteger userId) {
         this.userId = userId;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public Date getSubmittedOn() {
+        return submittedOn;
+    }
+
+    public void setSubmittedOn(Date submittedOn) {
+        this.submittedOn = submittedOn;
     }
 
     public String getGuardianName() {

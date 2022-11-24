@@ -5,6 +5,8 @@ import com.microservice.erp.domain.dto.ParentConsentListDto;
 import com.microservice.erp.domain.dto.ParentConsentDto;
 import com.microservice.erp.domain.entities.ParentConsent;
 import com.microservice.erp.domain.entities.ParentConsentOtp;
+import com.microservice.erp.domain.entities.RegistrationDateInfo;
+import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.domain.repositories.ParentConsentOtpRepository;
 import com.microservice.erp.domain.repositories.ParentConsentRepository;
 import com.microservice.erp.domain.helper.MailSender;
@@ -17,10 +19,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +27,7 @@ public class ParentConsentService implements IParentConsentService {
     private ParentConsentRepository parentConsentRepository;
 
     private ParentConsentOtpRepository parentConsentOtpRepository;
+    private IRegistrationDateInfoRepository iRegistrationDateInfoRepository;
 
     @Override
     public ResponseEntity<?> receiveOtp(ParentConsentDto parentConsentDto) throws Exception {
@@ -64,6 +64,10 @@ public class ParentConsentService implements IParentConsentService {
             return ResponseEntity.badRequest().body(new MessageResponse("You have already submitted parent or guardian consent."));
         }
         ParentConsent parentConsent = new ModelMapper().map(parentConsentDto, ParentConsent.class);
+
+        RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus('A');
+        parentConsent.setYear(registrationDateInfo.getRegistrationYear());
+        parentConsent.setSubmittedOn(new Date());
         parentConsentRepository.save(parentConsent);
         // to send confirmation sms and email to user
         String messageToUser = "Dear " + parentConsentDto.getFullName() + ", " + " Your parent/guardian consent for Gyalsung Registration has been submitted. Congratulations and" + " we look forward to seeing you in the training.";
@@ -80,10 +84,15 @@ public class ParentConsentService implements IParentConsentService {
     }
 
     @Override
-    public ResponseEntity<?> getParentConsentList(String authHeader) {
-        //TODO: need to filter parent consent lists by year
-        List<ParentConsent> parentConsentLists = parentConsentRepository.findAll();
+    public ResponseEntity<?> getParentConsentList(String authHeader, String year, Character status) {
 
+        List<ParentConsent> parentConsentLists;
+        if (status == 'S') {
+            parentConsentLists = parentConsentRepository.findByYearOrderBySubmittedOnAsc(year);
+        } else {
+            //todo: need to get list of eligible users who have not submitted parent/guardian consents
+            parentConsentLists = parentConsentRepository.findByYearOrderBySubmittedOnAsc(year);
+        }
         List<ParentConsentListDto> parentConsentListDtos = new ArrayList<>();
         parentConsentLists.forEach(item -> {
             RestTemplate restTemplate = new RestTemplate();
