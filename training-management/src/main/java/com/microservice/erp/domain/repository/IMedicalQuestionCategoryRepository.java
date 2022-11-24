@@ -13,5 +13,7 @@ import java.util.List;
 
 @Repository
 public interface IMedicalQuestionCategoryRepository extends JpaRepository<MedicalQuestionCategory, BigInteger> {
-    List<MedicalQuestionCategory> findAllByStatus(String status);
+    List<MedicalQuestionCategory> findAllByStatusOrderByCategoryNameAsc(String status);
+
+    List<MedicalQuestionCategory> findAllByOrderByCategoryNameAsc();
 }

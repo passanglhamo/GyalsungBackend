@@ -6,6 +6,7 @@ import com.microservice.erp.domain.repository.ITrainingAcademyCapacityRepository
 import com.microservice.erp.services.iServices.ICreateTrainingAcademyCapacityService;
 import com.microservice.erp.services.impl.mapper.TrainingAcademyCapacityMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,9 @@ public class CreateTrainingAcademyCapacityService implements ICreateTrainingAcad
 
     @Override
     public ResponseEntity<?> saveTrainingAcaCap(TrainingAcademyCapacityDto trainingAcademyCapacityDto) throws IOException, ParseException {
-        if (!Objects.isNull(repository.findByTrainingYear(trainingAcademyCapacityDto.getTrainingYear()))) {
-            return ResponseEntity.ok(new MessageResponse("Year already existed."));
+        if (!Objects.isNull(repository.findByTrainingYearAndAcademyId(trainingAcademyCapacityDto.getTrainingYear(),
+                trainingAcademyCapacityDto.getAcademyId()))) {
+            return new ResponseEntity<>("Data is already saved for the given year and academy.", HttpStatus.ALREADY_REPORTED);
         }
 
         var trainingAcademyCapacity = repository.save(

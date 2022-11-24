@@ -4,6 +4,8 @@ import com.microservice.erp.domain.entities.RegistrationDateInfo;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.services.iServices.ICreateRegistrationDateInfoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +15,12 @@ public class CreateRegistrationDateInfoService implements ICreateRegistrationDat
 
 
     @Override
-    public RegistrationDateInfo saveRegistrationDateInfo(RegistrationDateInfo registrationDateInfo) {
-        return repository.save(registrationDateInfo);
+    public ResponseEntity<?> saveRegistrationDateInfo(RegistrationDateInfo registrationDateInfo) {
+        if (repository.existsByRegistrationYear(registrationDateInfo.getRegistrationYear())) {
+            return new ResponseEntity<>("Registration date is already added for given year.", HttpStatus.ALREADY_REPORTED);
+        }
+        repository.save(registrationDateInfo);
+
+        return ResponseEntity.ok("Registration Date saved successfully.");
     }
 }

@@ -15,6 +15,6 @@ public class ReadRegistrationDateInfoService implements IReadRegistrationDateInf
     private final IRegistrationDateInfoRepository repository;
     @Override
     public List<RegistrationDateInfo> getAllRegistrationDateList() {
-        return repository.findAll();
+        return repository.findAllByOrderByRegistrationYearDesc();
     }
 }

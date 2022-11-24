@@ -23,11 +23,11 @@ public class ReadMedicalCategoryService implements IReadMedicalCategoryService {
 
     @Override
     public List<MedicalQuestionCategory> getAllMedicalCategoryList() {
-        return repository.findAll();
+        return repository.findAllByOrderByCategoryNameAsc();
     }
 
     @Override
     public List<MedicalQuestionCategory> getAllActiveMedicalCatList() {
-        return repository.findAllByStatus(Status.Active.value().toString());
+        return repository.findAllByStatusOrderByCategoryNameAsc(Status.Active.value().toString());
     }
 }

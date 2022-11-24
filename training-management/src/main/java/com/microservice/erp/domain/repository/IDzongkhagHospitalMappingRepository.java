@@ -7,16 +7,15 @@ import org.springframework.stereotype.Repository;
 import java.math.BigInteger;
 import java.util.List;
 
-/**
- * @author Passang Lhamo
- */
-
 @Repository
 public interface IDzongkhagHospitalMappingRepository extends JpaRepository<DzongkhagHospitalMapping, BigInteger> {
     DzongkhagHospitalMapping findByDzongkhagId(Integer id);
 
     List<DzongkhagHospitalMapping> findAllByStatus(String status);
 
-    boolean  existsByDzongkhagIdAndHospitalId(Integer dzongkhagId,Integer hospitalId);
+    boolean  existsByHospitalId(Integer hospitalId);
+
+    List<DzongkhagHospitalMapping> findAllByOrderByHospitalIdAsc();
+
 
 }
