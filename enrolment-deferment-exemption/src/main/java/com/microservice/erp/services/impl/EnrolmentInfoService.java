@@ -2,6 +2,7 @@ package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dao.EnrolmentDao;
 import com.microservice.erp.domain.dto.EnrolmentListDto;
+import com.microservice.erp.domain.dto.TrainingAcademyDto;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
@@ -90,10 +91,15 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             enrolmentListDto.setYear(item.getYear());
             enrolmentListDto.setPreference_number(item.getPreference_number());
             enrolmentListDto.setCourse_id(item.getCourse_id());
+
+            Integer trainingAcademyId = item.getTraining_academy_id();
+            if (trainingAcademyId != null) {
+                String urlTraining = "http://localhost:8086/api/training/management/common/getTrainingAcademyById?academyId=" + trainingAcademyId;
+                ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
+                enrolmentListDto.setAcademy_name(Objects.requireNonNull(responseTraining.getBody()).getName());
+            }
             enrolmentList.add(enrolmentListDto);
         });
-        //todo: need to get training academy name  if training academy_id is not null
-
-        return ResponseEntity.ok(enrolmentList);
+         return ResponseEntity.ok(enrolmentList);
     }
 }

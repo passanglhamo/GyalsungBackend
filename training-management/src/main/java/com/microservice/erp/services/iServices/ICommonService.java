@@ -18,4 +18,6 @@ public interface ICommonService {
     ResponseEntity<?> getHospitalMappingByHospitalId(Integer hospitalId);
 
     ResponseEntity<?> getAllTrainingAcademies();
+
+    ResponseEntity<?> getTrainingAcademyById(Integer academyId);
 }

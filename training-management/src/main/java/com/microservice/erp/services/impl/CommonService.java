@@ -71,4 +71,10 @@ public class CommonService implements ICommonService {
         List<TrainingAcademy> trainingAcademies = trainingAcademyRepository.findAllByOrderByNameAsc();
         return ResponseEntity.ok(trainingAcademies);
     }
+
+    @Override
+    public ResponseEntity<?> getTrainingAcademyById(Integer academyId) {
+        TrainingAcademy trainingAcademy = trainingAcademyRepository.findById(academyId).get();
+        return ResponseEntity.ok(trainingAcademy);
+    }
 }

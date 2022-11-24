@@ -10,6 +10,7 @@ import java.util.Date;
 @Getter
 public class EnrolmentListDto {
     //region private variables
+    private String academy_name;
     private String full_name;
     private String cid;
     private String dob;
@@ -18,7 +19,7 @@ public class EnrolmentListDto {
     private Date enrolled_on;
     private String remarks;
     private Character status;
-    private BigInteger training_academy_id;
+    private Integer training_academy_id;
     private String year;
     private Integer preference_number;
     private BigInteger course_id;
