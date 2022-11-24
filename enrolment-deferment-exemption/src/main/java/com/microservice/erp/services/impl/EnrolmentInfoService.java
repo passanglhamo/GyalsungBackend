@@ -6,14 +6,18 @@ import com.microservice.erp.domain.dto.TrainingAcademyDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
+import com.microservice.erp.domain.entities.ParentConsentOtp;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
+import com.microservice.erp.domain.helper.MailSender;
 import com.microservice.erp.domain.helper.MessageResponse;
+import com.microservice.erp.domain.helper.SmsSender;
 import com.microservice.erp.domain.mapper.EnrolmentMapper;
 import com.microservice.erp.domain.repositories.IEnrolmentCoursePreferenceRepository;
 import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -47,7 +51,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public ResponseEntity<?> saveEnrolment(String authHeader, EnrolmentDto enrolmentDto) {
+    public ResponseEntity<?> saveEnrolment(String authHeader, EnrolmentDto enrolmentDto) throws Exception {
         EnrolmentInfo enrolmentInfoDb = iEnrolmentInfoRepository.findByUserId(enrolmentDto.getUserId());
         //to check already enrolled or not
         if (enrolmentInfoDb != null) {
@@ -74,9 +78,19 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         } else {
             enrolmentDto.setUnderAge('N');
         }
+        String fullName = userDtoResponse.getBody().getFull_name();
+        String mobileNo = userDtoResponse.getBody().getMobile_no();
+        String email = userDtoResponse.getBody().getEmail();
         var enrolmentInfo = iEnrolmentInfoRepository.save(enrolmentMapper.mapToEntity(enrolmentDto));
         iEnrolmentInfoRepository.save(enrolmentInfo);
-        //todo:send email and sms
+
+        //todo: need to get mail and sms content
+        String message = "Dear " + fullName + ",  Thank you for registering to Gyalsung training.";
+        SmsSender.sendSms(mobileNo, message);
+
+        String subject = "Gyalsung Registration";
+        MailSender.sendMail(email, null, null, message, subject);
+
         return ResponseEntity.ok(new MessageResponse("Enrolled successfully."));
     }
 

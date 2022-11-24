@@ -90,7 +90,8 @@ public class ParentConsentService implements IParentConsentService {
         if (status == 'S') {
             parentConsentLists = parentConsentRepository.findByYearOrderBySubmittedOnAsc(year);
         } else {
-            //todo: need to get list of eligible users who have not submitted parent/guardian consents
+            //todo: need to get list of eligible users who have not submitted parent/guardian consents by checking underAge = Y in enrolment
+            // and userId not in parent consent table
             parentConsentLists = parentConsentRepository.findByYearOrderBySubmittedOnAsc(year);
         }
         List<ParentConsentListDto> parentConsentListDtos = new ArrayList<>();

@@ -16,12 +16,14 @@ public class UserProfileDto {
     private BigInteger userId;
     private String username;
     private String fullName;
+    private String full_name;
     private String sex;
     private String cid;
     private String studentCode;
     private String birthDate;
     private Date dob;
     private String mobileNo;
+    private String mobile_no;
     private String otp;
     private String email;
     private String verificationCode;
