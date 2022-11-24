@@ -2,6 +2,7 @@ package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
+import com.microservice.erp.services.iServices.IUpdateDefermentService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.math.BigInteger;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -35,10 +37,19 @@ public class EnrolmentController {
         return iEnrolmentInfoService.saveEnrolment(enrolmentDto);
     }
 
-    @RequestMapping(value = "/getEnrolmentListByYearAndCourseId", method = RequestMethod.GET)
-    public ResponseEntity<?> getEnrolmentListByYearAndCourseId(@RequestHeader("Authorization") String authHeader
+    @RequestMapping(value = "/getEnrolmentListByYearAndCoursePreference", method = RequestMethod.GET)
+    public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(@RequestHeader("Authorization") String authHeader
             , @RequestParam("year") String year
-            , @RequestParam("courseId") String courseId) {
-        return iEnrolmentInfoService.getEnrolmentListByYearAndCourseId(authHeader, year, courseId);
+            , @RequestParam("courseId") BigInteger courseId
+            , @RequestParam("coursePreferenceNumber") Integer coursePreferenceNumber) {
+        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, courseId, coursePreferenceNumber);
     }
+
+//    @PostMapping(value = "/allocateTraining")
+//    public ResponseEntity<?> allocateTraining(@RequestHeader("Authorization") String authHeader,
+//                                          @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
+//
+//        return iEnrolmentInfoService.allocateTraining(authHeader,command);
+//    }
+
 }

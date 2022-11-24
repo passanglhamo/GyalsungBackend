@@ -53,4 +53,9 @@ public class CommonController {
         return iCommonService.getAllTrainingAcademies();
     }
 
+    @GetMapping("/getTrainingAcademyById")
+    public ResponseEntity<?> getTrainingAcademyById(@RequestParam("academyId") Integer academyId) {
+        return iCommonService.getTrainingAcademyById(academyId);
+    }
+
 }

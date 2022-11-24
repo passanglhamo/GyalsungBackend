@@ -1,7 +1,7 @@
 /*
 package com.microservice.erp.domain.mapper;
 
-import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
+import com.microservice.erp.domain.dto.enrolment.EnrolmentListDto;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
 import com.microservice.erp.domain.mapper.enrolment.EnrolmentMapper;
 import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
@@ -37,7 +37,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public ResponseEntity<?> save(HttpServletRequest request, EnrolmentDto enrolmentDto) {
+    public ResponseEntity<?> save(HttpServletRequest request, EnrolmentListDto enrolmentDto) {
 
         var enrolmentInfo = iEnrolmentInfoRepository.save(enrolmentMapper.mapToEntity(request, enrolmentDto));
 
