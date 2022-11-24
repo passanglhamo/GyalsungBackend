@@ -4,15 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import java.math.BigInteger;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Validated
 public class TrainingAcademyCapacityDto {
     private BigInteger id;
     @NotNull
@@ -20,8 +22,10 @@ public class TrainingAcademyCapacityDto {
     @NotNull
     private String trainingYear;
     @NotNull
+    @PositiveOrZero(message = "Male capacity can be only positive number")
     private Integer maleCapacityAmount;
     @NotNull
+    @PositiveOrZero(message = "Female capacity can be only positive number")
     private Integer femaleCapacityAmount;
     @NotNull
     @NotEmpty

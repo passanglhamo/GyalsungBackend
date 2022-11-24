@@ -22,6 +22,6 @@ public class ReadNoticeConfigurationService implements IReadNoticeConfigurationS
 
     @Override
     public List<NoticeConfiguration> getAllNoticeConfigurationList() {
-        return repository.findAll();
+        return repository.findAllByOrderByNoticeNameAsc();
     }
 }

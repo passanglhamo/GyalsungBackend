@@ -16,7 +16,7 @@ public class ReadReasonService implements IReadReasonService {
 
     @Override
     public List<Reason> getAllReasonList() {
-        return repository.findAll();
+        return repository.findAllByOrderByReasonNameAsc();
     }
 
     @Override

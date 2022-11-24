@@ -9,9 +9,6 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author Rajib Kumer Ghosh
- */
 
 @Repository
 public interface IEnlistmentScheduleRepository extends JpaRepository<EnlistmentSchedule, BigInteger> {
@@ -21,4 +18,12 @@ public interface IEnlistmentScheduleRepository extends JpaRepository<EnlistmentS
     List<EnlistmentSchedule> getAllByFromDate(Date fromDate, String status);
 
     boolean existsByToDateAfter(Date fromDate);
+
+    boolean existsByToDateAfterAndIdNot(Date fromDate,BigInteger id);
+
+    List<EnlistmentSchedule> findAllByOrderByFromDateDesc();
+
+
+
 }
+

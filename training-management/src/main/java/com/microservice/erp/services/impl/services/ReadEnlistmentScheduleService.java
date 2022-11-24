@@ -17,7 +17,7 @@ public class ReadEnlistmentScheduleService implements IReadEnlistmentScheduleSer
 
     @Override
     public List<EnlistmentSchedule> getAllEnlistmentScheduleList() {
-        return repository.findAll();
+        return repository.findAllByOrderByFromDateDesc();
     }
 
 

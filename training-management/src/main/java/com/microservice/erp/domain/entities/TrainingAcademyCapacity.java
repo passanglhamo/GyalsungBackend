@@ -13,7 +13,7 @@ import java.math.BigInteger;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tms_training_academy_capacity")
-@AttributeOverride(name = "id", column = @Column(name = "training_academy_capacity_id",columnDefinition = "int"))
+@AttributeOverride(name = "id", column = @Column(name = "training_academy_capacity_id",columnDefinition = "bigint"))
 public class TrainingAcademyCapacity extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)

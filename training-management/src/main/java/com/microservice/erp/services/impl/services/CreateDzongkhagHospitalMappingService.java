@@ -18,15 +18,13 @@ public class CreateDzongkhagHospitalMappingService implements ICreateDzongkhagHo
     @Override
     public ResponseEntity<?> saveDzongkhagHospital(DzongkhagHospitalMapping dzongkhagHospitalMapping) {
 
-//        boolean defermentInfoExist = repository.existsByDzongkhagIdAndHospitalId(dzongkhagHospitalMapping.getDzongkhagId(),
-//                dzongkhagHospitalMapping.getHospitalId());
-//
-//        if (defermentInfoExist) {
-//            return new ResponseEntity<>(new MessageResponse("Selected dzongkhag and hospital is already mapped"), HttpStatus.ALREADY_REPORTED);
-//        }
+        boolean defermentInfoExist = repository.existsByHospitalId(dzongkhagHospitalMapping.getHospitalId());
+
+        if (defermentInfoExist) {
+            return new ResponseEntity<>("Selected hospital is already mapped.", HttpStatus.ALREADY_REPORTED);
+        }
 
         repository.save(dzongkhagHospitalMapping);
-
-        return ResponseEntity.ok(new MessageResponse("Dzongkhag and hospital mapped successfully"));
+        return ResponseEntity.ok("Dzongkhag and hospital mapped successfully.");
     }
 }
