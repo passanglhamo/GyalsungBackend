@@ -12,6 +12,7 @@ import java.util.Date;
 public class UserProfileDto {
     //region private variables
     private BigInteger userId;
+    private Integer age;
     private String username;
     private String fullName;
     private String sex;

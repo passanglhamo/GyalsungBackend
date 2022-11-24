@@ -145,4 +145,16 @@ public class UserProfileController {
         return iProfileService.getAllUsersEligibleForTraining(paramDate, paramAge);
     }
 
+    /**
+     * to get age during enrolment time to check if the user is underage or not
+     *
+     * @param userId    -- BigInteger
+     * @param paramDate -- Date
+     * @return -- ResponseEntity<?>
+     */
+    @GetMapping("/checkUnderAge")
+    public ResponseEntity<?> checkUnderAge(@RequestParam("userId") BigInteger userId,
+                                           @RequestParam("paramDate") Date paramDate) {
+        return iProfileService.checkUnderAge(userId, paramDate);
+    }
 }

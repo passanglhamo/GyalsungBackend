@@ -12,7 +12,7 @@ public interface IEnrolmentInfoService {
 
     ResponseEntity<?> getRegistrationDateInfo();
 
-    ResponseEntity<?> saveEnrolment(EnrolmentDto enrolmentDto);
+    ResponseEntity<?> saveEnrolment(String authHeader, EnrolmentDto enrolmentDto);
 
     ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId
             , Integer coursePreferenceNumber);

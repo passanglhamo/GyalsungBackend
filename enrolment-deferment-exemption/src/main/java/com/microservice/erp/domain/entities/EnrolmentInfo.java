@@ -15,6 +15,8 @@ public class EnrolmentInfo extends Auditable<BigInteger, Long> {
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
+    @Column(name = "under_age", columnDefinition = "char(1)")
+    private Character underAge;
     @Column(name = "year", columnDefinition = "char(4)")
     private String year;
     @Column(name = "training_academy_id", columnDefinition = "int")
@@ -48,6 +50,14 @@ public class EnrolmentInfo extends Auditable<BigInteger, Long> {
 
     public void setUserId(BigInteger userId) {
         this.userId = userId;
+    }
+
+    public Character getUnderAge() {
+        return underAge;
+    }
+
+    public void setUnderAge(Character underAge) {
+        this.underAge = underAge;
     }
 
     public String getYear() {

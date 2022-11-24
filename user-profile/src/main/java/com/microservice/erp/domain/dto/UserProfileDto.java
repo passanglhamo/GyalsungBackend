@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -11,6 +12,7 @@ import java.util.Date;
 @Getter
 public class UserProfileDto {
     //region private variables
+    private Double age;
     private BigInteger userId;
     private String username;
     private String fullName;

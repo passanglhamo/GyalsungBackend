@@ -16,6 +16,7 @@ public class EnrolmentDto {
     private String year;
     private Character status;
     private Date enrolledOn;
+    private Character underAge;
     private List<EnrolmentCoursesDto> enrolmentCoursesDtos;
 
     public static EnrolmentDto withId(
@@ -23,12 +24,14 @@ public class EnrolmentDto {
             String year,
             Character status,
             Date enrolledOn,
+            Character underAge,
             List<EnrolmentCoursesDto> enrolmentCoursesDtos) {
         return new EnrolmentDto(
                 userId,
                 year,
                 status,
                 enrolledOn,
+                underAge,
                 enrolmentCoursesDtos
         );
     }

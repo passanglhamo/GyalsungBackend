@@ -54,4 +54,5 @@ public interface IProfileService {
 
     ResponseEntity<?> getAllUsersEligibleForTraining(Date paramDate, Integer paramAge);
 
+    ResponseEntity<?> checkUnderAge(BigInteger userId, Date paramDate);
 }
