@@ -1,5 +1,6 @@
 package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dao.UserDao;
 import com.microservice.erp.domain.dto.DzongkhagDto;
 import com.microservice.erp.domain.dto.GeogDto;
 import com.microservice.erp.domain.dto.MessageResponse;
@@ -30,6 +31,7 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 public class ProfileService implements IProfileService {
+    private final UserDao userDao;
     private final IUserInfoRepository iUserInfoRepository;
     private final IChangeMobileNoSmsOtpRepository iChangeMobileNoSmsOtpRepository;
     private final IChangeEmailVerificationCodeRepository iChangeEmailVerificationCodeRepository;
@@ -412,4 +414,11 @@ public class ProfileService implements IProfileService {
         List<UserInfo> userInfos = iUserInfoRepository.getAllUsersEligibleForTraining(paramDate, paramAge);
         return ResponseEntity.ok(userInfos);
     }
+
+    @Override
+    public ResponseEntity<?> checkUnderAge(BigInteger userId, Date paramDate) {
+        UserProfileDto userProfileDto = userDao.checkUnderAge(userId, paramDate);
+        return ResponseEntity.ok(userProfileDto);
+    }
+
 }

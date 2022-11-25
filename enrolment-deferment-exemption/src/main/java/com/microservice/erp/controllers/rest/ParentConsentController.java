@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/parentConsent")
@@ -24,7 +26,9 @@ public class ParentConsentController {
     }
 
     @GetMapping(value = "/getParentConsentList")
-    public ResponseEntity<?> getParentConsentList(@RequestHeader("Authorization") String authHeader) {
-        return parentConsentService.getParentConsentList(authHeader);
+    public ResponseEntity<?> getParentConsentList(@RequestHeader("Authorization") String authHeader
+            , @RequestParam("year") String year
+            , @RequestParam("status") Character status) {
+        return parentConsentService.getParentConsentList(authHeader, year, status);
     }
 }

@@ -33,8 +33,8 @@ public class EnrolmentController {
 //    }
 
     @PostMapping(value = "/saveEnrolment")
-    public ResponseEntity<?> saveEnrolment(@RequestBody EnrolmentDto enrolmentDto) {
-        return iEnrolmentInfoService.saveEnrolment(enrolmentDto);
+    public ResponseEntity<?> saveEnrolment(@RequestHeader("Authorization") String authHeader, @RequestBody EnrolmentDto enrolmentDto) throws Exception {
+        return iEnrolmentInfoService.saveEnrolment(authHeader, enrolmentDto);
     }
 
     @RequestMapping(value = "/getEnrolmentListByYearAndCoursePreference", method = RequestMethod.GET)

@@ -4,7 +4,10 @@ import com.microservice.erp.domain.entities.ParentConsent;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigInteger;
+import java.util.List;
 
 public interface ParentConsentRepository extends JpaRepository<ParentConsent, BigInteger> {
-  ParentConsent findByUserId(BigInteger userId);
- }
+    ParentConsent findByUserId(BigInteger userId);
+
+    List<ParentConsent> findByYearOrderBySubmittedOnAsc(String year);
+}

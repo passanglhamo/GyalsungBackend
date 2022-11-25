@@ -15,12 +15,12 @@ public class JwtResponse {
     private String username;
     private String fullName;
     private String cid;
-    private Character gender;
+    private String gender;
     private String mobileNo;
     private String email;
     private List<String> roles;
 
-    public JwtResponse(String accessToken, BigInteger userId, String fullName, String cid, Character gender,
+    public JwtResponse(String accessToken, BigInteger userId, String fullName, String cid, String gender,
                        String mobileNo, String username, String email, List<String> roles) {
         this.accessToken = accessToken;
         this.userId = userId;
