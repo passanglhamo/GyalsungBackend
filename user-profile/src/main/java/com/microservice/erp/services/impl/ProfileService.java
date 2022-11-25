@@ -50,15 +50,16 @@ public class ProfileService implements IProfileService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
-
-        String geogUrl = "http://localhost:81/api/training/management/common/getGeogByGeogId?geogId=" + userInfo.getPresentGeogId();
-        ResponseEntity<GeogDto> geogResponse = restTemplate.exchange(geogUrl, HttpMethod.GET, request, GeogDto.class);
-        userProfileDto.setPresentGeogName(Objects.requireNonNull(geogResponse.getBody()).getGeogName());
-
-        String dzongkhagUrl = "http://localhost:81/api/training/management/common/getDzongkhagByDzongkhagId?dzongkhagId=" + userInfo.getPresentDzongkhagId();
-        ResponseEntity<DzongkhagDto> dzongkhagResponse = restTemplate.exchange(dzongkhagUrl, HttpMethod.GET, request, DzongkhagDto.class);
-        userProfileDto.setPresentDzongkhagName(Objects.requireNonNull(dzongkhagResponse.getBody()).getDzongkhagName());
-
+        if (userInfo.getPresentGeogId() != null) {
+            String geogUrl = "http://localhost:81/api/training/management/common/getGeogByGeogId?geogId=" + userInfo.getPresentGeogId();
+            ResponseEntity<GeogDto> geogResponse = restTemplate.exchange(geogUrl, HttpMethod.GET, request, GeogDto.class);
+            userProfileDto.setPresentGeogName(Objects.requireNonNull(geogResponse.getBody()).getGeogName());
+        }
+        if (userInfo.getPresentDzongkhagId() != null) {
+            String dzongkhagUrl = "http://localhost:81/api/training/management/common/getDzongkhagByDzongkhagId?dzongkhagId=" + userInfo.getPresentDzongkhagId();
+            ResponseEntity<DzongkhagDto> dzongkhagResponse = restTemplate.exchange(dzongkhagUrl, HttpMethod.GET, request, DzongkhagDto.class);
+            userProfileDto.setPresentDzongkhagName(Objects.requireNonNull(dzongkhagResponse.getBody()).getDzongkhagName());
+        }
         return ResponseEntity.ok(userProfileDto);
     }
 
