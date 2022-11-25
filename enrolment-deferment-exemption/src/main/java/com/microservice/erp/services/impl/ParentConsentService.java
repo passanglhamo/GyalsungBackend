@@ -1,6 +1,7 @@
 package com.microservice.erp.services.impl;
 
 
+import com.microservice.erp.domain.dao.ParentConsentDao;
 import com.microservice.erp.domain.dto.ParentConsentListDto;
 import com.microservice.erp.domain.dto.ParentConsentDto;
 import com.microservice.erp.domain.entities.ParentConsent;
@@ -25,7 +26,7 @@ import java.util.*;
 @AllArgsConstructor
 public class ParentConsentService implements IParentConsentService {
     private ParentConsentRepository parentConsentRepository;
-
+    private ParentConsentDao parentConsentDao;
     private ParentConsentOtpRepository parentConsentOtpRepository;
     private IRegistrationDateInfoRepository iRegistrationDateInfoRepository;
 
@@ -86,31 +87,46 @@ public class ParentConsentService implements IParentConsentService {
     @Override
     public ResponseEntity<?> getParentConsentList(String authHeader, String year, Character status) {
 
-        List<ParentConsent> parentConsentLists;
-        if (status == 'S') {
-            parentConsentLists = parentConsentRepository.findByYearOrderBySubmittedOnAsc(year);
-        } else {
-            //todo: need to get list of eligible users who have not submitted parent/guardian consents by checking underAge = Y in enrolment
-            // and userId not in parent consent table
-            parentConsentLists = parentConsentRepository.findByYearOrderBySubmittedOnAsc(year);
-        }
+
         List<ParentConsentListDto> parentConsentListDtos = new ArrayList<>();
-        parentConsentLists.forEach(item -> {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", authHeader);
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
-            ResponseEntity<ParentConsentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, ParentConsentListDto.class);
-            ParentConsentListDto parentConsentListDto = new ParentConsentListDto();
-            parentConsentListDto.setUserId(item.getUserId());
-            parentConsentListDto.setFullName(Objects.requireNonNull(response.getBody()).getFullName());
-            parentConsentListDto.setCid(response.getBody().getCid());
-            parentConsentListDto.setDob(response.getBody().getDob());
-            parentConsentListDto.setGuardianName(item.getGuardianName());
-            parentConsentListDto.setGuardianMobileNo(item.getGuardianMobileNo());
-            parentConsentListDtos.add(parentConsentListDto);
-        });
+        if (status == 'S') {
+            List<ParentConsent> parentConsentLists = parentConsentRepository.findByYearOrderBySubmittedOnAsc(year);
+            parentConsentLists.forEach(item -> {
+                RestTemplate restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Authorization", authHeader);
+                HttpEntity<String> request = new HttpEntity<>(headers);
+                String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
+                ResponseEntity<ParentConsentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, ParentConsentListDto.class);
+                ParentConsentListDto parentConsentListDto = new ParentConsentListDto();
+                parentConsentListDto.setUserId(item.getUserId());
+                parentConsentListDto.setFullName(Objects.requireNonNull(response.getBody()).getFullName());
+                parentConsentListDto.setCid(response.getBody().getCid());
+                parentConsentListDto.setDob(response.getBody().getDob());
+                parentConsentListDto.setGuardianName(item.getGuardianName());
+                parentConsentListDto.setGuardianMobileNo(item.getGuardianMobileNo());
+                parentConsentListDtos.add(parentConsentListDto);
+            });
+        } else {
+            List<ParentConsentDto> eligibleParentConsentList = parentConsentDao.getEligibleParentConsentList(year);
+            eligibleParentConsentList.forEach(item -> {
+                RestTemplate restTemplate = new RestTemplate();
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Authorization", authHeader);
+                HttpEntity<String> request = new HttpEntity<>(headers);
+                String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUser_id();
+                ResponseEntity<ParentConsentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, ParentConsentListDto.class);
+                ParentConsentListDto parentConsentListDto = new ParentConsentListDto();
+                parentConsentListDto.setUserId(item.getUser_id());
+                parentConsentListDto.setFullName(Objects.requireNonNull(response.getBody()).getFullName());
+                parentConsentListDto.setCid(response.getBody().getCid());
+                parentConsentListDto.setDob(response.getBody().getDob());
+                parentConsentListDto.setGuardianName(response.getBody().getGuardianName());
+                parentConsentListDto.setGuardianMobileNo(response.getBody().getGuardianMobileNo());
+                parentConsentListDtos.add(parentConsentListDto);
+            });
+        }
+
 
         return ResponseEntity.ok(parentConsentListDtos);
     }

@@ -8,6 +8,7 @@ import java.math.BigInteger;
 @Setter
 @Getter
 public class ParentConsentDto {
+    private BigInteger user_id;
     private BigInteger userId;
     private String mobileNo;
     private String fullName;
