@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface IGeogRepository extends JpaRepository<Geog, String> {
+public interface IGeogRepository extends JpaRepository<Geog, Integer> {
     List<Geog> findByDzongkhagIdOrderByGeogNameAsc(Integer dzongkhagId);
 
     Geog findByGeogId(Integer presentGeogId);

@@ -46,13 +46,18 @@ public class DefermentController {
     public ResponseEntity<?> rejectByIds(@RequestHeader("Authorization") String authHeader,
                                          @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
 
-        return updateService.rejectByIds(authHeader,command);
+        return updateService.rejectByIds(authHeader, command);
     }
 
     @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
     public ResponseEntity<?> downloadFile(@RequestParam("url") String url) {
         FileSystemResource file = new FileSystemResource(new File(url));
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+
+    @GetMapping(value = "/getDefermentListByToDateStatus")
+    public ResponseEntity<?> getDefermentListByToDateStatus(@RequestBody IReadDefermentService.ReadDefermentCommand command) {
+        return readService.getDefermentListByToDateStatus(command);
     }
 
 }

@@ -3,12 +3,12 @@ package com.microservice.erp.services.impl;
 import com.microservice.erp.domain.dto.DefermentDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.DefermentFileInfo;
-import com.microservice.erp.domain.mapper.DefermentMapper;
-import com.microservice.erp.domain.repositories.IDefermentFileInfoRepository;
-import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
 import com.microservice.erp.domain.helper.ResponseMessage;
 import com.microservice.erp.domain.helper.SystemDataInt;
+import com.microservice.erp.domain.mapper.DefermentMapper;
+import com.microservice.erp.domain.repositories.IDefermentFileInfoRepository;
+import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.IReadDefermentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -74,4 +75,16 @@ public class ReadDefermentService implements IReadDefermentService {
 
         return ResponseEntity.ok(responseMessage);
     }
+
+    @Override
+    public ResponseEntity<?> getDefermentListByToDateStatus(ReadDefermentCommand command) {
+        List<DefermentDto> defermentDtoList = repository.getDefermentListByToDateStatus(
+                        command.getToDate(), command.getStatus())
+                .stream()
+                .map(mapper::mapToDomain)
+                .collect(Collectors.toUnmodifiableList());
+
+        return ResponseEntity.ok(defermentDtoList);
+    }
+
 }
