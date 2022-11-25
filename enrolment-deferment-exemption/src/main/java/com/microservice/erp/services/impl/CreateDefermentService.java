@@ -58,11 +58,11 @@ public class CreateDefermentService implements ICreateDefermentService {
 
         repository.save(deferment);
 
-        try {
-            sendEmailAndSms(authTokenHeader, deferment.getUserId());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            sendEmailAndSms(authTokenHeader, deferment.getUserId());
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
 
         return ResponseEntity.ok(new MessageResponse("Deferment is successfully saved"));
     }
