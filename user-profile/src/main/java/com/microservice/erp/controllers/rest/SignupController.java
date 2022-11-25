@@ -1,13 +1,12 @@
 package com.microservice.erp.controllers.rest;
 
+import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.SignupRequestDto;
 import com.microservice.erp.domain.entities.UserInfo;
+import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISignupService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.wso2.client.api.ApiException;
 
@@ -17,7 +16,6 @@ import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -25,9 +23,11 @@ import java.util.stream.Collectors;
 public class SignupController {
 
     private final ISignupService iSignupService;
+    private final IUserInfoRepository iUserInfoRepository;
 
-    public SignupController(ISignupService iSignupService) {
+    public SignupController(ISignupService iSignupService, IUserInfoRepository iUserInfoRepository) {
         this.iSignupService = iSignupService;
+        this.iUserInfoRepository = iUserInfoRepository;
     }
 
     @GetMapping("/getCitizenDetails")
@@ -61,19 +61,26 @@ public class SignupController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser() {
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 
         List<String> roles = new ArrayList<>();
         roles.add("USER");
 
+        UserInfo userInfo = iUserInfoRepository.findByCid(loginRequest.getUsername());
+        if (userInfo == null) {
+            ResponseEntity.badRequest().body(new MessageResponse("Invalid username or password."));
+        }
+
+        assert userInfo != null;
+
         return ResponseEntity.ok(new JwtResponse("staticToken",
-                new BigInteger("2"),
-                "Ngawang Zepa",
-                "11514000454",
-                'M',
-                "17302667",
-                "nzepa",
-                "ngawang.zepa@thimphutechpark.bt",
+                userInfo.getId(),
+                userInfo.getFullName(),
+                userInfo.getCid(),
+                userInfo.getSex(),
+                userInfo.getMobileNo(),
+                userInfo.getUsername(),
+                userInfo.getEmail(),
                 roles));
     }
 }
