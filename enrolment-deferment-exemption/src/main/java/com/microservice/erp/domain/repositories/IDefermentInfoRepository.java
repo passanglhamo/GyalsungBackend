@@ -16,7 +16,7 @@ public interface IDefermentInfoRepository extends JpaRepository<DefermentInfo, B
                                                             Date toDate);
 
  @Query(value = "select d.* from ede_deferment_info d \n" +
-         "where d.to_date <=:toDate", nativeQuery = true)
+         "where d.to_date <=:toDate AND d.status =:status", nativeQuery = true)
  List<DefermentInfo> getDefermentListByToDateStatus(Date toDate, Character status);
 
 }
