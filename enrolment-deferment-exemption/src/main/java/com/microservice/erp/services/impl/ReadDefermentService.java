@@ -77,14 +77,26 @@ public class ReadDefermentService implements IReadDefermentService {
     }
 
     @Override
-    public ResponseEntity<?> getDefermentListByToDateStatus(ReadDefermentCommand command) {
+    public List<DefermentDto> getDefermentListByToDateStatus(String authHeader,Date toDate, Character status) {
         List<DefermentDto> defermentDtoList = repository.getDefermentListByToDateStatus(
-                        command.getToDate(), command.getStatus())
+                        toDate, status)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
+        defermentDtoList.forEach(item -> {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<String> request = headerToken.tokenHeader(authHeader);
 
-        return ResponseEntity.ok(defermentDtoList);
+            String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
+            ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
+            item.setFullName(Objects.requireNonNull(userResponse.getBody()).getFullName());
+            item.setCid(Objects.requireNonNull(userResponse.getBody()).getCid());
+            item.setDob(Objects.requireNonNull(userResponse.getBody()).getDob());
+            item.setSex(Objects.requireNonNull(userResponse.getBody()).getSex());
+        });
+
+
+        return defermentDtoList;
     }
 
 }

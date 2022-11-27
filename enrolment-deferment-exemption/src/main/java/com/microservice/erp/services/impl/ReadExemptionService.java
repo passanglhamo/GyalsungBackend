@@ -46,4 +46,26 @@ public class ReadExemptionService implements IReadExemptionService {
         return exemptionDtoList;
 
     }
+
+    @Override
+    public List<ExemptionDto> getExemptionListByStatus(String authHeader, Character status) {
+        List<ExemptionDto> exemptionDtoList = repository.getExemptionListByToDateStatus(status)
+                .stream()
+                .map(mapper::mapToDomain)
+                .collect(Collectors.toUnmodifiableList());
+
+        exemptionDtoList.forEach(item -> {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<String> request = headerToken.tokenHeader(authHeader);
+
+            String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
+            ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
+            item.setFullName(Objects.requireNonNull(userResponse.getBody()).getFullName());
+            item.setCid(Objects.requireNonNull(userResponse.getBody()).getCid());
+            item.setDob(Objects.requireNonNull(userResponse.getBody()).getDob());
+            item.setSex(Objects.requireNonNull(userResponse.getBody()).getSex());
+        });
+        return exemptionDtoList;
+
+    }
 }

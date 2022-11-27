@@ -5,7 +5,8 @@ import javax.validation.constraints.NotNull;
 public enum ApprovalStatus {
     APPROVED('A'),
     REJECTED('R'),
-    PENDING('P');
+    PENDING('P'),
+    CANCELED('C');
 
     private final char value;
 

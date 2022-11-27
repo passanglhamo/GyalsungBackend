@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -56,8 +57,10 @@ public class DefermentController {
     }
 
     @GetMapping(value = "/getDefermentListByToDateStatus")
-    public ResponseEntity<?> getDefermentListByToDateStatus(@RequestBody IReadDefermentService.ReadDefermentCommand command) {
-        return readService.getDefermentListByToDateStatus(command);
+    public List<DefermentDto> getDefermentListByToDateStatus(@RequestHeader("Authorization") String authHeader,
+                                                             @RequestParam("toDate") Date toDate
+            , @RequestParam("status") Character status) {
+        return readService.getDefermentListByToDateStatus(authHeader,toDate, status);
     }
 
 }
