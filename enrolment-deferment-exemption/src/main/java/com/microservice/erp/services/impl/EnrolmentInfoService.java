@@ -111,7 +111,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             ResponseEntity<EnrolmentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, EnrolmentListDto.class);
             EnrolmentListDto enrolmentListDto = new EnrolmentListDto();
             enrolmentListDto.setUser_id(item.getUser_id());
-            enrolmentListDto.setFull_name(Objects.requireNonNull(response.getBody()).getFull_name());
+            enrolmentListDto.setFull_name(Objects.requireNonNull(response.getBody()).getFullName());
             enrolmentListDto.setCid(response.getBody().getCid());
             enrolmentListDto.setDob(response.getBody().getDob());
 

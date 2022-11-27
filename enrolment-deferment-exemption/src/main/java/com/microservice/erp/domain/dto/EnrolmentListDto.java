@@ -11,6 +11,7 @@ import java.util.Date;
 public class EnrolmentListDto {
     //region private variables
     private String academy_name;
+    private String fullName;
     private String full_name;
     private String cid;
     private String dob;
