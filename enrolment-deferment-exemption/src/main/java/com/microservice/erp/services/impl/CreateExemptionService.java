@@ -1,7 +1,10 @@
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dto.UserProfileDto;
+import com.microservice.erp.domain.entities.DefermentInfo;
+import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.mapper.ExemptionMapper;
+import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MailSender;
@@ -26,20 +29,54 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CreateExemptionService implements ICreateExemptionService {
     private final IExemptionInfoRepository repository;
+    private final IDefermentInfoRepository defermentRepository;
     private final ExemptionMapper mapper;
     //    private final SendEmailSms sendEmailSms;
     private final HeaderToken headerToken;
+
+    Integer fileLength = 5;
+
 
     @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> saveExemption(HttpServletRequest request, CreateExemptionCommand command) throws Exception {
         String authTokenHeader = request.getHeader("Authorization");
 
-        boolean exemptionInfoExist = repository.existsByUserIdAndStatusIn(command.getUserId(),
-                Set.of(ApprovalStatus.PENDING.value(), ApprovalStatus.APPROVED.value()));
-
-        if (exemptionInfoExist) {
-            return new ResponseEntity<>("Exemption is already saved.", HttpStatus.ALREADY_REPORTED);
+//        boolean exemptionInfoExist = repository.existsByUserIdAndStatusIn(command.getUserId(),
+//                Set.of(ApprovalStatus.PENDING.value(), ApprovalStatus.APPROVED.value()));
+//
+//        if (exemptionInfoExist) {
+//            return new ResponseEntity<>("Exemption is already saved.", HttpStatus.ALREADY_REPORTED);
+//        }
+        if (!Objects.isNull(command.getProofDocuments())) {
+            if (command.getProofDocuments().length > fileLength) {
+                return new ResponseEntity<>("You can upload maximum of 5 files.", HttpStatus.ALREADY_REPORTED);
+            }
         }
+
+        ExemptionInfo exemptionInfo = repository.getExemptionByUserId(command.getUserId());
+        if(!Objects.isNull(exemptionInfo)){
+            if(exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
+                return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
+            }
+            if(exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
+                repository.findById(exemptionInfo.getId()).map(d -> {
+                    d.setStatus(ApprovalStatus.CANCELED.value());
+                    repository.save(d);
+                    return true;
+                });
+
+            }
+        }else{
+            DefermentInfo defermentInfo = defermentRepository.getDefermentByUserId(command.getUserId());
+            if(!Objects.isNull(defermentInfo)){
+                defermentRepository.findById(defermentInfo.getId()).map(d -> {
+                    d.setStatus(ApprovalStatus.CANCELED.value());
+                    defermentRepository.save(d);
+                    return d;
+                });
+            }
+        }
+
         var exemption = repository.save(
                 mapper.mapToEntity(
                         request, command

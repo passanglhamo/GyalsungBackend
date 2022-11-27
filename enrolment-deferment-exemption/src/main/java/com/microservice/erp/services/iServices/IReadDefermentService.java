@@ -1,6 +1,7 @@
 package com.microservice.erp.services.iServices;
 
 import com.microservice.erp.domain.dto.DefermentDto;
+import com.microservice.erp.domain.entities.DefermentInfo;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,4 +16,7 @@ public interface IReadDefermentService {
 
     List<DefermentDto> getDefermentListByToDateStatus(String authHeader,Date toDate, Character status);
 
+    ResponseEntity<?> getDefermentByUserId(BigInteger userId);
+
+    ResponseEntity<?> getDefermentValidation(BigInteger userId);
 }

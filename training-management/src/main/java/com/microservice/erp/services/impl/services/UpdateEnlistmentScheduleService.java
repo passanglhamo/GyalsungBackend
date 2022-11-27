@@ -23,7 +23,7 @@ public class UpdateEnlistmentScheduleService implements IUpdateEnlistmentSchedul
             return new ResponseEntity<>("From Date already existed.", HttpStatus.ALREADY_REPORTED);
         }
 
-        repository.findById(enlistmentScheduleDto.getId()).stream().map(d -> {
+        repository.findById(enlistmentScheduleDto.getId()).map(d -> {
             d.setFromDate(enlistmentScheduleDto.getFromDate());
             d.setToDate(enlistmentScheduleDto.getToDate());
             d.setStatus(enlistmentScheduleDto.getStatus());

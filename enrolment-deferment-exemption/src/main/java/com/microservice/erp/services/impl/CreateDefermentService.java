@@ -1,12 +1,15 @@
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dto.UserProfileDto;
-import com.microservice.erp.domain.mapper.DefermentMapper;
-import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
+import com.microservice.erp.domain.entities.DefermentInfo;
+import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MailSender;
 import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.helper.SmsSender;
+import com.microservice.erp.domain.mapper.DefermentMapper;
+import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
+import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -20,13 +23,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class CreateDefermentService implements ICreateDefermentService {
 
     private final IDefermentInfoRepository repository;
+    private final IExemptionInfoRepository exemptionInfoRepository;
     private final DefermentMapper mapper;
     private final HeaderToken headerToken;
     Integer fileLength = 5;
@@ -35,18 +38,51 @@ public class CreateDefermentService implements ICreateDefermentService {
     @Transactional
     public ResponseEntity<?> saveDeferment(HttpServletRequest request, CreateDefermentCommand command) {
         String authTokenHeader = request.getHeader("Authorization");
-        boolean defermentInfoExist = repository.existsByUserIdAndStatusInAndToDateGreaterThanEqual(command.getUserId(),
-                Set.of(ApprovalStatus.PENDING.value(), ApprovalStatus.APPROVED.value()), command.getToDate());
-
-
-        if (defermentInfoExist) {
-            return new ResponseEntity<>("Deferment is already saved.", HttpStatus.ALREADY_REPORTED);
-        }
+        repository.getDefermentByUserId(command.getUserId());
+//        boolean defermentInfoExist = repository.existsByUserIdAndStatusInAndToDateGreaterThanEqual(command.getUserId(),
+//                Set.of(ApprovalStatus.PENDING.value(), ApprovalStatus.APPROVED.value()), command.getToDate());
+//
+//
+//        if (defermentInfoExist) {
+//            return new ResponseEntity<>("Deferment is already saved.", HttpStatus.ALREADY_REPORTED);
+//        }
 
 
         if (!Objects.isNull(command.getProofDocuments())) {
             if (command.getProofDocuments().length > fileLength) {
                 return new ResponseEntity<>("You can upload maximum of 5 files.", HttpStatus.ALREADY_REPORTED);
+            }
+        }
+
+        ExemptionInfo exemptionInfo = exemptionInfoRepository.getExemptionByUserId(command.getUserId());
+        if(!Objects.isNull(exemptionInfo)){
+            if(exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
+                return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
+            }
+            if(exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
+                exemptionInfoRepository.findById(exemptionInfo.getId()).map(d -> {
+                    d.setStatus(ApprovalStatus.CANCELED.value());
+                    exemptionInfoRepository.save(d);
+                    return true;
+                });
+
+            }
+        }else{
+            DefermentInfo  defermentInfo = repository.getDefermentByUserId(command.getUserId());
+            if(!Objects.isNull(defermentInfo)){
+                if(defermentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
+                    return new ResponseEntity<>("User has already applied for deferment.", HttpStatus.ALREADY_REPORTED);
+
+                }
+                if(defermentInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
+                    repository.findById(defermentInfo.getId()).map(d -> {
+                        d.setStatus(ApprovalStatus.CANCELED.value());
+                        repository.save(d);
+                        return d;
+                    });
+
+                }
+
             }
         }
 
@@ -58,11 +94,11 @@ public class CreateDefermentService implements ICreateDefermentService {
 
         repository.save(deferment);
 
-//        try {
-//            sendEmailAndSms(authTokenHeader, deferment.getUserId());
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            sendEmailAndSms(authTokenHeader, deferment.getUserId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return ResponseEntity.ok(new MessageResponse("Deferment is successfully saved"));
     }

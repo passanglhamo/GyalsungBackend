@@ -1,6 +1,7 @@
 package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.DefermentDto;
+import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import com.microservice.erp.services.iServices.IReadDefermentService;
 import com.microservice.erp.services.iServices.IUpdateDefermentService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +62,17 @@ public class DefermentController {
     public List<DefermentDto> getDefermentListByToDateStatus(@RequestHeader("Authorization") String authHeader,
                                                              @RequestParam("toDate") Date toDate
             , @RequestParam("status") Character status) {
-        return readService.getDefermentListByToDateStatus(authHeader,toDate, status);
+        return readService.getDefermentListByToDateStatus(authHeader, toDate, status);
+    }
+
+    @GetMapping(value = "/getDefermentByUserId")
+    public ResponseEntity<?> getDefermentByUserId(@RequestParam("userId") BigInteger userId) {
+        return readService.getDefermentByUserId(userId);
+    }
+
+    @GetMapping(value = "/getDefermentValidation")
+    public ResponseEntity<?> getDefermentValidation(@RequestParam("userId") BigInteger userId) {
+        return readService.getDefermentValidation(userId);
     }
 
 }

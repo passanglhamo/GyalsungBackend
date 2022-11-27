@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.math.BigInteger;
 import java.util.List;
 
 
@@ -60,5 +61,15 @@ public class ExemptionController {
     public List<ExemptionDto> getExemptionListByStatus(@RequestHeader("Authorization") String authHeader,
                                                        @RequestParam("status") Character status) {
         return readService.getExemptionListByStatus(authHeader, status);
+    }
+
+    @GetMapping(value = "/getExemptionByUserId")
+    public ResponseEntity<?> getExemptionByUserId(@RequestParam("userId") BigInteger userId) {
+        return readService.getExemptionByUserId(userId);
+    }
+
+    @GetMapping(value = "/getExemptionValidation")
+    public ResponseEntity<?> getExemptionValidation(@RequestParam("userId") BigInteger userId) {
+        return readService.getExemptionValidation(userId);
     }
 }

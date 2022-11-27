@@ -2,16 +2,22 @@ package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dto.ExemptionDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
+import com.microservice.erp.domain.entities.DefermentInfo;
+import com.microservice.erp.domain.entities.ExemptionInfo;
+import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.mapper.ExemptionMapper;
+import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
 import com.microservice.erp.services.iServices.IReadExemptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -20,6 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReadExemptionService implements IReadExemptionService {
     private final IExemptionInfoRepository repository;
+    private final IDefermentInfoRepository defermentRepository;
     private final ExemptionMapper mapper;
 
     private final HeaderToken headerToken;
@@ -67,5 +74,43 @@ public class ReadExemptionService implements IReadExemptionService {
         });
         return exemptionDtoList;
 
+    }
+
+    @Override
+    public ResponseEntity<?> getExemptionByUserId(BigInteger userId) {
+        ExemptionInfo exemptionInfo = Objects.isNull(repository.getExemptionByUserId(userId)) ? null :
+                repository.getExemptionByUserId(userId);
+        return ResponseEntity.ok(exemptionInfo);
+    }
+
+    @Override
+    public ResponseEntity<?> getExemptionValidation(BigInteger userId) {
+        ExemptionInfo exemptionInfo = repository.getExemptionByUserId(userId);
+        if(!Objects.isNull(exemptionInfo)){
+            if(exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
+                return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
+            }
+            if(exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
+                return new ResponseEntity<>("There is still some exemption which are not approved. If you continue," +
+                        " then the pending exemption will be cancelled", HttpStatus.ALREADY_REPORTED);
+
+            }
+        }else{
+            DefermentInfo defermentInfo = defermentRepository.getDefermentByUserId(userId);
+            if(!Objects.isNull(defermentInfo)){
+                if(defermentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
+                    return new ResponseEntity<>("There is still some deferment which are not approved. If you continue," +
+                            " then the approved deferment will be cancelled", HttpStatus.ALREADY_REPORTED);
+
+                }
+                if(defermentInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
+                    return new ResponseEntity<>("There is still some deferment which are not approved. If you continue," +
+                            " then the pending deferment will be cancelled", HttpStatus.ALREADY_REPORTED);
+
+                }
+
+            }
+        }
+        return ResponseEntity.ok("No Validation");
     }
 }
