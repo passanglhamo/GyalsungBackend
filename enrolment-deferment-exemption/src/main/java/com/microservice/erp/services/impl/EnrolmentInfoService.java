@@ -140,7 +140,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     @Override
     public ResponseEntity<?> allocateEnrolments(String authHeader, EnrolmentInfoCommand command) {
         iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(d -> {
-            d.setStatus(ApprovalStatus.PENDING.value());
+            d.setStatus('A');
             d.setTrainingAcademyId(command.getTrainingAcademyId());
             iEnrolmentInfoRepository.save(d);
         });
