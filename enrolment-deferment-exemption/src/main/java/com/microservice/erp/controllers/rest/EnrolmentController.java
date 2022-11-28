@@ -52,11 +52,4 @@ public class EnrolmentController {
         return iEnrolmentInfoService.allocateEnrolments(authHeader,command);
     }
 
-//    @PostMapping(value = "/allocateTraining")
-//    public ResponseEntity<?> allocateTraining(@RequestHeader("Authorization") String authHeader,
-//                                          @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
-//
-//        return iEnrolmentInfoService.allocateTraining(authHeader,command);
-//    }
-
 }
