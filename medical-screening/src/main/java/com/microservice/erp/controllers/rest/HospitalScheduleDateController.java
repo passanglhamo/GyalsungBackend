@@ -44,7 +44,7 @@ public class HospitalScheduleDateController {
 
 
     @GetMapping(value = "/getAllAvailableAppointmentDateByHospitalId", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllAvailableAppointmentDateByHospitalId(@RequestParam("hospitalId") Long hospitalId) {
+    public ResponseEntity<?> getAllAvailableAppointmentDateByHospitalId(@RequestParam("hospitalId") BigInteger hospitalId) {
         return readService.getAllAvailableAppointmentDateByHospitalId(hospitalId);
     }
 }

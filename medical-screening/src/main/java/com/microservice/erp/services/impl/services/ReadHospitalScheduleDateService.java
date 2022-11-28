@@ -29,7 +29,7 @@ public class ReadHospitalScheduleDateService implements IReadHospitalScheduleDat
     }
 
     @Override
-    public ResponseEntity<?> getAllAvailableAppointmentDateByHospitalId(Long hospitalId) {
+    public ResponseEntity<?> getAllAvailableAppointmentDateByHospitalId(BigInteger hospitalId) {
         Collection<HospitalScheduleDate> hospitalScheduleTimes = repository.findByHospitalIdOrderByAppointmentDateAsc(hospitalId);
         if (hospitalScheduleTimes.size() > 0) {
             return ResponseEntity.ok(hospitalScheduleTimes

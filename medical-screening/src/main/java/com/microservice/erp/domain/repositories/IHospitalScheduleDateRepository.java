@@ -13,7 +13,7 @@ import java.util.Collection;
 public interface IHospitalScheduleDateRepository extends JpaRepository<HospitalScheduleDate, BigInteger> {
 
     Collection<HospitalScheduleDate> findAllByHospitalId(BigInteger dzoHosId);
-    Collection<HospitalScheduleDate> findByHospitalIdOrderByAppointmentDateAsc(Long hospitalId);
+    Collection<HospitalScheduleDate> findByHospitalIdOrderByAppointmentDateAsc(BigInteger hospitalId);
 
     @Query(value = "select d.* from tms_hospital_schedule_date d inner join tms_hos_schedule_time t\n" +
             "on d.hospital_schedule_date_id = t.hospital_schedule_date_id \n" +
