@@ -17,7 +17,7 @@ public interface IExemptionInfoRepository extends JpaRepository<ExemptionInfo, B
             "WHERE ((e.status=:status) )")
     List<ExemptionInfo> getExemptionListByToDateStatus(Character status);
 
-    @Query(value = "select d.* from ede_exemption_info e \n" +
+    @Query(value = "select e.* from ede_exemption_info e \n" +
             "where e.user_id =:userId order by exemption_id LIMIT 1", nativeQuery = true)
     ExemptionInfo getExemptionByUserId(BigInteger userId);
 

@@ -81,6 +81,7 @@ public class DefermentMapper {
                 deferment.getStatus(),
                 deferment.getRemarks(),
                 null,
+                deferment.getFiles().size()==0?null:
                 deferment.getFiles()
                         .stream()
                         .map(ta ->
