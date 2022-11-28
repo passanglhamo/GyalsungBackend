@@ -41,8 +41,10 @@ public class UserInfo extends Auditable<BigInteger, Long> {
     @Column(name = "email", columnDefinition = "varchar(255)")
     private String email;
 
-    @IsValidGender
-    private String sex = Gender.NONE.name();
+    @Column(name = "gender", columnDefinition = "char(1)")
+    private Character gender;
+//    @IsValidGender
+//    private String sex = Gender.NONE.name();
 
     @Min(value = 18, message = "Minimum age value must be 18")
     private Integer age = 18;
@@ -202,18 +204,18 @@ public class UserInfo extends Auditable<BigInteger, Long> {
     }
 
     public UserInfo(@NotNull(message = "Name must not be null") String fullName
-            , Gender sex
+            , Character gender
             , @Min(value = 18, message = "Min Value is 18.") int age) {
         this();
         this.fullName = fullName;
-        this.sex = sex.name();
+        this.gender = gender;
         this.age = age;
         updateDOB(age, false);
     }
 
     public UserInfo(
             @NotNull(message = "Password must not be null.") @Size(max = 100) String password,
-            @NotNull(message = "Name must not be null.") String fullName, String email, String sex,
+            @NotNull(message = "Name must not be null.") String fullName, String email, Character gender,
             @Min(value = 18, message = "age min Value is 18.") Integer age, @NotNull(message = "dob Cannot be Null")
             @Past(message = "Date Of Birth Must Be Greater Then Now") Date dob,
             @NotNull(message = "CID must not be null.") String cid,
@@ -232,7 +234,7 @@ public class UserInfo extends Auditable<BigInteger, Long> {
         this.password = password;
         this.fullName = fullName;
         this.email = email;
-        this.sex = sex;
+        this.gender = gender;
         this.age = age;
         updateDOB(age, false);
         this.cid = cid;

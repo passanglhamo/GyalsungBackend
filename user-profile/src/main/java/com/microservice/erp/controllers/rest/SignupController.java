@@ -77,7 +77,7 @@ public class SignupController {
                 userInfo.getId(),
                 userInfo.getFullName(),
                 userInfo.getCid(),
-                userInfo.getSex(),
+                userInfo.getGender(),
                 userInfo.getMobileNo(),
                 userInfo.getUsername(),
                 userInfo.getEmail(),

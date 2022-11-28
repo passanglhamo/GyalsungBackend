@@ -303,7 +303,8 @@ public class ProfileService implements IProfileService {
         userInfo.setCid(userProfileDto.getCid());
         userInfo.setDob(dob);
         userInfo.setFullName(userProfileDto.getFullName());
-        userInfo.setSex(userProfileDto.getSex().toUpperCase());
+        userInfo.setGender(userProfileDto.getGender());
+//        userInfo.setSex(userProfileDto.getSex().toUpperCase());
         userInfo.setFatherName(userProfileDto.getFatherName());
         userInfo.setMotherName(userProfileDto.getMotherName());
         userInfo.setPermanentPlaceName(userProfileDto.getPermanentPlaceName());

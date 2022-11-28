@@ -12,8 +12,9 @@ import lombok.Setter;
 public class CitizenDetailDto {
     //region private variables
     private String fullName;
-    private String gender;
-    private String cid;
+    private String genderName;
+    private Character gender;
+     private String cid;
     private String dob;
     private String fatherName;
     private String fatherCid;

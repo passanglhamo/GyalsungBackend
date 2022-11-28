@@ -155,8 +155,8 @@ public class SignupService implements ISignupService {
 
         Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(signupRequestDto.getBirthDate());
         signupRequestDto.setDob(birthDate);
-        String sex = signupRequestDto.getSex().toUpperCase();
-        signupRequestDto.setSex(sex);
+//        String sex = signupRequestDto.getSex().toUpperCase();
+//        signupRequestDto.setSex(sex);
         UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
         userInfo.setStatus('A');
         userInfo.setUsername(signupRequestDto.getCid());
@@ -223,7 +223,8 @@ public class SignupService implements ISignupService {
             citizenDetailDto.setFullName(citizenDetailDto.getFullName().replaceAll("null", ""));
             citizenDetailDto.setCid(citizendetailsObj.getCid());
             citizenDetailDto.setDob(censusDob);
-            citizenDetailDto.setGender(genderName);
+            citizenDetailDto.setGender(genderChar);
+            citizenDetailDto.setGenderName(genderName);
             citizenDetailDto.setFatherName(citizendetailsObj.getFatherName());
             citizenDetailDto.setFatherCid(null);
             citizenDetailDto.setMotherName(citizendetailsObj.getMotherName());

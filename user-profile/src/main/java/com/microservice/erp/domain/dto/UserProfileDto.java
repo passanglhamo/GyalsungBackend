@@ -17,7 +17,7 @@ public class UserProfileDto {
     private String username;
     private String fullName;
     private String full_name;
-    private String sex;
+    private Character gender;
     private String cid;
     private String studentCode;
     private String birthDate;
