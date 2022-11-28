@@ -48,7 +48,7 @@ public class ReadExemptionService implements IReadExemptionService {
             item.setFullName(Objects.requireNonNull(userResponse.getBody()).getFullName());
             item.setCid(Objects.requireNonNull(userResponse.getBody()).getCid());
             item.setDob(Objects.requireNonNull(userResponse.getBody()).getDob());
-            item.setSex(Objects.requireNonNull(userResponse.getBody()).getSex());
+            item.setGender(Objects.requireNonNull(userResponse.getBody()).getGender());
         });
         return exemptionDtoList;
 
@@ -70,7 +70,7 @@ public class ReadExemptionService implements IReadExemptionService {
             item.setFullName(Objects.requireNonNull(userResponse.getBody()).getFullName());
             item.setCid(Objects.requireNonNull(userResponse.getBody()).getCid());
             item.setDob(Objects.requireNonNull(userResponse.getBody()).getDob());
-            item.setSex(Objects.requireNonNull(userResponse.getBody()).getSex());
+            item.setGender(Objects.requireNonNull(userResponse.getBody()).getGender());
         });
         return exemptionDtoList;
 

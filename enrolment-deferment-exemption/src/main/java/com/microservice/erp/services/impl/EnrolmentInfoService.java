@@ -80,9 +80,11 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         } else {
             enrolmentDto.setUnderAge('N');
         }
+        Character gender = userDtoResponse.getBody().getGender();
         String fullName = userDtoResponse.getBody().getFull_name();
         String mobileNo = userDtoResponse.getBody().getMobile_no();
         String email = userDtoResponse.getBody().getEmail();
+        enrolmentDto.setGender(gender);
         var enrolmentInfo = iEnrolmentInfoRepository.save(enrolmentMapper.mapToEntity(enrolmentDto));
         iEnrolmentInfoRepository.save(enrolmentInfo);
 

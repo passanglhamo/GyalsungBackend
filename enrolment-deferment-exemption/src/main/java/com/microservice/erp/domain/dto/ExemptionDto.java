@@ -32,7 +32,7 @@ public class ExemptionDto {
     private String fullName;
     private String cid;
     private Date dob;
-    private String sex;
+    private Character gender;
 
     public static ExemptionDto withId(
             BigInteger id,
@@ -46,7 +46,7 @@ public class ExemptionDto {
             String fullName,
             String cid,
             Date dob,
-            String sex) {
+            Character gender) {
         return new ExemptionDto(
                 id,
                 userId,
@@ -59,6 +59,6 @@ public class ExemptionDto {
                 fullName,
                 cid,
                 dob,
-                sex);
+                gender);
     }
 }

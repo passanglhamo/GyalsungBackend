@@ -33,7 +33,7 @@ public class DefermentDto {
     private String fullName;
     private String cid;
     private Date dob;
-    private String sex;
+    private Character gender;
 
         public static DefermentDto withId(
                 BigInteger id,
@@ -49,7 +49,7 @@ public class DefermentDto {
                 String fullName,
                 String cid,
                 Date dob,
-                String sex) {
+                Character gender) {
             return new DefermentDto(
                     id,
                     fromDate,
@@ -64,7 +64,7 @@ public class DefermentDto {
                     fullName,
                     cid,
                     dob,
-                    sex);
+                    gender);
         }
 
 
