@@ -1,12 +1,19 @@
 package com.microservice.erp.services.iServices;
 
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
+import com.microservice.erp.domain.entities.EnrolmentInfo;
 import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.math.BigInteger;
+import java.util.List;
 
 public interface IEnrolmentInfoService {
 
@@ -16,4 +23,16 @@ public interface IEnrolmentInfoService {
 
     ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId
             , Integer coursePreferenceNumber);
+    ResponseEntity<?> allocateEnrolments(String authHeader, @Valid EnrolmentInfoCommand command);
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    class EnrolmentInfoCommand {
+
+        private Integer trainingAcademyId;
+
+        private List<BigInteger> enrolmentIds;
+    }
 }

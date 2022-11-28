@@ -45,6 +45,13 @@ public class EnrolmentController {
         return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, courseId, coursePreferenceNumber);
     }
 
+    @PostMapping(value = "/allocateEnrolments")
+    public ResponseEntity<?> allocateEnrolments(@RequestHeader("Authorization") String authHeader,
+                                          @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) {
+
+        return iEnrolmentInfoService.allocateEnrolments(authHeader,command);
+    }
+
 //    @PostMapping(value = "/allocateTraining")
 //    public ResponseEntity<?> allocateTraining(@RequestHeader("Authorization") String authHeader,
 //                                          @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {

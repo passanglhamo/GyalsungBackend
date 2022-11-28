@@ -8,6 +8,7 @@ import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
 import com.microservice.erp.domain.entities.ParentConsentOtp;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
+import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MailSender;
 import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.helper.SmsSender;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -133,5 +135,16 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             enrolmentList.add(enrolmentListDto);
         });
         return ResponseEntity.ok(enrolmentList);
+    }
+
+    @Override
+    public ResponseEntity<?> allocateEnrolments(String authHeader, EnrolmentInfoCommand command) {
+        iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(d -> {
+            d.setStatus(ApprovalStatus.PENDING.value());
+            d.setTrainingAcademyId(command.getTrainingAcademyId());
+            iEnrolmentInfoRepository.save(d);
+        });
+
+        return ResponseEntity.ok(new MessageResponse("Training allocated successfully"));
     }
 }
