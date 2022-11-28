@@ -15,6 +15,10 @@ public class EnrolmentInfo extends Auditable<BigInteger, Long> {
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
+    @NotNull()
+    @Column(name = "sex", columnDefinition = "char(1)")
+    private Character sex;
+
     @Column(name = "under_age", columnDefinition = "char(1)")
     private Character underAge;
     @Column(name = "year", columnDefinition = "char(4)")
