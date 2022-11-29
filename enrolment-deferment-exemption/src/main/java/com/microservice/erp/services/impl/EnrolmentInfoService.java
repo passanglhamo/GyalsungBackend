@@ -54,13 +54,18 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> saveEnrolment(String authHeader, EnrolmentDto enrolmentDto) throws Exception {
+        RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus('A');
+        if (registrationDateInfo == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Registration date information not found."));
+        }
+        String registrationYear = registrationDateInfo.getRegistrationYear();
+
         EnrolmentInfo enrolmentInfoDb = iEnrolmentInfoRepository.findByUserId(enrolmentDto.getUserId());
         //to check already enrolled or not
         if (enrolmentInfoDb != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("You have already enrolled."));
         }
-        RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus('A');
-        String registrationYear = registrationDateInfo.getRegistrationYear();
+
         enrolmentDto.setYear(registrationYear);
         enrolmentDto.setStatus('P');//P=Pending, D=Deferred, E=Exempted, A=Approved, which means training academy allocated
         enrolmentDto.setEnrolledOn(new Date());
