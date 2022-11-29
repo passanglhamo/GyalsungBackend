@@ -144,12 +144,20 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     }
 
     @Override
+    @Transactional()
     public ResponseEntity<?> allocateEnrolments(String authHeader, EnrolmentInfoCommand command) {
-        iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(d -> {
-            d.setStatus('A');
-            d.setTrainingAcademyId(command.getTrainingAcademyId());
-            d.setAllocatedCourseId(command.getAllocatedCourseId());
-            iEnrolmentInfoRepository.save(d);
+        // to check already allocated or not
+        for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
+            if (enrolmentInfo.getStatus() == 'A') {
+                return ResponseEntity.badRequest().body(new MessageResponse("Already allocated training institute."));
+            }
+        }
+
+        iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
+            item.setStatus('A');
+            item.setTrainingAcademyId(command.getTrainingAcademyId());
+            item.setAllocatedCourseId(command.getAllocatedCourseId());
+            iEnrolmentInfoRepository.save(item);
         });
 
         return ResponseEntity.ok(new MessageResponse("Training allocated successfully"));
