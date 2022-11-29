@@ -42,7 +42,7 @@ public class UpdateDefermentService implements IUpdateDefermentService {
             return new ResponseEntity<>("There are some application that are already approved or rejected.", HttpStatus.ALREADY_REPORTED);
 
         }
-        repository.findAllById(command.getDefermentIds()).stream().map(d -> {
+        repository.findAllById(command.getDefermentIds()).forEach(d -> {
             d.setStatus(ApprovalStatus.APPROVED.value());
             d.setApprovalRemarks(command.getRemarks());
             repository.save(d);
@@ -51,8 +51,8 @@ public class UpdateDefermentService implements IUpdateDefermentService {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            return d;
-        }).map(mapper::mapToDomain).collect(Collectors.toUnmodifiableList());
+
+        });
 
         return ResponseEntity.ok(new MessageResponse("Approved successfully"));
     }
@@ -70,7 +70,7 @@ public class UpdateDefermentService implements IUpdateDefermentService {
             return new ResponseEntity<>("There are some application that are already approved or rejected.", HttpStatus.ALREADY_REPORTED);
 
         }
-        repository.findAllById(command.getDefermentIds()).stream().map(d -> {
+        repository.findAllById(command.getDefermentIds()).forEach(d -> {
             d.setStatus(ApprovalStatus.REJECTED.value());
             d.setApprovalRemarks(command.getRemarks());
             repository.save(d);
@@ -79,8 +79,8 @@ public class UpdateDefermentService implements IUpdateDefermentService {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            return d;
-        }).map(mapper::mapToDomain).collect(Collectors.toUnmodifiableList());
+
+        });
 
         return ResponseEntity.ok(new MessageResponse("Rejected successfully"));
 

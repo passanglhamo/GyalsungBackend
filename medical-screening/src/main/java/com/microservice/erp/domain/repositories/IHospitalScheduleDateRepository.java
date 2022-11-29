@@ -7,12 +7,19 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 
 @Repository
 public interface IHospitalScheduleDateRepository extends JpaRepository<HospitalScheduleDate, BigInteger> {
 
     Collection<HospitalScheduleDate> findAllByHospitalId(BigInteger dzoHosId);
+
+    boolean existsByAppointmentDateAndHospitalId(Date appointmentDate,BigInteger hospitalId);
+
+    List<HospitalScheduleDate> findAllByAppointmentDateAndHospitalId(Date appointmentDate,BigInteger hospitalId);
+
     Collection<HospitalScheduleDate> findByHospitalIdOrderByAppointmentDateAsc(BigInteger hospitalId);
 
     @Query(value = "select d.* from tms_hospital_schedule_date d inner join tms_hos_schedule_time t\n" +

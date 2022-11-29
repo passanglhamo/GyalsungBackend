@@ -10,18 +10,17 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.util.Date;
+import java.math.BigInteger;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class HospitalScheduleTimeMapper {
-    public HospitalScheduleDate mapToEntity(HospitalScheduleDateDto hospitalScheduleTimeDto) {
-        HospitalScheduleDate hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDto, HospitalScheduleDate.class);
-        hospitalScheduleTime.setStatus(AppointmentStatus.Available.value());
-        hospitalScheduleTime.setHospitalScheduleTimeLists(
-                hospitalScheduleTimeDto.getHospitalScheduleTimeList()
+    public HospitalScheduleDate mapToEntity(HospitalScheduleDateDto hospitalScheduleDateDto) {
+        HospitalScheduleDate hospitalScheduleDate = new ModelMapper().map(hospitalScheduleDateDto, HospitalScheduleDate.class);
+        hospitalScheduleDate.setStatus(AppointmentStatus.Available.value());
+        hospitalScheduleDate.setHospitalScheduleTimeLists(
+                hospitalScheduleDateDto.getHospitalScheduleTimeList()
                         .stream()
                         .map(ta ->
                                 new HospitalScheduleTime(
@@ -31,13 +30,24 @@ public class HospitalScheduleTimeMapper {
                                         null,
                                         null,
                                         null,
-                                        hospitalScheduleTime
+                                        hospitalScheduleDate
                                 )
                         )
                         .collect(Collectors.toSet())
         );
 
+        return hospitalScheduleDate;
+    }
+
+    public HospitalScheduleTime mapToHospitalTimeEntity(HospitalScheduleTimeDto hospitalScheduleTimeDto,
+                                                        HospitalScheduleDate hospitalScheduleDate) {
+        HospitalScheduleTime hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDto, HospitalScheduleTime.class);
+        hospitalScheduleTime.setStartTime(DateConversion.convertToDate(hospitalScheduleTimeDto.getStartTime()));
+        hospitalScheduleTime.setEndTime(DateConversion.convertToDate(hospitalScheduleTimeDto.getEndTime()));
+        hospitalScheduleTime.setBookStatus('A');
+        hospitalScheduleTime.setHospitalScheduleDate(hospitalScheduleDate);
         return hospitalScheduleTime;
+
     }
 
     public HospitalScheduleDateDto mapToDomain(HospitalScheduleDate hospitalScheduleTime) {
