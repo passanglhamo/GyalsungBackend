@@ -106,7 +106,9 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     @Override
     public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId, Integer coursePreferenceNumber) {
         List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, courseId, coursePreferenceNumber);
-
+        if (enrolmentListDtos == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("No information found."));
+        }
         List<EnrolmentListDto> enrolmentList = new ArrayList<>();
         //to get user detail from m-user-service
         enrolmentListDtos.forEach(item -> {
