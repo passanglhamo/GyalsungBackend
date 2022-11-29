@@ -158,6 +158,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             item.setTrainingAcademyId(command.getTrainingAcademyId());
             item.setAllocatedCourseId(command.getAllocatedCourseId());
             iEnrolmentInfoRepository.save(item);
+            //todo:send email and sms
         });
 
         return ResponseEntity.ok(new MessageResponse("Training allocated successfully"));
