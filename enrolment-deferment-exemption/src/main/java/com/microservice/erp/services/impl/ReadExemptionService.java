@@ -5,6 +5,7 @@ import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
+import com.microservice.erp.domain.helper.StatusResponse;
 import com.microservice.erp.domain.mapper.ExemptionMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
@@ -85,27 +86,36 @@ public class ReadExemptionService implements IReadExemptionService {
 
     @Override
     public ResponseEntity<?> getExemptionValidation(BigInteger userId) {
+        StatusResponse responseMessage = new StatusResponse();
         ExemptionInfo exemptionInfo = repository.getExemptionByUserId(userId);
         if(!Objects.isNull(exemptionInfo)){
             if(exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
-                return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
+                responseMessage.setStatus(ApprovalStatus.APPROVED.value());
+                responseMessage.setMessage("User is exempted from the gyalsung program.");
+                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
             if(exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
-                return new ResponseEntity<>("There is still some exemption which are not approved. If you continue," +
-                        " then the pending exemption will be cancelled", HttpStatus.ALREADY_REPORTED);
+                responseMessage.setStatus(ApprovalStatus.PENDING.value());
+                responseMessage.setMessage("There is still some exemption which are not approved. If you continue," +
+                        " then the pending exemption will be cancelled.");
+                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
 
             }
         }else{
             DefermentInfo defermentInfo = defermentRepository.getDefermentByUserId(userId);
             if(!Objects.isNull(defermentInfo)){
                 if(defermentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
-                    return new ResponseEntity<>("There is still some deferment which are not approved. If you continue," +
-                            " then the approved deferment will be cancelled", HttpStatus.ALREADY_REPORTED);
+                    responseMessage.setStatus(ApprovalStatus.PENDING.value());
+                    responseMessage.setMessage("There is still some deferment which are not approved. If you continue,\" +\n" +
+                            "                            \" then the approved deferment will be cancelled");
+                    return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
 
                 }
                 if(defermentInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
-                    return new ResponseEntity<>("There is still some deferment which are not approved. If you continue," +
-                            " then the pending deferment will be cancelled", HttpStatus.ALREADY_REPORTED);
+                    responseMessage.setStatus(ApprovalStatus.PENDING.value());
+                    responseMessage.setMessage("There is still some deferment which are not approved. If you continue,\" +\n" +
+                            "                            \" then the pending deferment will be cancelled.");
+                    return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
 
                 }
 
