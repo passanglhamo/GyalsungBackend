@@ -16,9 +16,9 @@ public interface IHospitalScheduleDateRepository extends JpaRepository<HospitalS
 
     Collection<HospitalScheduleDate> findAllByHospitalId(BigInteger dzoHosId);
 
-    boolean existsByAppointmentDate(Date appointmentDate);
+    boolean existsByAppointmentDateAndHospitalId(Date appointmentDate,BigInteger hospitalId);
 
-    List<HospitalScheduleDate> findAllByAppointmentDate(Date appointmentDate);
+    List<HospitalScheduleDate> findAllByAppointmentDateAndHospitalId(Date appointmentDate,BigInteger hospitalId);
 
     Collection<HospitalScheduleDate> findByHospitalIdOrderByAppointmentDateAsc(BigInteger hospitalId);
 

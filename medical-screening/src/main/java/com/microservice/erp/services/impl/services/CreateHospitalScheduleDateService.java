@@ -21,14 +21,15 @@ public class CreateHospitalScheduleDateService implements ICreateHospitalSchedul
     private final HospitalScheduleTimeMapper mapper;
 
     public ResponseEntity<?> saveScheduleDate(HospitalScheduleDateDto hospitalScheduleDateDto) throws IOException {
-        if (!repository.existsByAppointmentDate(hospitalScheduleDateDto.getAppointmentDate())) {
+        if (!repository.existsByAppointmentDateAndHospitalId(hospitalScheduleDateDto.getAppointmentDate(),
+                hospitalScheduleDateDto.getHospitalId())) {
             repository.save(
                     mapper.mapToEntity(hospitalScheduleDateDto)
             );
         } else {
             hospitalScheduleDateDto.getHospitalScheduleTimeList().forEach(d -> {
-                HospitalScheduleDate hospitalScheduleDate = repository.findAllByAppointmentDate(
-                        hospitalScheduleDateDto.getAppointmentDate()).get(0);
+                HospitalScheduleDate hospitalScheduleDate = repository.findAllByAppointmentDateAndHospitalId(
+                        hospitalScheduleDateDto.getAppointmentDate(),hospitalScheduleDateDto.getHospitalId()).get(0);
                 HospitalScheduleTime hospitalScheduleTime = mapper.mapToHospitalTimeEntity(d,hospitalScheduleDate);
                 hospitalScheduleTimeRepository.save(hospitalScheduleTime);
             });
