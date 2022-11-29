@@ -13,12 +13,12 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "tms_field_specialization")
-@AttributeOverride(name = "id", column = @Column(name = "field_specialization_id",columnDefinition = "bigint"))
+@AttributeOverride(name = "id", column = @Column(name = "field_specialization_id", columnDefinition = "bigint"))
 public class FieldSpecialization extends Auditable<BigInteger, Long> {
 
     @Basic(optional = false)
     @NotNull(message = "Particular cannot be null")
-    @Column(name = "field_spec_name",columnDefinition = "varchar(255)")
+    @Column(name = "field_spec_name", columnDefinition = "varchar(255)")
     private String fieldSpecName;
 
     @Basic(optional = false)
@@ -31,7 +31,7 @@ public class FieldSpecialization extends Auditable<BigInteger, Long> {
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "status",columnDefinition = "char(1)")
+    @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
 
     public String getFieldSpecName() {

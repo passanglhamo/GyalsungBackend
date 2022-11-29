@@ -99,10 +99,8 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     }
 
     @Override
-    public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId,
-                                                                       Integer coursePreferenceNumber) {
-        List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, courseId
-                , coursePreferenceNumber);
+    public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId, Integer coursePreferenceNumber) {
+        List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, courseId, coursePreferenceNumber);
 
         List<EnrolmentListDto> enrolmentList = new ArrayList<>();
         //to get user detail from m-user-service
@@ -144,6 +142,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(d -> {
             d.setStatus('A');
             d.setTrainingAcademyId(command.getTrainingAcademyId());
+            d.setAllocatedCourseId(command.getAllocatedCourseId());
             iEnrolmentInfoRepository.save(d);
         });
 

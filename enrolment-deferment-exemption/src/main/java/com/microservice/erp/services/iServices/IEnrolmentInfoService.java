@@ -23,6 +23,7 @@ public interface IEnrolmentInfoService {
 
     ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId
             , Integer coursePreferenceNumber);
+
     ResponseEntity<?> allocateEnrolments(String authHeader, @Valid EnrolmentInfoCommand command);
 
     @Getter
@@ -32,6 +33,7 @@ public interface IEnrolmentInfoService {
     class EnrolmentInfoCommand {
 
         private Integer trainingAcademyId;
+        private BigInteger allocatedCourseId;
 
         private List<BigInteger> enrolmentIds;
     }

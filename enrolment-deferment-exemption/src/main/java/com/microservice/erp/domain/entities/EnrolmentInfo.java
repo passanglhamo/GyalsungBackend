@@ -25,6 +25,9 @@ public class EnrolmentInfo extends Auditable<BigInteger, Long> {
     @Column(name = "training_academy_id", columnDefinition = "int")
     private Integer trainingAcademyId;
 
+    @Column(name = "allocated_course_id", columnDefinition = "bigint")
+    private BigInteger allocatedCourseId;
+
     @NotNull(message = "Enrolled on cannot be null")
     @Column(name = "enrolled_on")
     private Date enrolledOn;
@@ -55,6 +58,14 @@ public class EnrolmentInfo extends Auditable<BigInteger, Long> {
         this.userId = userId;
     }
 
+    public Character getGender() {
+        return gender;
+    }
+
+    public void setGender(Character gender) {
+        this.gender = gender;
+    }
+
     public Character getUnderAge() {
         return underAge;
     }
@@ -67,14 +78,6 @@ public class EnrolmentInfo extends Auditable<BigInteger, Long> {
         return year;
     }
 
-    public Character getGender() {
-        return gender;
-    }
-
-    public void setGender(Character gender) {
-        this.gender = gender;
-    }
-
     public void setYear(String year) {
         this.year = year;
     }
@@ -85,6 +88,14 @@ public class EnrolmentInfo extends Auditable<BigInteger, Long> {
 
     public void setTrainingAcademyId(Integer trainingAcademyId) {
         this.trainingAcademyId = trainingAcademyId;
+    }
+
+    public BigInteger getAllocatedCourseId() {
+        return allocatedCourseId;
+    }
+
+    public void setAllocatedCourseId(BigInteger allocatedCourseId) {
+        this.allocatedCourseId = allocatedCourseId;
     }
 
     public Date getEnrolledOn() {
