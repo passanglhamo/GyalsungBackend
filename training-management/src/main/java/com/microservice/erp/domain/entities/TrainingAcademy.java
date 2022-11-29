@@ -1,14 +1,10 @@
 package com.microservice.erp.domain.entities;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@Setter
-@Getter
+
 @Entity(name = "st_training_academy")
 public class TrainingAcademy {
     @Id
@@ -17,13 +13,33 @@ public class TrainingAcademy {
 
     @Column(name = "name", columnDefinition = "varchar(255)")
     private String name;
+    @Column(name = "battalion", columnDefinition = "int")
+    private String battalion;
     //endregion
 
-    public TrainingAcademy() {
+    //region setters and getters
+    public Integer getTrainingAcaId() {
+        return trainingAcaId;
     }
 
-    public TrainingAcademy(Integer trainingAcaId, String name) {
+    public void setTrainingAcaId(Integer trainingAcaId) {
         this.trainingAcaId = trainingAcaId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
         this.name = name;
     }
+
+    public String getBattalion() {
+        return battalion;
+    }
+
+    public void setBattalion(String battalion) {
+        this.battalion = battalion;
+    }
+    //endregion
 }
