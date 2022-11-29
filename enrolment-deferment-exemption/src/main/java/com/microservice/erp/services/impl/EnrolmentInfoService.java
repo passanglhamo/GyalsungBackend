@@ -99,10 +99,8 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     }
 
     @Override
-    public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId,
-                                                                       Integer coursePreferenceNumber) {
-        List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, courseId
-                , coursePreferenceNumber);
+    public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId, Integer coursePreferenceNumber) {
+        List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, courseId, coursePreferenceNumber);
 
         List<EnrolmentListDto> enrolmentList = new ArrayList<>();
         //to get user detail from m-user-service
@@ -134,17 +132,33 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
                 ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
                 enrolmentListDto.setAcademy_name(Objects.requireNonNull(responseTraining.getBody()).getName());
             }
+            BigInteger allocatedCourseId = item.getAllocated_course_id();
+            if (allocatedCourseId != null) {
+                String urlCourse = "http://localhost:8086/api/training/management/fieldSpecializations/getCourseByCourseId?courseId=" + allocatedCourseId;
+                ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
+                enrolmentListDto.setCourseName(Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName());
+            }
             enrolmentList.add(enrolmentListDto);
         });
         return ResponseEntity.ok(enrolmentList);
     }
 
     @Override
+    @Transactional()
     public ResponseEntity<?> allocateEnrolments(String authHeader, EnrolmentInfoCommand command) {
-        iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(d -> {
-            d.setStatus('A');
-            d.setTrainingAcademyId(command.getTrainingAcademyId());
-            iEnrolmentInfoRepository.save(d);
+        // to check already allocated or not
+        for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
+            if (enrolmentInfo.getStatus() == 'A') {
+                return ResponseEntity.badRequest().body(new MessageResponse("Already allocated training institute."));
+            }
+        }
+
+        iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
+            item.setStatus('A');
+            item.setTrainingAcademyId(command.getTrainingAcademyId());
+            item.setAllocatedCourseId(command.getAllocatedCourseId());
+            iEnrolmentInfoRepository.save(item);
+            //todo:send email and sms
         });
 
         return ResponseEntity.ok(new MessageResponse("Training allocated successfully"));

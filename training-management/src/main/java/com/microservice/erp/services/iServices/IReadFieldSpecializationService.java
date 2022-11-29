@@ -3,6 +3,7 @@ package com.microservice.erp.services.iServices;
 import com.microservice.erp.domain.entities.FieldSpecialization;
 import org.springframework.http.ResponseEntity;
 
+import java.math.BigInteger;
 import java.util.List;
 
 public interface IReadFieldSpecializationService {
@@ -13,4 +14,5 @@ public interface IReadFieldSpecializationService {
 
     List<FieldSpecialization> getAllFieldSpecList();
 
+    ResponseEntity<?> getCourseByCourseId(BigInteger courseId);
 }

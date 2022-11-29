@@ -47,9 +47,9 @@ public class EnrolmentController {
 
     @PostMapping(value = "/allocateEnrolments")
     public ResponseEntity<?> allocateEnrolments(@RequestHeader("Authorization") String authHeader,
-                                          @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) {
+                                                @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) {
 
-        return iEnrolmentInfoService.allocateEnrolments(authHeader,command);
+        return iEnrolmentInfoService.allocateEnrolments(authHeader, command);
     }
 
 }

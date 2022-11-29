@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigInteger;
 import java.util.List;
 
 @RestController
@@ -25,6 +26,17 @@ public class FieldSpecializationController {
     @GetMapping(value = "/getAllFieldSpecByStatus")
     public ResponseEntity<?> getAllFieldSpecByStatus(@RequestParam("status") Character status) {
         return readService.getAllFieldSpecByStatus(status);
+    }
+
+    /**
+     * this api is used by enrolment microservice to get name of course
+     *
+     * @param courseId -- BigInteger
+     * @return -- ResponseEntity<?>
+     */
+    @GetMapping(value = "/getCourseByCourseId")
+    public ResponseEntity<?> getCourseByCourseId(@RequestParam("courseId") BigInteger courseId) {
+        return readService.getCourseByCourseId(courseId);
     }
 
     @GetMapping(value = "/getAllDefaultCourses")
