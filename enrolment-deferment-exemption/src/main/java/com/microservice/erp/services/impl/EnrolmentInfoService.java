@@ -132,6 +132,12 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
                 ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
                 enrolmentListDto.setAcademy_name(Objects.requireNonNull(responseTraining.getBody()).getName());
             }
+            BigInteger allocatedCourseId = item.getAllocated_course_id();
+            if (allocatedCourseId != null) {
+                String urlCourse = "http://localhost:8086/api/training/management/fieldSpecializations/getCourseByCourseId?courseId=" + allocatedCourseId;
+                ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
+                enrolmentListDto.setCourseName(Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName());
+            }
             enrolmentList.add(enrolmentListDto);
         });
         return ResponseEntity.ok(enrolmentList);

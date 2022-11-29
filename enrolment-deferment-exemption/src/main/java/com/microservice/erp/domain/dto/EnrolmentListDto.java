@@ -21,8 +21,10 @@ public class EnrolmentListDto {
     private String remarks;
     private Character status;
     private Integer training_academy_id;
+    private BigInteger allocated_course_id;
     private String year;
     private Integer preference_number;
     private BigInteger course_id;
+    private String courseName;
     //endregion
 }

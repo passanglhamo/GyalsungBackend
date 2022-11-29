@@ -14,5 +14,6 @@ public class TrainingAcademyDto {
     private String battalion;
     private BigInteger noOfMaleEnrolled;
     private BigInteger noOfFemaleEnrolled;
+    private String fieldSpecName;
     //endregion
 }

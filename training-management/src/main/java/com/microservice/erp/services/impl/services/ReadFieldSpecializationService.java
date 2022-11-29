@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -48,5 +49,11 @@ public class ReadFieldSpecializationService implements IReadFieldSpecializationS
     @Override
     public List<FieldSpecialization> getAllFieldSpecList() {
         return repository.findAllByOrderByFieldSpecNameAsc();
+    }
+
+    @Override
+    public ResponseEntity<?> getCourseByCourseId(BigInteger courseId) {
+        FieldSpecialization fieldSpecialization = repository.findById(courseId).get();
+        return ResponseEntity.ok(fieldSpecialization);
     }
 }
