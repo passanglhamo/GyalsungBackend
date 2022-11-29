@@ -138,6 +138,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
                 ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
                 enrolmentListDto.setCourseName(Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName());
             }
+
             enrolmentList.add(enrolmentListDto);
         });
         return ResponseEntity.ok(enrolmentList);
@@ -145,22 +146,53 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     @Override
     @Transactional()
-    public ResponseEntity<?> allocateEnrolments(String authHeader, EnrolmentInfoCommand command) {
+    public ResponseEntity<?> allocateEnrolments(String authHeader, EnrolmentInfoCommand command) throws Exception {
         // to check already allocated or not
         for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
             if (enrolmentInfo.getStatus() == 'A') {
                 return ResponseEntity.badRequest().body(new MessageResponse("Already allocated training institute."));
             }
         }
-
+        //to save update enrolment info
         iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
             item.setStatus('A');
             item.setTrainingAcademyId(command.getTrainingAcademyId());
             item.setAllocatedCourseId(command.getAllocatedCourseId());
             iEnrolmentInfoRepository.save(item);
-            //todo:send email and sms
         });
+        // to send email and sms
+        for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", authHeader);
+            HttpEntity<String> request = new HttpEntity<>(headers);
+            String academyName = "";
+            String courseName = "";
 
+            String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + enrolmentInfo.getUserId();
+            ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
+            String fullName = Objects.requireNonNull(userResponse.getBody()).getFullName();
+            String mobileNo = Objects.requireNonNull(userResponse.getBody()).getMobileNo();
+            String email = Objects.requireNonNull(userResponse.getBody()).getEmail();
+
+            Integer trainingAcademyId = enrolmentInfo.getTrainingAcademyId();
+            if (trainingAcademyId != null) {
+                String urlTraining = "http://localhost:8086/api/training/management/common/getTrainingAcademyById?academyId=" + trainingAcademyId;
+                ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
+                academyName = Objects.requireNonNull(responseTraining.getBody()).getName();
+            }
+            BigInteger allocatedCourseId = enrolmentInfo.getAllocatedCourseId();
+            if (allocatedCourseId != null) {
+                String urlCourse = "http://localhost:8086/api/training/management/fieldSpecializations/getCourseByCourseId?courseId=" + allocatedCourseId;
+                ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
+                courseName = Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName();
+            }
+            String message = "Dear " + fullName + ", You have been allocated to " + academyName + " training academy to undergo Gyalsung training in " + courseName + " for the year " + enrolmentInfo.getYear();
+            SmsSender.sendSms(mobileNo, message);
+
+            String subject = "Registration Approval";
+            MailSender.sendMail(email, null, null, message, subject);
+        }
         return ResponseEntity.ok(new MessageResponse("Training allocated successfully"));
     }
 }
