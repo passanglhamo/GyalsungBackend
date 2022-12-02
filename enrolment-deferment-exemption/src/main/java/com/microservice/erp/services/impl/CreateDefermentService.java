@@ -1,6 +1,9 @@
 package com.microservice.erp.services.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microservice.erp.domain.dto.MailSenderDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
+import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
@@ -16,6 +19,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,6 +39,8 @@ public class CreateDefermentService implements ICreateDefermentService {
     private final IExemptionInfoRepository exemptionInfoRepository;
     private final DefermentMapper mapper;
     private final HeaderToken headerToken;
+    private final KafkaTemplate<?, ?> kafkaTemplate;
+
     Integer fileLength = 5;
 
 
@@ -104,6 +113,7 @@ public class CreateDefermentService implements ICreateDefermentService {
     }
 
     private void sendEmailAndSms(String authTokenHeader, BigInteger userId) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authTokenHeader);
 
@@ -115,10 +125,20 @@ public class CreateDefermentService implements ICreateDefermentService {
                 "\n" +
                 "This is to acknowledge the receipt of your deferment application. Your deferment application will be reviewed and the outcome of the deferment will be sent to you through your email within 10 days of the submission of your application. If you are not approved for deferment, you will have to complete the Gyalsung pre-enlistment procedure. \n";
 
-        MailSender.sendMail(Objects.requireNonNull(userResponse.getBody()).getEmail(), null, null, emailMessage, subject);
 
+        Message<String> message = MessageBuilder
+                .withPayload( mapper.writeValueAsString( MailSenderDto.withId(
+                        Objects.requireNonNull(userResponse.getBody()).getEmail(),
+                        null,
+                        null,
+                        emailMessage,
+                        subject,
+                        Objects.requireNonNull(userResponse.getBody()).getMobileNo()
+                )))
+                .setHeader(KafkaHeaders.TOPIC,"enrolment")
+                .build();
+        kafkaTemplate.send(message);
 
-        SmsSender.sendSms(Objects.requireNonNull(userResponse.getBody()).getMobileNo(), emailMessage);
 
     }
 

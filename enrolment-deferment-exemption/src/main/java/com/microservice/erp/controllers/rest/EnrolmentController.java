@@ -5,6 +5,7 @@ import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import com.microservice.erp.services.iServices.IUpdateDefermentService;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -22,6 +23,7 @@ import java.math.BigInteger;
 @RestController
 @RequestMapping("/enrolment")
 @AllArgsConstructor
+@NoArgsConstructor
 public class EnrolmentController {
     private static Logger LOG = LoggerFactory.getLogger(EnrolmentController.class.getSimpleName());
 

@@ -34,17 +34,17 @@ public class SendNotificationController {
         return iSendNotificationService.sendNotification(authHeader, noticeDto);
     }
 
-    @KafkaListener(topics = {"${topic.enrolment}"}, concurrency = "1")
-    public ResponseEntity<?> sendNotification(@Payload String message, Acknowledgment ack) throws Exception {
-
-        LOG.info("ENROLMENT-TOPIC-QUEUE: Message received {} ", message);
-        ObjectMapper mapper = new ObjectMapper();
-        //TODO Mail Validation have to be done while Enrolment.... Not on mail sending.
-        ResponseEntity responseEntity = ResponseEntity.ok("Test");
-        /*NoticeDto noticeDto = mapper.readValue(message, NoticeDto.class);
-        String authHeader = "";
-        ResponseEntity responseEntity = iSendNotificationService.sendNotification(authHeader, noticeDto);*/
-        ack.acknowledge();
-        return responseEntity;
-    }
+//    @KafkaListener(topics = {"${topic.enrolment}"}, concurrency = "1")
+//    public ResponseEntity<?> sendNotification(@Payload String message, Acknowledgment ack) throws Exception {
+//
+//        LOG.info("ENROLMENT-TOPIC-QUEUE: Message received {} ", message);
+//        ObjectMapper mapper = new ObjectMapper();
+//        //TODO Mail Validation have to be done while Enrolment.... Not on mail sending.
+//        ResponseEntity responseEntity = ResponseEntity.ok("Test");
+//        /*NoticeDto noticeDto = mapper.readValue(message, NoticeDto.class);
+//        String authHeader = "";
+//        ResponseEntity responseEntity = iSendNotificationService.sendNotification(authHeader, noticeDto);*/
+//        ack.acknowledge();
+//        return responseEntity;
+//    }
 }

@@ -1,7 +1,9 @@
 package com.microservice.erp.services.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservice.erp.domain.dao.EnrolmentDao;
 import com.microservice.erp.domain.dto.EnrolmentListDto;
+import com.microservice.erp.domain.dto.MailSenderDto;
 import com.microservice.erp.domain.dto.TrainingAcademyDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
@@ -23,6 +25,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -44,6 +50,8 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     private EnrolmentMapper enrolmentMapper;
     private final IRegistrationDateInfoRepository iRegistrationDateInfoRepository;
     private EnrolmentDao enrolmentDao;
+    private final KafkaTemplate<?, ?> kafkaTemplate;
+
 
     @Override
     public ResponseEntity<?> getRegistrationDateInfo() {
@@ -54,6 +62,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> saveEnrolment(String authHeader, EnrolmentDto enrolmentDto) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
         RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus('A');
         if (registrationDateInfo == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Registration date information not found."));
@@ -95,10 +104,23 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
         //todo: need to get mail and sms content
         String message = "Dear " + fullName + ",  Thank you for registering to Gyalsung training.";
-        SmsSender.sendSms(mobileNo, message);
-
+//        SmsSender.sendSms(mobileNo, message);
+//
         String subject = "Gyalsung Registration";
-        MailSender.sendMail(email, null, null, message, subject);
+//        MailSender.sendMail(email, null, null, message, subject);
+
+        Message<String> mailValues = MessageBuilder
+                .withPayload( mapper.writeValueAsString( MailSenderDto.withId(
+                        email,
+                        null,
+                        null,
+                        message,
+                        subject,
+                        mobileNo
+                )))
+                .setHeader(KafkaHeaders.TOPIC,"enrolment")
+                .build();
+        kafkaTemplate.send(mailValues);
 
         return ResponseEntity.ok(new MessageResponse("Enrolled successfully."));
     }

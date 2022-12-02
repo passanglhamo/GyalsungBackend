@@ -1,5 +1,7 @@
 package com.microservice.erp.services.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microservice.erp.domain.dto.MailSenderDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.ExemptionInfo;
@@ -16,6 +18,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,7 +37,8 @@ public class CreateExemptionService implements ICreateExemptionService {
     private final IExemptionInfoRepository repository;
     private final IDefermentInfoRepository defermentRepository;
     private final ExemptionMapper mapper;
-    //    private final SendEmailSms sendEmailSms;
+    private final KafkaTemplate<?, ?> kafkaTemplate;
+
     private final HeaderToken headerToken;
 
     Integer fileLength = 5;
@@ -94,6 +101,7 @@ public class CreateExemptionService implements ICreateExemptionService {
     }
 
     private void sendEmailAndSms(String authTokenHeader, BigInteger userId) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authTokenHeader);
 
@@ -105,10 +113,17 @@ public class CreateExemptionService implements ICreateExemptionService {
         String emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
                 "\n" +
                 "This is to acknowledge the receipt of your exemption application. Your exemption application will be reviewed and the outcome of the exemption will be sent to you through your email within 10 days of the submission of your application. If you are not approved for exemption, you will have to complete the Gyalsung pre-enlistment procedure. \n";
-
-
-        MailSender.sendMail(Objects.requireNonNull(userResponse.getBody()).getEmail(), null, null, emailMessage, subject);
-
-        SmsSender.sendSms(Objects.requireNonNull(userResponse.getBody()).getMobileNo(), emailMessage);
+        Message<String> message = MessageBuilder
+                .withPayload( mapper.writeValueAsString( MailSenderDto.withId(
+                        Objects.requireNonNull(userResponse.getBody()).getEmail(),
+                        null,
+                        null,
+                        emailMessage,
+                        subject,
+                        Objects.requireNonNull(userResponse.getBody()).getMobileNo()
+                )))
+                .setHeader(KafkaHeaders.TOPIC,"enrolment")
+                .build();
+        kafkaTemplate.send(message);
     }
 }
