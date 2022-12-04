@@ -2,7 +2,6 @@ package com.microservice.erp.services.iServices;
 
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.SignupRequestDto;
-import com.microservice.erp.domain.entities.UserInfo;
 import org.springframework.http.ResponseEntity;
 import org.wso2.client.api.ApiException;
 

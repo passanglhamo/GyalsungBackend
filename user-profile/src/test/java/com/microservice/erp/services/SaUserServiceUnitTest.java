@@ -1,8 +1,8 @@
 package com.microservice.erp.services;
 
-import com.microservice.erp.domain.entities.UserInfo;
+import com.microservice.erp.domain.entities.SaUser;
 import com.microservice.erp.domain.models.Gender;
-import com.microservice.erp.domain.repositories.IUserInfoRepository;
+import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.services.iServices.IUserInfoService;
 import com.microservice.erp.services.impl.UserInfoService;
 import com.microservice.erp.webapp.config.TestJPAH2Config;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, classes = {TestJPAH2Config.class})
-public class UserInfoServiceUnitTest {
+public class SaUserServiceUnitTest {
 
     @Before
     public void setup(){
@@ -35,7 +35,7 @@ public class UserInfoServiceUnitTest {
     }
 
     @Mock
-    IUserInfoRepository repository;
+    ISaUserRepository repository;
 
     @InjectMocks
     IUserInfoService service = new UserInfoService(repository);
@@ -43,16 +43,16 @@ public class UserInfoServiceUnitTest {
     @Test
     public void happyPathTest(){
         //Defining Mock Object:
-        UserInfo aUserInfo = new UserInfo("Rajib", Gender.MALE, 36);
-        when(repository.save(any(UserInfo.class))).thenReturn(aUserInfo);
+        SaUser aSaUser = new SaUser("Rajib", Gender.MALE, 36);
+        when(repository.save(any(SaUser.class))).thenReturn(aSaUser);
 
         //Call controller to make the save:
-        UserInfo nUserInfo = service.add(aUserInfo);
+        SaUser nSaUser = service.add(aSaUser);
 
         //Verify:
-        assertNotNull(nUserInfo);
-        assertNotNull(nUserInfo.getId());
-        assertEquals("Rajib", nUserInfo.getId());
-        //System.out.println(nUserInfo.marshallingToMap(true));
+        assertNotNull(nSaUser);
+        assertNotNull(nSaUser.getId());
+        assertEquals("Rajib", nSaUser.getId());
+        //System.out.println(nSaUser.marshallingToMap(true));
     }
 }

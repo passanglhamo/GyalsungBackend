@@ -3,8 +3,8 @@ package com.microservice.erp.controllers.rest;
 import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.SignupRequestDto;
-import com.microservice.erp.domain.entities.UserInfo;
-import com.microservice.erp.domain.repositories.IUserInfoRepository;
+import com.microservice.erp.domain.entities.SaUser;
+import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.services.iServices.ISignupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,6 @@ import org.wso2.client.api.ApiException;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +22,11 @@ import java.util.List;
 public class SignupController {
 
     private final ISignupService iSignupService;
-    private final IUserInfoRepository iUserInfoRepository;
+    private final ISaUserRepository iSaUserRepository;
 
-    public SignupController(ISignupService iSignupService, IUserInfoRepository iUserInfoRepository) {
+    public SignupController(ISignupService iSignupService, ISaUserRepository iSaUserRepository) {
         this.iSignupService = iSignupService;
-        this.iUserInfoRepository = iUserInfoRepository;
+        this.iSaUserRepository = iSaUserRepository;
     }
 
     @GetMapping("/getCitizenDetails")
@@ -66,21 +65,21 @@ public class SignupController {
         List<String> roles = new ArrayList<>();
         roles.add("USER");
 
-        UserInfo userInfo = iUserInfoRepository.findByCid(loginRequest.getUsername());
-        if (userInfo == null) {
+        SaUser saUser = iSaUserRepository.findByCid(loginRequest.getUsername());
+        if (saUser == null) {
             ResponseEntity.badRequest().body(new MessageResponse("Invalid username or password."));
         }
 
-        assert userInfo != null;
+        assert saUser != null;
 
         return ResponseEntity.ok(new JwtResponse("staticToken",
-                userInfo.getId(),
-                userInfo.getFullName(),
-                userInfo.getCid(),
-                userInfo.getGender(),
-                userInfo.getMobileNo(),
-                userInfo.getUsername(),
-                userInfo.getEmail(),
+                saUser.getId(),
+                saUser.getFullName(),
+                saUser.getCid(),
+                saUser.getGender(),
+                saUser.getMobileNo(),
+                saUser.getUsername(),
+                saUser.getEmail(),
                 roles));
     }
 }

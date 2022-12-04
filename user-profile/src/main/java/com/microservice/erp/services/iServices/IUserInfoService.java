@@ -1,7 +1,7 @@
 package com.microservice.erp.services.iServices;
 
-import com.microservice.erp.domain.entities.UserInfo;
-import com.microservice.erp.domain.repositories.IUserInfoRepository;
+import com.microservice.erp.domain.entities.SaUser;
+import com.microservice.erp.domain.repositories.ISaUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -12,12 +12,12 @@ import java.util.List;
  */
 
 public interface IUserInfoService {
-    void setIUserInfoRepository(@Autowired IUserInfoRepository repository);
-    UserInfo add(UserInfo aUserInfo);
-    UserInfo update(UserInfo aUserInfo);
+    void setIUserInfoRepository(@Autowired ISaUserRepository repository);
+    SaUser add(SaUser aSaUser);
+    SaUser update(SaUser aSaUser);
     boolean remove(Long userid);
     Long totalCount();
-    UserInfo findByUserID(Long userid);
-    List<UserInfo> findAllByUserID(List<Long> userid);
-    List<UserInfo> findAll(Integer page, Integer size);
+    SaUser findByUserID(Long userid);
+    List<SaUser> findAllByUserID(List<Long> userid);
+    List<SaUser> findAll(Integer page, Integer size);
 }

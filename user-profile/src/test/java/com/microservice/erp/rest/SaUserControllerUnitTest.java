@@ -1,7 +1,7 @@
 package com.microservice.erp.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microservice.erp.domain.entities.UserInfo;
+import com.microservice.erp.domain.entities.SaUser;
 import com.microservice.erp.domain.models.Gender;
 import com.microservice.erp.services.iServices.IUserInfoService;
 import com.microservice.erp.webapp.WebApplicationTest;
@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
         classes = {WebApplicationTest.class, TestJPAH2Config.class, BeanConfig.class})
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:h2-db.properties")
-public class UserInfoControllerUnitTest {
+public class SaUserControllerUnitTest {
 
     @Before
     public void setup(){
@@ -72,14 +72,14 @@ public class UserInfoControllerUnitTest {
     @Test
     public void happyPathTest() throws Exception {
         //Defining Mock Object:
-        UserInfo aUserInfo = new UserInfo("Rajib", Gender.MALE, 36);
+        SaUser aSaUser = new SaUser("Rajib",'M', 36);
 
-        when(service.add(any(UserInfo.class))).thenReturn(aUserInfo);
+        when(service.add(any(SaUser.class))).thenReturn(aSaUser);
 
         //Call controller to make the save:
         MvcResult result = mockMvc.perform(post("/userinfo")
                 .accept(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsBytes(aUserInfo))
+                .content(mapper.writeValueAsBytes(aSaUser))
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 //.andExpect(status().isOk())
                 .andReturn();

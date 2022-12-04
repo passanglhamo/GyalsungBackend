@@ -32,7 +32,7 @@ import java.util.*;
 @AllArgsConstructor
 public class ProfileService implements IProfileService {
     private final UserDao userDao;
-    private final IUserInfoRepository iUserInfoRepository;
+    private final ISaUserRepository iSaUserRepository;
     private final IChangeMobileNoSmsOtpRepository iChangeMobileNoSmsOtpRepository;
     private final IChangeEmailVerificationCodeRepository iChangeEmailVerificationCodeRepository;
 
@@ -43,20 +43,20 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> getProfileInfo(String authHeader, BigInteger userId) {
-        UserInfo userInfo = iUserInfoRepository.findById(userId).get();
-        UserProfileDto userProfileDto = new ModelMapper().map(userInfo, UserProfileDto.class);
+        SaUser saUser = iSaUserRepository.findById(userId).get();
+        UserProfileDto userProfileDto = new ModelMapper().map(saUser, UserProfileDto.class);
         userProfileDto.setPassword(null);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
-        if (userInfo.getPresentGeogId() != null) {
-            String geogUrl = "http://localhost:81/api/training/management/common/getGeogByGeogId?geogId=" + userInfo.getPresentGeogId();
+        if (saUser.getPresentGeogId() != null) {
+            String geogUrl = "http://localhost:81/api/training/management/common/getGeogByGeogId?geogId=" + saUser.getPresentGeogId();
             ResponseEntity<GeogDto> geogResponse = restTemplate.exchange(geogUrl, HttpMethod.GET, request, GeogDto.class);
             userProfileDto.setPresentGeogName(Objects.requireNonNull(geogResponse.getBody()).getGeogName());
         }
-        if (userInfo.getPresentDzongkhagId() != null) {
-            String dzongkhagUrl = "http://localhost:81/api/training/management/common/getDzongkhagByDzongkhagId?dzongkhagId=" + userInfo.getPresentDzongkhagId();
+        if (saUser.getPresentDzongkhagId() != null) {
+            String dzongkhagUrl = "http://localhost:81/api/training/management/common/getDzongkhagByDzongkhagId?dzongkhagId=" + saUser.getPresentDzongkhagId();
             ResponseEntity<DzongkhagDto> dzongkhagResponse = restTemplate.exchange(dzongkhagUrl, HttpMethod.GET, request, DzongkhagDto.class);
             userProfileDto.setPresentDzongkhagName(Objects.requireNonNull(dzongkhagResponse.getBody()).getDzongkhagName());
         }
@@ -65,8 +65,8 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> getProfilePicture(BigInteger userId) throws IOException {
-        UserInfo userInfo = iUserInfoRepository.findById(userId).get();
-        String profilePictureUrl = userInfo.getProfilePictureUrl();
+        SaUser saUser = iSaUserRepository.findById(userId).get();
+        String profilePictureUrl = saUser.getProfilePictureUrl();
         if (profilePictureUrl == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Profile picture not set yet."));
         } else {
@@ -94,24 +94,24 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> changeUsername(UserProfileDto userProfileDto) {
-        UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
+        SaUser saUserDb = iSaUserRepository.findById(userProfileDto.getUserId()).get();
 
         ResponseEntity<?> checkUsernameExistOrNot = checkUsernameExistOrNot(userProfileDto.getUsername());
         if (checkUsernameExistOrNot.getStatusCode().value() != HttpStatus.OK.value()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Username already in use."));
         }
 
-        UserInfo userInfoObject = new ModelMapper().map(userInfoDb, UserInfo.class);
+        SaUser saUserObject = new ModelMapper().map(saUserDb, SaUser.class);
 
-        userInfoObject.setUsername(userProfileDto.getUsername());
-        iUserInfoRepository.save(userInfoDb);
+        saUserObject.setUsername(userProfileDto.getUsername());
+        iSaUserRepository.save(saUserDb);
         return ResponseEntity.ok(new MessageResponse("Username updated successfully."));
     }
 
     @Override
     public ResponseEntity<?> checkEmailExistOrNot(String email) {
-        UserInfo userInfoDb = iUserInfoRepository.findByEmail(email);
-        if (userInfoDb != null) {
+        SaUser saUserDb = iSaUserRepository.findByEmail(email);
+        if (saUserDb != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         } else {
             return ResponseEntity.ok(new MessageResponse("Email available."));
@@ -120,7 +120,7 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> changeMobileNo(UserProfileDto userProfileDto) {
-        UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
+        SaUser saUserDb = iSaUserRepository.findById(userProfileDto.getUserId()).get();
 
 
         //verify otp
@@ -128,18 +128,18 @@ public class ProfileService implements IProfileService {
         if (responseEntity.getStatusCode().value() != HttpStatus.OK.value()) {
             return ResponseEntity.badRequest().body(new MessageResponse("OTP didn't match."));
         }
-        UserInfo userInfoObject = new ModelMapper().map(userInfoDb, UserInfo.class);
+        SaUser saUserObject = new ModelMapper().map(saUserDb, SaUser.class);
 
-        userInfoObject.setMobileNo(userProfileDto.getMobileNo());
-        iUserInfoRepository.save(userInfoDb);
+        saUserObject.setMobileNo(userProfileDto.getMobileNo());
+        iSaUserRepository.save(saUserDb);
         return ResponseEntity.ok(new MessageResponse("Mobile number changed successfully."));
     }
 
     @Override
     public ResponseEntity<?> changeEmail(UserProfileDto userProfileDto) {
 
-        UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
-        UserInfo userInfo = new ModelMapper().map(userInfoDb, UserInfo.class);
+        SaUser saUserDb = iSaUserRepository.findById(userProfileDto.getUserId()).get();
+        SaUser saUser = new ModelMapper().map(saUserDb, SaUser.class);
 
         //verify verification code
         ResponseEntity<?> responseEntity = verifyVerificationCode(userProfileDto);
@@ -150,8 +150,8 @@ public class ProfileService implements IProfileService {
         if (checkEmailExistOrNot.getStatusCode().value() != HttpStatus.OK.value()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
-        userInfoDb.setEmail(userProfileDto.getEmail());
-        iUserInfoRepository.save(userInfoDb);
+        saUserDb.setEmail(userProfileDto.getEmail());
+        iSaUserRepository.save(saUserDb);
         return ResponseEntity.ok(new MessageResponse("Email changed successfully."));
     }
 
@@ -173,13 +173,13 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> changePassword(UserProfileDto userProfileDto) {
-        UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
-        UserInfo userInfo = new ModelMapper().map(userInfoDb, UserInfo.class);
+        SaUser saUserDb = iSaUserRepository.findById(userProfileDto.getUserId()).get();
+        SaUser saUser = new ModelMapper().map(saUserDb, SaUser.class);
 
         //current pw must be equal to existing pw
 //        TODO: need to check pw match
 //        String curPw =  userProfileDto.getCurrentPassword();
-//        if (!passwordEncoder.matches(userInfoDb.getPassword(), curPw)) {
+//        if (!passwordEncoder.matches(saUserDb.getPassword(), curPw)) {
 //            return ResponseEntity.badRequest().body(new MessageResponse("Current password doesn't match."));
 //        }
 
@@ -188,52 +188,52 @@ public class ProfileService implements IProfileService {
             return ResponseEntity.badRequest().body(new MessageResponse("Confirm password doesn't match."));
         }
 
-        userInfo.setPassword(passwordEncoder.encode(userProfileDto.getNewPassword()));
-        iUserInfoRepository.save(userInfo);
+        saUser.setPassword(passwordEncoder.encode(userProfileDto.getNewPassword()));
+        iSaUserRepository.save(saUser);
         //TODO: send email after cahnging password
         return ResponseEntity.ok(new MessageResponse("Password changed successfully."));
     }
 
     @Override
     public ResponseEntity<?> changeParentInfo(UserProfileDto userProfileDto) {
-        UserInfo userInfo = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
+        SaUser saUser = iSaUserRepository.findById(userProfileDto.getUserId()).get();
 
-        userInfo.setFatherCid(userProfileDto.getFatherCid());
-        userInfo.setFatherMobileNo(userProfileDto.getFatherMobileNo());
-        userInfo.setFatherEmail(userProfileDto.getFatherEmail());
-        userInfo.setFatherOccupation(userProfileDto.getFatherOccupation());
+        saUser.setFatherCid(userProfileDto.getFatherCid());
+        saUser.setFatherMobileNo(userProfileDto.getFatherMobileNo());
+        saUser.setFatherEmail(userProfileDto.getFatherEmail());
+        saUser.setFatherOccupation(userProfileDto.getFatherOccupation());
 
-        userInfo.setMotherCid(userProfileDto.getFatherCid());
-        userInfo.setMotherMobileNo(userProfileDto.getMotherMobileNo());
-        userInfo.setMotherEmail(userProfileDto.getMotherEmail());
-        userInfo.setMotherOccupation(userProfileDto.getMotherOccupation());
+        saUser.setMotherCid(userProfileDto.getFatherCid());
+        saUser.setMotherMobileNo(userProfileDto.getMotherMobileNo());
+        saUser.setMotherEmail(userProfileDto.getMotherEmail());
+        saUser.setMotherOccupation(userProfileDto.getMotherOccupation());
 
-        iUserInfoRepository.save(userInfo);
+        iSaUserRepository.save(saUser);
         return ResponseEntity.ok(new MessageResponse("Parent information updated successfully."));
     }
 
     @Override
     public ResponseEntity<?> changeGuardianInfo(UserProfileDto userProfileDto) {
-        UserInfo userInfo = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
+        SaUser saUser = iSaUserRepository.findById(userProfileDto.getUserId()).get();
 
-        userInfo.setGuardianName(userProfileDto.getGuardianName());
-        userInfo.setGuardianCid(userProfileDto.getGuardianCid());
-        userInfo.setGuardianOccupation(userProfileDto.getGuardianOccupation());
-        userInfo.setGuardianMobileNo(userProfileDto.getGuardianMobileNo());
-        userInfo.setGuardianEmail(userProfileDto.getGuardianEmail());
-        userInfo.setRelationToGuardian(userProfileDto.getRelationToGuardian());
+        saUser.setGuardianName(userProfileDto.getGuardianName());
+        saUser.setGuardianCid(userProfileDto.getGuardianCid());
+        saUser.setGuardianOccupation(userProfileDto.getGuardianOccupation());
+        saUser.setGuardianMobileNo(userProfileDto.getGuardianMobileNo());
+        saUser.setGuardianEmail(userProfileDto.getGuardianEmail());
+        saUser.setRelationToGuardian(userProfileDto.getRelationToGuardian());
 
-        iUserInfoRepository.save(userInfo);
+        iSaUserRepository.save(saUser);
         return ResponseEntity.ok(new MessageResponse("Guardian information updated successfully."));
     }
 
     @Override
     public ResponseEntity<?> changeSocialMediaLink(UserProfileDto userProfileDto) {
-        UserInfo userInfo = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
-        userInfo.setSocialMediaLink1(userProfileDto.getSocialMediaLink1());
-        userInfo.setSocialMediaLink2(userProfileDto.getSocialMediaLink2());
-        userInfo.setSocialMediaLink3(userProfileDto.getSocialMediaLink3());
-        iUserInfoRepository.save(userInfo);
+        SaUser saUser = iSaUserRepository.findById(userProfileDto.getUserId()).get();
+        saUser.setSocialMediaLink1(userProfileDto.getSocialMediaLink1());
+        saUser.setSocialMediaLink2(userProfileDto.getSocialMediaLink2());
+        saUser.setSocialMediaLink3(userProfileDto.getSocialMediaLink3());
+        iSaUserRepository.save(saUser);
         return ResponseEntity.ok(new MessageResponse("Guardian information updated successfully."));
 
     }
@@ -282,51 +282,51 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> changeCurrentAddress(UserProfileDto userProfileDto) {
-        UserInfo userInfo = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
-        userInfo.setPresentCountry(userProfileDto.getPresentCountry());
-        userInfo.setPresentPlaceName(userProfileDto.getPresentPlaceName());
-        userInfo.setPresentDzongkhagId(userProfileDto.getPresentDzongkhagId());
-        userInfo.setPresentGeogId(userProfileDto.getPresentGeogId());
-        iUserInfoRepository.save(userInfo);
+        SaUser saUser = iSaUserRepository.findById(userProfileDto.getUserId()).get();
+        saUser.setPresentCountry(userProfileDto.getPresentCountry());
+        saUser.setPresentPlaceName(userProfileDto.getPresentPlaceName());
+        saUser.setPresentDzongkhagId(userProfileDto.getPresentDzongkhagId());
+        saUser.setPresentGeogId(userProfileDto.getPresentGeogId());
+        iSaUserRepository.save(saUser);
         return ResponseEntity.ok(new MessageResponse("Guardian information updated successfully."));
     }
 
     @Override
     public ResponseEntity<?> syncCensusRecord(UserProfileDto userProfileDto) throws ParseException {
 
-        UserInfo userInfoCheck = iUserInfoRepository.findByCid(userProfileDto.getCid());
-        if (userInfoCheck != null) {
+        SaUser saUserCheck = iSaUserRepository.findByCid(userProfileDto.getCid());
+        if (saUserCheck != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("User already exist having CID " + userProfileDto.getCid()));
         }
-        UserInfo userInfo = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
+        SaUser saUser = iSaUserRepository.findById(userProfileDto.getUserId()).get();
         Date dob = new SimpleDateFormat("dd/MM/yyyy").parse(userProfileDto.getBirthDate());
-        userInfo.setCid(userProfileDto.getCid());
-        userInfo.setDob(dob);
-        userInfo.setFullName(userProfileDto.getFullName());
-        userInfo.setGender(userProfileDto.getGender());
-//        userInfo.setSex(userProfileDto.getSex().toUpperCase());
-        userInfo.setFatherName(userProfileDto.getFatherName());
-        userInfo.setMotherName(userProfileDto.getMotherName());
-        userInfo.setPermanentPlaceName(userProfileDto.getPermanentPlaceName());
-        userInfo.setPermanentGeog(userProfileDto.getPermanentGeog());
-        userInfo.setPermanentDzongkhag(userProfileDto.getPermanentDzongkhag());
+        saUser.setCid(userProfileDto.getCid());
+        saUser.setDob(dob);
+        saUser.setFullName(userProfileDto.getFullName());
+        saUser.setGender(userProfileDto.getGender());
+//        saUser.setSex(userProfileDto.getSex().toUpperCase());
+        saUser.setFatherName(userProfileDto.getFatherName());
+        saUser.setMotherName(userProfileDto.getMotherName());
+        saUser.setPermanentPlaceName(userProfileDto.getPermanentPlaceName());
+        saUser.setPermanentGeog(userProfileDto.getPermanentGeog());
+        saUser.setPermanentDzongkhag(userProfileDto.getPermanentDzongkhag());
 
-        iUserInfoRepository.save(userInfo);
+        iSaUserRepository.save(saUser);
         return ResponseEntity.ok(new MessageResponse("Census record updated successfully."));
     }
 
     @Override
     public ResponseEntity<?> searchUser(String searchKey) {
-        UserInfo userInfo;
-        userInfo = iUserInfoRepository.findByCid(searchKey);
-        if (userInfo == null) {
-            userInfo = iUserInfoRepository.findByEmail(searchKey);
+        SaUser saUser;
+        saUser = iSaUserRepository.findByCid(searchKey);
+        if (saUser == null) {
+            saUser = iSaUserRepository.findByEmail(searchKey);
         }
-        if (userInfo == null) {
-            userInfo = iUserInfoRepository.findByUsername(searchKey);
+        if (saUser == null) {
+            saUser = iSaUserRepository.findByUsername(searchKey);
         }
-        if (userInfo != null) {
-            return ResponseEntity.ok(userInfo);
+        if (saUser != null) {
+            return ResponseEntity.ok(saUser);
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("User not found matching " + searchKey));
         }
@@ -334,16 +334,16 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> resetUserPassword(UserProfileDto userProfileDto) {
-        UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
-        UserInfo userInfo = new ModelMapper().map(userInfoDb, UserInfo.class);
+        SaUser saUserDb = iSaUserRepository.findById(userProfileDto.getUserId()).get();
+        SaUser saUser = new ModelMapper().map(saUserDb, SaUser.class);
 
         //confirm current pw must be equal to new pw
         if (!Objects.equals(userProfileDto.getNewPassword(), userProfileDto.getConfirmPassword())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Confirm password doesn't match."));
         }
 
-        userInfo.setPassword(passwordEncoder.encode(userProfileDto.getNewPassword()));
-        iUserInfoRepository.save(userInfo);
+        saUser.setPassword(passwordEncoder.encode(userProfileDto.getNewPassword()));
+        iSaUserRepository.save(saUser);
 
         //TODO: send email after resetting password
         return ResponseEntity.ok(new MessageResponse("Password changed successfully."));
@@ -363,21 +363,21 @@ public class ProfileService implements IProfileService {
         if (!filename.equals("")) {
             ResponseMessage responseMessage = FileUploadToExternalLocation.fileUploader(profilePicture, filename, "attachFile.properties", request);
 
-            UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
-            UserInfo userInfo = new ModelMapper().map(userInfoDb, UserInfo.class);
-            userInfo.setProfilePictureName(filename);
-            userInfo.setProfilePictureUrl(fileUrl);
-            userInfo.setProfilePictureExt(fileExtension);
-            userInfo.setProfilePictureSize(fileSize.toString());
-            iUserInfoRepository.save(userInfo);
+            SaUser saUserDb = iSaUserRepository.findById(userProfileDto.getUserId()).get();
+            SaUser saUser = new ModelMapper().map(saUserDb, SaUser.class);
+            saUser.setProfilePictureName(filename);
+            saUser.setProfilePictureUrl(fileUrl);
+            saUser.setProfilePictureExt(fileExtension);
+            saUser.setProfilePictureSize(fileSize.toString());
+            iSaUserRepository.save(saUser);
         }
 
         return ResponseEntity.ok(new MessageResponse("Profile changed successfully."));
     }
 
     private ResponseEntity<?> checkUsernameExistOrNot(String username) {
-        UserInfo userInfoDb = iUserInfoRepository.findByUsername(username);
-        if (userInfoDb != null) {
+        SaUser saUserDb = iSaUserRepository.findByUsername(username);
+        if (saUserDb != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Username already in use."));
         } else {
             return ResponseEntity.ok(new MessageResponse("Username available."));
@@ -407,14 +407,14 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> getRegisteredUsers() {
-        List<UserInfo> userInfos = iUserInfoRepository.findAll();
-        return ResponseEntity.ok(userInfos);
+        List<SaUser> saUsers = iSaUserRepository.findAll();
+        return ResponseEntity.ok(saUsers);
     }
 
     @Override
     public ResponseEntity<?> getAllUsersEligibleForTraining(Date paramDate, Integer paramAge) {
-        List<UserInfo> userInfos = iUserInfoRepository.getAllUsersEligibleForTraining(paramDate, paramAge);
-        return ResponseEntity.ok(userInfos);
+        List<SaUser> saUsers = iSaUserRepository.getAllUsersEligibleForTraining(paramDate, paramAge);
+        return ResponseEntity.ok(saUsers);
     }
 
     @Override

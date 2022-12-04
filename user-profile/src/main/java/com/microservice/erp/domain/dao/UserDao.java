@@ -1,10 +1,8 @@
 package com.microservice.erp.domain.dao;
 
 import com.microservice.erp.domain.dto.UserProfileDto;
-import com.microservice.erp.domain.entities.UserInfo;
 import com.microservice.erp.domain.helper.BaseDao;
 import org.hibernate.SQLQuery;
-import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
@@ -13,7 +11,6 @@ import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.util.Date;
-import java.util.List;
 
 @Repository
 public class UserDao extends BaseDao {

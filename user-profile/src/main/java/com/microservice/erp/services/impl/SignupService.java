@@ -1,18 +1,16 @@
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dto.SignupRequestDto;
-import com.microservice.erp.domain.entities.ApiAccessToken;
-import com.microservice.erp.domain.entities.SignupEmailVerificationCode;
-import com.microservice.erp.domain.entities.SignupSmsOtp;
-import com.microservice.erp.domain.entities.UserInfo;
+import com.microservice.erp.domain.entities.*;
 import com.microservice.erp.domain.helper.MailSender;
 import com.microservice.erp.domain.helper.SmsSender;
+import com.microservice.erp.domain.repositories.ISaRoleRepository;
 import com.microservice.erp.domain.repositories.ISignupEmailVerificationCodeRepository;
 import com.microservice.erp.domain.repositories.ISignupSmsOtpRepository;
 import com.microservice.erp.domain.dto.CitizenDetailDto;
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.MessageResponse;
-import com.microservice.erp.domain.repositories.IUserInfoRepository;
+import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.services.iServices.ISignupService;
 import com.squareup.okhttp.OkHttpClient;
 import lombok.AllArgsConstructor;
@@ -20,13 +18,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.wso2.client.api.ApiClient;
 import org.wso2.client.api.ApiException;
 import org.wso2.client.api.DCRC_CitizenDetailsAPI.DefaultApi;
@@ -45,7 +41,9 @@ public class SignupService implements ISignupService {
     private final CitizenDetailApiService citizenDetailApiService;
     private final ISignupSmsOtpRepository iSignupSmsOtpRepository;
     private final ISignupEmailVerificationCodeRepository iSignupEmailVerificationCodeRepository;
-    private final IUserInfoRepository iUserInfoRepository;
+    private final ISaUserRepository iSaUserRepository;
+    private final ISaRoleRepository iSaRoleRepository;
+
     private final PasswordEncoder encoder;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -86,8 +84,8 @@ public class SignupService implements ISignupService {
 
     @Override
     public ResponseEntity<?> receiveEmailVcode(NotificationRequestDto notificationRequestDto) throws Exception {
-        UserInfo userInfoDB = iUserInfoRepository.findByEmail(notificationRequestDto.getEmail());
-        if (userInfoDB != null) {
+        SaUser saUserDB = iSaUserRepository.findByEmail(notificationRequestDto.getEmail());
+        if (saUserDB != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
         String verificationCode = generateVerificationCode(6);
@@ -122,8 +120,8 @@ public class SignupService implements ISignupService {
     @Override
     public ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException {
         //check already registered not by CID
-        UserInfo userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
-        if (userInfoDB != null) {
+        SaUser saUserDB = iSaUserRepository.findByCid(signupRequestDto.getCid());
+        if (saUserDB != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + signupRequestDto.getCid() + " already exist."));
         }
         //Mobile number verification OTP received from dto must be equal to backend
@@ -144,8 +142,8 @@ public class SignupService implements ISignupService {
         }
 
         //To check if the email is already in use or not
-        UserInfo userInfoEmail = iUserInfoRepository.findByEmail(signupRequestDto.getEmail());
-        if (userInfoEmail != null) {
+        SaUser saUserEmail = iSaUserRepository.findByEmail(signupRequestDto.getEmail());
+        if (saUserEmail != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
         //Password must be equal to confirm password
@@ -155,13 +153,16 @@ public class SignupService implements ISignupService {
 
         Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(signupRequestDto.getBirthDate());
         signupRequestDto.setDob(birthDate);
-//        String sex = signupRequestDto.getSex().toUpperCase();
-//        signupRequestDto.setSex(sex);
-        UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
-        userInfo.setStatus('A');
-        userInfo.setUsername(signupRequestDto.getCid());
-        userInfo.setPassword(passwordEncoder.encode(signupRequestDto.getPassword()));
-        iUserInfoRepository.save(userInfo);
+        SaUser saUser = new ModelMapper().map(signupRequestDto, SaUser.class);
+        saUser.setStatus('A');
+        saUser.setUsername(signupRequestDto.getCid());
+        saUser.setPassword(passwordEncoder.encode(signupRequestDto.getPassword()));
+        //todo:set role equal to USER
+        Set<SaRole> saRoles = new HashSet<>();
+        SaRole saRoleDb = iSaRoleRepository.findByRoleId(1);//todo:need to get student user role infomaiton
+        saRoles.add(saRoleDb);
+        saUser.setSaRoles(saRoles);
+        iSaUserRepository.save(saUser);
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));
     }
 

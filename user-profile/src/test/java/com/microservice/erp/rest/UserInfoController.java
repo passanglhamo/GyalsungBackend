@@ -2,7 +2,7 @@ package com.microservice.erp.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microservice.erp.domain.entities.UserInfo;
+import com.microservice.erp.domain.entities.SaUser;
 import com.microservice.erp.services.iServices.IUserInfoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,24 +41,24 @@ public class UserInfoController {
     }
 
     @GetMapping
-    public List<UserInfo> query(@RequestParam("limit") Integer size
+    public List<SaUser> query(@RequestParam("limit") Integer size
             , @RequestParam("page") Integer page){
         //TODO: Test with RestExecutor
-        List<UserInfo> userInfos = service.findAll(page, size);
-        return userInfos;
+        List<SaUser> saUsers = service.findAll(page, size);
+        return saUsers;
     }
 
     @PostMapping
-    public UserInfo insert(@Valid @RequestBody UserInfo userInfo){
+    public SaUser insert(@Valid @RequestBody SaUser saUser){
         //TODO: Test with RestExecutor
-        UserInfo nUserInfo = service.add(userInfo);
-        return nUserInfo;
+        SaUser nSaUser = service.add(saUser);
+        return nSaUser;
     }
 
     @PutMapping
-    public UserInfo update(@Valid @RequestBody UserInfo userInfo){
+    public SaUser update(@Valid @RequestBody SaUser saUser){
         //TODO: Test with RestExecutor
-        UserInfo old = service.update(userInfo);
+        SaUser old = service.update(saUser);
         return old;
     }
 
