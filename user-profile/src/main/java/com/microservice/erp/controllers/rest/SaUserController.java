@@ -18,6 +18,11 @@ public class SaUserController {
     @PostMapping("/addUser")
     public ResponseEntity<?> addUser(@RequestBody UserDto userDto) {
         return iSaUserService.addUser(userDto);
-     }
+    }
+
+    @GetMapping("/getAllRoles")
+    public ResponseEntity<?> getAllRoles() {
+        return iSaUserService.getAllRoles();
+    }
 
 }
