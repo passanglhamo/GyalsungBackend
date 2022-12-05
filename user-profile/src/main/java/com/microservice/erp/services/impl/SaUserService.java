@@ -98,10 +98,10 @@ public class SaUserService implements ISaUserService {
         iSaUserRepository.save(saUser);
         String emailBody = "Dear " + userDto.getFullName() + ", " + "Your information has been added to Gyalsung MIS against this your email. " + "Please login in using email: " + userDto.getEmail() + " and password " + password;
         String subject = "User Added to Gyalsung System";
-        CoachBus coachBusEmail = CoachBus.withId(userDto.getEmail(), null, null, emailBody, subject, userDto.getMobileNo());
+        CoachBus coachBusEmail = CoachBus.withId(userDto.getEmail(), null, null, emailBody, subject, null);
 
         String smsBody = "Dear " + userDto.getFullName() + ", " + " Your information has been added to Gyalsung MIS against this your email. " + "Please check your email " + userDto.getEmail() + " to see login credentials.";
-        CoachBus coachBusSms = CoachBus.withId(userDto.getEmail(), null, null, smsBody, subject, userDto.getMobileNo());
+        CoachBus coachBusSms = CoachBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
 //todo:need to get topic name from properties file
         addToQueue.addToQueue("email", coachBusEmail);
         addToQueue.addToQueue("sms", coachBusSms);
@@ -139,7 +139,7 @@ public class SaUserService implements ISaUserService {
         CoachBus coachBusEmail = CoachBus.withId(userDto.getEmail(), null, null, emailBody, subject, userDto.getMobileNo());
 
         String smsBody = "Dear " + saUser.getFullName() + ", " + " Your information in Gyalsung MIS has been updated. " + "Please check your email " + saUser.getEmail() + " to see login credentials.";
-        CoachBus coachBusSms = CoachBus.withId(userDto.getEmail(), null, null, smsBody, subject, userDto.getMobileNo());
+        CoachBus coachBusSms = CoachBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
 
         //todo:need to get topic name from properties file
         addToQueue.addToQueue("email", coachBusEmail);

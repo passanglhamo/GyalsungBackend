@@ -1,5 +1,6 @@
 package com.microservice.erp.controllers.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.SignupRequestDto;
@@ -35,7 +36,7 @@ public class SignupController {
     }
 
     @PostMapping("/receiveOtp")
-    public ResponseEntity<?> receiveOtp(@RequestBody NotificationRequestDto notificationRequestDto) {
+    public ResponseEntity<?> receiveOtp(@RequestBody NotificationRequestDto notificationRequestDto) throws JsonProcessingException {
         return iSignupService.receiveOtp(notificationRequestDto);
     }
 

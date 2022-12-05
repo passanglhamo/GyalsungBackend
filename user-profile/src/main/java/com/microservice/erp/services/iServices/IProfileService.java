@@ -1,5 +1,6 @@
 package com.microservice.erp.services.iServices;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.helper.ResponseMessage;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public interface IProfileService {
 
     ResponseEntity<?> changeEmail(UserProfileDto userProfileDto);
 
-    ResponseEntity<?> receiveOtp(UserProfileDto userProfileDto);
+    ResponseEntity<?> receiveOtp(UserProfileDto userProfileDto) throws JsonProcessingException;
 
     ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto) throws Exception;
 

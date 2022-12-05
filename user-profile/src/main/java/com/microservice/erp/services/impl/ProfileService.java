@@ -1,10 +1,8 @@
 package com.microservice.erp.services.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dao.UserDao;
-import com.microservice.erp.domain.dto.DzongkhagDto;
-import com.microservice.erp.domain.dto.GeogDto;
-import com.microservice.erp.domain.dto.MessageResponse;
-import com.microservice.erp.domain.dto.UserProfileDto;
+import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.*;
 import com.microservice.erp.domain.helper.*;
 import com.microservice.erp.domain.repositories.*;
@@ -39,7 +37,7 @@ public class ProfileService implements IProfileService {
     private final PasswordEncoder encoder;
     private final BCryptPasswordEncoder passwordEncoder;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
-
+    private final AddToQueue addToQueue;
 
     @Override
     public ResponseEntity<?> getProfileInfo(String authHeader, BigInteger userId) {
@@ -77,13 +75,14 @@ public class ProfileService implements IProfileService {
         }
     }
 
-    public ResponseEntity<?> receiveOtp(UserProfileDto userProfileDto) {
+    public ResponseEntity<?> receiveOtp(UserProfileDto userProfileDto) throws JsonProcessingException {
         Random random = new Random();
         int number = random.nextInt(9999);//max upto 9999
         String otp = String.format("%04d", number);
 
         String message = "Your OTP for Gyalsung System is " + otp;
-        SmsSender.sendSms(userProfileDto.getMobileNo(), message);
+        CoachBus coachBusSms = CoachBus.withId(null, null, null, message, null, userProfileDto.getMobileNo());
+        addToQueue.addToQueue("sms", coachBusSms);
         ChangeMobileNoSmsOtp changeMobileNoSmsOtp = new ChangeMobileNoSmsOtp();
         changeMobileNoSmsOtp.setUserId(userProfileDto.getUserId());
         changeMobileNoSmsOtp.setMobileNo(userProfileDto.getMobileNo());
@@ -161,8 +160,8 @@ public class ProfileService implements IProfileService {
 
         String subject = "Email verification";
         String message = "Dear, The verification code to change email for Gyalsung system is " + verificationCode;
-        MailSender.sendMail(userProfileDto.getEmail(), null, null, message, subject);
-
+        CoachBus coachBusEmail = CoachBus.withId(userProfileDto.getEmail(), null, null, message, subject, null);
+        addToQueue.addToQueue("email", coachBusEmail);
         ChangeEmailVerificationCode changeEmailVerificationCode = new ChangeEmailVerificationCode();
         changeEmailVerificationCode.setUserId(userProfileDto.getUserId());
         changeEmailVerificationCode.setEmail(userProfileDto.getEmail());

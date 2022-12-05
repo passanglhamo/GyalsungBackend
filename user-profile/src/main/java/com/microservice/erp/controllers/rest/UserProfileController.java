@@ -1,5 +1,6 @@
 package com.microservice.erp.controllers.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.helper.ResponseMessage;
 import com.microservice.erp.services.iServices.IProfileService;
@@ -49,7 +50,7 @@ public class UserProfileController {
     }
 
     @PostMapping("/receiveOtp")
-    public ResponseEntity<?> receiveOtp(@RequestBody UserProfileDto userProfileDto) {
+    public ResponseEntity<?> receiveOtp(@RequestBody UserProfileDto userProfileDto) throws JsonProcessingException {
         return iProfileService.receiveOtp(userProfileDto);
     }
 

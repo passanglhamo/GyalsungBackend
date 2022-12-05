@@ -1,15 +1,11 @@
 package com.microservice.erp.services.impl;
 
-import com.microservice.erp.domain.dto.SignupRequestDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.*;
-import com.microservice.erp.domain.helper.MailSender;
-import com.microservice.erp.domain.helper.SmsSender;
 import com.microservice.erp.domain.repositories.ISaRoleRepository;
 import com.microservice.erp.domain.repositories.ISignupEmailVerificationCodeRepository;
 import com.microservice.erp.domain.repositories.ISignupSmsOtpRepository;
-import com.microservice.erp.domain.dto.CitizenDetailDto;
-import com.microservice.erp.domain.dto.NotificationRequestDto;
-import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.services.iServices.ISignupService;
 import com.squareup.okhttp.OkHttpClient;
@@ -46,7 +42,7 @@ public class SignupService implements ISignupService {
 
     private final PasswordEncoder encoder;
     private final BCryptPasswordEncoder passwordEncoder;
-
+    private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
 
 
@@ -56,7 +52,7 @@ public class SignupService implements ISignupService {
     }
 
     @Override
-    public ResponseEntity<?> receiveOtp(NotificationRequestDto notificationRequestDto) {
+    public ResponseEntity<?> receiveOtp(NotificationRequestDto notificationRequestDto) throws JsonProcessingException {
         Random random = new Random();
         int number = random.nextInt(9999);//max upto 9999
         String otp = String.format("%04d", number);
@@ -65,7 +61,9 @@ public class SignupService implements ISignupService {
         signupSmsOtp.setMobileNo(notificationRequestDto.getMobileNo());
         signupSmsOtp.setOtp(otp);
         iSignupSmsOtpRepository.save(signupSmsOtp);
-        SmsSender.sendSms(notificationRequestDto.getMobileNo(), message);
+
+        CoachBus coachBusSms = CoachBus.withId(null, null, null, message, null, notificationRequestDto.getMobileNo());
+        addToQueue.addToQueue("sms", coachBusSms);
         return ResponseEntity.ok(signupSmsOtp);
     }
 
@@ -91,13 +89,14 @@ public class SignupService implements ISignupService {
         String verificationCode = generateVerificationCode(6);
 
         String subject = "Email verification";
-        String message = "Dear, The verification code for Gyalsung system is " + verificationCode;
-        MailSender.sendMail(notificationRequestDto.getEmail(), null, null, message, subject);
+        String message = "Dear, Your verification code for Gyalsung system is " + verificationCode;
+
+        CoachBus coachBusEmail = CoachBus.withId(notificationRequestDto.getEmail(), null, null, message, subject, null);
+        addToQueue.addToQueue("email", coachBusEmail);
 
         SignupEmailVerificationCode signupEmailVerificationCode = new SignupEmailVerificationCode();
         signupEmailVerificationCode.setEmail(notificationRequestDto.getEmail());
         signupEmailVerificationCode.setVerificationCode(verificationCode);
-//        iSignupEmailVerificationCodeRepository.deleteById(notificationRequestDto.getEmail());
         iSignupEmailVerificationCodeRepository.save(signupEmailVerificationCode);
         return ResponseEntity.ok(signupEmailVerificationCode);
     }
