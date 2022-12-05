@@ -1,6 +1,8 @@
 package com.microservice.erp.services.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dao.UserDao;
+import com.microservice.erp.domain.dto.CoachBus;
 import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.SaRoleDto;
 import com.microservice.erp.domain.dto.UserDto;
@@ -10,7 +12,10 @@ import com.microservice.erp.domain.repositories.ISaRoleRepository;
 import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.services.iServices.ISaUserService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +30,14 @@ public class SaUserService implements ISaUserService {
     private final ISaUserRepository iSaUserRepository;
     private final ISaRoleRepository iSaRoleRepository;
     private final UserDao userDao;
-//    private final BCryptPasswordEncoder passwordEncoder;
+    private final AddToQueue addToQueue;
+    //    private final BCryptPasswordEncoder passwordEncoder;
+
+//    @Value("${topic.email}")
+//    private String emailTopic;
+//
+//    @Value("${topic.sms}")
+//    private String smsTopic;
 
     @Override
     public ResponseEntity<?> getAllRoles() {
@@ -38,7 +50,7 @@ public class SaUserService implements ISaUserService {
     }
 
     @Override
-    public ResponseEntity<?> saveUser(UserDto userDto) {
+    public ResponseEntity<?> saveUser(UserDto userDto) throws JsonProcessingException {
         ResponseEntity<?> responseEntity;
         if (userDto.getUserId() == null) {
             responseEntity = addNewUser(userDto);
@@ -58,7 +70,7 @@ public class SaUserService implements ISaUserService {
         }
     }
 
-    private ResponseEntity<?> addNewUser(UserDto userDto) {
+    private ResponseEntity<?> addNewUser(UserDto userDto) throws JsonProcessingException {
         SaUser saUserEmail = iSaUserRepository.findByEmail(userDto.getEmail());
         if (saUserEmail != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
@@ -84,11 +96,19 @@ public class SaUserService implements ISaUserService {
         });
         saUser.setSaRoles(saRoles);
         iSaUserRepository.save(saUser);
-        //todo:send email and sms
+        String emailBody = "Dear " + userDto.getFullName() + ", " + "Your information has been added to Gyalsung MIS against this your email. " + "Please login in using email: " + userDto.getEmail() + " and password " + password;
+        String subject = "User Added to Gyalsung System";
+        CoachBus coachBusEmail = CoachBus.withId(userDto.getEmail(), null, null, emailBody, subject, userDto.getMobileNo());
+
+        String smsBody = "Dear " + userDto.getFullName() + ", " + " Your information has been added to Gyalsung MIS against this your email. " + "Please check your email " + userDto.getEmail() + " to see login credentials.";
+        CoachBus coachBusSms = CoachBus.withId(userDto.getEmail(), null, null, smsBody, subject, userDto.getMobileNo());
+//todo:need to get topic name from properties file
+        addToQueue.addToQueue("email", coachBusEmail);
+        addToQueue.addToQueue("sms", coachBusSms);
         return ResponseEntity.ok(new MessageResponse("User added successfully!"));
     }
 
-    private ResponseEntity<?> editUser(UserDto userDto) {
+    private ResponseEntity<?> editUser(UserDto userDto) throws JsonProcessingException {
         String isEmailAlreadyInUse = userDao.isEmailAlreadyInUse(userDto.getEmail(), userDto.getUserId());
         if (isEmailAlreadyInUse != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
@@ -114,7 +134,16 @@ public class SaUserService implements ISaUserService {
         });
         saUser.setSaRoles(saRoles);
         iSaUserRepository.save(saUser);
-        //todo:send email and sms
+        String emailBody = "Dear " + saUser.getFullName() + ", " + "Your information in Gyalsung MIS has been updated. " + "Please login in using email: " + saUser.getEmail();
+        String subject = "User Updated in Gyalsung System";
+        CoachBus coachBusEmail = CoachBus.withId(userDto.getEmail(), null, null, emailBody, subject, userDto.getMobileNo());
+
+        String smsBody = "Dear " + saUser.getFullName() + ", " + " Your information in Gyalsung MIS has been updated. " + "Please check your email " + saUser.getEmail() + " to see login credentials.";
+        CoachBus coachBusSms = CoachBus.withId(userDto.getEmail(), null, null, smsBody, subject, userDto.getMobileNo());
+
+        //todo:need to get topic name from properties file
+        addToQueue.addToQueue("email", coachBusEmail);
+        addToQueue.addToQueue("sms", coachBusSms);
         return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
     }
 }

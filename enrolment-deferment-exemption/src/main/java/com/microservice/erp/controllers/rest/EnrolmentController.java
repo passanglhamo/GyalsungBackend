@@ -23,21 +23,10 @@ import java.math.BigInteger;
 @RestController
 @RequestMapping("/enrolment")
 @AllArgsConstructor
-@NoArgsConstructor
-public class EnrolmentController {
-    private static Logger LOG = LoggerFactory.getLogger(EnrolmentController.class.getSimpleName());
+ public class EnrolmentController {
+//    private static Logger LOG = LoggerFactory.getLogger(EnrolmentController.class.getSimpleName());
 
     private IEnrolmentInfoService iEnrolmentInfoService;
-    private KafkaTemplate<String, String> kafkaTemplate;
-    private String enrolmentQueue;
-
-    public void setKafkaTemplate(KafkaTemplate<String, String> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
-
-    public void setEnrolmentQueue(String enrolmentQueue) {
-        this.enrolmentQueue = enrolmentQueue;
-    }
 
     @RequestMapping(value = "/getRegistrationDateInfo", method = RequestMethod.GET)
     public ResponseEntity<?> getRegistrationDateInfo() {
@@ -50,20 +39,9 @@ public class EnrolmentController {
 //        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
 //    }
 
-    /*@PostMapping(value = "/saveEnrolment")
+    @PostMapping(value = "/saveEnrolment")
     public ResponseEntity<?> saveEnrolment(@RequestHeader("Authorization") String authHeader, @RequestBody EnrolmentDto enrolmentDto) throws Exception {
         return iEnrolmentInfoService.saveEnrolment(authHeader, enrolmentDto);
-    }*/
-	@PostMapping(value = "/saveEnrolment")
-    public ResponseEntity<?> saveEnrolment(@RequestHeader("Authorization") String authHeader, @RequestBody EnrolmentDto enrolmentDto) throws Exception {
-
-        ResponseEntity responseEntity = iEnrolmentInfoService.saveEnrolment(authHeader, enrolmentDto);
-
-        if (responseEntity.getStatusCode().value() == 200) {
-            kafkaTemplate.send(enrolmentQueue, "Please send mail");
-        }
-
-        return responseEntity;
     }
 
     @RequestMapping(value = "/getEnrolmentListByYearAndCoursePreference", method = RequestMethod.GET)
