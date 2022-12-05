@@ -17,7 +17,17 @@ public class SaUserController {
 
     @PostMapping("/addUser")
     public ResponseEntity<?> addUser(@RequestBody UserDto userDto) {
-        return iSaUserService.addUser(userDto);
+        return iSaUserService.saveUser(userDto);
+    }
+
+    @PostMapping("/editUser")
+    public ResponseEntity<?> editUser(@RequestBody UserDto userDto) {
+        return iSaUserService.saveUser(userDto);
+    }
+
+    @GetMapping("/getUsers")
+    public ResponseEntity<?> getUsers() {
+        return iSaUserService.getUsers();
     }
 
     @GetMapping("/getAllRoles")

@@ -19,6 +19,11 @@ public abstract class BaseDao {
     protected org.hibernate.Query hibernateQuery(String query, Class dtoClazz) {
         return getCurrentSession().createSQLQuery(query).setResultTransformer(Transformers.aliasToBean(dtoClazz));
     }
+
+    protected org.hibernate.Query hibernateQuery(String query) {
+        return getCurrentSession().createSQLQuery(query);
+    }
+
 }
 
 

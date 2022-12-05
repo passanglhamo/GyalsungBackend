@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 public interface ISaUserService {
     ResponseEntity<?> getAllRoles();
 
-    ResponseEntity<?> addUser(UserDto userDto);
+    ResponseEntity<?> saveUser(UserDto userDto);
 
+    ResponseEntity<?> getUsers();
 }

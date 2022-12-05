@@ -35,19 +35,20 @@ public class SaUser extends Auditable<BigInteger, Long> {
     @Column(name = "full_name", columnDefinition = "varchar(255)")
     private String fullName;
 
+    @NotNull(message = "Email cannot be null")
     @Column(name = "email", columnDefinition = "varchar(255)")
     private String email;
 
     @Column(name = "gender", columnDefinition = "char(1)")
     private Character gender;
 
-//    @NotNull(message = "DOB cannot be null")
+    //    @NotNull(message = "DOB cannot be null")
 //    @Past(message = "DOB must be greater than now")
 //    @Basic(optional = false)
     @Column(name = "dob")
     private Date dob;
 
-//    @NotNull(message = "CID cannot be null")
+    //    @NotNull(message = "CID cannot be null")
 //    @Basic(optional = false)
     @Column(name = "cid", columnDefinition = "varchar(255)")
     private String cid;
@@ -155,6 +156,10 @@ public class SaUser extends Auditable<BigInteger, Long> {
 
     @Column(name = "remarks", columnDefinition = "varchar(255)")
     private String remarks;
+
+    @NotNull
+    @Column(name = "signup_user")
+    private Character signupUser;
 
     @NotNull
     @Column(name = "status")

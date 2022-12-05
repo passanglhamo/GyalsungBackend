@@ -155,11 +155,12 @@ public class SignupService implements ISignupService {
         signupRequestDto.setDob(birthDate);
         SaUser saUser = new ModelMapper().map(signupRequestDto, SaUser.class);
         saUser.setStatus('A');
+        saUser.setSignupUser('Y');
         saUser.setUsername(signupRequestDto.getCid());
         saUser.setPassword(passwordEncoder.encode(signupRequestDto.getPassword()));
         //todo:set role equal to USER
         Set<SaRole> saRoles = new HashSet<>();
-        SaRole saRoleDb = iSaRoleRepository.findByRoleId(1);//todo:need to get student user role infomaiton
+        SaRole saRoleDb = iSaRoleRepository.findByRoleId(1);//todo:need to get student user role information
         saRoles.add(saRoleDb);
         saUser.setSaRoles(saRoles);
         iSaUserRepository.save(saUser);

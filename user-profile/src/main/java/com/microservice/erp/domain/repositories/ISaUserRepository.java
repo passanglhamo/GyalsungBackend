@@ -23,4 +23,6 @@ public interface ISaUserRepository extends JpaRepository<SaUser, BigInteger> {
 
     @Query(value = "select * from sys_userinfo u where date_part('year',age(:paramDate, u.dob)) >=:paramAge", nativeQuery = true)
     List<SaUser> getAllUsersEligibleForTraining(Date paramDate, Integer paramAge);
+
+    List<SaUser> findAllBySignupUserOrderByFullNameAsc(char signupUser);
 }
