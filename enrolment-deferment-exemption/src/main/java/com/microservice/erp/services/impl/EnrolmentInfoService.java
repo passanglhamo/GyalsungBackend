@@ -8,27 +8,18 @@ import com.microservice.erp.domain.dto.TrainingAcademyDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
-import com.microservice.erp.domain.entities.ParentConsentOtp;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
-import com.microservice.erp.domain.helper.ApprovalStatus;
-import com.microservice.erp.domain.helper.MailSender;
 import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.helper.SmsSender;
 import com.microservice.erp.domain.mapper.EnrolmentMapper;
 import com.microservice.erp.domain.repositories.IEnrolmentCoursePreferenceRepository;
 import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -46,11 +36,10 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     private IEnrolmentInfoRepository iEnrolmentInfoRepository;
     private IEnrolmentCoursePreferenceRepository iEnrolmentCoursePreferenceRepository;
-
     private EnrolmentMapper enrolmentMapper;
     private final IRegistrationDateInfoRepository iRegistrationDateInfoRepository;
     private EnrolmentDao enrolmentDao;
-    private final KafkaTemplate<?, ?> kafkaTemplate;
+    private final AddToQueue addToQueue;
 
 
     @Override
@@ -104,23 +93,12 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
         //todo: need to get mail and sms content
         String message = "Dear " + fullName + ",  Thank you for registering to Gyalsung training.";
-//        SmsSender.sendSms(mobileNo, message);
-//
         String subject = "Gyalsung Registration";
-//        MailSender.sendMail(email, null, null, message, subject);
 
-        Message<String> mailValues = MessageBuilder
-                .withPayload( mapper.writeValueAsString( MailSenderDto.withId(
-                        email,
-                        null,
-                        null,
-                        message,
-                        subject,
-                        mobileNo
-                )))
-                .setHeader(KafkaHeaders.TOPIC,"enrolment")
-                .build();
-        kafkaTemplate.send(mailValues);
+        MailSenderDto mailSenderDto = MailSenderDto.withId(email, null, null, message, subject, mobileNo);
+
+        addToQueue.addToQueue("email", mailSenderDto);
+        addToQueue.addToQueue("sms", mailSenderDto);
 
         return ResponseEntity.ok(new MessageResponse("Enrolled successfully."));
     }
@@ -217,10 +195,13 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
                 courseName = Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName();
             }
             String message = "Dear " + fullName + ", You have been allocated to " + academyName + " training academy to undergo Gyalsung training in " + courseName + " for the year " + enrolmentInfo.getYear();
-            SmsSender.sendSms(mobileNo, message);
-
             String subject = "Registration Approval";
-            MailSender.sendMail(email, null, null, message, subject);
+
+
+            MailSenderDto mailSenderDto = MailSenderDto.withId(email, null, null, message, subject, mobileNo);
+
+            addToQueue.addToQueue("email", mailSenderDto);
+            addToQueue.addToQueue("sms", mailSenderDto);
         }
         return ResponseEntity.ok(new MessageResponse("Training allocated successfully"));
     }

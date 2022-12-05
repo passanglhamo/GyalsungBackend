@@ -12,13 +12,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailSenderService {
 
-    @KafkaListener(topics = {"${topic.enrolment}"}, concurrency = "1")
-    public void sendNotification(@Payload String message, Acknowledgment ack) throws Exception {
+    @KafkaListener(topics = {"${topic.email}"}, concurrency = "1")
+    public void sendEmail(@Payload String message, Acknowledgment ack) throws Exception {
 
         Gson gson = new Gson();
         MailSenderDto mailSenderDto = gson.fromJson(message, MailSenderDto.class);
         MailSender.sendMail(mailSenderDto.getDestinationEmail(), null, null, mailSenderDto.getMessageBody(), mailSenderDto.getSubject());
 
+    }
+
+    @KafkaListener(topics = {"${topic.sms}"}, concurrency = "1")
+    public void sendSms(@Payload String message, Acknowledgment ack){
+
+        Gson gson = new Gson();
+        MailSenderDto mailSenderDto = gson.fromJson(message, MailSenderDto.class);
         SmsSender.sendSms(mailSenderDto.getMobileNo(), mailSenderDto.getMessageBody());
 
     }

@@ -96,7 +96,7 @@ public class ReadExemptionService implements IReadExemptionService {
             }
             if(exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
                 responseMessage.setStatus(ApprovalStatus.PENDING.value());
-                responseMessage.setMessage("There is still some exemption which are not approved. If you continue," +
+                responseMessage.setMessage("There are still some exemption which are not approved. If you continue," +
                         " then the pending exemption will be cancelled.");
                 return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
 
@@ -106,15 +106,15 @@ public class ReadExemptionService implements IReadExemptionService {
             if(!Objects.isNull(defermentInfo)){
                 if(defermentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
                     responseMessage.setStatus(ApprovalStatus.PENDING.value());
-                    responseMessage.setMessage("There is still some deferment which are not approved. If you continue,\" +\n" +
-                            "                            \" then the approved deferment will be cancelled");
+                    responseMessage.setMessage("There are still some approved deferment. If you continue," +
+                                                        " then the approved deferment will be cancelled.");
                     return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
 
                 }
                 if(defermentInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
                     responseMessage.setStatus(ApprovalStatus.PENDING.value());
-                    responseMessage.setMessage("There is still some deferment which are not approved. If you continue,\" +\n" +
-                            "                            \" then the pending deferment will be cancelled.");
+                    responseMessage.setMessage("There are still some deferment which are not approved. If you continue," +
+                                                        " then the pending deferment will be cancelled.");
                     return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
 
                 }

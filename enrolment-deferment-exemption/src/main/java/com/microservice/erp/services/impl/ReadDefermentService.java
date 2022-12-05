@@ -138,8 +138,8 @@ public class ReadDefermentService implements IReadDefermentService {
                 }
                 if(defermentInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
                     responseMessage.setStatus(ApprovalStatus.APPROVED.value());
-                    responseMessage.setMessage("There is still some deferment which are not approved. If you continue,\" +\n" +
-                            "                            \" then the pending deferment will be cancelled.");
+                    responseMessage.setMessage("There is still some deferment which are not approved. If you continue," +
+                                                        " then the pending deferment will be cancelled.");
                     return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
 
                 }
