@@ -1,13 +1,11 @@
 package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dto.MailSenderDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.DefermentInfo;
-import com.microservice.erp.domain.mapper.DefermentMapper;
-import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.domain.helper.ApprovalStatus;
-import com.microservice.erp.domain.helper.MailSender;
 import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.helper.SmsSender;
+import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.IUpdateDefermentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -20,14 +18,14 @@ import org.springframework.web.client.RestTemplate;
 import javax.validation.Valid;
 import java.math.BigInteger;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UpdateDefermentService implements IUpdateDefermentService {
     private final IDefermentInfoRepository repository;
-    private final DefermentMapper mapper;
     private final HeaderToken headerToken;
+    private final AddToQueue addToQueue;
+
 
     @Override
     public ResponseEntity<?> approveByIds(String authHeader, UpdateDefermentCommand command) {
@@ -122,11 +120,16 @@ public class UpdateDefermentService implements IUpdateDefermentService {
                     "Gyalsung HQ.\n";
         }
 
+        MailSenderDto mailSenderDto = MailSenderDto.withId(
+                Objects.requireNonNull(userResponse.getBody()).getEmail(),
+                null,
+                null,
+                emailMessage,
+                subject,
+                Objects.requireNonNull(userResponse.getBody()).getMobileNo());
 
-        MailSender.sendMail(Objects.requireNonNull(userResponse.getBody()).getEmail(), null, null, emailMessage, subject);
-
-        SmsSender.sendSms(Objects.requireNonNull(userResponse.getBody()).getMobileNo(), emailMessage);
-
+        addToQueue.addToQueue("email", mailSenderDto);
+        addToQueue.addToQueue("sms", mailSenderDto);
     }
 
 }

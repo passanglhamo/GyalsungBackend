@@ -2,6 +2,7 @@ package com.microservice.erp.services.impl;
 
 
 import com.microservice.erp.domain.dao.ParentConsentDao;
+import com.microservice.erp.domain.dto.MailSenderDto;
 import com.microservice.erp.domain.dto.ParentConsentListDto;
 import com.microservice.erp.domain.dto.ParentConsentDto;
 import com.microservice.erp.domain.entities.ParentConsent;
@@ -10,9 +11,7 @@ import com.microservice.erp.domain.entities.RegistrationDateInfo;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.domain.repositories.ParentConsentOtpRepository;
 import com.microservice.erp.domain.repositories.ParentConsentRepository;
-import com.microservice.erp.domain.helper.MailSender;
 import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.helper.SmsSender;
 import com.microservice.erp.services.iServices.IParentConsentService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -29,6 +28,8 @@ public class ParentConsentService implements IParentConsentService {
     private ParentConsentDao parentConsentDao;
     private ParentConsentOtpRepository parentConsentOtpRepository;
     private IRegistrationDateInfoRepository iRegistrationDateInfoRepository;
+    private AddToQueue addToQueue;
+
 
     @Override
     public ResponseEntity<?> receiveOtp(ParentConsentDto parentConsentDto) throws Exception {
@@ -42,14 +43,19 @@ public class ParentConsentService implements IParentConsentService {
         String otp = String.format("%04d", number);
 
         String message = "Dear " + parentConsentDto.getGuardianName() + ", " + parentConsentDto.getFullName() + " has requested parent/guardian consent for Gyalsung Registration." + " You have to share this OTP " + otp + " if you agree to send your son/daughter to Gyalsung training." + " Please read legal terms and conditions before you share OTP.";
-        SmsSender.sendSms(parentConsentDto.getGuardianMobileNo(), message);
+
+        MailSenderDto mailSenderDto = MailSenderDto.withId(null, null, null, message, null, parentConsentDto.getGuardianMobileNo());
+        addToQueue.addToQueue("sms", mailSenderDto);
 
         ParentConsentOtp parentConsentOtp = new ModelMapper().map(parentConsentDto, ParentConsentOtp.class);
         parentConsentOtp.setOtp(otp);
         parentConsentOtpRepository.save(parentConsentOtp);
 
         String subject = "Parent/Guardian Consent for Gyalsung Registration";
-        MailSender.sendMail(parentConsentDto.getGuardianEmail(), null, null, message, subject);
+
+        MailSenderDto mailSenderSmsDto = MailSenderDto.withId(parentConsentDto.getGuardianEmail(), null, null, message, subject, null);
+        addToQueue.addToQueue("email", mailSenderSmsDto);
+
         return ResponseEntity.ok(parentConsentOtp);
     }
 
@@ -72,15 +78,32 @@ public class ParentConsentService implements IParentConsentService {
         parentConsentRepository.save(parentConsent);
         // to send confirmation sms and email to user
         String messageToUser = "Dear " + parentConsentDto.getFullName() + ", " + " Your parent/guardian consent for Gyalsung Registration has been submitted. Congratulations and" + " we look forward to seeing you in the training.";
-        SmsSender.sendSms(parentConsentDto.getMobileNo(), messageToUser);
-
         String subject = "Parent/Guardian Consent for Gyalsung Registration";
-        MailSender.sendMail(parentConsentDto.getEmail(), null, null, messageToUser, subject);
+
+        MailSenderDto mailSenderDto=MailSenderDto.withId(
+                parentConsentDto.getEmail(),
+                null,
+                null,
+                messageToUser,
+                subject,
+                parentConsentDto.getMobileNo());
+
+        addToQueue.addToQueue("email",mailSenderDto);
+        addToQueue.addToQueue("sms",mailSenderDto);
 
         //to send confirmation sms and email to guardian
         String messageToGuardian = "Dear " + parentConsentDto.getGuardianName() + ", " + " Thank you for granting consent to " + parentConsentDto.getFullName() + " for Gyalsung Registration." + " Congratulations and we look forward to seeing your son/daughter in the training.";
-        SmsSender.sendSms(parentConsentDto.getGuardianMobileNo(), messageToGuardian);
-        MailSender.sendMail(parentConsentDto.getGuardianEmail(), null, null, messageToGuardian, subject);
+
+        MailSenderDto mailSenderGuardianDto=MailSenderDto.withId(
+                parentConsentDto.getGuardianEmail(),
+                null,
+                null,
+                messageToGuardian,
+                subject,
+                parentConsentDto.getGuardianMobileNo());
+
+        addToQueue.addToQueue("email",mailSenderGuardianDto);
+        addToQueue.addToQueue("sms",mailSenderGuardianDto);
         return ResponseEntity.ok(new MessageResponse("Data saved successfully."));
     }
 

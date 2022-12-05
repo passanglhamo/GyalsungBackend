@@ -1,27 +1,20 @@
 package com.microservice.erp.services.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservice.erp.domain.dto.MailSenderDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.ExemptionInfo;
+import com.microservice.erp.domain.helper.ApprovalStatus;
+import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.mapper.ExemptionMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
-import com.microservice.erp.domain.helper.ApprovalStatus;
-import com.microservice.erp.domain.helper.MailSender;
-import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.helper.SmsSender;
 import com.microservice.erp.services.iServices.ICreateExemptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +29,7 @@ public class CreateExemptionService implements ICreateExemptionService {
     private final IExemptionInfoRepository repository;
     private final IDefermentInfoRepository defermentRepository;
     private final ExemptionMapper mapper;
-    private final KafkaTemplate<?, ?> kafkaTemplate;
-
+    private final AddToQueue addToQueue;
     private final HeaderToken headerToken;
 
     Integer fileLength = 5;
@@ -61,11 +52,11 @@ public class CreateExemptionService implements ICreateExemptionService {
         }
 
         ExemptionInfo exemptionInfo = repository.getExemptionByUserId(command.getUserId());
-        if(!Objects.isNull(exemptionInfo)){
-            if(exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
+        if (!Objects.isNull(exemptionInfo)) {
+            if (exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
                 return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
             }
-            if(exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
+            if (exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
                 repository.findById(exemptionInfo.getId()).map(d -> {
                     d.setStatus(ApprovalStatus.CANCELED.value());
                     repository.save(d);
@@ -73,9 +64,9 @@ public class CreateExemptionService implements ICreateExemptionService {
                 });
 
             }
-        }else{
+        } else {
             DefermentInfo defermentInfo = defermentRepository.getDefermentByUserId(command.getUserId());
-            if(!Objects.isNull(defermentInfo)){
+            if (!Objects.isNull(defermentInfo)) {
                 defermentRepository.findById(defermentInfo.getId()).map(d -> {
                     d.setStatus(ApprovalStatus.CANCELED.value());
                     defermentRepository.save(d);
@@ -101,7 +92,6 @@ public class CreateExemptionService implements ICreateExemptionService {
     }
 
     private void sendEmailAndSms(String authTokenHeader, BigInteger userId) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authTokenHeader);
 
@@ -113,17 +103,15 @@ public class CreateExemptionService implements ICreateExemptionService {
         String emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
                 "\n" +
                 "This is to acknowledge the receipt of your exemption application. Your exemption application will be reviewed and the outcome of the exemption will be sent to you through your email within 10 days of the submission of your application. If you are not approved for exemption, you will have to complete the Gyalsung pre-enlistment procedure. \n";
-        Message<String> message = MessageBuilder
-                .withPayload( mapper.writeValueAsString( MailSenderDto.withId(
-                        Objects.requireNonNull(userResponse.getBody()).getEmail(),
-                        null,
-                        null,
-                        emailMessage,
-                        subject,
-                        Objects.requireNonNull(userResponse.getBody()).getMobileNo()
-                )))
-                .setHeader(KafkaHeaders.TOPIC,"enrolment")
-                .build();
-        kafkaTemplate.send(message);
+        MailSenderDto mailSenderDto = MailSenderDto.withId(
+                Objects.requireNonNull(userResponse.getBody()).getEmail(),
+                null,
+                null,
+                emailMessage,
+                subject,
+                Objects.requireNonNull(userResponse.getBody()).getMobileNo());
+
+        addToQueue.addToQueue("email", mailSenderDto);
+        addToQueue.addToQueue("sms", mailSenderDto);
     }
 }

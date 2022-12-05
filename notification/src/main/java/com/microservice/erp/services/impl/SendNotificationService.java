@@ -1,5 +1,7 @@
 package com.microservice.erp.services.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microservice.erp.domain.dto.MailSenderDto;
 import com.microservice.erp.domain.dto.NoticeDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.NoticeConfiguration;
@@ -16,6 +18,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,6 +34,7 @@ import java.util.Objects;
 public class SendNotificationService implements ISendNotificationService {
     private INoticeConfigurationRepository iNoticeConfigurationRepository;
     private SendNoticeInfoRepository sendNoticeInfoRepository;
+    private MailSenderService mailSenderService;
 
     @Override
     public ResponseEntity<?> checkNoticeAlreadySentOrNot(String year, Long noticeConfigurationId) {
@@ -62,14 +68,30 @@ public class SendNotificationService implements ISendNotificationService {
         HttpEntity<String> request = new HttpEntity<>(headers);
         String url = "http://localhost:81/api/user/profile/userProfile/getAllUsersEligibleForTraining?paramDate=" + paramDate + "&paramAge=" + paramAge;
         ResponseEntity<UserProfileDto[]> userDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserProfileDto[].class);
+        ObjectMapper mapper = new ObjectMapper();
 
         for (UserProfileDto userProfileDto : Objects.requireNonNull(userDtoResponse.getBody())) {
             String smsBody = noticeConfigurationDb.getNoticeBody();
             String emailBody = "Dear " + userProfileDto.getFullName() + ", " + noticeConfigurationDb.getNoticeBody();
-
-            SmsSender.sendSms(userProfileDto.getMobileNo(), smsBody);
             String subject = noticeConfigurationDb.getNoticeName();
-            MailSender.sendMail(userProfileDto.getEmail(), null, null, emailBody, subject);
+
+            MailSenderDto mailSenderDto = MailSenderDto.withId(
+                    userProfileDto.getEmail(),
+                    null,
+                    null,
+                    smsBody,
+                    subject,
+                    userProfileDto.getMobileNo());
+
+            mailSenderService.sendSms(mapper.writeValueAsString(
+                    mailSenderDto
+            ),null);
+
+            mailSenderDto.setMessageBody(emailBody);
+
+            mailSenderService.sendEmail(mapper.writeValueAsString(
+                    mailSenderDto
+            ),null);
         }
         return ResponseEntity.ok("Notification sent successfully.");
     }

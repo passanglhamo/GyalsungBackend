@@ -1,13 +1,12 @@
 package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dto.MailSenderDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.ExemptionInfo;
+import com.microservice.erp.domain.helper.ApprovalStatus;
+import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.mapper.ExemptionMapper;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
-import com.microservice.erp.domain.helper.ApprovalStatus;
-import com.microservice.erp.domain.helper.MailSender;
-import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.helper.SmsSender;
 import com.microservice.erp.services.iServices.IUpdateExemptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -27,8 +26,8 @@ public class UpdateExemptionService implements IUpdateExemptionService {
 
     private final IExemptionInfoRepository repository;
     private final ExemptionMapper mapper;
-
     private final HeaderToken headerToken;
+    private final AddToQueue addToQueue;
 
 
     @Override
@@ -123,8 +122,16 @@ public class UpdateExemptionService implements IUpdateExemptionService {
                     "Gyalsung HQ.\n";
         }
 
-        MailSender.sendMail(Objects.requireNonNull(userResponse.getBody()).getEmail(), null, null, emailMessage, subject);
-        SmsSender.sendSms(Objects.requireNonNull(userResponse.getBody()).getMobileNo() , emailMessage);
+        MailSenderDto mailSenderDto = MailSenderDto.withId(
+                Objects.requireNonNull(userResponse.getBody()).getEmail(),
+                null,
+                null,
+                emailMessage,
+                subject,
+                Objects.requireNonNull(userResponse.getBody()).getMobileNo());
+
+        addToQueue.addToQueue("email", mailSenderDto);
+        addToQueue.addToQueue("sms", mailSenderDto);
 
     }
 
