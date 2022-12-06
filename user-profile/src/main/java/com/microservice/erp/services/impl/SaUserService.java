@@ -2,7 +2,7 @@ package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dao.UserDao;
-import com.microservice.erp.domain.dto.CoachBus;
+import com.microservice.erp.domain.dto.EventBus;
 import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.SaRoleDto;
 import com.microservice.erp.domain.dto.UserDto;
@@ -12,12 +12,8 @@ import com.microservice.erp.domain.repositories.ISaRoleRepository;
 import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.services.iServices.ISaUserService;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -98,13 +94,13 @@ public class SaUserService implements ISaUserService {
         iSaUserRepository.save(saUser);
         String emailBody = "Dear " + userDto.getFullName() + ", " + "Your information has been added to Gyalsung MIS against this your email. " + "Please login in using email: " + userDto.getEmail() + " and password " + password;
         String subject = "User Added to Gyalsung System";
-        CoachBus coachBusEmail = CoachBus.withId(userDto.getEmail(), null, null, emailBody, subject, null);
+        EventBus eventBusEmail = EventBus.withId(userDto.getEmail(), null, null, emailBody, subject, null);
 
         String smsBody = "Dear " + userDto.getFullName() + ", " + " Your information has been added to Gyalsung MIS against this your email. " + "Please check your email " + userDto.getEmail() + " to see login credentials.";
-        CoachBus coachBusSms = CoachBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
+        EventBus eventBusSms = EventBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
 //todo:need to get topic name from properties file
-        addToQueue.addToQueue("email", coachBusEmail);
-        addToQueue.addToQueue("sms", coachBusSms);
+        addToQueue.addToQueue("email", eventBusEmail);
+        addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("User added successfully!"));
     }
 
@@ -136,14 +132,14 @@ public class SaUserService implements ISaUserService {
         iSaUserRepository.save(saUser);
         String emailBody = "Dear " + saUser.getFullName() + ", " + "Your information in Gyalsung MIS has been updated. " + "Please login in using email: " + saUser.getEmail();
         String subject = "User Updated in Gyalsung System";
-        CoachBus coachBusEmail = CoachBus.withId(userDto.getEmail(), null, null, emailBody, subject, userDto.getMobileNo());
+        EventBus eventBusEmail = EventBus.withId(userDto.getEmail(), null, null, emailBody, subject, userDto.getMobileNo());
 
         String smsBody = "Dear " + saUser.getFullName() + ", " + " Your information in Gyalsung MIS has been updated. " + "Please check your email " + saUser.getEmail() + " to see login credentials.";
-        CoachBus coachBusSms = CoachBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
+        EventBus eventBusSms = EventBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
 
         //todo:need to get topic name from properties file
-        addToQueue.addToQueue("email", coachBusEmail);
-        addToQueue.addToQueue("sms", coachBusSms);
+        addToQueue.addToQueue("email", eventBusEmail);
+        addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
     }
 }

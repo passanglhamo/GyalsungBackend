@@ -62,8 +62,8 @@ public class SignupService implements ISignupService {
         signupSmsOtp.setOtp(otp);
         iSignupSmsOtpRepository.save(signupSmsOtp);
 
-        CoachBus coachBusSms = CoachBus.withId(null, null, null, message, null, notificationRequestDto.getMobileNo());
-        addToQueue.addToQueue("sms", coachBusSms);
+        EventBus eventBusSms = EventBus.withId(null, null, null, message, null, notificationRequestDto.getMobileNo());
+        addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(signupSmsOtp);
     }
 
@@ -91,8 +91,8 @@ public class SignupService implements ISignupService {
         String subject = "Email verification";
         String message = "Dear, Your verification code for Gyalsung system is " + verificationCode;
 
-        CoachBus coachBusEmail = CoachBus.withId(notificationRequestDto.getEmail(), null, null, message, subject, null);
-        addToQueue.addToQueue("email", coachBusEmail);
+        EventBus eventBusEmail = EventBus.withId(notificationRequestDto.getEmail(), null, null, message, subject, null);
+        addToQueue.addToQueue("email", eventBusEmail);
 
         SignupEmailVerificationCode signupEmailVerificationCode = new SignupEmailVerificationCode();
         signupEmailVerificationCode.setEmail(notificationRequestDto.getEmail());

@@ -11,7 +11,7 @@ import java.io.File;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CoachBus {
+public class EventBus {
     String destinationEmail;
     String sentMailFrom;
     File attachmentFile;
@@ -19,14 +19,14 @@ public class CoachBus {
     String subject;
     String mobileNo;
 
-    public static CoachBus withId(
+    public static EventBus withId(
             String destinationEmail,
             String sentMailFrom,
             File attachmentFile,
             String reasonId,
             String subject,
             String mobileNo) {
-        return new CoachBus(
+        return new EventBus(
                 destinationEmail,
                 sentMailFrom,
                 attachmentFile,

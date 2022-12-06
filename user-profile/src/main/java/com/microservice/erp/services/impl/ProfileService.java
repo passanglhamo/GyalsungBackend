@@ -81,8 +81,8 @@ public class ProfileService implements IProfileService {
         String otp = String.format("%04d", number);
 
         String message = "Your OTP for Gyalsung System is " + otp;
-        CoachBus coachBusSms = CoachBus.withId(null, null, null, message, null, userProfileDto.getMobileNo());
-        addToQueue.addToQueue("sms", coachBusSms);
+        EventBus eventBusSms = EventBus.withId(null, null, null, message, null, userProfileDto.getMobileNo());
+        addToQueue.addToQueue("sms", eventBusSms);
         ChangeMobileNoSmsOtp changeMobileNoSmsOtp = new ChangeMobileNoSmsOtp();
         changeMobileNoSmsOtp.setUserId(userProfileDto.getUserId());
         changeMobileNoSmsOtp.setMobileNo(userProfileDto.getMobileNo());
@@ -160,8 +160,8 @@ public class ProfileService implements IProfileService {
 
         String subject = "Email verification";
         String message = "Dear, The verification code to change email for Gyalsung system is " + verificationCode;
-        CoachBus coachBusEmail = CoachBus.withId(userProfileDto.getEmail(), null, null, message, subject, null);
-        addToQueue.addToQueue("email", coachBusEmail);
+        EventBus eventBusEmail = EventBus.withId(userProfileDto.getEmail(), null, null, message, subject, null);
+        addToQueue.addToQueue("email", eventBusEmail);
         ChangeEmailVerificationCode changeEmailVerificationCode = new ChangeEmailVerificationCode();
         changeEmailVerificationCode.setUserId(userProfileDto.getUserId());
         changeEmailVerificationCode.setEmail(userProfileDto.getEmail());

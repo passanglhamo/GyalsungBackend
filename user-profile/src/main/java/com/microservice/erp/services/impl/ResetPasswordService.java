@@ -1,6 +1,6 @@
 package com.microservice.erp.services.impl;
 
-import com.microservice.erp.domain.dto.CoachBus;
+import com.microservice.erp.domain.dto.EventBus;
 import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.ResetPasswordDto;
 import com.microservice.erp.domain.entities.PwChangeRequest;
@@ -11,7 +11,6 @@ import com.microservice.erp.services.iServices.IResetPasswordService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -46,8 +45,8 @@ public class ResetPasswordService implements IResetPasswordService {
         String toAddress = pwChangeRequest.getEmail();
         String subject = "Gyalsung System Password Reset";
         String message = "Sir/Madam, <br><br>" + "Please click below link to change your password of Gyalsung System:<br>" + "<a href='" + requestUrl + "' target='_blank'>Click here</a><br><br>" + "<br><br>Thank you<br>" + "Have a good day.<br><br><br>" + "<small>****** This is a system generated e-mail. Please do not reply ******</small>";
-        CoachBus coachBus = CoachBus.withId(toAddress, null, null, message, subject, null);
-        addToQueue.addToQueue("email", coachBus);
+        EventBus eventBus = EventBus.withId(toAddress, null, null, message, subject, null);
+        addToQueue.addToQueue("email", eventBus);
     }
 
     public ResponseEntity<?> validatePasswordResetLink(ResetPasswordDto resetPasswordDto) {
