@@ -69,4 +69,12 @@ public class EnrolmentController {
         return iEnrolmentInfoService.getEnrolmentListByYearCourseAndAcademy(authHeader, year, trainingAcademyId, courseId);
     }
 
+
+    @PostMapping(value = "/changeTrainingAcademy")
+    public ResponseEntity<?> changeTrainingAcademy(@RequestHeader("Authorization") String authHeader,
+                                                @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) throws Exception {
+
+        return iEnrolmentInfoService.changeTrainingAcademy(authHeader, command);
+    }
+
 }

@@ -253,4 +253,53 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         });
         return ResponseEntity.ok(enrolmentList);
     }
+
+    @Override
+    public ResponseEntity<?> changeTrainingAcademy(String authHeader, EnrolmentInfoCommand command) throws Exception {
+
+        //to save update enrolment info
+        iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
+            item.setStatus('A');
+            item.setTrainingAcademyId(command.getTrainingAcademyId());
+            item.setAllocatedCourseId(command.getAllocatedCourseId());
+            iEnrolmentInfoRepository.save(item);
+        });
+        // to send email and sms
+        for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", authHeader);
+            HttpEntity<String> request = new HttpEntity<>(headers);
+            String academyName = "";
+            String courseName = "";
+
+            String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + enrolmentInfo.getUserId();
+            ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
+            String fullName = Objects.requireNonNull(userResponse.getBody()).getFullName();
+            String mobileNo = Objects.requireNonNull(userResponse.getBody()).getMobileNo();
+            String email = Objects.requireNonNull(userResponse.getBody()).getEmail();
+
+            Integer trainingAcademyId = enrolmentInfo.getTrainingAcademyId();
+            if (trainingAcademyId != null) {
+                String urlTraining = "http://localhost:8086/api/training/management/common/getTrainingAcademyById?academyId=" + trainingAcademyId;
+                ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
+                academyName = Objects.requireNonNull(responseTraining.getBody()).getName();
+            }
+            BigInteger allocatedCourseId = enrolmentInfo.getAllocatedCourseId();
+            if (allocatedCourseId != null) {
+                String urlCourse = "http://localhost:8086/api/training/management/fieldSpecializations/getCourseByCourseId?courseId=" + allocatedCourseId;
+                ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
+                courseName = Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName();
+            }
+            String message = "Dear " + fullName + ", Your training academy have been changed to " + academyName + " to undergo Gyalsung training in " + courseName + " for the year " + enrolmentInfo.getYear();
+            String subject = "Training Academy Change";
+
+
+            MailSenderDto mailSenderDto = MailSenderDto.withId(email, null, null, message, subject, mobileNo);
+
+            addToQueue.addToQueue("email", mailSenderDto);
+            addToQueue.addToQueue("sms", mailSenderDto);
+        }
+        return ResponseEntity.ok(new MessageResponse("Training academy changed successfully"));
+    }
 }
