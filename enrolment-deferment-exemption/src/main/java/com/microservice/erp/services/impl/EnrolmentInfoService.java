@@ -205,4 +205,52 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         }
         return ResponseEntity.ok(new MessageResponse("Training allocated successfully"));
     }
+
+    @Override
+    public ResponseEntity<?> getEnrolmentListByYearCourseAndAcademy(String authHeader, String year, Integer trainingAcademyId, BigInteger courseId) {
+        List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearCourseAndAcademy(year, trainingAcademyId, courseId);
+        if (enrolmentListDtos == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("No information found."));
+        }
+        List<EnrolmentListDto> enrolmentList = new ArrayList<>();
+        //to get user detail from m-user-service
+        enrolmentListDtos.forEach(item -> {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", authHeader);
+            HttpEntity<String> request = new HttpEntity<>(headers);
+            String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUser_id();
+            ResponseEntity<EnrolmentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, EnrolmentListDto.class);
+            EnrolmentListDto enrolmentListDto = new EnrolmentListDto();
+            enrolmentListDto.setUser_id(item.getUser_id());
+            enrolmentListDto.setFull_name(Objects.requireNonNull(response.getBody()).getFullName());
+            enrolmentListDto.setCid(response.getBody().getCid());
+            enrolmentListDto.setDob(response.getBody().getDob());
+
+            enrolmentListDto.setEnrolment_id(item.getEnrolment_id());
+            enrolmentListDto.setEnrolled_on(item.getEnrolled_on());
+            enrolmentListDto.setRemarks(item.getRemarks());
+            enrolmentListDto.setStatus(item.getStatus());
+            enrolmentListDto.setTraining_academy_id(item.getTraining_academy_id());
+            enrolmentListDto.setYear(item.getYear());
+            enrolmentListDto.setPreference_number(item.getPreference_number());
+            enrolmentListDto.setCourse_id(item.getCourse_id());
+
+            Integer trainingAcaId = item.getTraining_academy_id();
+            if (trainingAcademyId != null) {
+                String urlTraining = "http://localhost:8086/api/training/management/common/getTrainingAcademyById?academyId=" + trainingAcaId;
+                ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
+                enrolmentListDto.setAcademy_name(Objects.requireNonNull(responseTraining.getBody()).getName());
+            }
+            BigInteger allocatedCourseId = item.getAllocated_course_id();
+            if (allocatedCourseId != null) {
+                String urlCourse = "http://localhost:8086/api/training/management/fieldSpecializations/getCourseByCourseId?courseId=" + allocatedCourseId;
+                ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
+                enrolmentListDto.setCourseName(Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName());
+            }
+
+            enrolmentList.add(enrolmentListDto);
+        });
+        return ResponseEntity.ok(enrolmentList);
+    }
 }

@@ -18,12 +18,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.math.BigInteger;
+import java.util.Objects;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/enrolment")
 @AllArgsConstructor
- public class EnrolmentController {
+public class EnrolmentController {
 //    private static Logger LOG = LoggerFactory.getLogger(EnrolmentController.class.getSimpleName());
 
     private IEnrolmentInfoService iEnrolmentInfoService;
@@ -57,6 +58,15 @@ import java.math.BigInteger;
                                                 @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) throws Exception {
 
         return iEnrolmentInfoService.allocateEnrolments(authHeader, command);
+    }
+
+    @RequestMapping(value = "/getEnrolmentListByYearCourseAndAcademy", method = RequestMethod.GET)
+    public ResponseEntity<?> getEnrolmentListByYearCourseAndAcademy(@RequestHeader("Authorization") String authHeader
+            , @RequestParam("year") String year
+            , @RequestParam("trainingAcademyId") Integer trainingAcademyId
+            , @RequestParam("courseId") BigInteger courseId) {
+
+        return iEnrolmentInfoService.getEnrolmentListByYearCourseAndAcademy(authHeader, year, trainingAcademyId, courseId);
     }
 
 }

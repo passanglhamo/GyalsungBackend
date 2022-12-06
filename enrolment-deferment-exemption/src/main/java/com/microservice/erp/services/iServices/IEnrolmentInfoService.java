@@ -26,6 +26,8 @@ public interface IEnrolmentInfoService {
 
     ResponseEntity<?> allocateEnrolments(String authHeader, @Valid EnrolmentInfoCommand command) throws Exception;
 
+    ResponseEntity<?> getEnrolmentListByYearCourseAndAcademy(String authHeader, String year, Integer trainingAcademyId, BigInteger courseId);
+
     @Getter
     @Setter
     @AllArgsConstructor
