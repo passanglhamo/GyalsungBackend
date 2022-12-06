@@ -15,6 +15,8 @@ public interface IDzongkhagHospitalMappingRepository extends JpaRepository<Dzong
 
     boolean  existsByHospitalId(Integer hospitalId);
 
+    boolean  existsByHospitalIdAndIdNot(Integer hospitalId,BigInteger id);
+
     List<DzongkhagHospitalMapping> findAllByOrderByHospitalIdAsc();
 
 

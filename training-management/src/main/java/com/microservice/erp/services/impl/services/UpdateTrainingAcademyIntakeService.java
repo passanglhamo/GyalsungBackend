@@ -22,7 +22,7 @@ public class UpdateTrainingAcademyIntakeService implements IUpdateTrainingAcadem
                 trainingAcademyCapacityDto.getAcademyId(), trainingAcademyCapacityDto.getId()))) {
             return new ResponseEntity<>("Data is already saved for the given year and academy.", HttpStatus.ALREADY_REPORTED);
         }
-        repository.findById(trainingAcademyCapacityDto.getId()).stream().map(d -> {
+        repository.findById(trainingAcademyCapacityDto.getId()).map(d -> {
             d.setAcademyId(trainingAcademyCapacityDto.getAcademyId());
             d.setTrainingYear(trainingAcademyCapacityDto.getTrainingYear());
             d.setMaleCapacityAmount(trainingAcademyCapacityDto.getMaleCapacityAmount());

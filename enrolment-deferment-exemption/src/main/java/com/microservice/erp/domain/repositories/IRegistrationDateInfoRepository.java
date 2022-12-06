@@ -11,6 +11,8 @@ public interface IRegistrationDateInfoRepository extends JpaRepository<Registrat
 
     boolean existsByRegistrationYear(String registrationYear);
 
+    boolean existsByRegistrationYearAndIdNot(String registrationYear, BigInteger id);
+
     List<RegistrationDateInfo> findAllByOrderByRegistrationYearDesc();
 
 

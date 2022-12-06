@@ -3,6 +3,7 @@ package com.microservice.erp.controllers.rest;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
 import com.microservice.erp.services.iServices.ICreateRegistrationDateInfoService;
 import com.microservice.erp.services.iServices.IReadRegistrationDateInfoService;
+import com.microservice.erp.services.iServices.IUpdateRegistrationDateInfoService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ public class RegistrationDateInfoController {
 
     private final ICreateRegistrationDateInfoService service;
     private final IReadRegistrationDateInfoService readService;
+    private final IUpdateRegistrationDateInfoService updateService;
 
     @PostMapping
     public ResponseEntity<?> saveRegistrationDateInfo(@Valid @RequestBody RegistrationDateInfo registrationDateInfo) {
@@ -26,5 +28,11 @@ public class RegistrationDateInfoController {
     @GetMapping
     public List<RegistrationDateInfo> getAllRegistrationDateList() {
         return readService.getAllRegistrationDateList();
+    }
+
+    @PutMapping("/updateRegistrationDateInfo")
+    public ResponseEntity<?> updateRegistrationDateInfo(@Valid @RequestBody RegistrationDateInfo registrationDateInfo) {
+
+        return updateService.updateRegistrationDateInfo(registrationDateInfo);
     }
 }
