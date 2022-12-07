@@ -2,7 +2,7 @@ package com.microservice.erp.services.impl;
 
 
 import com.microservice.erp.domain.dao.ParentConsentDao;
-import com.microservice.erp.domain.dto.MailSenderDto;
+import com.microservice.erp.domain.dto.EventBus;
 import com.microservice.erp.domain.dto.ParentConsentListDto;
 import com.microservice.erp.domain.dto.ParentConsentDto;
 import com.microservice.erp.domain.entities.ParentConsent;
@@ -44,8 +44,8 @@ public class ParentConsentService implements IParentConsentService {
 
         String message = "Dear " + parentConsentDto.getGuardianName() + ", " + parentConsentDto.getFullName() + " has requested parent/guardian consent for Gyalsung Registration." + " You have to share this OTP " + otp + " if you agree to send your son/daughter to Gyalsung training." + " Please read legal terms and conditions before you share OTP.";
 
-        MailSenderDto mailSenderDto = MailSenderDto.withId(null, null, null, message, null, parentConsentDto.getGuardianMobileNo());
-        addToQueue.addToQueue("sms", mailSenderDto);
+        EventBus eventBus = EventBus.withId(null, null, null, message, null, parentConsentDto.getGuardianMobileNo());
+        addToQueue.addToQueue("sms", eventBus);
 
         ParentConsentOtp parentConsentOtp = new ModelMapper().map(parentConsentDto, ParentConsentOtp.class);
         parentConsentOtp.setOtp(otp);
@@ -53,8 +53,8 @@ public class ParentConsentService implements IParentConsentService {
 
         String subject = "Parent/Guardian Consent for Gyalsung Registration";
 
-        MailSenderDto mailSenderSmsDto = MailSenderDto.withId(parentConsentDto.getGuardianEmail(), null, null, message, subject, null);
-        addToQueue.addToQueue("email", mailSenderSmsDto);
+        EventBus eventBusMail = EventBus.withId(parentConsentDto.getGuardianEmail(), null, null, message, subject, null);
+        addToQueue.addToQueue("email", eventBusMail);
 
         return ResponseEntity.ok(parentConsentOtp);
     }
@@ -80,7 +80,7 @@ public class ParentConsentService implements IParentConsentService {
         String messageToUser = "Dear " + parentConsentDto.getFullName() + ", " + " Your parent/guardian consent for Gyalsung Registration has been submitted. Congratulations and" + " we look forward to seeing you in the training.";
         String subject = "Parent/Guardian Consent for Gyalsung Registration";
 
-        MailSenderDto mailSenderDto=MailSenderDto.withId(
+        EventBus eventBusMail= EventBus.withId(
                 parentConsentDto.getEmail(),
                 null,
                 null,
@@ -88,13 +88,13 @@ public class ParentConsentService implements IParentConsentService {
                 subject,
                 parentConsentDto.getMobileNo());
 
-        addToQueue.addToQueue("email",mailSenderDto);
-        addToQueue.addToQueue("sms",mailSenderDto);
+        addToQueue.addToQueue("email",eventBusMail);
+        addToQueue.addToQueue("sms",eventBusMail);
 
         //to send confirmation sms and email to guardian
         String messageToGuardian = "Dear " + parentConsentDto.getGuardianName() + ", " + " Thank you for granting consent to " + parentConsentDto.getFullName() + " for Gyalsung Registration." + " Congratulations and we look forward to seeing your son/daughter in the training.";
 
-        MailSenderDto mailSenderGuardianDto=MailSenderDto.withId(
+        EventBus mailSenderGuardianDto= EventBus.withId(
                 parentConsentDto.getGuardianEmail(),
                 null,
                 null,

@@ -11,7 +11,7 @@ import java.io.File;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MailSenderDto {
+public class EventBus {
     String destinationEmail;
     String sentMailFrom;
     File attachmentFile;
@@ -19,14 +19,14 @@ public class MailSenderDto {
     String subject;
     String mobileNo;
 
-    public static MailSenderDto withId(
+    public static EventBus withId(
             String destinationEmail,
             String sentMailFrom,
             File attachmentFile,
             String reasonId,
             String subject,
             String mobileNo) {
-        return new MailSenderDto(
+        return new EventBus(
                 destinationEmail,
                 sentMailFrom,
                 attachmentFile,

@@ -1,6 +1,6 @@
 package com.microservice.erp.services.impl;
 
-import com.microservice.erp.domain.dto.MailSenderDto;
+import com.microservice.erp.domain.dto.EventBus;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.ExemptionInfo;
@@ -103,7 +103,7 @@ public class CreateExemptionService implements ICreateExemptionService {
         String emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
                 "\n" +
                 "This is to acknowledge the receipt of your exemption application. Your exemption application will be reviewed and the outcome of the exemption will be sent to you through your email within 10 days of the submission of your application. If you are not approved for exemption, you will have to complete the Gyalsung pre-enlistment procedure. \n";
-        MailSenderDto mailSenderDto = MailSenderDto.withId(
+        EventBus eventBus = EventBus.withId(
                 Objects.requireNonNull(userResponse.getBody()).getEmail(),
                 null,
                 null,
@@ -111,7 +111,7 @@ public class CreateExemptionService implements ICreateExemptionService {
                 subject,
                 Objects.requireNonNull(userResponse.getBody()).getMobileNo());
 
-        addToQueue.addToQueue("email", mailSenderDto);
-        addToQueue.addToQueue("sms", mailSenderDto);
+        addToQueue.addToQueue("email", eventBus);
+        addToQueue.addToQueue("sms", eventBus);
     }
 }

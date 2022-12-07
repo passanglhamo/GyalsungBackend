@@ -88,7 +88,7 @@ public class MedicalBookingService implements IMedicalBookingService {
         String message = "Dear " + Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName() + ", " + "You have booked medical screening appointment for Gyalsung at " + hospitalName + ", " + dzongkhagName + ", " + "on " + appointmentDate + " from " + appointmentStartTime + " to " + appointmentEndTime + ". " + "Please report before 30 minutes on " + appointmentDate;
         String subject = "Medical Screening Appointment";
 
-        MailSenderDto mailSenderDto = MailSenderDto.withId(
+        MailSenderDto eventBus = MailSenderDto.withId(
                 Objects.requireNonNull(userInfoDtoResponse.getBody()).getEmail(),
                 null,
                 null,
@@ -96,8 +96,8 @@ public class MedicalBookingService implements IMedicalBookingService {
                 subject,
                 Objects.requireNonNull(userInfoDtoResponse.getBody()).getMobileNo());
 
-        addToQueue.addToQueue("email", mailSenderDto);
-        addToQueue.addToQueue("sms", mailSenderDto);
+        addToQueue.addToQueue("email", eventBus);
+        addToQueue.addToQueue("sms", eventBus);
         return ResponseEntity.ok("Appointment booked successfully.");
     }
 

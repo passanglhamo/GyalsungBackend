@@ -3,7 +3,7 @@ package com.microservice.erp.services.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservice.erp.domain.dao.EnrolmentDao;
 import com.microservice.erp.domain.dto.EnrolmentListDto;
-import com.microservice.erp.domain.dto.MailSenderDto;
+import com.microservice.erp.domain.dto.EventBus;
 import com.microservice.erp.domain.dto.TrainingAcademyDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
@@ -95,10 +95,10 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         String message = "Dear " + fullName + ",  Thank you for registering to Gyalsung training.";
         String subject = "Gyalsung Registration";
 
-        MailSenderDto mailSenderDto = MailSenderDto.withId(email, null, null, message, subject, mobileNo);
+        EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo);
 
-        addToQueue.addToQueue("email", mailSenderDto);
-        addToQueue.addToQueue("sms", mailSenderDto);
+        addToQueue.addToQueue("email", eventBus);
+        addToQueue.addToQueue("sms", eventBus);
 
         return ResponseEntity.ok(new MessageResponse("Enrolled successfully."));
     }
@@ -198,10 +198,10 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             String subject = "Registration Approval";
 
 
-            MailSenderDto mailSenderDto = MailSenderDto.withId(email, null, null, message, subject, mobileNo);
+            EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo);
 
-            addToQueue.addToQueue("email", mailSenderDto);
-            addToQueue.addToQueue("sms", mailSenderDto);
+            addToQueue.addToQueue("email", eventBus);
+            addToQueue.addToQueue("sms", eventBus);
         }
         return ResponseEntity.ok(new MessageResponse("Training allocated successfully"));
     }
@@ -295,10 +295,10 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             String subject = "Training Academy Change";
 
 
-            MailSenderDto mailSenderDto = MailSenderDto.withId(email, null, null, message, subject, mobileNo);
+            EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo);
 
-            addToQueue.addToQueue("email", mailSenderDto);
-            addToQueue.addToQueue("sms", mailSenderDto);
+            addToQueue.addToQueue("email", eventBus);
+            addToQueue.addToQueue("sms", eventBus);
         }
         return ResponseEntity.ok(new MessageResponse("Training academy changed successfully"));
     }
