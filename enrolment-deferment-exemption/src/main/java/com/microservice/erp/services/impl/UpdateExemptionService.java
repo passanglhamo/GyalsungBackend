@@ -44,17 +44,19 @@ public class UpdateExemptionService implements IUpdateExemptionService {
 
         }
 
-        repository.findAllById(command.getExemptionIds()).stream().map(d -> {
-            d.setStatus(ApprovalStatus.APPROVED.value());
-            d.setApprovalRemarks(command.getRemarks());
-            repository.save(d);
+        repository.findAllById(command.getExemptionIds()).forEach(d -> {
+            if(d.getStatus().equals(ApprovalStatus.PENDING.value())){
+                d.setStatus(ApprovalStatus.APPROVED.value());
+                d.setApprovalRemarks(command.getRemarks());
+                repository.save(d);
+            }
+
             try {
                 sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.APPROVED.value());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            return d;
-        }).map(mapper::mapToDomain).collect(Collectors.toUnmodifiableList());
+        });
 
         return ResponseEntity.ok(new MessageResponse("Approved successfully"));
     }
@@ -73,16 +75,19 @@ public class UpdateExemptionService implements IUpdateExemptionService {
 
         }
 
-        repository.findAllById(command.getExemptionIds()).stream().map(d -> {
-            d.setStatus(ApprovalStatus.REJECTED.value());
-            d.setApprovalRemarks(command.getRemarks());
+        repository.findAllById(command.getExemptionIds()).forEach(d -> {
+            if(d.getStatus().equals(ApprovalStatus.PENDING.value())){
+                d.setStatus(ApprovalStatus.REJECTED.value());
+                d.setApprovalRemarks(command.getRemarks());
+                repository.save(d);
+            }
             try {
                 sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.REJECTED.value());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            return repository.save(d);
-        }).map(mapper::mapToDomain).collect(Collectors.toUnmodifiableList());
+
+        });
 
         return ResponseEntity.ok(new MessageResponse("Rejected successfully"));
 

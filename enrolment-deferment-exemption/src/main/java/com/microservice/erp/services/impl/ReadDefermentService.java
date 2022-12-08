@@ -32,10 +32,9 @@ import java.util.stream.Collectors;
 public class ReadDefermentService implements IReadDefermentService {
     private final IDefermentInfoRepository repository;
     private final IDefermentFileInfoRepository repositoryFile;
-
-    private final IExemptionInfoRepository exemptionInfoRepository;
     private final DefermentMapper mapper;
     private final HeaderToken headerToken;
+    private final DefermentExemptionValidation defermentExemptionValidation;
 
     @Override
     public List<DefermentDto> getAllDefermentList(String authHeader) {
@@ -112,43 +111,7 @@ public class ReadDefermentService implements IReadDefermentService {
 
     @Override
     public ResponseEntity<?> getDefermentValidation(BigInteger userId) {
-        StatusResponse responseMessage = new StatusResponse();
-        ExemptionInfo exemptionInfo = exemptionInfoRepository.getExemptionByUserId(userId);
-        if(!Objects.isNull(exemptionInfo)){
-           if(exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
-               responseMessage.setStatus(ApprovalStatus.APPROVED.value());
-               responseMessage.setMessage("User is exempted from the gyalsung program.");
-               return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-           }
-            if(exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
-                responseMessage.setStatus(ApprovalStatus.PENDING.value());
-                responseMessage.setMessage("There is still some exemption which are not approved. If you continue," +
-                        " then the pending exemption will be cancelled.");
-                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-
-            }
-        }else{
-            DefermentInfo  defermentInfo = repository.getDefermentByUserId(userId);
-            if(!Objects.isNull(defermentInfo)){
-                if(defermentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
-                    responseMessage.setStatus(ApprovalStatus.APPROVED.value());
-                    responseMessage.setMessage("User has already applied for deferment.");
-                    return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-
-                }
-                if(defermentInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
-                    responseMessage.setStatus(ApprovalStatus.APPROVED.value());
-                    responseMessage.setMessage("There is still some deferment which are not approved. If you continue," +
-                                                        " then the pending deferment will be cancelled.");
-                    return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-
-                }
-
-            }
-        }
-        responseMessage.setStatus('I');
-        responseMessage.setMessage("No Validation");
-        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+      return   defermentExemptionValidation.getDefermentAndExemptValidation(userId,'D');
     }
 
 }

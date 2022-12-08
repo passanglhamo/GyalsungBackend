@@ -13,15 +13,17 @@ import java.util.List;
 
 public interface IDefermentInfoRepository extends JpaRepository<DefermentInfo, BigInteger> {
 
- boolean existsByUserIdAndStatusInAndToDateGreaterThanEqual(BigInteger userId, Collection<Character> status,
-                                                            Date toDate);
-
  @Query(value = "select d.* from ede_deferment_info d \n" +
          "where d.to_date <=:toDate AND d.status =:status", nativeQuery = true)
  List<DefermentInfo> getDefermentListByToDateStatus(Date toDate, Character status);
 
  @Query(value = "select d.* from ede_deferment_info d \n" +
-         "where d.user_id =:userId order by deferment_id LIMIT 1", nativeQuery = true)
+         "where d.user_id =:userId order by deferment_id DESC LIMIT 1", nativeQuery = true)
  DefermentInfo getDefermentByUserId(BigInteger userId);
+
+ @Query(value = "select d.* from ede_deferment_info d \n" +
+         "where d.user_id =:userId AND (d.status !=:cancelStatus) " +
+         "order by deferment_id DESC LIMIT 1", nativeQuery = true)
+ DefermentInfo getDefermentByUserIdNotCancelled(BigInteger userId,Character cancelStatus);
 
 }

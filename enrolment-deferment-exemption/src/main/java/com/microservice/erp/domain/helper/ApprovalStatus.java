@@ -6,7 +6,9 @@ public enum ApprovalStatus {
     APPROVED('A'),
     REJECTED('R'),
     PENDING('P'),
-    CANCELED('C');
+    CANCELED('C'),
+    Deferred('D'),
+    Exempted('E');
 
     private final char value;
 

@@ -17,9 +17,6 @@ public class UpdateRegistrationDateInfoService implements IUpdateRegistrationDat
     @Override
     public ResponseEntity<?> updateRegistrationDateInfo(RegistrationDateInfo registrationDateInfo) {
 
-        if (!(registrationDateInfo.getRegistrationYear().equals(DateConversion.getYearFromDate(registrationDateInfo.getFromDate())))) {
-            return new ResponseEntity<>("From date should be same as selected year.", HttpStatus.ALREADY_REPORTED);
-        }
         if (repository.existsByRegistrationYearAndIdNot(registrationDateInfo.getRegistrationYear(), registrationDateInfo.getId())) {
             return new ResponseEntity<>("Registration date is already added for given year.", HttpStatus.ALREADY_REPORTED);
         }

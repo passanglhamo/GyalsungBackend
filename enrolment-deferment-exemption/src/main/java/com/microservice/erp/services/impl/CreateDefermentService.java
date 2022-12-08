@@ -6,6 +6,7 @@ import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
+import com.microservice.erp.domain.helper.StatusResponse;
 import com.microservice.erp.domain.mapper.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
@@ -32,6 +33,7 @@ public class CreateDefermentService implements ICreateDefermentService {
     private final DefermentMapper mapper;
     private final HeaderToken headerToken;
     private final AddToQueue addToQueue;
+    private final DefermentExemptionValidation defermentExemptionValidation;
     Integer fileLength = 5;
 
 
@@ -39,50 +41,39 @@ public class CreateDefermentService implements ICreateDefermentService {
     public ResponseEntity<?> saveDeferment(HttpServletRequest request, CreateDefermentCommand command) {
         String authTokenHeader = request.getHeader("Authorization");
         repository.getDefermentByUserId(command.getUserId());
-//        boolean defermentInfoExist = repository.existsByUserIdAndStatusInAndToDateGreaterThanEqual(command.getUserId(),
-//                Set.of(ApprovalStatus.PENDING.value(), ApprovalStatus.APPROVED.value()), command.getToDate());
-//
-//
-//        if (defermentInfoExist) {
-//            return new ResponseEntity<>("Deferment is already saved.", HttpStatus.ALREADY_REPORTED);
-//        }
-
-
         if (!Objects.isNull(command.getProofDocuments())) {
             if (command.getProofDocuments().length > fileLength) {
                 return new ResponseEntity<>("You can upload maximum of 5 files.", HttpStatus.ALREADY_REPORTED);
             }
         }
 
-        ExemptionInfo exemptionInfo = exemptionInfoRepository.getExemptionByUserId(command.getUserId());
-        if(!Objects.isNull(exemptionInfo)){
-            if(exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
+
+        StatusResponse responseMessage = (StatusResponse) defermentExemptionValidation
+                .getDefermentAndExemptValidation(command.getUserId(), 'D').getBody();
+        if (!Objects.isNull(responseMessage)) {
+            if (responseMessage.getSavingStatus().equals("EA")) {
                 return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
+
             }
-            if(exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
-                exemptionInfoRepository.findById(exemptionInfo.getId()).map(d -> {
+            if (responseMessage.getSavingStatus().equals("DA")) {
+                return new ResponseEntity<>("User has already applied for deferment.", HttpStatus.ALREADY_REPORTED);
+
+            }
+            if (responseMessage.getSavingStatus().equals("DP")) {
+                DefermentInfo defermentInfo = repository.getDefermentByUserId(command.getUserId());
+                repository.findById(defermentInfo.getId()).ifPresent(d -> {
                     d.setStatus(ApprovalStatus.CANCELED.value());
-                    exemptionInfoRepository.save(d);
-                    return true;
+                    repository.save(d);
                 });
-
             }
-        }else{
-            DefermentInfo  defermentInfo = repository.getDefermentByUserId(command.getUserId());
-            if(!Objects.isNull(defermentInfo)){
-                if(defermentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
-                    return new ResponseEntity<>("User has already applied for deferment.", HttpStatus.ALREADY_REPORTED);
-
-                }
-                if(defermentInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
-                    repository.findById(defermentInfo.getId()).map(d -> {
+            if (responseMessage.getSavingStatus().equals("EP")) {
+                ExemptionInfo exemptionInfo = exemptionInfoRepository.getExemptionByUserId(command.getUserId());
+                if (exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
+                    exemptionInfoRepository.findById(exemptionInfo.getId()).ifPresent(d -> {
                         d.setStatus(ApprovalStatus.CANCELED.value());
-                        repository.save(d);
-                        return d;
+                        exemptionInfoRepository.save(d);
                     });
-
                 }
-
             }
         }
 

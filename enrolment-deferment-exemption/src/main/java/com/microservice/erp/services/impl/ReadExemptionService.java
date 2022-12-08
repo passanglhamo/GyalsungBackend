@@ -2,18 +2,13 @@ package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dto.ExemptionDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
-import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.ExemptionInfo;
-import com.microservice.erp.domain.helper.ApprovalStatus;
-import com.microservice.erp.domain.helper.StatusResponse;
 import com.microservice.erp.domain.mapper.ExemptionMapper;
-import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
 import com.microservice.erp.services.iServices.IReadExemptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -27,10 +22,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReadExemptionService implements IReadExemptionService {
     private final IExemptionInfoRepository repository;
-    private final IDefermentInfoRepository defermentRepository;
     private final ExemptionMapper mapper;
-
     private final HeaderToken headerToken;
+    private final DefermentExemptionValidation defermentExemptionValidation;
 
 
     @Override
@@ -86,41 +80,6 @@ public class ReadExemptionService implements IReadExemptionService {
 
     @Override
     public ResponseEntity<?> getExemptionValidation(BigInteger userId) {
-        StatusResponse responseMessage = new StatusResponse();
-        ExemptionInfo exemptionInfo = repository.getExemptionByUserId(userId);
-        if(!Objects.isNull(exemptionInfo)){
-            if(exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
-                responseMessage.setStatus(ApprovalStatus.APPROVED.value());
-                responseMessage.setMessage("User is exempted from the gyalsung program.");
-                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-            }
-            if(exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
-                responseMessage.setStatus(ApprovalStatus.PENDING.value());
-                responseMessage.setMessage("There are still some exemption which are not approved. If you continue," +
-                        " then the pending exemption will be cancelled.");
-                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-
-            }
-        }else{
-            DefermentInfo defermentInfo = defermentRepository.getDefermentByUserId(userId);
-            if(!Objects.isNull(defermentInfo)){
-                if(defermentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())){
-                    responseMessage.setStatus(ApprovalStatus.PENDING.value());
-                    responseMessage.setMessage("There are still some approved deferment. If you continue," +
-                                                        " then the approved deferment will be cancelled.");
-                    return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-
-                }
-                if(defermentInfo.getStatus().equals(ApprovalStatus.PENDING.value())){
-                    responseMessage.setStatus(ApprovalStatus.PENDING.value());
-                    responseMessage.setMessage("There are still some deferment which are not approved. If you continue," +
-                                                        " then the pending deferment will be cancelled.");
-                    return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-
-                }
-
-            }
-        }
-        return ResponseEntity.ok("No Validation");
+       return defermentExemptionValidation.getDefermentAndExemptValidation(userId,'E');
     }
 }

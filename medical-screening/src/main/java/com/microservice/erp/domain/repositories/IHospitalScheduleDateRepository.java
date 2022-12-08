@@ -26,4 +26,12 @@ public interface IHospitalScheduleDateRepository extends JpaRepository<HospitalS
             "on d.hospital_schedule_date_id = t.hospital_schedule_date_id \n" +
             "where t.booked_by =:userId", nativeQuery = true)
     HospitalScheduleDate getMyBookingDate(BigInteger userId);
+
+    @Query(value = "select t.* \n" +
+            "from tms_hospital_schedule_date d\n" +
+            "inner join tms_hos_schedule_time t\n" +
+            "on d.hospital_schedule_date_id = t.hospital_schedule_date_id \n" +
+            "WHERE d.appointment_date=:appointmentDate\n" +
+            "AND :startTime BETWEEN t.start_time AND t.end_time", nativeQuery = true)
+    HospitalScheduleDate getHospitalScheduleByAppDateAndTime(Date appointmentDate,Date startTime);
 }

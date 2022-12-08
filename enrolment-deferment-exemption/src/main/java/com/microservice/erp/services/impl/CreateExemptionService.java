@@ -6,6 +6,7 @@ import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
+import com.microservice.erp.domain.helper.StatusResponse;
 import com.microservice.erp.domain.mapper.ExemptionMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
@@ -31,7 +32,7 @@ public class CreateExemptionService implements ICreateExemptionService {
     private final ExemptionMapper mapper;
     private final AddToQueue addToQueue;
     private final HeaderToken headerToken;
-
+    private final DefermentExemptionValidation defermentExemptionValidation;
     Integer fileLength = 5;
 
 
@@ -39,42 +40,37 @@ public class CreateExemptionService implements ICreateExemptionService {
     public ResponseEntity<?> saveExemption(HttpServletRequest request, CreateExemptionCommand command) throws Exception {
         String authTokenHeader = request.getHeader("Authorization");
 
-//        boolean exemptionInfoExist = repository.existsByUserIdAndStatusIn(command.getUserId(),
-//                Set.of(ApprovalStatus.PENDING.value(), ApprovalStatus.APPROVED.value()));
-//
-//        if (exemptionInfoExist) {
-//            return new ResponseEntity<>("Exemption is already saved.", HttpStatus.ALREADY_REPORTED);
-//        }
         if (!Objects.isNull(command.getProofDocuments())) {
             if (command.getProofDocuments().length > fileLength) {
                 return new ResponseEntity<>("You can upload maximum of 5 files.", HttpStatus.ALREADY_REPORTED);
             }
         }
-
-        ExemptionInfo exemptionInfo = repository.getExemptionByUserId(command.getUserId());
-        if (!Objects.isNull(exemptionInfo)) {
-            if (exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
+        StatusResponse responseMessage = (StatusResponse) defermentExemptionValidation
+                .getDefermentAndExemptValidation(command.getUserId(), 'E').getBody();
+        if (!Objects.isNull(responseMessage)) {
+            if (responseMessage.getSavingStatus().equals("EA")) {
                 return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
-            }
-            if (exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                repository.findById(exemptionInfo.getId()).map(d -> {
-                    d.setStatus(ApprovalStatus.CANCELED.value());
-                    repository.save(d);
-                    return true;
-                });
 
             }
-        } else {
-            DefermentInfo defermentInfo = defermentRepository.getDefermentByUserId(command.getUserId());
-            if (!Objects.isNull(defermentInfo)) {
-                defermentRepository.findById(defermentInfo.getId()).map(d -> {
+
+            if (responseMessage.getSavingStatus().equals("DP") ||
+                    responseMessage.getSavingStatus().equals("DA")) {
+                DefermentInfo defermentInfo = defermentRepository.getDefermentByUserId(command.getUserId());
+                defermentRepository.findById(defermentInfo.getId()).ifPresent(d -> {
                     d.setStatus(ApprovalStatus.CANCELED.value());
                     defermentRepository.save(d);
-                    return d;
                 });
             }
+            if (responseMessage.getSavingStatus().equals("EP")) {
+                ExemptionInfo exemptionInfo = repository.getExemptionByUserId(command.getUserId());
+                if (exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
+                    repository.findById(exemptionInfo.getId()).ifPresent(d -> {
+                        d.setStatus(ApprovalStatus.CANCELED.value());
+                        repository.save(d);
+                    });
+                }
+            }
         }
-
         var exemption = repository.save(
                 mapper.mapToEntity(
                         request, command
@@ -86,8 +82,8 @@ public class CreateExemptionService implements ICreateExemptionService {
         sendEmailAndSms(authTokenHeader, exemption.getUserId());
 
         return ResponseEntity.ok(new MessageResponse("An acknowledgement notifcation will be sent  to you as soon as you submit your  application.\" +\n" +
-                "                    \"Your Deferment application will be  reviewed and the outcome  of the deferment wil be sent \" +\n" +
-                "                    \" to you throught your email. If you  are not approved for deferment , you will have to complete the \" +\n" +
+                "                    \"Your Exemption application will be  reviewed and the outcome  of the exemption wil be sent \" +\n" +
+                "                    \" to you throught your email. If you  are not approved for exemption , you will have to complete the \" +\n" +
                 "                    \" Gyalsung pre-enlistment procedure"));
     }
 

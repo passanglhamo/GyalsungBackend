@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import scala.App;
 
 import javax.validation.Valid;
 import java.math.BigInteger;
@@ -41,14 +42,17 @@ public class UpdateDefermentService implements IUpdateDefermentService {
 
         }
         repository.findAllById(command.getDefermentIds()).forEach(d -> {
-            d.setStatus(ApprovalStatus.APPROVED.value());
-            d.setApprovalRemarks(command.getRemarks());
-            repository.save(d);
-            try {
-                sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.APPROVED.value());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            if(d.getStatus().equals(ApprovalStatus.PENDING.value())){
+                d.setStatus(ApprovalStatus.APPROVED.value());
+                d.setApprovalRemarks(command.getRemarks());
+                repository.save(d);
+                try {
+                    sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.APPROVED.value());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
+
 
         });
 
@@ -69,13 +73,16 @@ public class UpdateDefermentService implements IUpdateDefermentService {
 
         }
         repository.findAllById(command.getDefermentIds()).forEach(d -> {
-            d.setStatus(ApprovalStatus.REJECTED.value());
-            d.setApprovalRemarks(command.getRemarks());
-            repository.save(d);
-            try {
-                sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.REJECTED.value());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            if(d.getStatus().equals(ApprovalStatus.PENDING.value())){
+                d.setStatus(ApprovalStatus.REJECTED.value());
+                d.setApprovalRemarks(command.getRemarks());
+                repository.save(d);
+                try {
+                    sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.REJECTED.value());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
             }
 
         });
