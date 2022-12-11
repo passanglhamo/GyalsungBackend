@@ -25,16 +25,16 @@ public class CreateHospitalScheduleDateService implements ICreateHospitalSchedul
 
     public ResponseEntity<?> saveScheduleDate(HospitalScheduleDateDto hospitalScheduleDateDto) {
 
-        if (!Objects.isNull(hospitalScheduleDateDto.getHospitalScheduleTimeList())) {
-            HospitalScheduleTimeDto hospitalScheduleTimeDtoVal = hospitalScheduleDateDto.getHospitalScheduleTimeList()
-                    .stream()
-                    .filter(hospitalScheduleTimeDto -> !Objects.isNull(repository.getHospitalScheduleByAppDateAndTime(hospitalScheduleDateDto.getAppointmentDate(),
-                            DateConversion.convertToDate(hospitalScheduleTimeDto.getStartTime()))))
-                    .findFirst().orElse(null);
-            if (!Objects.isNull(hospitalScheduleTimeDtoVal)) {
-                return new ResponseEntity<>("Hospital time already exist.", HttpStatus.ALREADY_REPORTED);
-            }
-        }
+//        if (!Objects.isNull(hospitalScheduleDateDto.getHospitalScheduleTimeList())) {
+//            HospitalScheduleTimeDto hospitalScheduleTimeDtoVal = hospitalScheduleDateDto.getHospitalScheduleTimeList()
+//                    .stream()
+//                    .filter(hospitalScheduleTimeDto -> !Objects.isNull(repository.getHospitalScheduleByAppDateAndTime(hospitalScheduleDateDto.getAppointmentDate(),
+//                            DateConversion.convertToDate(hospitalScheduleTimeDto.getStartTime()))))
+//                    .findFirst().orElse(null);
+//            if (!Objects.isNull(hospitalScheduleTimeDtoVal)) {
+//                return new ResponseEntity<>("Hospital time already exist.", HttpStatus.ALREADY_REPORTED);
+//            }
+//        }
 
 
         if (!repository.existsByAppointmentDateAndHospitalId(hospitalScheduleDateDto.getAppointmentDate(),
