@@ -64,15 +64,15 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             return ResponseEntity.badRequest().body(new MessageResponse("You have already enrolled."));
         }
 
-        StatusResponse responseMessage = (StatusResponse) defermentExemptionValidation
-                .getDefermentAndExemptValidation(new BigInteger(String.valueOf(enrolmentDto.getUserId())), 'N').getBody();
-
-        if (!Objects.isNull(responseMessage)) {
-            if (responseMessage.getSavingStatus().equals("EA")) {
-                return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
-
-            }
-        }
+//        StatusResponse responseMessage = (StatusResponse) defermentExemptionValidation
+//                .getDefermentAndExemptValidation(new BigInteger(String.valueOf(enrolmentDto.getUserId())), 'N').getBody();
+//
+//        if (!Objects.isNull(responseMessage)) {
+//            if (responseMessage.getSavingStatus().equals("EA")) {
+//                return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
+//
+//            }
+//        }
 
         enrolmentDto.setYear(registrationYear);
         enrolmentDto.setStatus('P');//P=Pending, D=Deferred, E=Exempted, A=Approved, which means training academy allocated
