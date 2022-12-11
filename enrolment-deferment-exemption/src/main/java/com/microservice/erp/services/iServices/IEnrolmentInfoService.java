@@ -29,6 +29,9 @@ public interface IEnrolmentInfoService {
     ResponseEntity<?> getEnrolmentListByYearCourseAndAcademy(String authHeader, String year, Integer trainingAcademyId, BigInteger courseId);
 
     ResponseEntity<?> changeTrainingAcademy(String authHeader, @Valid EnrolmentInfoCommand command) throws Exception;
+
+    ResponseEntity<?> getEnrolmentValidation(BigInteger userId);
+
     @Getter
     @Setter
     @AllArgsConstructor

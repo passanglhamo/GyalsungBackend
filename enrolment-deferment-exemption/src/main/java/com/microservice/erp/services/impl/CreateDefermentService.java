@@ -6,7 +6,6 @@ import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.helper.StatusResponse;
 import com.microservice.erp.domain.mapper.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
@@ -47,35 +46,21 @@ public class CreateDefermentService implements ICreateDefermentService {
             }
         }
 
-
-        StatusResponse responseMessage = (StatusResponse) defermentExemptionValidation
-                .getDefermentAndExemptValidation(command.getUserId(), 'D').getBody();
-        if (!Objects.isNull(responseMessage)) {
-            if (responseMessage.getSavingStatus().equals("EA")) {
-                return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
-
-            }
-            if (responseMessage.getSavingStatus().equals("DA")) {
-                return new ResponseEntity<>("User has already applied for deferment.", HttpStatus.ALREADY_REPORTED);
-
-            }
-            if (responseMessage.getSavingStatus().equals("DP")) {
-                DefermentInfo defermentInfo = repository.getDefermentByUserId(command.getUserId());
-                repository.findById(defermentInfo.getId()).ifPresent(d -> {
-                    d.setStatus(ApprovalStatus.CANCELED.value());
-                    repository.save(d);
-                });
-            }
-            if (responseMessage.getSavingStatus().equals("EP")) {
-                ExemptionInfo exemptionInfo = exemptionInfoRepository.getExemptionByUserId(command.getUserId());
-                if (exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                    exemptionInfoRepository.findById(exemptionInfo.getId()).ifPresent(d -> {
-                        d.setStatus(ApprovalStatus.CANCELED.value());
-                        exemptionInfoRepository.save(d);
-                    });
-                }
-            }
-        }
+//        ExemptionInfo exemptionInfo = exemptionInfoRepository.getExemptionByUserId(command.getUserId());
+//        if (!Objects.isNull(exemptionInfo)) {
+//            if (exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
+//                return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
+//
+//            }
+//        }
+//
+//        DefermentInfo defermentInfoVal = repository.getDefermentByUserId(command.getUserId());
+//        if (!Objects.isNull(defermentInfoVal)) {
+//            if (defermentInfoVal.getStatus().equals(ApprovalStatus.APPROVED.value())) {
+//                return new ResponseEntity<>("User has already applied for deferment.", HttpStatus.ALREADY_REPORTED);
+//
+//            }
+//        }
 
         var deferment = repository.save(
                 mapper.mapToEntity(

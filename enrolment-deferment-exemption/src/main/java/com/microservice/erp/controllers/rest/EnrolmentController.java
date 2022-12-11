@@ -77,4 +77,8 @@ public class EnrolmentController {
         return iEnrolmentInfoService.changeTrainingAcademy(authHeader, command);
     }
 
+    @GetMapping(value = "/getEnrolmentValidation")
+    public ResponseEntity<?> getEnrolmentValidation(@RequestParam("userId") BigInteger userId) {
+        return iEnrolmentInfoService.getEnrolmentValidation(userId);
+    }
 }

@@ -9,17 +9,16 @@ import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
+import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
+import com.microservice.erp.domain.helper.StatusResponse;
 import com.microservice.erp.domain.mapper.EnrolmentMapper;
 import com.microservice.erp.domain.repositories.IEnrolmentCoursePreferenceRepository;
 import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,6 +39,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     private final IRegistrationDateInfoRepository iRegistrationDateInfoRepository;
     private EnrolmentDao enrolmentDao;
     private final AddToQueue addToQueue;
+    private final DefermentExemptionValidation defermentExemptionValidation;
 
 
     @Override
@@ -58,10 +58,20 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         }
         String registrationYear = registrationDateInfo.getRegistrationYear();
 
-        EnrolmentInfo enrolmentInfoDb = iEnrolmentInfoRepository.findByUserId(enrolmentDto.getUserId());
+        EnrolmentInfo enrolmentInfoDb = iEnrolmentInfoRepository.findByUserId(new BigInteger(String.valueOf(enrolmentDto.getUserId())));
         //to check already enrolled or not
         if (enrolmentInfoDb != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("You have already enrolled."));
+        }
+
+        StatusResponse responseMessage = (StatusResponse) defermentExemptionValidation
+                .getDefermentAndExemptValidation(new BigInteger(String.valueOf(enrolmentDto.getUserId())), 'N').getBody();
+
+        if (!Objects.isNull(responseMessage)) {
+            if (responseMessage.getSavingStatus().equals("EA")) {
+                return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
+
+            }
         }
 
         enrolmentDto.setYear(registrationYear);
@@ -69,7 +79,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         enrolmentDto.setEnrolledOn(new Date());
 
         String paramDate = registrationYear + "/12/31";// as on 31st December in the registration date
-        BigInteger userId = enrolmentDto.getUserId();
+        BigInteger userId = new BigInteger(String.valueOf(enrolmentDto.getUserId()));
         //check if user is below 18 or not, need to call user service
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -162,10 +172,13 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         }
         //to save update enrolment info
         iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
-            item.setStatus('A');
-            item.setTrainingAcademyId(command.getTrainingAcademyId());
-            item.setAllocatedCourseId(command.getAllocatedCourseId());
-            iEnrolmentInfoRepository.save(item);
+            if(item.getStatus().equals(ApprovalStatus.PENDING.value())){
+                item.setStatus(ApprovalStatus.APPROVED.value());
+                item.setTrainingAcademyId(command.getTrainingAcademyId());
+                item.setAllocatedCourseId(command.getAllocatedCourseId());
+                iEnrolmentInfoRepository.save(item);
+            }
+
         });
         // to send email and sms
         for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
@@ -301,5 +314,10 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             addToQueue.addToQueue("sms", eventBus);
         }
         return ResponseEntity.ok(new MessageResponse("Training academy changed successfully"));
+    }
+
+    @Override
+    public ResponseEntity<?> getEnrolmentValidation(BigInteger userId) {
+        return defermentExemptionValidation.getDefermentAndExemptValidation(userId,'N');
     }
 }
