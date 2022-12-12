@@ -1,81 +1,67 @@
 version: '3.5'
 
 networks:
-   web-app-net:
-       name: my-web-app-net
-       #driver: overlay
-       driver: bridge
+  web-app-net:
+    name: my-web-app-net
+    driver: bridge
 
 volumes:
-   mysql-db-storage:
-   redis-inmemory-storage:
+  auth-db-storage:
+  activemq-storage:
+  redis-inmemory-storage:
 
 services:
-   mysql-db:
-      image: mysql:8.0.13
-      environment:
-          MYSQL_DATABASE: testDB
-          MYSQL_ROOT_PASSWORD: root@123
-      ports:
-          - 3306:3306
-      networks:
-          - web-app-net
-      volumes:
-          - mysql-db-storage:/var/lib/mysql
+  auth-db:
+    image: mysql:8.0.13
+    environment:
+      MYSQL_DATABASE: authDB
+      MYSQL_ROOT_PASSWORD: root@123
+    ports:
+      - 3307:3306
+    networks:
+      - web-app-net
+    volumes:
+      - auth-db-storage:/var/lib/mysql
 
-   redis:
-      image: redis:latest
-      ports:
-         - 6379:6379
-      networks:
-         - web-app-net
-      volumes:
-         - redis-inmemory-storage:/data
+  phpadmin-auth:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: auth-db
+      PMA_PORT: 3306
+      PMA_PMADB: authDB
+      MYSQL_ROOT_PASSWORD: root@123
+    ports:
+      - 8092:80
+    networks:
+      - web-app-net
+    depends_on:
+      - auth-db
+    restart: on-failure
 
-   zookeeper:
-      image: bitnami/zookeeper:latest
-      ports:
-        - 2181:2181
-      environment:
-        - ALLOW_ANONYMOUS_LOGIN=yes
-      networks:
-        - web-app-net
+  activemq:
+    image: webcenter/activemq
+    ports:
+      - 8161:8161
+      - 61616:61616
+      - 61613:61613
+    environment:
+      - ACTIVEMQ_MIN_MEMORY=512
+      - ACTIVEMQ_MAX_MEMORY=2048
+      - ACTIVEMQ_ADMIN_LOGIN=admin
+      - ACTIVEMQ_ADMIN_PASSWORD=admin
+    restart: on-failure
+    networks:
+      - web-app-net
+    volumes:
+      - activemq-storage:/var/log/activemq
 
-   kafka:
-      image: bitnami/kafka:latest
-      ports:
-        - 9092:9092
-        - 9093:9093
-      environment:
-        - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-        - ALLOW_PLAINTEXT_LISTENER=yes
-        #Place Device-Current IP Or EC2-Private-IP
-        #To connect from an external machine, change localhost to your host's external IP/hostname,
-        #EXTERNAL://localhost:9093, If we need to access the kafka from our host-machine for debug purpose.
-        #EXTERNAL://<ec2-private-ip>:9093, In case of aws-ec2 instance, we have to broadcast on the ec2's private ip, other wise can't be listen from other ec2 instance.
-        - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
-        - KAFKA_LISTENERS=CLIENT://:9092,EXTERNAL://0.0.0.0:9093
-        - KAFKA_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
-        - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
-        #
-      depends_on:
-        - zookeeper
-      networks:
-        - web-app-net
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    networks:
+      - web-app-net
+    volumes:
+      - redis-inmemory-storage:/data
 
-   kafka-ui:
-      image: provectuslabs/kafka-ui
-      ports:
-        - 8081:8080
-      restart: on-failure
-      environment:
-        - KAFKA_CLUSTERS_0_NAME=local
-        - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-        - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
-        - KAFKA_CLUSTERS_0_READONLY=false
-      depends_on:
-        - kafka
-      networks:
-        - web-app-net
-
-##End Of Scripts
+#end of scripts
