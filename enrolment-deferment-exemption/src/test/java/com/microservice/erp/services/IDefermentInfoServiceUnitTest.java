@@ -55,7 +55,7 @@ public class IDefermentInfoServiceUnitTest {
     @Test
     public void happyPathTest() {
         Mockito.mock(DefermentMapper.class);
-        ICreateDefermentService.CreateDefermentCommand createCommand = createCommand();
+        //ICreateDefermentService.CreateDefermentCommand createCommand = createCommand();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Authorization", "Bearer testingtoken");
         //DefermentInfo d=mapper.mapToEntity(request, createCommand);
@@ -70,7 +70,7 @@ public class IDefermentInfoServiceUnitTest {
         //assertEquals(200, response.getStatusCodeValue());
     }
 
-    @Test
+    /*@Test
     public void saveWithoutToDateTest() {
         ICreateDefermentService.CreateDefermentCommand createCommand = createCommand();
         createCommand.setToDate(null);
@@ -114,7 +114,7 @@ public class IDefermentInfoServiceUnitTest {
                 null,
                 null
         );
-    }
+    }*/
 
 
 }

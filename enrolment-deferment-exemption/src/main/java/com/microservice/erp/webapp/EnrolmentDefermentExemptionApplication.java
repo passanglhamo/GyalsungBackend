@@ -4,9 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.microservice.erp.controllers"
@@ -14,14 +12,14 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
         , "com.microservice.erp.webapp.config"
         , "com.microservice.erp.domain"})
 //@EnableFeignClients(basePackages = "com.microservice.erp.services")
-public class WebApplication extends SpringBootServletInitializer {
+public class EnrolmentDefermentExemptionApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        SpringApplication.run(WebApplication.class, args);
+        SpringApplication.run(EnrolmentDefermentExemptionApplication.class, args);
     }
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return builder.sources(WebApplication.class);
+        return builder.sources(EnrolmentDefermentExemptionApplication.class);
     }
 }

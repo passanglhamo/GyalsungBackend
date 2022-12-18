@@ -24,7 +24,7 @@ public class IDefermentInfoRepositoryUnitTest {
     @Autowired
     IDefermentInfoRepository repository;
 
-    @Test
+    /*@Test
     public void insert(){
         DefermentInfo defermentInfo =
                 new DefermentInfo(
@@ -41,5 +41,5 @@ public class IDefermentInfoRepositoryUnitTest {
         Assert.assertEquals(repository.findAll().size(),1);
 
 
-    }
+    }*/
 }

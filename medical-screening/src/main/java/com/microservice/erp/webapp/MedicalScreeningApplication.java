@@ -11,14 +11,14 @@ import org.springframework.context.annotation.ComponentScan;
         , "com.microservice.erp.services"
         , "com.microservice.erp.webapp.config"
         , "com.microservice.erp.domain"})
-public class WebApplication extends SpringBootServletInitializer {
+public class MedicalScreeningApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        SpringApplication.run(WebApplication.class, args);
+        SpringApplication.run(MedicalScreeningApplication.class, args);
     }
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return builder.sources(WebApplication.class);
+        return builder.sources(MedicalScreeningApplication.class);
     }
 }

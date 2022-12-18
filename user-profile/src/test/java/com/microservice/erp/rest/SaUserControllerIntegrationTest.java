@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigInteger;
+
 /**
  * @author Rajib Kumer Ghosh
  *
@@ -59,8 +61,10 @@ public class SaUserControllerIntegrationTest {
 
     @Test
     public void count(){
+        SaUser aSaUser = new SaUser();
+        aSaUser.setId(new BigInteger("1"));
         //
-        //controller.insert(new SaUser("Rajib The Coder", Gender.MALE, 24));
+        controller.insert(aSaUser);
         //
         Integer count = 121;
         System.out.println(count);
