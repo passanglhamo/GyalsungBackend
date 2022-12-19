@@ -1,6 +1,5 @@
 package com.microservice.erp.webapp.config;
 
-import com.microservice.erp.domain.repositories.UserRepository;
 import com.infoworks.lab.jjwt.JWTPayload;
 import com.infoworks.lab.jjwt.JWTValidator;
 import com.infoworks.lab.jjwt.TokenValidator;
@@ -29,10 +28,9 @@ public class AuthorizationFilter extends GenericFilterBean {
     public static final String AUTHORITIES_KEY = "roles";
     public static final String TOKEN_PREFIX = "Bearer ";
     private static Logger LOG = LoggerFactory.getLogger("AuthorizationFilter");
-    private UserRepository repository;
 
-    public AuthorizationFilter(UserRepository repository) {
-        this.repository = repository;
+    public AuthorizationFilter() {
+
     }
 
     @Override
@@ -41,27 +39,27 @@ public class AuthorizationFilter extends GenericFilterBean {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         LOG.info("RequestURI: " + request.getRequestURI().toLowerCase());
-        if(header == null || !header.startsWith(TOKEN_PREFIX.trim())) {
-            chain.doFilter(request,response);
+        if (header == null || !header.startsWith(TOKEN_PREFIX.trim())) {
+            chain.doFilter(request, response);
             return;
         }
         Authentication authenticationToken = getAuthentication(request);
-        if (authenticationToken != null){
+        if (authenticationToken != null) {
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            chain.doFilter(request,response);
-        }else{
+            chain.doFilter(request, response);
+        } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 
-    public Authentication getAuthentication(HttpServletRequest request){
+    public Authentication getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if(token != null){
-            token = token.replace(TOKEN_PREFIX.trim(),"").trim();
+        if (token != null) {
+            token = token.replace(TOKEN_PREFIX.trim(), "").trim();
             try {
-                JWTValidator validator = new JWTokenValidator(request, repository);
+                JWTValidator validator = new JWTokenValidator(request);
                 boolean isTrue = validator.isValid(token);
-                if(isTrue) {
+                if (isTrue) {
                     JWTPayload payload = TokenValidator.parsePayload(token, JWTPayload.class);
                     Object authoritiesClaim = (payload.getData() == null)
                             ? null

@@ -31,6 +31,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+//    @Bean
+//    public BCryptPasswordEncoder encoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+
     public static final String[] URL_WHITELIST = {
             "/v2/api-docs"
             , "/swagger-ui.html"

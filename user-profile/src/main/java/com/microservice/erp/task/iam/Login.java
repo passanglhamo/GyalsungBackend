@@ -1,13 +1,13 @@
-package com.microservice.erp.domain.tasks.iam;
+package com.microservice.erp.task.iam;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.microservice.erp.domain.entities.User;
-import com.microservice.erp.domain.models.LoginRequest;
-import com.microservice.erp.domain.repositories.UserRepository;
 import com.infoworks.lab.jwtoken.definition.TokenProvider;
 import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.sql.query.models.Property;
+import com.microservice.erp.controllers.rest.LoginRequest;
+import com.microservice.erp.domain.entities.SaUser;
+import com.microservice.erp.domain.repositories.ISaUserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
@@ -19,20 +19,20 @@ import java.util.Optional;
 
 public class Login extends TokenizerTask {
 
-    private UserRepository repository;
+    private ISaUserRepository repository;
     private PasswordEncoder encoder;
 
-    public Login(UserRepository repository, PasswordEncoder encoder, Property... properties) {
+    public Login(ISaUserRepository repository, PasswordEncoder encoder, Property... properties) {
         super(properties);
         this.repository = repository;
         this.encoder = encoder;
     }
 
-    public Login(UserRepository repository, PasswordEncoder encoder, String username){
+    public Login(ISaUserRepository repository, PasswordEncoder encoder, String username){
         this(repository, encoder, new Property("username", username));
     }
 
-    public Login(UserRepository repository, PasswordEncoder encoder, LoginRequest request) {
+    public Login(ISaUserRepository repository, PasswordEncoder encoder, LoginRequest request) {
         this(repository, encoder, request.getRow().getProperties().toArray(new Property[0]));
     }
 
@@ -70,7 +70,7 @@ public class Login extends TokenizerTask {
             throw new RuntimeException("UserRepository must not be null!");
         //Do the login:
         LoginRequest request = (LoginRequest) getMessage();
-        Optional<User> exist = repository.findByUsername(request.getUsername());
+        Optional<SaUser> exist = Optional.ofNullable(repository.findByUsername(request.getUsername()));
         if (exist.isPresent()){
             //PasswordEncoder::matches(RawPassword, EncodedPassword) == will return true/false
             if (!encoder.matches(request.getPassword(), exist.get().getPassword()))

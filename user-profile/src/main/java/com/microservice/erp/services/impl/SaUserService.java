@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -37,7 +38,7 @@ public class SaUserService implements ISaUserService {
 
     @Override
     public ResponseEntity<?> getAllRoles() {
-        List<SaRole> saRoleList = iSaRoleRepository.findAllByOrderByRoleNameAsc();
+        List<SaRole> saRoleList = iSaRoleRepository.findAllByOrderByNameAsc();
         if (saRoleList.size() > 0) {
             return ResponseEntity.ok(saRoleList);
         } else {
@@ -82,15 +83,15 @@ public class SaUserService implements ISaUserService {
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
-        Set<SaRole> saRoles = new HashSet<>();
+        Set<Optional<SaRole>> saRoles = new HashSet<>();
         saRoleDtos.forEach(saRoleDto -> {
-            SaRole saRoleDb = iSaRoleRepository.findByRoleId(saRoleDto.getRoleId());
-            if (saRoleDb == null) {
+            Optional<SaRole> saRoleDb = iSaRoleRepository.findById(saRoleDto.getRoleId());
+            if (!saRoleDb.isPresent()) {
                 return;
             }
             saRoles.add(saRoleDb);
         });
-        saUser.setSaRoles(saRoles);
+        //saUser.setSaRoles(saRoles);
         iSaUserRepository.save(saUser);
         String emailBody = "Dear " + userDto.getFullName() + ", " + "Your information has been added to Gyalsung MIS against this your email. " + "Please login in using email: " + userDto.getEmail() + " and password " + password;
         String subject = "User Added to Gyalsung System";
@@ -120,15 +121,15 @@ public class SaUserService implements ISaUserService {
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
-        Set<SaRole> saRoles = new HashSet<>();
+        Set<Optional<SaRole>> saRoles = new HashSet<>();
         saRoleDtos.forEach(saRoleDto -> {
-            SaRole saRoleDb = iSaRoleRepository.findByRoleId(saRoleDto.getRoleId());
-            if (saRoleDb == null) {
+            Optional<SaRole> saRoleDb = iSaRoleRepository.findById(saRoleDto.getRoleId());
+            if (!saRoleDb.isPresent()) {
                 return;
             }
             saRoles.add(saRoleDb);
         });
-        saUser.setSaRoles(saRoles);
+        //saUser.setSaRoles(saRoles);
         iSaUserRepository.save(saUser);
         String emailBody = "Dear " + saUser.getFullName() + ", " + "Your information in Gyalsung MIS has been updated. " + "Please login in using email: " + saUser.getEmail();
         String subject = "User Updated in Gyalsung System";

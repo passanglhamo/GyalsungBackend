@@ -1,9 +1,13 @@
 package com.microservice.erp.services.iServices;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.infoworks.lab.rest.models.Response;
+import com.microservice.erp.controllers.rest.JwtResponse;
+import com.microservice.erp.controllers.rest.LoginRequest;
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.SignupRequestDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.wso2.client.api.ApiException;
 
 import java.io.IOException;
@@ -21,4 +25,5 @@ public interface ISignupService {
     ResponseEntity<?> verifyEmailVcode(NotificationRequestDto notificationRequestDto);
 
     ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException;
+
 }

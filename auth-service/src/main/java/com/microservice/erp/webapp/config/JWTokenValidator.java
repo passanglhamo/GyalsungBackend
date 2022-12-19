@@ -1,17 +1,15 @@
 package com.microservice.erp.webapp.config;
 
-import com.microservice.erp.domain.repositories.UserRepository;
-import com.microservice.erp.domain.tasks.iam.CheckTokenValidity;
 import com.infoworks.lab.jjwt.JWTValidator;
 import com.infoworks.lab.jjwt.TokenValidator;
-import com.infoworks.lab.rest.models.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,12 +21,9 @@ public class JWTokenValidator extends JWTValidator {
     private static Logger LOG = LoggerFactory.getLogger(JWTokenValidator.class.getSimpleName());
 
     private HttpServletRequest request;
-    private UserRepository repository;
 
-    public JWTokenValidator(@Autowired HttpServletRequest request
-                            , @Autowired UserRepository repository) {
+    public JWTokenValidator(@Autowired HttpServletRequest request) {
         this.request = request;
-        this.repository = repository;
     }
 
     protected String getHeaderValue(String key){
@@ -42,9 +37,19 @@ public class JWTokenValidator extends JWTValidator {
 
     @Override
     public Boolean isValid(String token, String... args) {
-        CheckTokenValidity tokenValidity = new CheckTokenValidity(token, repository);
-        Response response = tokenValidity.execute(null);
-        return response.getStatus() == 200;
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        //HttpEntity<String> request = headerToken.tokenHeader(authHeader);
+        HttpEntity<String> entity = new HttpEntity<>(token, headers);
+
+        //String userUrl = "http://localhost:8084/api/user/profile/signup/validateToken/{token}";
+        String userUrl = "http://localhost:8084/api/user/profile/auth/validateToken?token=" + token;
+
+        ResponseEntity<?> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, entity, String.class);
+        //ResponseEntity<?> responseEntity =  userClient.validateToken(token);
+//        Response response = tokenValidity.execute(null);
+        return userResponse.getStatusCode().value() == 200;
     }
 
     @Override

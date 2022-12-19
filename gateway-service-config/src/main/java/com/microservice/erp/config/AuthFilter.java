@@ -63,10 +63,11 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
             String token = authHeader.substring("Bearer ".length());
             Mono<Void> filterChain = builder.build()
                     //.get()
-                    //.uri(String.format("%s?token=%s", authValidationURL, token))
                     //OR following
-                    .post()
+                    .get()
+                    //.uri(String.format("%s?token=%s", config.authValidationURL, token))
                     .uri(config.authValidationURL)
+                    //.uri("http://localhost:8083/api/auth/auth/v1/isValidToken")
                     .header(HttpHeaders.AUTHORIZATION, authHeader)
                     .exchange()
                     .flatMap(clientResponse -> {
@@ -84,7 +85,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
     }
 
     private static Mono<Void> unauthorizedAccessHandler(ServerWebExchange exchange, HttpStatus status){
-        return unauthorizedAccessHandler(exchange, status, "Un-Authorized Access!");
+            return unauthorizedAccessHandler(exchange, status, "Un-Authorized Access!");
     }
 
     private static Mono<Void> unauthorizedAccessHandler(ServerWebExchange exchange, HttpStatus status, Object body) {

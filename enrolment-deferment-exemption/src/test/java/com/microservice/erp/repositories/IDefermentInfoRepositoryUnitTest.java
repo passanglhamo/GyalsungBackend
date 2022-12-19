@@ -12,6 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 @RunWith(SpringRunner.class)
@@ -27,10 +28,10 @@ public class IDefermentInfoRepositoryUnitTest {
     public void insert(){
         DefermentInfo defermentInfo =
                 new DefermentInfo(
-                        1L,
+                        new BigInteger("1"),
                         null,
                         new Date(),
-                        1L,
+                        new BigInteger("1"),
                         null,
                         null,
                         'P',

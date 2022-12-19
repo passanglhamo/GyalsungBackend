@@ -60,7 +60,7 @@ public class SaUserControllerIntegrationTest {
     @Test
     public void count(){
         //
-        controller.insert(new SaUser("Rajib The Coder", Gender.MALE, 24));
+        //controller.insert(new SaUser("Rajib The Coder", Gender.MALE, 24));
         //
         Integer count = 121;
         System.out.println(count);

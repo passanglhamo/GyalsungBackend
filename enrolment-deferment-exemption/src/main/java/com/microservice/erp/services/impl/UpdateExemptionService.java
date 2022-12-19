@@ -50,56 +50,6 @@ public class UpdateExemptionService implements IUpdateExemptionService {
         }
 
         repository.findAllById(command.getExemptionIds()).forEach(d -> {
-//            StatusResponse responseMessage = (StatusResponse) defermentExemptionValidation
-//                    .getDefermentAndExemptValidation(d.getUserId(), 'E').getBody();
-//            if (!Objects.isNull(responseMessage)) {
-//
-//                if (responseMessage.getSavingStatus().equals("DP") ||
-//                        responseMessage.getSavingStatus().equals("DA")) {
-//                    DefermentInfo defermentInfo = defermentInfoRepository.getDefermentByUserId(d.getUserId());
-//                    defermentInfoRepository.findById(defermentInfo.getId()).ifPresent(dval -> {
-//                        dval.setStatus(ApprovalStatus.CANCELED.value());
-//                        defermentInfoRepository.save(dval);
-//                    });
-//                }
-//                if (responseMessage.getSavingStatus().equals("EP")) {
-//                    ExemptionInfo exemptionInfoVal = repository.getExemptionByUserId(d.getUserId());
-//                    if (exemptionInfoVal.getStatus().equals(ApprovalStatus.PENDING.value())) {
-//                        repository.findById(exemptionInfoVal.getId()).ifPresent(eVal -> {
-//                            eVal.setStatus(ApprovalStatus.CANCELED.value());
-//                            repository.save(eVal);
-//                        });
-//                    }
-//                }
-//                if (responseMessage.getSavingStatus().equals("ENP")||
-//                        responseMessage.getSavingStatus().equals("ENA")) {
-//                    ExemptionInfo exemptionInfoVal = repository.getExemptionByUserId(d.getUserId());
-//                    if (exemptionInfoVal.getStatus().equals(ApprovalStatus.PENDING.value())) {
-//                        repository.findById(exemptionInfoVal.getId()).ifPresent(dVal -> {
-//                            dVal.setStatus(ApprovalStatus.CANCELED.value());
-//                            repository.save(dVal);
-//                        });
-//                    }
-//                    DefermentInfo defermentInfoVal = defermentInfoRepository.getDefermentByUserId(d.getUserId());
-//                    if (exemptionInfoVal.getStatus().equals(ApprovalStatus.PENDING.value())
-//                            || exemptionInfoVal.getStatus().equals(ApprovalStatus.APPROVED.value())) {
-//                        repository.findById(defermentInfoVal.getId()).ifPresent(dVal -> {
-//                            dVal.setStatus(ApprovalStatus.CANCELED.value());
-//                            repository.save(dVal);
-//                        });
-//                    }
-//
-//                    EnrolmentInfo enrolmentInfo = enrolmentInfoRepository.findByUserId(d.getUserId());
-//                    if (exemptionInfoVal.getStatus().equals(ApprovalStatus.PENDING.value())
-//                            || exemptionInfoVal.getStatus().equals(ApprovalStatus.APPROVED.value())) {
-//                        enrolmentInfoRepository.findById(enrolmentInfo.getId()).ifPresent(dVal -> {
-//                            dVal.setStatus(ApprovalStatus.CANCELED.value());
-//                            enrolmentInfoRepository.save(dVal);
-//                        });
-//                    }
-//
-//                }
-//            }
             if (d.getStatus().equals(ApprovalStatus.PENDING.value())) {
                 d.setStatus(ApprovalStatus.APPROVED.value());
                 d.setApprovalRemarks(command.getRemarks());

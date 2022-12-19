@@ -80,6 +80,6 @@ public class ReadExemptionService implements IReadExemptionService {
 
     @Override
     public ResponseEntity<?> getExemptionValidation(BigInteger userId) {
-       return defermentExemptionValidation.getDefermentAndExemptValidation(userId,'E');
+       return defermentExemptionValidation.getDefermentAndExemptValidation(userId);
     }
 }

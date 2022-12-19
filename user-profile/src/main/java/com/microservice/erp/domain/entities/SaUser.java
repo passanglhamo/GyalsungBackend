@@ -1,23 +1,27 @@
 package com.microservice.erp.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigInteger;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @Entity(name = "sys_userinfo")
 @AttributeOverride(name = "id", column = @Column(name = "user_id", columnDefinition = "bigint"))
-public class SaUser extends Auditable<BigInteger, Long> {
+public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
 
     @NotNull(message = "Username must not be null.")
     @Basic(optional = false)
@@ -165,11 +169,94 @@ public class SaUser extends Auditable<BigInteger, Long> {
     @Column(name = "status")
     private Character status;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "sa_user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<SaRole> saRoles = new HashSet<>();
+    @ManyToMany(targetEntity = SaRole.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<SaRole> roles;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "sa_users_secrets")
+    @Column(name = "secrets")
+    @JsonIgnore
+    private Map<Integer, String> secrets;
+
+    @ManyToMany(targetEntity = SaPolicy.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<SaPolicy> policies;
+
+    private boolean enabled;
+
+    public static Map<Integer, String> createRandomMapOfSecret() {
+        Map<Integer, String> secrets = new HashMap<>();
+        secrets.put(1110, UUID.randomUUID().toString());
+        secrets.put(1111, UUID.randomUUID().toString());
+        secrets.put(1112, UUID.randomUUID().toString());
+        secrets.put(1113, UUID.randomUUID().toString());
+        secrets.put(1114, UUID.randomUUID().toString());
+        return secrets;
+    }
+
+    public SaUser addPolicies(SaPolicy... policies) {
+        if (getPolicies() == null) {
+            setPolicies(new HashSet<>());
+        }
+        getPolicies().addAll(Arrays.asList(policies));
+        return this;
+    }
+
+    public SaUser addRoles(SaRole... roles) {
+        if (getRoles() == null) {
+            setRoles(new HashSet<>());
+        }
+        getRoles().addAll(Arrays.asList(roles));
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SaUser user = (SaUser) o;
+        return getId().equals(user.getId()) && username.equals(user.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), username);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (roles == null) return new ArrayList<>();
+        return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(toList());
+    }
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return enabled;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
 
     public SaUser() {
 

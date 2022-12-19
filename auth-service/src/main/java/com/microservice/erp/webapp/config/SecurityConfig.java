@@ -1,7 +1,6 @@
 package com.microservice.erp.webapp.config;
 
 import com.microservice.erp.domain.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -25,10 +24,8 @@ import java.util.Collection;
 @EnableGlobalMethodSecurity(prePostEnabled=true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private UserRepository userRepository;
 
-    public SecurityConfig(@Autowired UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public SecurityConfig() {
     }
 
     @Bean
@@ -84,7 +81,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.and()
                 .authorizeRequests().antMatchers("/**").permitAll() //enable to open all
                 .and()
-                .addFilterBefore(new AuthorizationFilter(userRepository), BasicAuthenticationFilter.class);
+                .addFilterBefore(new AuthorizationFilter(), BasicAuthenticationFilter.class);
     }
 
     @Override
@@ -94,7 +91,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService(userRepository)).passwordEncoder(encoder());
+        auth.userDetailsService(userDetailsService(null)).passwordEncoder(encoder());
     }
 
     public static boolean matchAnyAdminRole(String...args) {

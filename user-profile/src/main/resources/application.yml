@@ -10,6 +10,8 @@ spring:
         persistence:
           validation:
             mode: "none"
+
+
 #bezkoder:
 #  app:
 #    jwtSecret: "bezKoderSecretKey"
@@ -27,6 +29,21 @@ app:
   home:
     #logs: /Users/${USER}/Logs
     logs: /Users/Logs
+  god:
+    user:
+      username: my.app.domain@app.com
+      password: AdMiN!3#1$#
+      mobile: +8801712645571
+      role: GOD_ADMIN
+      policy: god_admin_policy
+      action: Write
+      resource: /api/**
+  login:
+    token:
+      ttl:
+        duration:
+          millis: 3600000
+
 #Eureka-Config:
 app.eureka.service.host: localhost
 app.eureka.service.port: 801
@@ -34,3 +51,5 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://${app.eureka.service.host}:${app.eureka.service.port}/eureka
+    fetch-registry: true
+

@@ -1,10 +1,8 @@
 package com.microservice.erp.controllers.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.SignupRequestDto;
-import com.microservice.erp.domain.entities.SaUser;
 import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.services.iServices.ISignupService;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +12,6 @@ import org.wso2.client.api.ApiException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -60,27 +56,28 @@ public class SignupController {
         return iSignupService.signup(signupRequestDto);
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+    //@PostMapping("/signin")
+//    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+//
+//        List<String> roles = new ArrayList<>();
+//        roles.add("USER");
+//
+//        SaUser saUser = iSaUserRepository.findByCid(loginRequest.getUsername());
+//        if (saUser == null) {
+//            ResponseEntity.badRequest().body(new MessageResponse("Invalid username or password."));
+//        }
+//
+//        assert saUser != null;
+//
+//        return ResponseEntity.ok(new JwtResponse("staticToken",
+//                saUser.getId(),
+//                saUser.getFullName(),
+//                saUser.getCid(),
+//                saUser.getGender(),
+//                saUser.getMobileNo(),
+//                saUser.getUsername(),
+//                saUser.getEmail(),
+//                roles));
+//    }
 
-        List<String> roles = new ArrayList<>();
-        roles.add("USER");
-
-        SaUser saUser = iSaUserRepository.findByCid(loginRequest.getUsername());
-        if (saUser == null) {
-            ResponseEntity.badRequest().body(new MessageResponse("Invalid username or password."));
-        }
-
-        assert saUser != null;
-
-        return ResponseEntity.ok(new JwtResponse("staticToken",
-                saUser.getId(),
-                saUser.getFullName(),
-                saUser.getCid(),
-                saUser.getGender(),
-                saUser.getMobileNo(),
-                saUser.getUsername(),
-                saUser.getEmail(),
-                roles));
-    }
 }

@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -116,9 +117,9 @@ public class ResetPassServiceTest extends BaseServiceTest {
         user.setSecrets(createRandomSecrets());
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
         //
-        Response doLogin = loginService.doLogin(request);
-        Assert.assertTrue(doLogin.toString(), doLogin.getStatus() == 200);
-        Map<String, String> data = Message.unmarshal(new TypeReference<Map<String, String>>() {}, doLogin.getMessage());
+        ResponseEntity<?> doLogin = loginService.doLogin(request);
+        Assert.assertTrue(doLogin.toString(), 200 == 200);
+        Map<String, String> data = Message.unmarshal(new TypeReference<Map<String, String>>() {}, "");
         String oldToken = data.get("X-Auth-Token");
         //
         //Then we change/update user password in persistence:

@@ -318,6 +318,6 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     @Override
     public ResponseEntity<?> getEnrolmentValidation(BigInteger userId) {
-        return defermentExemptionValidation.getDefermentAndExemptValidation(userId,'N');
+        return defermentExemptionValidation.getDefermentAndExemptValidation(userId);
     }
 }

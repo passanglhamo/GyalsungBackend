@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
 import java.util.Date;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -62,8 +63,8 @@ public class IDefermentInfoUnitTest {
         ICreateDefermentService.CreateDefermentCommand createCommand =
                 new ICreateDefermentService.CreateDefermentCommand(
                         null,
-                        1L,
-                        1L,
+                        new BigInteger("1"),
+                        new BigInteger("1"),
                         null,
                         new Date(),
                         'P',

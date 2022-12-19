@@ -1,23 +1,29 @@
 package com.microservice.erp.services.impl;
 
 import com.infoworks.lab.beans.tasks.definition.TaskStack;
+import com.infoworks.lab.rest.models.Response;
+import com.microservice.erp.controllers.rest.JwtResponse;
 import com.microservice.erp.domain.models.LoginRequest;
 import com.microservice.erp.domain.repositories.UserRepository;
-import com.microservice.erp.domain.tasks.iam.*;
-import com.infoworks.lab.rest.models.Response;
+import com.microservice.erp.domain.tasks.iam.CheckTokenValidity;
+import com.microservice.erp.domain.tasks.iam.Logout;
+import com.microservice.erp.domain.tasks.iam.MakeTokenExpired;
+import com.microservice.erp.domain.tasks.iam.RefreshToken;
 import com.microservice.erp.services.definition.iLogin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.time.Duration;
 
 @Service
-public class LoginService implements iLogin{
+public class LoginService implements iLogin {
 
     private static Logger LOG = LoggerFactory.getLogger(LoginService.class.getSimpleName());
     private UserRepository userRepository;
@@ -32,25 +38,28 @@ public class LoginService implements iLogin{
     private long tokenTtl;
 
     @Override
-    public Response doLogin(LoginRequest request) {
-        Response response = new Response().setMessage("Not Implemented").setStatus(HttpStatus.NOT_IMPLEMENTED.value());
-        //
-        request.setTokenTtl(tokenTtl);
-        TaskStack loginStack = TaskStack.createSync(true);
-        loginStack.push(new CheckUserExist(userRepository, request.getUsername()));
-        loginStack.push(new Login(userRepository, passwordEncoder, request));
-        loginStack.commit(true, (message, state) -> {
-            LOG.info("Login Status: " + state.name());
-            if (message != null)
-                response.unmarshallingFromMap(message.marshallingToMap(true), true);
-        });
-        //
-        return response;
+    public ResponseEntity<?> doLogin(LoginRequest request) throws IOException {
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(request.toString(), headers);
+
+        String userUrl = "http://localhost:8084/api/user/profile/auth/signin";
+        return restTemplate.exchange(userUrl, HttpMethod.POST, entity, String.class);
+
     }
 
     @Override
-    public Response isValidToken(String token, UserDetails principal) {
-        return new CheckTokenValidity(token, userRepository).execute(null);
+    public ResponseEntity<?> isValidToken(String token, UserDetails principal) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(principal.toString(), headers);
+
+        String userUrl = "http://localhost:8084/api/user/profile/auth/validateToken?token=" + token;
+
+        return restTemplate.exchange(userUrl, HttpMethod.GET, entity, String.class);
     }
 
     @Override

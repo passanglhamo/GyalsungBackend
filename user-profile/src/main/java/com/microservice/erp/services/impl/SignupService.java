@@ -1,13 +1,22 @@
 package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.infoworks.lab.beans.tasks.definition.TaskStack;
+import com.infoworks.lab.jjwt.TokenValidator;
+import com.infoworks.lab.rest.models.Message;
+import com.infoworks.lab.rest.models.Response;
+import com.microservice.erp.controllers.rest.JwtResponse;
+import com.microservice.erp.controllers.rest.LoginRequest;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.*;
 import com.microservice.erp.domain.repositories.ISaRoleRepository;
+import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.domain.repositories.ISignupEmailVerificationCodeRepository;
 import com.microservice.erp.domain.repositories.ISignupSmsOtpRepository;
-import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.services.iServices.ISignupService;
+import com.microservice.erp.task.iam.CheckUserExist;
+import com.microservice.erp.task.iam.Login;
 import com.squareup.okhttp.OkHttpClient;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -16,6 +25,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,6 +36,7 @@ import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizenDetailsResponse;
 import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -44,6 +55,9 @@ public class SignupService implements ISignupService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
+    //private final DataSource<String,LoginRetryCount> cache;
+//    @Value("${app.login.token.ttl.duration.millis}")
+//    private long tokenTtl;
 
 
     @Override
@@ -158,10 +172,11 @@ public class SignupService implements ISignupService {
         saUser.setUsername(signupRequestDto.getCid());
         saUser.setPassword(passwordEncoder.encode(signupRequestDto.getPassword()));
         //todo:set role equal to USER
-        Set<SaRole> saRoles = new HashSet<>();
-        SaRole saRoleDb = iSaRoleRepository.findByRoleId(1);//todo:need to get student user role information
-        saRoles.add(saRoleDb);
-        saUser.setSaRoles(saRoles);
+//        Set<Optional<SaRole>> saRoles = new HashSet<>();
+//        Optional<SaRole> saRoleDb = iSaRoleRepository.findById(1);//todo:need to get student user role information
+//        saRoles.add(saRoleDb);
+        //saUser.setSaRoles(saRoles);
+        saUser.setSecrets(SaUser.createRandomMapOfSecret());
         iSaUserRepository.save(saUser);
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));
     }

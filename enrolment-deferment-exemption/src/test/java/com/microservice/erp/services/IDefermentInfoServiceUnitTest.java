@@ -21,6 +21,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
@@ -105,8 +106,8 @@ public class IDefermentInfoServiceUnitTest {
 
         return new ICreateDefermentService.CreateDefermentCommand(
                 null,
-                1L,
-                1L,
+                new BigInteger("1"),
+                new BigInteger("1"),
                 null,
                 new Date(),
                 'P',
