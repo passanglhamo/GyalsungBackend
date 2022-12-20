@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -98,3 +99,4 @@ public class UserInfoControllerUnitTest {
     }
 
 }
+*/

@@ -1,9 +1,8 @@
+/*
 package com.microservice.erp.repositories;
 
-import com.microservice.erp.domain.entities.UserInfo;
-import com.microservice.erp.domain.models.Gender;
-import com.microservice.erp.domain.repositories.IUserInfoRepository;
-import com.microservice.erp.webapp.config.TestJPAH2Config;
+ import com.microservice.erp.domain.models.Gender;
+ import com.microservice.erp.webapp.config.TestJPAH2Config;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,4 +73,4 @@ public class IUserInfoRepositoryUnitTest {
                 , Sort.by(Sort.Order.asc("name"))));
         paged.get().forEach(userInfo -> System.out.println(userInfo.getName()));
     }
-}
+}*/

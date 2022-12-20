@@ -60,6 +60,7 @@ public class UserProfileDto {
     private String presentGeogName;
     private String presentPlaceName;
     private String presentCountry;
+    private String profilePictureUrl;
     private MultipartFile profilePicture;
     private byte[] profilePhoto;
     //endregion

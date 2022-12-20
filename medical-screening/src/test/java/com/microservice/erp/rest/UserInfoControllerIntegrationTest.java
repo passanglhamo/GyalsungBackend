@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.rest;
 
 import com.microservice.erp.domain.entities.UserInfo;
@@ -64,13 +65,15 @@ public class UserInfoControllerIntegrationTest {
     @Test
     public void query(){
         //
-        /*controller.insert(new UserInfo("Rajib The Coder", Gender.MALE, 24));
+        */
+/*controller.insert(new UserInfo("Rajib The Coder", Gender.MALE, 24));
         controller.insert(new UserInfo("Zepa The Pankha Coder", Gender.MALE, 24));
-        controller.insert(new UserInfo("Passang The Pagla", Gender.MALE, 26));*/
+        controller.insert(new UserInfo("Passang The Pagla", Gender.MALE, 26));*//*
+
         //
         int size = Long.valueOf(controller.getRowCount()).intValue();
         //List<UserInfo> items = controller.query(size, 0);
         //items.stream().forEach(userInfo -> System.out.println(userInfo.getName()));
     }
 
-}
+}*/

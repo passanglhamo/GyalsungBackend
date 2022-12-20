@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -64,3 +65,4 @@ public class UserInfoController {
     }
 
 }
+*/

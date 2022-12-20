@@ -28,7 +28,7 @@ public class Login extends TokenizerTask {
         this.encoder = encoder;
     }
 
-    public Login(ISaUserRepository repository, PasswordEncoder encoder, String username){
+    public Login(ISaUserRepository repository, PasswordEncoder encoder, String username) {
         this(repository, encoder, new Property("username", username));
     }
 
@@ -40,11 +40,13 @@ public class Login extends TokenizerTask {
     public Response getMessage() {
         try {
             Message saved = super.getMessage();
-            Map<String, Object> data = Message.unmarshal(new TypeReference<Map<String, Object>>() {}, saved.getPayload());
+            Map<String, Object> data = Message.unmarshal(new TypeReference<Map<String, Object>>() {
+            }, saved.getPayload());
             saved = new LoginRequest();
             saved.unmarshallingFromMap(data, true);
             return (Response) saved;
-        } catch (IOException e) {}
+        } catch (IOException e) {
+        }
         return super.getMessage();
     }
 
@@ -71,7 +73,8 @@ public class Login extends TokenizerTask {
         //Do the login:
         LoginRequest request = (LoginRequest) getMessage();
         Optional<SaUser> exist = Optional.ofNullable(repository.findByUsername(request.getUsername()));
-        if (exist.isPresent()){
+        //todo:user must able to login using email, username, cid. For that need to find user by email and cid
+        if (exist.isPresent()) {
             //PasswordEncoder::matches(RawPassword, EncodedPassword) == will return true/false
             if (!encoder.matches(request.getPassword(), exist.get().getPassword()))
                 return new Response().setStatus(401).setMessage("Password didn't matched.");
@@ -85,6 +88,7 @@ public class Login extends TokenizerTask {
                 data.put("X-Auth-Token", tokenKey);
                 data.put("userId", exist.get().getId().toString());
                 data.put("roles", exist.get().getRoles().toString());
+                //todo: loop through roles and get access permission
                 return new Response().setStatus(200).setMessage(Message.marshal(data));
             } catch (IOException e) {
                 return new Response().setStatus(500).setMessage(e.getMessage());
