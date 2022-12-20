@@ -1,8 +1,6 @@
 package com.microservice.erp.webapp.config;
 
-import com.microservice.erp.domain.entities.SaPolicy;
 import com.microservice.erp.domain.entities.SaRole;
-import com.microservice.erp.domain.entities.SaStatement;
 import com.microservice.erp.domain.entities.SaUser;
 import com.microservice.erp.domain.helper.Action;
 import com.microservice.erp.domain.repositories.ISaUserRepository;
@@ -92,16 +90,16 @@ public class StartupConfig implements CommandLineRunner {
         //
         SaRole role = new SaRole();
         role.setName(userRole);
-        user.addRoles(role);
+        //user.addRoles(role);
         //
-        SaStatement statement = new SaStatement();
-        statement.setAction(action);
-        statement.setResource(resource);
+//        SaStatement statement = new SaStatement();
+//        statement.setAction(action);
+//        statement.setResource(resource);
         //
-        SaPolicy policy = new SaPolicy();
-        policy.setServiceName(policyName);
-        policy.addStatements(statement);
-        role.addPolicies(policy);
+//        SaPolicy policy = new SaPolicy();
+//        policy.setServiceName(policyName);
+//        policy.addStatements(statement);
+//        role.addPolicies(policy);
         //
         userRepository.save(user);
     }
