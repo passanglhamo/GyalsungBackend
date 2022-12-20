@@ -1,14 +1,6 @@
 package com.microservice.erp.services.impl;
 
-import com.infoworks.lab.beans.tasks.definition.TaskStack;
-import com.infoworks.lab.rest.models.Response;
-import com.microservice.erp.controllers.rest.JwtResponse;
 import com.microservice.erp.domain.models.LoginRequest;
-import com.microservice.erp.domain.repositories.UserRepository;
-import com.microservice.erp.domain.tasks.iam.CheckTokenValidity;
-import com.microservice.erp.domain.tasks.iam.Logout;
-import com.microservice.erp.domain.tasks.iam.MakeTokenExpired;
-import com.microservice.erp.domain.tasks.iam.RefreshToken;
 import com.microservice.erp.services.definition.iLogin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,17 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.time.Duration;
 
 @Service
 public class LoginService implements iLogin {
 
     private static Logger LOG = LoggerFactory.getLogger(LoginService.class.getSimpleName());
-    private UserRepository userRepository;
+
     private PasswordEncoder passwordEncoder;
 
-    public LoginService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public LoginService(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -62,25 +52,25 @@ public class LoginService implements iLogin {
         return restTemplate.exchange(userUrl, HttpMethod.GET, entity, String.class);
     }
 
-    @Override
-    public Response refreshToken(String token, UserDetails principal) {
-        return new RefreshToken(token, userRepository, Duration.ofMillis(tokenTtl)).execute(null);
-    }
-
-    @Override
-    public Response doLogout(String token, UserDetails principal) {
-        Response response = new Response().setMessage("Not Implemented").setStatus(HttpStatus.NOT_IMPLEMENTED.value());
-        //
-        TaskStack logoutStack = TaskStack.createSync(true);
-        logoutStack.push(new CheckTokenValidity(token, userRepository));
-        logoutStack.push(new Logout(token));
-        logoutStack.push(new MakeTokenExpired(token));
-        logoutStack.commit(true, (message, state) -> {
-            LOG.info("Logout Status: " + state.name());
-            if (message != null)
-                response.unmarshallingFromMap(message.marshallingToMap(true), true);
-        });
-        //
-        return response;
-    }
+//    @Override
+//    public Response refreshToken(String token, UserDetails principal) {
+//        return new RefreshToken(token, userRepository, Duration.ofMillis(tokenTtl)).execute(null);
+//    }
+//
+//    @Override
+//    public Response doLogout(String token, UserDetails principal) {
+//        Response response = new Response().setMessage("Not Implemented").setStatus(HttpStatus.NOT_IMPLEMENTED.value());
+//        //
+//        TaskStack logoutStack = TaskStack.createSync(true);
+//        logoutStack.push(new CheckTokenValidity(token, userRepository));
+//        logoutStack.push(new Logout(token));
+//        logoutStack.push(new MakeTokenExpired(token));
+//        logoutStack.commit(true, (message, state) -> {
+//            LOG.info("Logout Status: " + state.name());
+//            if (message != null)
+//                response.unmarshallingFromMap(message.marshallingToMap(true), true);
+//        });
+//        //
+//        return response;
+//    }
 }

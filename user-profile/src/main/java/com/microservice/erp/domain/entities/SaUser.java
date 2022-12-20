@@ -46,14 +46,9 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
     @Column(name = "gender", columnDefinition = "char(1)")
     private Character gender;
 
-    //    @NotNull(message = "DOB cannot be null")
-//    @Past(message = "DOB must be greater than now")
-//    @Basic(optional = false)
     @Column(name = "dob")
     private Date dob;
 
-    //    @NotNull(message = "CID cannot be null")
-//    @Basic(optional = false)
     @Column(name = "cid", columnDefinition = "varchar(255)")
     private String cid;
 
@@ -178,8 +173,6 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
     @JsonIgnore
     private Map<Integer, String> secrets;
 
-//    @ManyToMany(targetEntity = SaPolicy.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    private Set<SaPolicy> policies;
 
     private boolean enabled;
 
@@ -193,14 +186,6 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
         return secrets;
     }
 
-//    public SaUser addPolicies(SaPolicy... policies) {
-//        if (getPolicies() == null) {
-//            setPolicies(new HashSet<>());
-//        }
-//        getPolicies().addAll(Arrays.asList(policies));
-//        return this;
-//    }
-//
     public SaUser addRoles(SaRole... roles) {
         if (getRoles() == null) {
             setRoles(new HashSet<>());

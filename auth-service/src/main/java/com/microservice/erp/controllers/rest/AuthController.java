@@ -1,16 +1,11 @@
 package com.microservice.erp.controllers.rest;
 
-import com.infoworks.lab.jjwt.TokenValidator;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.data.base.DataSource;
-import com.microservice.erp.domain.models.ChangePassRequest;
 import com.microservice.erp.domain.models.LoginRequest;
 import com.microservice.erp.domain.models.LoginRetryCount;
-import com.microservice.erp.domain.models.NewAccountRequest;
 import com.microservice.erp.services.definition.iLogin;
-import com.microservice.erp.services.definition.iRegistration;
 import com.microservice.erp.services.definition.iResetPassword;
-import com.microservice.erp.webapp.config.SecurityConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,8 +27,8 @@ public class AuthController {
 
     private static Logger LOG = LoggerFactory.getLogger(AuthController.class.getSimpleName());
     private iLogin login;
-    private iRegistration registration;
-    private iResetPassword resetPassword;
+    //    private iRegistration registration;
+   // private iResetPassword resetPassword;
     private DataSource<String, LoginRetryCount> cache;
 
     @Value("${app.login.retry.count}")
@@ -43,25 +38,21 @@ public class AuthController {
     private long blockDurationInMillis;
 
     public AuthController(iLogin login
-            , iRegistration registration
-            , iResetPassword resetPassword
             , @Qualifier("loginRetryCount") DataSource<String, LoginRetryCount> cache) {
         this.login = login;
-        this.registration = registration;
-        this.resetPassword = resetPassword;
         this.cache = cache;
     }
 
-    @GetMapping("/isAccountExist")
-    public ResponseEntity<String> isExist(@RequestParam("username") String username) {
-        Response response = registration.isAccountExist(username);
-        if (response.getStatus() == HttpStatus.OK.value())
-            return ResponseEntity.ok(response.toString());
-        else
-            return ResponseEntity.status(response.getStatus()).body(response.toString());
-    }
+//    @GetMapping("/isAccountExist")
+//    public ResponseEntity<String> isExist(@RequestParam("username") String username) {
+//        Response response = registration.isAccountExist(username);
+//        if (response.getStatus() == HttpStatus.OK.value())
+//            return ResponseEntity.ok(response.toString());
+//        else
+//            return ResponseEntity.status(response.getStatus()).body(response.toString());
+//    }
 
-    // For future reference
+    // Commented for
 //    @PostMapping("/new/user/account")
 //    public ResponseEntity<String> newUserAccount(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
 //            , @ApiIgnore @AuthenticationPrincipal UserDetails principal
@@ -186,7 +177,7 @@ public class AuthController {
     @GetMapping("/isValidToken")
     public ResponseEntity<?> isValid(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
             , @ApiIgnore @AuthenticationPrincipal UserDetails principal) {
-        return login.isValidToken(token,principal);
+        return login.isValidToken(token, principal);
     }
 
 //    @GetMapping("/refreshToken")

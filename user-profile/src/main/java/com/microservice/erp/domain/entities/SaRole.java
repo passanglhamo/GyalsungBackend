@@ -2,8 +2,6 @@ package com.microservice.erp.domain.entities;
 
 import javax.persistence.*;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -17,8 +15,6 @@ public class SaRole extends Auditable<BigInteger, Long> {
     @ManyToMany(targetEntity = SaUser.class, fetch = FetchType.LAZY)
     private Set<SaUser> users;
 
-//    @ManyToMany(targetEntity = SaPolicy.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    private Set<SaPolicy> policies;
 
     public String getName() {
         return name;
@@ -36,29 +32,6 @@ public class SaRole extends Auditable<BigInteger, Long> {
         this.users = users;
     }
 
-//    public Set<SaPolicy> getPolicies() {
-//        return policies;
-//    }
-//
-//    public void setPolicies(Set<SaPolicy> policies) {
-//        this.policies = policies;
-//    }
-
-    public SaRole addUsers(SaUser... users) {
-        if (getUsers() == null) {
-            setUsers(new HashSet<>());
-        }
-        getUsers().addAll(Arrays.asList(users));
-        return this;
-    }
-
-//    public SaRole addPolicies(SaPolicy... policies) {
-//        if (getPolicies() == null) {
-//            setPolicies(new HashSet<>());
-//        }
-//        getPolicies().addAll(Arrays.asList(policies));
-//        return this;
-//    }
 
     @Override
     public boolean equals(Object o) {

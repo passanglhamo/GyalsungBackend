@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.webapp.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,3 +77,4 @@ public class TestJPAH2Config {
         return hibernateProperties;
     }
 }
+*/

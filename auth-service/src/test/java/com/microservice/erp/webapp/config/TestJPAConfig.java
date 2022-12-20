@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.webapp.config;
 
 import com.infoworks.lab.jsql.JsqlConfig;
@@ -89,3 +90,4 @@ public class TestJPAConfig {
     }
 
 }
+*/

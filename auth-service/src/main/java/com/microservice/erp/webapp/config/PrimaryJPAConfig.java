@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.webapp.config;
 
 import com.microservice.erp.domain.entities.Username;
@@ -110,3 +111,4 @@ public class PrimaryJPAConfig {
     }
 
 }
+*/

@@ -1,8 +1,6 @@
 package com.microservice.erp.domain.entities;
 
-import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.math.BigInteger;
 

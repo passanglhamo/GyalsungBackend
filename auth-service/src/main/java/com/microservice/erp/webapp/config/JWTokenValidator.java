@@ -40,15 +40,12 @@ public class JWTokenValidator extends JWTValidator {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        //HttpEntity<String> request = headerToken.tokenHeader(authHeader);
         HttpEntity<String> entity = new HttpEntity<>(token, headers);
 
-        //String userUrl = "http://localhost:8084/api/user/profile/signup/validateToken/{token}";
         String userUrl = "http://localhost:8084/api/user/profile/auth/validateToken?token=" + token;
 
         ResponseEntity<?> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, entity, String.class);
-        //ResponseEntity<?> responseEntity =  userClient.validateToken(token);
-//        Response response = tokenValidity.execute(null);
+
         return userResponse.getStatusCode().value() == 200;
     }
 

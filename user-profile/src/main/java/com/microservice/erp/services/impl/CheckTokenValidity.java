@@ -30,7 +30,14 @@ public class CheckTokenValidity extends TokenizerTask {
         String token = getPropertyValue("token").toString();
         JWTHeader header = TokenValidator.parseHeader(token, JWTHeader.class);
         JWTPayload payload = TokenValidator.parsePayload(token, JWTPayload.class);
-        Optional<SaUser> exist = Optional.ofNullable(repository.findByUsername(payload.getIss()));
+        Optional<SaUser> exist;
+        exist = Optional.ofNullable(repository.findByUsername(payload.getIss()));
+        if(!exist.isPresent()){
+            exist = Optional.ofNullable(repository.findByCid(payload.getIss()));
+        }
+        if(!exist.isPresent()){
+            exist = Optional.ofNullable(repository.findByEmail(payload.getIss()));
+        }
         if (exist.isPresent()){
             String secret = getSecret(exist.get(), Integer.valueOf(header.getKid()));
             try {
