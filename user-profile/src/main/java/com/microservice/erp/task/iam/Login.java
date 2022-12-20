@@ -72,8 +72,14 @@ public class Login extends TokenizerTask {
             throw new RuntimeException("UserRepository must not be null!");
         //Do the login:
         LoginRequest request = (LoginRequest) getMessage();
-        Optional<SaUser> exist = Optional.ofNullable(repository.findByUsername(request.getUsername()));
-        //todo:user must able to login using email, username, cid. For that need to find user by email and cid
+        Optional<SaUser> exist;
+        exist = Optional.ofNullable(repository.findByUsername(request.getUsername()));
+        if (!exist.isPresent()) {
+            exist = Optional.ofNullable(repository.findByCid(request.getUsername()));
+        }
+        if (!exist.isPresent()) {
+            exist = Optional.ofNullable(repository.findByEmail(request.getUsername()));
+        }
         if (exist.isPresent()) {
             //PasswordEncoder::matches(RawPassword, EncodedPassword) == will return true/false
             if (!encoder.matches(request.getPassword(), exist.get().getPassword()))
@@ -88,7 +94,6 @@ public class Login extends TokenizerTask {
                 data.put("X-Auth-Token", tokenKey);
                 data.put("userId", exist.get().getId().toString());
                 data.put("roles", exist.get().getRoles().toString());
-                //todo: loop through roles and get access permission
                 return new Response().setStatus(200).setMessage(Message.marshal(data));
             } catch (IOException e) {
                 return new Response().setStatus(500).setMessage(e.getMessage());

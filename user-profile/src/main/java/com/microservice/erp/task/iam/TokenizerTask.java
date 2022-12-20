@@ -38,6 +38,7 @@ public abstract class TokenizerTask extends AbstractTask<Response, Response> {
         if (exist.getAuthorities().size() > 0){
             String[] roles = AuthorityUtils.authorityListToSet(exist.getAuthorities()).toArray(new String[0]);
             payload = payload.addData("roles", String.join(",", roles));
+            //todo: need to get permissions by looping through ROLES.
         }
         //
         TokenProvider token = new JWTokenProvider(secret)

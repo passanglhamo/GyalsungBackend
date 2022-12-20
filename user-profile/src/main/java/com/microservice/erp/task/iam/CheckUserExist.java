@@ -29,14 +29,21 @@ public class CheckUserExist extends AbstractTask<Message, Response> {
     @Override
     public Response execute(Message message) throws RuntimeException {
         String username = (accountRequest != null) ? accountRequest.getUsername() : getPropertyValue("username").toString();
-        if (repository != null){
-            Optional<SaUser> optUser = Optional.ofNullable(repository.findByUsername(username));
-            if (optUser.isPresent()){
+        if (repository != null) {
+            Optional<SaUser> optUser;
+            optUser = Optional.ofNullable(repository.findByUsername(username));//login using username
+            if (!optUser.isPresent()) {
+                optUser = Optional.ofNullable(repository.findByCid(username));//login using cid
+            }
+            if (!optUser.isPresent()) {
+                optUser = Optional.ofNullable(repository.findByEmail(username));//login using email
+            }
+            if (optUser.isPresent()) {
                 return (accountRequest == null)
                         ? new NewAccountRequest(username, null, null, null)
-                                                .setStatus(200).setMessage(username + " exist.")
+                        .setStatus(200).setMessage(username + " exist.")
                         : accountRequest.setStatus(200).setMessage(username + " exist.");
-            }else {
+            } else {
                 return accountRequest.setStatus(404).setMessage(username + " doesn't exist.");
             }
         }
