@@ -7,14 +7,23 @@ import com.infoworks.lab.jwtoken.definition.TokenProvider;
 import com.infoworks.lab.jwtoken.services.JWTokenProvider;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.sql.query.models.Property;
+import com.microservice.erp.domain.dao.RoleWiseAccessPermissionDao;
+import com.microservice.erp.domain.dto.PermissionListDto;
 import com.microservice.erp.domain.entities.SaUser;
+import com.microservice.erp.domain.helper.Permission;
+import com.microservice.erp.services.impl.RoleWiseAccessPermissionService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.time.Duration;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public abstract class TokenizerTask extends AbstractTask<Response, Response> {
 
@@ -22,32 +31,31 @@ public abstract class TokenizerTask extends AbstractTask<Response, Response> {
         super(properties);
     }
 
-    protected String getToken(SaUser exist, Calendar timeToLive) {
-        Integer kid = getRandomSecretKey(exist.getSecrets());
-        String secret = getSecret(exist, kid);
+    protected String getToken(SaUser saUser, Calendar timeToLive) {
+        Integer kid = getRandomSecretKey(saUser.getSecrets());
+        String secret = getSecret(saUser, kid);
         //
         JWTHeader header = new JWTHeader().setTyp("round").setKid(kid.toString());
         JWTPayload payload = new JWTPayload()
-                .setSub(exist.getUsername())
-                .setIss(exist.getUsername())
+                .setSub(saUser.getUsername())
+                .setIss(saUser.getUsername())
                 .setIat(new Date().getTime())
                 .setExp(timeToLive.getTimeInMillis())
-                .addData("mobile", exist.getMobileNo())
-                .addData("email", exist.getEmail());
+                .addData("mobile", saUser.getMobileNo())
+                .addData("email", saUser.getEmail());
         //Adding Roles to Claim:
-        if (exist.getAuthorities().size() > 0){
-            String[] roles = AuthorityUtils.authorityListToSet(exist.getAuthorities()).toArray(new String[0]);
+        if (saUser.getAuthorities().size() > 0) {
+            String[] roles = AuthorityUtils.authorityListToSet(saUser.getAuthorities()).toArray(new String[0]);
             payload = payload.addData("roles", String.join(",", roles));
-            //todo: need to get permissions by looping through ROLES.
         }
-        //
+
         TokenProvider token = new JWTokenProvider(secret)
                 .setHeader(header)
                 .setPayload(payload);
         return token.generateToken(timeToLive);
     }
 
-    protected Integer getRandomSecretKey(Map<Integer, String> secrets){
+    protected Integer getRandomSecretKey(Map<Integer, String> secrets) {
         int randIndex = new Random().nextInt(secrets.size());
         Integer kid = secrets.keySet().toArray(new Integer[0])[randIndex];
         return kid;

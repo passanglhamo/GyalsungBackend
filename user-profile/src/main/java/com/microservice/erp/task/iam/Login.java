@@ -6,34 +6,41 @@ import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.sql.query.models.Property;
 import com.microservice.erp.controllers.rest.LoginRequest;
+import com.microservice.erp.domain.dto.PermissionListDto;
 import com.microservice.erp.domain.entities.SaUser;
+import com.microservice.erp.domain.helper.Permission;
 import com.microservice.erp.domain.repositories.ISaUserRepository;
+import com.microservice.erp.services.impl.RoleWiseAccessPermissionService;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.time.Duration;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class Login extends TokenizerTask {
 
     private ISaUserRepository repository;
     private PasswordEncoder encoder;
 
-    public Login(ISaUserRepository repository, PasswordEncoder encoder, Property... properties) {
+    private RoleWiseAccessPermissionService roleWiseAccessPermissionService;
+
+
+    public Login(ISaUserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService, Property... properties) {
         super(properties);
         this.repository = repository;
         this.encoder = encoder;
+        this.roleWiseAccessPermissionService = roleWiseAccessPermissionService;
     }
 
-    public Login(ISaUserRepository repository, PasswordEncoder encoder, String username) {
-        this(repository, encoder, new Property("username", username));
+    public Login(ISaUserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService, String username) {
+        this(repository, encoder, roleWiseAccessPermissionService, new Property("username", username));
     }
 
-    public Login(ISaUserRepository repository, PasswordEncoder encoder, LoginRequest request) {
-        this(repository, encoder, request.getRow().getProperties().toArray(new Property[0]));
+    public Login(ISaUserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService, LoginRequest request) {
+        this(repository, encoder, roleWiseAccessPermissionService, request.getRow().getProperties().toArray(new Property[0]));
     }
 
     @Override
@@ -72,30 +79,54 @@ public class Login extends TokenizerTask {
             throw new RuntimeException("UserRepository must not be null!");
         //Do the login:
         LoginRequest request = (LoginRequest) getMessage();
-        Optional<SaUser> exist;
-        exist = Optional.ofNullable(repository.findByUsername(request.getUsername()));
-        if (!exist.isPresent()) {
-            exist = Optional.ofNullable(repository.findByCid(request.getUsername()));
+        Optional<SaUser> saUser;
+        saUser = Optional.ofNullable(repository.findByUsername(request.getUsername()));
+        if (!saUser.isPresent()) {
+            saUser = Optional.ofNullable(repository.findByCid(request.getUsername()));
         }
-        if (!exist.isPresent()) {
-            exist = Optional.ofNullable(repository.findByEmail(request.getUsername()));
+        if (!saUser.isPresent()) {
+            saUser = Optional.ofNullable(repository.findByEmail(request.getUsername()));
         }
-        if (exist.isPresent()) {
+        if (saUser.isPresent()) {
             //PasswordEncoder::matches(RawPassword, EncodedPassword) == will return true/false
-            if (!encoder.matches(request.getPassword(), exist.get().getPassword()))
+            if (!encoder.matches(request.getPassword(), saUser.get().getPassword()))
                 return new Response().setStatus(401).setMessage("Password didn't matched.");
 
             //Now existing password matched: lets create the JWT token;
             try {
                 //We create a token for 1 Hour:
                 Calendar timeToLive = getTimeToLive();
-                String tokenKey = getToken(exist.get(), timeToLive);
-                Map<String, String> data = new HashMap<>();
-                data.put("X-Auth-Token", tokenKey);
-                data.put("userId", exist.get().getId().toString());
-                data.put("roles", exist.get().getRoles().toString());
+                String tokenKey = getToken(saUser.get(), timeToLive);
+
+                Map<String, Object> data = new HashMap<>();
+                data.put("accessToken", tokenKey);
+                data.put("userId", saUser.get().getId());
+                data.put("roles", saUser.get().getRoles());
+
+                //to get role wise access permission from DB
+                Set<GrantedAuthority> accessPermissions = new HashSet<>();
+                BigInteger roleId = new BigInteger("2");//todo:need to get roleId from above roles loop roles
+                List<PermissionListDto> permissionListDtos = roleWiseAccessPermissionService.getRoleMappedScreens(roleId);
+                for (PermissionListDto permissionListDto : permissionListDtos) {
+                     Integer screenId = permissionListDto.getScreen_id();
+                    //Screen permissions
+                    if (permissionListDto.getView_allowed() != null && permissionListDto.getView_allowed() == 'y') {
+                        accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.VIEW));
+                    }
+                    if (permissionListDto.getSave_allowed() != null && permissionListDto.getSave_allowed() == 'y') {
+                        accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.DELETE));
+                    }
+                    if (permissionListDto.getEdit_allowed() != null && permissionListDto.getEdit_allowed() == 'y') {
+                        accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.EDIT));
+                    }
+                    if (permissionListDto.getDelete_allowed() != null && permissionListDto.getDelete_allowed() == 'y') {
+                        accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.DELETE));
+                    }
+                }
+                data.put("accessPermissions", accessPermissions);
+
                 return new Response().setStatus(200).setMessage(Message.marshal(data));
-            } catch (IOException e) {
+             } catch (IOException e) {
                 return new Response().setStatus(500).setMessage(e.getMessage());
             }
         } else {

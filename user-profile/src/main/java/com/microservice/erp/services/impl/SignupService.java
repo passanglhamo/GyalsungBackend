@@ -1,22 +1,16 @@
 package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.infoworks.lab.beans.tasks.definition.TaskStack;
-import com.infoworks.lab.jjwt.TokenValidator;
-import com.infoworks.lab.rest.models.Message;
-import com.infoworks.lab.rest.models.Response;
-import com.microservice.erp.controllers.rest.JwtResponse;
-import com.microservice.erp.controllers.rest.LoginRequest;
 import com.microservice.erp.domain.dto.*;
-import com.microservice.erp.domain.entities.*;
+import com.microservice.erp.domain.entities.ApiAccessToken;
+import com.microservice.erp.domain.entities.SaUser;
+import com.microservice.erp.domain.entities.SignupEmailVerificationCode;
+import com.microservice.erp.domain.entities.SignupSmsOtp;
 import com.microservice.erp.domain.repositories.ISaRoleRepository;
 import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.domain.repositories.ISignupEmailVerificationCodeRepository;
 import com.microservice.erp.domain.repositories.ISignupSmsOtpRepository;
 import com.microservice.erp.services.iServices.ISignupService;
-import com.microservice.erp.task.iam.CheckUserExist;
-import com.microservice.erp.task.iam.Login;
 import com.squareup.okhttp.OkHttpClient;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -25,7 +19,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,10 +29,12 @@ import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizenDetailsResponse;
 import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Service

@@ -20,7 +20,7 @@ public class AuthController {
 
 
     @PostMapping("/signin")
-    public ResponseEntity<JwtResponse> authenticateUser(@RequestBody LoginRequest loginRequest) throws IOException {
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) throws IOException {
 
         return iAuthService.doLogin(loginRequest);
     }

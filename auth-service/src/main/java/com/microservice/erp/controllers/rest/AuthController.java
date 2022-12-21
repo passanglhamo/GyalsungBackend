@@ -28,7 +28,7 @@ public class AuthController {
     private static Logger LOG = LoggerFactory.getLogger(AuthController.class.getSimpleName());
     private iLogin login;
     //    private iRegistration registration;
-   // private iResetPassword resetPassword;
+    // private iResetPassword resetPassword;
     private DataSource<String, LoginRetryCount> cache;
 
     @Value("${app.login.retry.count}")
@@ -90,7 +90,6 @@ public class AuthController {
 
     @PostMapping("/nonblock/login")
     public ResponseEntity<?> nonBlockingLogin(@Valid @RequestBody LoginRequest request) throws IOException {
-        //
         return login.doLogin(request);
 
     }

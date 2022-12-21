@@ -1,5 +1,8 @@
 package com.microservice.erp.services.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.infoworks.lab.rest.models.Message;
+import com.microservice.erp.controllers.rest.JwtResponse;
 import com.microservice.erp.domain.models.LoginRequest;
 import com.microservice.erp.services.definition.iLogin;
 import org.slf4j.Logger;
@@ -12,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class LoginService implements iLogin {
@@ -36,8 +41,10 @@ public class LoginService implements iLogin {
         HttpEntity<String> entity = new HttpEntity<>(request.toString(), headers);
 
         String userUrl = "http://localhost:8084/api/user/profile/auth/signin";
-        return restTemplate.exchange(userUrl, HttpMethod.POST, entity, String.class);
-
+        ResponseEntity<String> loginResponse = restTemplate.exchange(userUrl, HttpMethod.POST, entity, String.class);
+        JwtResponse data = Message.unmarshal(new TypeReference<JwtResponse>() {
+        }, loginResponse.getBody());
+        return ResponseEntity.ok(data);
     }
 
     @Override
