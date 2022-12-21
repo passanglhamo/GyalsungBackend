@@ -88,10 +88,10 @@ public class StartupConfig implements CommandLineRunner {
 
         user.setSecrets(SaUser.createRandomMapOfSecret());
         //
-        SaRole role = new SaRole();
-        role.setRoleName(userRole);
-        role.setIsOpenUser('y');
-        user.addRoles(role);
+//        SaRole role = new SaRole();
+//        role.setRoleName(userRole);
+//        role.setIsOpenUser('y');
+//        user.addRoles(role);
         //
 //        SaStatement statement = new SaStatement();
 //        statement.setAction(action);

@@ -3,7 +3,7 @@ package com.microservice.erp.domain.entities;
 import javax.persistence.*;
 import java.math.BigInteger;
 
-@Entity(name = "sa_roles")
+@Entity(name = "sa_role")
 @AttributeOverride(name = "id", column = @Column(name = "role_id", columnDefinition = "bigint"))
 public class SaRole extends Auditable<BigInteger, Long> {
 

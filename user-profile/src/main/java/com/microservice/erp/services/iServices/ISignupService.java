@@ -18,6 +18,7 @@ public interface ISignupService {
     ResponseEntity<?> verifyOtp(NotificationRequestDto notificationRequestDto);
 
     ResponseEntity<?> receiveEmailVcode(NotificationRequestDto notificationRequestDto) throws Exception;
+
     ResponseEntity<?> verifyEmailVcode(NotificationRequestDto notificationRequestDto);
 
     ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException;

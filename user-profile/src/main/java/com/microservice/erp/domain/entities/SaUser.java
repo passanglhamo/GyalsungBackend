@@ -157,26 +157,26 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
     private String remarks;
 
     @NotNull
-    @Column(name = "signup_user")
+    @Column(name = "signup_user", columnDefinition = "char(1)")
     private Character signupUser;
 
     @NotNull
-    @Column(name = "status")
+    @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
 
 //    @ManyToMany(targetEntity = SaRole.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //    private Set<SaRole> roles;
-
+//todo: need to join with sa_user_role_mapping table
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "sa_user_roles",
+    @JoinTable(name = "sa_user_role_mapping",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<SaRole> roles = new HashSet<>();
 
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "sa_users_secrets")
-    @Column(name = "secrets")
+    @CollectionTable(name = "sa_user_secret")
+    @Column(name = "secret")
     @JsonIgnore
     private Map<Integer, String> secrets;
 
@@ -219,6 +219,7 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
         if (roles == null) return new ArrayList<>();
         return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(toList());
     }
+
     @Override
     public String getPassword() {
         return password;
