@@ -7,6 +7,7 @@ import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.sql.query.models.Property;
 import com.microservice.erp.controllers.rest.LoginRequest;
 import com.microservice.erp.domain.dto.PermissionListDto;
+import com.microservice.erp.domain.entities.SaRole;
 import com.microservice.erp.domain.entities.SaUser;
 import com.microservice.erp.domain.helper.Permission;
 import com.microservice.erp.domain.repositories.ISaUserRepository;
@@ -104,30 +105,31 @@ public class Login extends TokenizerTask {
                 data.put("roles", saUser.get().getRoles());
 
                 //todo: need to check without data in sa_screen
-                //to get role wise access permission from DB
                 Set<GrantedAuthority> accessPermissions = new HashSet<>();
-                BigInteger roleId = new BigInteger("1");//todo:need to get roleId from above roles loop roles
-                List<PermissionListDto> permissionListDtos = roleWiseAccessPermissionService.getRoleMappedScreens(roleId);
-                for (PermissionListDto permissionListDto : permissionListDtos) {
-                     Integer screenId = permissionListDto.getScreen_id();
-                    //Screen permissions
-                    if (permissionListDto.getView_allowed() != null && permissionListDto.getView_allowed() == 'y') {
-                        accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.VIEW));
-                    }
-                    if (permissionListDto.getSave_allowed() != null && permissionListDto.getSave_allowed() == 'y') {
-                        accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.DELETE));
-                    }
-                    if (permissionListDto.getEdit_allowed() != null && permissionListDto.getEdit_allowed() == 'y') {
-                        accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.EDIT));
-                    }
-                    if (permissionListDto.getDelete_allowed() != null && permissionListDto.getDelete_allowed() == 'y') {
-                        accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.DELETE));
+                for (SaRole saRole : saUser.get().getRoles()) {
+                    BigInteger roleId = saRole.getId();
+                    List<PermissionListDto> permissionListDtos = roleWiseAccessPermissionService.getRoleMappedScreens(roleId);
+                    for (PermissionListDto permissionListDto : permissionListDtos) {
+                        Integer screenId = permissionListDto.getScreen_id();
+                        //Screen permissions
+                        if (permissionListDto.getView_allowed() != null && permissionListDto.getView_allowed() == 'Y') {
+                            accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.VIEW));
+                        }
+                        if (permissionListDto.getSave_allowed() != null && permissionListDto.getSave_allowed() == 'Y') {
+                            accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.DELETE));
+                        }
+                        if (permissionListDto.getEdit_allowed() != null && permissionListDto.getEdit_allowed() == 'Y') {
+                            accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.EDIT));
+                        }
+                        if (permissionListDto.getDelete_allowed() != null && permissionListDto.getDelete_allowed() == 'Y') {
+                            accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.DELETE));
+                        }
                     }
                 }
                 data.put("accessPermissions", accessPermissions);
 
                 return new Response().setStatus(200).setMessage(Message.marshal(data));
-             } catch (IOException e) {
+            } catch (IOException e) {
                 return new Response().setStatus(500).setMessage(e.getMessage());
             }
         } else {
