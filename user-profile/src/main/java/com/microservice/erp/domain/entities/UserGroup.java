@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.entities;
 
 import javax.persistence.Basic;
@@ -10,10 +11,12 @@ import javax.validation.constraints.Size;
 import javax.persistence.AttributeOverride;
 import java.util.Date;
 
+*/
 /**
  * @author Rajib Kumer Ghosh
  *
- */
+ *//*
+
 
 @Entity(name = "SYS_USERGROUP")
 @AttributeOverride(name = "id", column = @Column(name = "GROUPID"))
@@ -60,3 +63,4 @@ public class UserGroup extends Auditable<Long, Long> {
         this.versionNo = versionNo;
     }
 }
+*/

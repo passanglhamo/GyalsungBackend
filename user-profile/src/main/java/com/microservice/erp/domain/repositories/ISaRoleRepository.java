@@ -9,7 +9,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 
-public interface ISaRoleRepository extends JpaRepository<SaRole, Integer> {
+public interface ISaRoleRepository extends JpaRepository<SaRole, BigInteger> {
 
-    List<SaRole> findAllByOrderByNameAsc();
+    List<SaRole> findAllByOrderByRoleNameAsc();
 }

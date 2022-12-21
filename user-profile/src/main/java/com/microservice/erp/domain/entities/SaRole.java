@@ -2,47 +2,38 @@ package com.microservice.erp.domain.entities;
 
 import javax.persistence.*;
 import java.math.BigInteger;
-import java.util.Objects;
-import java.util.Set;
 
-@Entity
-@Table(name = "roles", indexes = {@Index(name = "idx_name", columnList = "name")})
+@Entity(name = "sa_roles")
+@AttributeOverride(name = "id", column = @Column(name = "role_id", columnDefinition = "bigint"))
 public class SaRole extends Auditable<BigInteger, Long> {
 
-    @Column(length = 256, unique = true, nullable = false)
-    private String name;
+    //region private variables
+    @Column(name = "role_name", columnDefinition = "varchar(255)")
+    private String roleName;
 
-    @ManyToMany(targetEntity = SaUser.class, fetch = FetchType.LAZY)
-    private Set<SaUser> users;
+    @Column(name = "is_open_user", columnDefinition = "char(1)")
+    private Character isOpenUser;
 
 
-    public String getName() {
-        return name;
+    //endregion
+
+    //region setters and getters
+
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
-    public Set<SaUser> getUsers() {
-        return users;
+    public Character getIsOpenUser() {
+        return isOpenUser;
     }
 
-    public void setUsers(Set<SaUser> users) {
-        this.users = users;
+    public void setIsOpenUser(Character isOpenUser) {
+        this.isOpenUser = isOpenUser;
     }
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SaRole role = (SaRole) o;
-        return getId().equals(role.getId()) && name.equals(role.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), name);
-    }
+    //endregion
 }

@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.entities;
 
 import java.io.Serializable;
@@ -11,10 +12,12 @@ import javax.persistence.IdClass;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+*/
 /**
  * @author Rajib Kumer Ghosh
  *
- */
+ *//*
+
 
 @Entity(name = "SYS_USERWISEGROUPMAP")
 @IdClass(UserWiseGroupMap.UserWiseGroupMapPK.class)
@@ -106,3 +109,4 @@ public class UserWiseGroupMap {
         this.groupName = groupName;
     }
 }
+*/

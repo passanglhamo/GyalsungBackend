@@ -38,7 +38,7 @@ public class SaUserService implements ISaUserService {
 
     @Override
     public ResponseEntity<?> getAllRoles() {
-        List<SaRole> saRoleList = iSaRoleRepository.findAllByOrderByNameAsc();
+        List<SaRole> saRoleList = iSaRoleRepository.findAllByOrderByRoleNameAsc();
         if (saRoleList.size() > 0) {
             return ResponseEntity.ok(saRoleList);
         } else {

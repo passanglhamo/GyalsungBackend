@@ -2,10 +2,7 @@ package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.*;
-import com.microservice.erp.domain.entities.ApiAccessToken;
-import com.microservice.erp.domain.entities.SaUser;
-import com.microservice.erp.domain.entities.SignupEmailVerificationCode;
-import com.microservice.erp.domain.entities.SignupSmsOtp;
+import com.microservice.erp.domain.entities.*;
 import com.microservice.erp.domain.repositories.ISaRoleRepository;
 import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.domain.repositories.ISignupEmailVerificationCodeRepository;
@@ -29,12 +26,10 @@ import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizenDetailsResponse;
 import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -166,11 +161,13 @@ public class SignupService implements ISignupService {
         saUser.setSignupUser('Y');
         saUser.setUsername(signupRequestDto.getCid());
         saUser.setPassword(passwordEncoder.encode(signupRequestDto.getPassword()));
-        //todo:set role equal to USER
-//        Set<Optional<SaRole>> saRoles = new HashSet<>();
-//        Optional<SaRole> saRoleDb = iSaRoleRepository.findById(1);//todo:need to get student user role information
-//        saRoles.add(saRoleDb);
-        //saUser.setSaRoles(saRoles);
+        //todo:set role equal to open user, meaning student
+        Set<SaRole> saRoles = new HashSet<>();
+        SaRole saRoleDb = iSaRoleRepository.findById(new BigInteger("1")).get();//todo:need to get student user role information
+
+        saRoles.add(saRoleDb);
+
+        saUser.setRoles(saRoles);
         saUser.setSecrets(SaUser.createRandomMapOfSecret());
         iSaUserRepository.save(saUser);
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));

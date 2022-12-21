@@ -164,8 +164,15 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
     @Column(name = "status")
     private Character status;
 
-    @ManyToMany(targetEntity = SaRole.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<SaRole> roles;
+//    @ManyToMany(targetEntity = SaRole.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    private Set<SaRole> roles;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "sa_user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<SaRole> roles = new HashSet<>();
+
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "sa_users_secrets")
@@ -210,7 +217,7 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (roles == null) return new ArrayList<>();
-        return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(toList());
+        return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(toList());
     }
     @Override
     public String getPassword() {

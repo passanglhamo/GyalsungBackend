@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.entities;
 
 import javax.persistence.AttributeOverride;
@@ -83,3 +84,4 @@ import java.math.BigInteger;
         this.hasDeletePermission = hasDeletePermission;
     }
 }
+*/

@@ -103,9 +103,10 @@ public class Login extends TokenizerTask {
                 data.put("userId", saUser.get().getId());
                 data.put("roles", saUser.get().getRoles());
 
+                //todo: need to check without data in sa_screen
                 //to get role wise access permission from DB
                 Set<GrantedAuthority> accessPermissions = new HashSet<>();
-                BigInteger roleId = new BigInteger("2");//todo:need to get roleId from above roles loop roles
+                BigInteger roleId = new BigInteger("1");//todo:need to get roleId from above roles loop roles
                 List<PermissionListDto> permissionListDtos = roleWiseAccessPermissionService.getRoleMappedScreens(roleId);
                 for (PermissionListDto permissionListDto : permissionListDtos) {
                      Integer screenId = permissionListDto.getScreen_id();
