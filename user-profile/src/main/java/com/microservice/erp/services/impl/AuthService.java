@@ -6,6 +6,7 @@ import com.infoworks.lab.jjwt.TokenValidator;
 import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
 import com.microservice.erp.controllers.rest.LoginRequest;
+import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.services.iServices.IAuthService;
 import com.microservice.erp.task.iam.CheckUserExist;
@@ -55,10 +56,15 @@ public class AuthService implements IAuthService {
             if (message != null)
                 response.unmarshallingFromMap(message.marshallingToMap(true), true);
         });
+
         Map<String, Object> data = Message.unmarshal(new TypeReference<Map<String, Object>>() {
         }, response.getMessage());
-//todo:invalid user is able to login. Need to check data status
-        return ResponseEntity.ok(data);
+        if (data == null) {
+            return ResponseEntity.badRequest().body(response.getMessage());
+        } else {
+            return ResponseEntity.ok(data);
+        }
+
     }
 
     @Override

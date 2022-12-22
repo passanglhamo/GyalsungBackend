@@ -28,7 +28,7 @@ public class CheckUserExist extends AbstractTask<Message, Response> {
 
     @Override
     public Response execute(Message message) throws RuntimeException {
-        String username = (accountRequest != null) ? accountRequest.getUsername() : getPropertyValue("username").toString();
+        String username = getPropertyValue("username").toString();
         if (repository != null) {
             Optional<SaUser> optUser;
             optUser = Optional.ofNullable(repository.findByUsername(username));//login using username
@@ -39,12 +39,9 @@ public class CheckUserExist extends AbstractTask<Message, Response> {
                 optUser = Optional.ofNullable(repository.findByEmail(username));//login using email
             }
             if (optUser.isPresent()) {
-                return (accountRequest == null)
-                        ? new NewAccountRequest(username, null, null, null)
-                        .setStatus(200).setMessage(username + " exist.")
-                        : accountRequest.setStatus(200).setMessage(username + " exist.");
+                return new Response().setStatus(200).setMessage(username + " exist.");
             } else {
-                return accountRequest.setStatus(404).setMessage(username + " doesn't exist.");
+                return new Response().setStatus(404).setMessage(username + " doesn't exist.");
             }
         }
         throw new RuntimeException("UserRepository Must Not Be Null");
