@@ -13,12 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
-/**
- * @author Rajib Kumer Ghosh
- *
- */
-
-@Entity(name = "SYS_USERINFO_A")
+@Entity(name = "sa_user_a")
 @AttributeOverride(name = "id", column = @Column(name = "AUDIT_SERIAL_NO"))
 public class UserInfo_A extends Auditable<BigInteger, Long> {
 
