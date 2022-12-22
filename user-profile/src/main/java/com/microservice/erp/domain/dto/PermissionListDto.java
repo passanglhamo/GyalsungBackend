@@ -11,7 +11,7 @@ import java.util.Date;
 public class PermissionListDto {
     //region private variables
     private BigInteger permission_id;
-    private Integer role_id;
+    private BigInteger role_id;
     private Integer screen_id;
     private Character view_allowed;
     private Character edit_allowed;
