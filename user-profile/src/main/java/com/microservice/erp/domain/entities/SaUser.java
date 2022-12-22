@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toList;
 @Setter
 @Getter
 @AllArgsConstructor
-@Entity(name = "sys_userinfo")
+@Entity(name = "sa_user")
 @AttributeOverride(name = "id", column = @Column(name = "user_id", columnDefinition = "bigint"))
 public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
 

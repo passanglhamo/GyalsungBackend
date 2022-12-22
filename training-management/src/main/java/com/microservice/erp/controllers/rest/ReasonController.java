@@ -1,9 +1,12 @@
 package com.microservice.erp.controllers.rest;
 
+import com.infoworks.lab.jjwt.JWTPayload;
+import com.infoworks.lab.jjwt.TokenValidator;
 import com.microservice.erp.domain.entities.Reason;
 import com.microservice.erp.services.iServices.ICreateReasonService;
 import com.microservice.erp.services.iServices.IReadReasonService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,7 +33,13 @@ public class ReasonController {
     }
 
     @GetMapping
-    public List<Reason> getAllReasonList() {
+    public List<Reason> getAllReasonList(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+
+        //region sample code to get userId from JWT token
+        JWTPayload jwtPayload = TokenValidator.parsePayload(token, JWTPayload.class);
+        String userId = jwtPayload.getSub();
+        //endregion
+
         return readService.getAllReasonList();
     }
 
