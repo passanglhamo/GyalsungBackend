@@ -37,7 +37,7 @@ public abstract class TokenizerTask extends AbstractTask<Response, Response> {
         //
         JWTHeader header = new JWTHeader().setTyp("round").setKid(kid.toString());
         JWTPayload payload = new JWTPayload()
-                .setSub(saUser.getUsername())
+                .setSub(saUser.getId().toString())
                 .setIss(saUser.getUsername())
                 .setIat(new Date().getTime())
                 .setExp(timeToLive.getTimeInMillis())
