@@ -101,7 +101,7 @@ public class Login extends TokenizerTask {
                 Map<String, Object> data = new HashMap<>();
                 data.put("accessToken", tokenKey);
                 data.put("userId", saUser.get().getId());
-                data.put("roles", saUser.get().getRoles());
+                data.put("roles", saUser.get().getAuthorities());
 
                 //todo: need to check without data in sa_screen
                 //to get role wise access permission from DB
