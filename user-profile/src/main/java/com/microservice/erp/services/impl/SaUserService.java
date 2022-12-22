@@ -78,20 +78,17 @@ public class SaUserService implements ISaUserService {
         saUser.setSignupUser('N');
         //todo:generate password and send email
         String password = "pw";
-        saUser.setPassword(password);
+        saUser.setPassword(password);//todo:encode pw and save
         List<SaRoleDto> saRoleDtos = userDto.getRoles();
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
-        Set<Optional<SaRole>> saRoles = new HashSet<>();
+        Set<SaRole> saRoles = new HashSet<>();
         saRoleDtos.forEach(saRoleDto -> {
-            Optional<SaRole> saRoleDb = iSaRoleRepository.findById(saRoleDto.getRoleId());
-            if (!saRoleDb.isPresent()) {
-                return;
-            }
+            SaRole saRoleDb = iSaRoleRepository.findById(saRoleDto.getRoleId()).get();
             saRoles.add(saRoleDb);
         });
-        //saUser.setSaRoles(saRoles);
+        saUser.setRoles(saRoles);
         iSaUserRepository.save(saUser);
         String emailBody = "Dear " + userDto.getFullName() + ", " + "Your information has been added to Gyalsung MIS against this your email. " + "Please login in using email: " + userDto.getEmail() + " and password " + password;
         String subject = "User Added to Gyalsung System";

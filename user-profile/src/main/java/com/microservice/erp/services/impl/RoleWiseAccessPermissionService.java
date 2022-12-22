@@ -2,6 +2,7 @@ package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dao.RoleWiseAccessPermissionDao;
 import com.microservice.erp.domain.dto.PermissionListDto;
+import com.microservice.erp.services.iServices.IRoleWiseAccessPermissionService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -9,7 +10,7 @@ import java.util.List;
 
 
 @Service
-public class RoleWiseAccessPermissionService {
+public class RoleWiseAccessPermissionService implements IRoleWiseAccessPermissionService {
     private final RoleWiseAccessPermissionDao roleWiseAccessPermissionDao;
 
     //    private final RoleWiseAccessPermissionRepository roleWiseAccessPermissionRepository;

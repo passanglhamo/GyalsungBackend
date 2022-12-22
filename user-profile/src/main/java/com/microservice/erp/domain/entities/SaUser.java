@@ -164,9 +164,6 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
     @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
 
-//    @ManyToMany(targetEntity = SaRole.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    private Set<SaRole> roles;
-//todo: need to join with sa_user_role_mapping table
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "sa_user_role_mapping",
             joinColumns = @JoinColumn(name = "user_id"),
