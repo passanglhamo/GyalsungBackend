@@ -16,8 +16,8 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
-@Setter
-@Getter
+//@Setter
+//@Getter
 @AllArgsConstructor
 @Entity(name = "sa_user")
 @AttributeOverride(name = "id", column = @Column(name = "user_id", columnDefinition = "bigint"))
@@ -250,5 +250,361 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
 
     public SaUser() {
 
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Character getGender() {
+        return gender;
+    }
+
+    public void setGender(Character gender) {
+        this.gender = gender;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
+    }
+
+    public Boolean getUserLockStatus() {
+        return userLockStatus;
+    }
+
+    public void setUserLockStatus(Boolean userLockStatus) {
+        this.userLockStatus = userLockStatus;
+    }
+
+    public String getPresentCountry() {
+        return presentCountry;
+    }
+
+    public void setPresentCountry(String presentCountry) {
+        this.presentCountry = presentCountry;
+    }
+
+    public Integer getPresentDzongkhagId() {
+        return presentDzongkhagId;
+    }
+
+    public void setPresentDzongkhagId(Integer presentDzongkhagId) {
+        this.presentDzongkhagId = presentDzongkhagId;
+    }
+
+    public Integer getPresentGeogId() {
+        return presentGeogId;
+    }
+
+    public void setPresentGeogId(Integer presentGeogId) {
+        this.presentGeogId = presentGeogId;
+    }
+
+    public String getPresentPlaceName() {
+        return presentPlaceName;
+    }
+
+    public void setPresentPlaceName(String presentPlaceName) {
+        this.presentPlaceName = presentPlaceName;
+    }
+
+    public String getPermanentCountry() {
+        return permanentCountry;
+    }
+
+    public void setPermanentCountry(String permanentCountry) {
+        this.permanentCountry = permanentCountry;
+    }
+
+    public String getPermanentDzongkhag() {
+        return permanentDzongkhag;
+    }
+
+    public void setPermanentDzongkhag(String permanentDzongkhag) {
+        this.permanentDzongkhag = permanentDzongkhag;
+    }
+
+    public String getPermanentGeog() {
+        return permanentGeog;
+    }
+
+    public void setPermanentGeog(String permanentGeog) {
+        this.permanentGeog = permanentGeog;
+    }
+
+    public String getPermanentPlaceName() {
+        return permanentPlaceName;
+    }
+
+    public void setPermanentPlaceName(String permanentPlaceName) {
+        this.permanentPlaceName = permanentPlaceName;
+    }
+
+    public String getFatherName() {
+        return fatherName;
+    }
+
+    public void setFatherName(String fatherName) {
+        this.fatherName = fatherName;
+    }
+
+    public String getFatherCid() {
+        return fatherCid;
+    }
+
+    public void setFatherCid(String fatherCid) {
+        this.fatherCid = fatherCid;
+    }
+
+    public String getFatherMobileNo() {
+        return fatherMobileNo;
+    }
+
+    public void setFatherMobileNo(String fatherMobileNo) {
+        this.fatherMobileNo = fatherMobileNo;
+    }
+
+    public String getFatherOccupation() {
+        return fatherOccupation;
+    }
+
+    public void setFatherOccupation(String fatherOccupation) {
+        this.fatherOccupation = fatherOccupation;
+    }
+
+    public String getFatherEmail() {
+        return fatherEmail;
+    }
+
+    public void setFatherEmail(String fatherEmail) {
+        this.fatherEmail = fatherEmail;
+    }
+
+    public String getMotherName() {
+        return motherName;
+    }
+
+    public void setMotherName(String motherName) {
+        this.motherName = motherName;
+    }
+
+    public String getMotherCid() {
+        return motherCid;
+    }
+
+    public void setMotherCid(String motherCid) {
+        this.motherCid = motherCid;
+    }
+
+    public String getMotherMobileNo() {
+        return motherMobileNo;
+    }
+
+    public void setMotherMobileNo(String motherMobileNo) {
+        this.motherMobileNo = motherMobileNo;
+    }
+
+    public String getMotherOccupation() {
+        return motherOccupation;
+    }
+
+    public void setMotherOccupation(String motherOccupation) {
+        this.motherOccupation = motherOccupation;
+    }
+
+    public String getMotherEmail() {
+        return motherEmail;
+    }
+
+    public void setMotherEmail(String motherEmail) {
+        this.motherEmail = motherEmail;
+    }
+
+    public String getGuardianName() {
+        return guardianName;
+    }
+
+    public void setGuardianName(String guardianName) {
+        this.guardianName = guardianName;
+    }
+
+    public String getGuardianCid() {
+        return guardianCid;
+    }
+
+    public void setGuardianCid(String guardianCid) {
+        this.guardianCid = guardianCid;
+    }
+
+    public String getGuardianMobileNo() {
+        return guardianMobileNo;
+    }
+
+    public void setGuardianMobileNo(String guardianMobileNo) {
+        this.guardianMobileNo = guardianMobileNo;
+    }
+
+    public String getGuardianOccupation() {
+        return guardianOccupation;
+    }
+
+    public void setGuardianOccupation(String guardianOccupation) {
+        this.guardianOccupation = guardianOccupation;
+    }
+
+    public String getGuardianEmail() {
+        return guardianEmail;
+    }
+
+    public void setGuardianEmail(String guardianEmail) {
+        this.guardianEmail = guardianEmail;
+    }
+
+    public String getRelationToGuardian() {
+        return relationToGuardian;
+    }
+
+    public void setRelationToGuardian(String relationToGuardian) {
+        this.relationToGuardian = relationToGuardian;
+    }
+
+    public String getSocialMediaLink1() {
+        return socialMediaLink1;
+    }
+
+    public void setSocialMediaLink1(String socialMediaLink1) {
+        this.socialMediaLink1 = socialMediaLink1;
+    }
+
+    public String getSocialMediaLink2() {
+        return socialMediaLink2;
+    }
+
+    public void setSocialMediaLink2(String socialMediaLink2) {
+        this.socialMediaLink2 = socialMediaLink2;
+    }
+
+    public String getSocialMediaLink3() {
+        return socialMediaLink3;
+    }
+
+    public void setSocialMediaLink3(String socialMediaLink3) {
+        this.socialMediaLink3 = socialMediaLink3;
+    }
+
+    public String getProfilePictureName() {
+        return profilePictureName;
+    }
+
+    public void setProfilePictureName(String profilePictureName) {
+        this.profilePictureName = profilePictureName;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public String getProfilePictureExt() {
+        return profilePictureExt;
+    }
+
+    public void setProfilePictureExt(String profilePictureExt) {
+        this.profilePictureExt = profilePictureExt;
+    }
+
+    public String getProfilePictureSize() {
+        return profilePictureSize;
+    }
+
+    public void setProfilePictureSize(String profilePictureSize) {
+        this.profilePictureSize = profilePictureSize;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    public Character getSignupUser() {
+        return signupUser;
+    }
+
+    public void setSignupUser(Character signupUser) {
+        this.signupUser = signupUser;
+    }
+
+    public Character getStatus() {
+        return status;
+    }
+
+    public void setStatus(Character status) {
+        this.status = status;
+    }
+
+    public Set<SaRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<SaRole> roles) {
+        this.roles = roles;
+    }
+
+    public Map<Integer, String> getSecrets() {
+        return secrets;
+    }
+
+    public void setSecrets(Map<Integer, String> secrets) {
+        this.secrets = secrets;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }
