@@ -164,16 +164,12 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
     @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
 
-//    @ManyToMany(targetEntity = SaRole.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    private Set<SaRole> roles;
-//todo: need to join with sa_user_role_mapping table
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "sa_user_role_mapping",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id"))
-//    private Set<SaRole> roles = new HashSet<>();
-    @OneToMany(mappedBy = "user")
-    Set<SaUserRoleMapping> userRoleMappings;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "sa_user_role_mapping",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<SaRole> roles = new HashSet<>();
+
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "sa_user_secret")
@@ -194,13 +190,13 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
         return secrets;
     }
 
-//    public SaUser addRoles(SaRole... roles) {
-//        if (getRoles() == null) {
-//            setRoles(new HashSet<>());
-//        }
-//        getRoles().addAll(Arrays.asList(roles));
-//        return this;
-//    }
+    public SaUser addRoles(SaRole... roles) {
+        if (getRoles() == null) {
+            setRoles(new HashSet<>());
+        }
+        getRoles().addAll(Arrays.asList(roles));
+        return this;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -217,8 +213,8 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (userRoleMappings == null) return new ArrayList<>();
-        return this.userRoleMappings.stream().map(role -> new SimpleGrantedAuthority(role.getRole().getRoleName())).collect(toList());
+        if (roles == null) return new ArrayList<>();
+        return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(toList());
     }
 
     @Override

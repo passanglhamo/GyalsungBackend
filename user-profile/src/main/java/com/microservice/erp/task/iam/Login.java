@@ -116,7 +116,7 @@ public class Login extends TokenizerTask {
                             accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.VIEW));
                         }
                         if (permissionListDto.getSave_allowed() != null && permissionListDto.getSave_allowed() == 'Y') {
-                            accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.DELETE));
+                            accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.ADD));
                         }
                         if (permissionListDto.getEdit_allowed() != null && permissionListDto.getEdit_allowed() == 'Y') {
                             accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.EDIT));

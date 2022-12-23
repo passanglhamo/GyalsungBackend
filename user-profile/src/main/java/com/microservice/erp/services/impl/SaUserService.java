@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -78,20 +79,17 @@ public class SaUserService implements ISaUserService {
         saUser.setSignupUser('N');
         //todo:generate password and send email
         String password = "pw";
-        saUser.setPassword(password);
-        List<SaRoleDto> saRoleDtos = userDto.getRoles();
+        saUser.setPassword(password);//todo:encode pw and save
+        List<BigInteger> saRoleDtos = userDto.getRoles();
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
-        Set<Optional<SaRole>> saRoles = new HashSet<>();
-        saRoleDtos.forEach(saRoleDto -> {
-            Optional<SaRole> saRoleDb = iSaRoleRepository.findById(saRoleDto.getRoleId());
-            if (!saRoleDb.isPresent()) {
-                return;
-            }
+        Set<SaRole> saRoles = new HashSet<>();
+        saRoleDtos.forEach(roleId -> {
+            SaRole saRoleDb = iSaRoleRepository.findById(roleId).get();
             saRoles.add(saRoleDb);
         });
-        //saUser.setSaRoles(saRoles);
+        saUser.setRoles(saRoles);
         iSaUserRepository.save(saUser);
         String emailBody = "Dear " + userDto.getFullName() + ", " + "Your information has been added to Gyalsung MIS against this your email. " + "Please login in using email: " + userDto.getEmail() + " and password " + password;
         String subject = "User Added to Gyalsung System";
@@ -117,19 +115,17 @@ public class SaUserService implements ISaUserService {
         saUser.setMobileNo(userDto.getMobileNo());
         saUser.setEmail(userDto.getEmail());
         saUser.setStatus(userDto.getStatus());
-        List<SaRoleDto> saRoleDtos = userDto.getRoles();
+        List<BigInteger> saRoleDtos = userDto.getRoles();
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
-        Set<Optional<SaRole>> saRoles = new HashSet<>();
-        saRoleDtos.forEach(saRoleDto -> {
-            Optional<SaRole> saRoleDb = iSaRoleRepository.findById(saRoleDto.getRoleId());
-            if (!saRoleDb.isPresent()) {
-                return;
-            }
+
+        Set<SaRole> saRoles = new HashSet<>();
+        saRoleDtos.forEach(roleId -> {
+            SaRole saRoleDb = iSaRoleRepository.findById(roleId).get();
             saRoles.add(saRoleDb);
         });
-        //saUser.setSaRoles(saRoles);
+        saUser.setRoles(saRoles);
         iSaUserRepository.save(saUser);
         String emailBody = "Dear " + saUser.getFullName() + ", " + "Your information in Gyalsung MIS has been updated. " + "Please login in using email: " + saUser.getEmail();
         String subject = "User Updated in Gyalsung System";

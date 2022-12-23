@@ -1,8 +1,9 @@
 package com.microservice.erp.domain.entities;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.math.BigInteger;
-import java.util.Set;
 
 @Entity(name = "sa_role")
 @AttributeOverride(name = "id", column = @Column(name = "role_id", columnDefinition = "bigint"))
@@ -13,10 +14,8 @@ public class SaRole extends Auditable<BigInteger, Long> {
     private String roleName;
 
     @Column(name = "is_open_user", columnDefinition = "char(1)")
-    private Character isOpenUser;
+    private String isOpenUser;
 
-    @OneToMany(mappedBy = "role")
-    Set<SaUserRoleMapping> roleMappings;
     //endregion
 
     //region setters and getters
@@ -29,20 +28,12 @@ public class SaRole extends Auditable<BigInteger, Long> {
         this.roleName = roleName;
     }
 
-    public Character getIsOpenUser() {
+    public String getIsOpenUser() {
         return isOpenUser;
     }
 
-    public void setIsOpenUser(Character isOpenUser) {
+    public void setIsOpenUser(String isOpenUser) {
         this.isOpenUser = isOpenUser;
-    }
-
-    public Set<SaUserRoleMapping> getRoleMappings() {
-        return roleMappings;
-    }
-
-    public void setRoleMappings(Set<SaUserRoleMapping> roleMappings) {
-        this.roleMappings = roleMappings;
     }
 
     //endregion
