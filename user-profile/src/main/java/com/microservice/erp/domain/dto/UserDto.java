@@ -18,5 +18,5 @@ public class UserDto {
     private String password;
     private Character status;
 
-    private List<SaRoleDto> roles;
+    private List<BigInteger> roles;
 }

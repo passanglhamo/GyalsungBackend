@@ -162,12 +162,12 @@ public class SignupService implements ISignupService {
         saUser.setUsername(signupRequestDto.getCid());
         saUser.setPassword(passwordEncoder.encode(signupRequestDto.getPassword()));
         //todo:set role equal to open user, meaning student
-        Set<SaRole> saRoles = new HashSet<>();
-        SaRole saRoleDb = iSaRoleRepository.findById(new BigInteger("1")).get();//todo:need to get student user role information
-
-        saRoles.add(saRoleDb);
-
-        saUser.setRoles(saRoles);
+//        Set<SaRole> saRoles = new HashSet<>();
+//        SaRole saRoleDb = iSaRoleRepository.findById(new BigInteger("1")).get();//todo:need to get student user role information
+//
+//        saRoles.add(saRoleDb);
+//
+//        saUser.setRoles(saRoles);
         saUser.setSecrets(SaUser.createRandomMapOfSecret());
         iSaUserRepository.save(saUser);
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));
