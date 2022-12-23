@@ -22,13 +22,6 @@ public class RoleWiseAccessPermissionDao extends BaseDao {
     }
 
     @Transactional
-    public boolean getIsRoleMapped(BigInteger roleId) {
-        String sqlQuery = environment.getProperty("CommonDao.getIsRoleMapped");
-        NativeQuery hQuery = (NativeQuery) hibernateQuery(sqlQuery).setParameter("roleId", roleId);
-        return hQuery.list().size() > 0;
-    }
-
-    @Transactional
     public List<PermissionListDto> getRoleMappedScreens(BigInteger roleId) {
         String sqlQuery = environment.getProperty("CommonDao.getRoleMappedScreens");
         NativeQuery hQuery = (NativeQuery) hibernateQuery(sqlQuery, PermissionListDto.class);

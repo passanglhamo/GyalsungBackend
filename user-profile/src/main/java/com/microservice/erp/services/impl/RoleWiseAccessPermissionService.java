@@ -1,8 +1,12 @@
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dao.RoleWiseAccessPermissionDao;
+import com.microservice.erp.domain.dto.PermissionDto;
 import com.microservice.erp.domain.dto.PermissionListDto;
+import com.microservice.erp.domain.entities.RoleWiseAccessPermission;
+import com.microservice.erp.domain.repositories.RoleWiseAccessPermissionRepository;
 import com.microservice.erp.services.iServices.IRoleWiseAccessPermissionService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -13,52 +17,49 @@ import java.util.List;
 public class RoleWiseAccessPermissionService implements IRoleWiseAccessPermissionService {
     private final RoleWiseAccessPermissionDao roleWiseAccessPermissionDao;
 
-    //    private final RoleWiseAccessPermissionRepository roleWiseAccessPermissionRepository;
-    public RoleWiseAccessPermissionService(RoleWiseAccessPermissionDao roleWiseAccessPermissionDao) {
+    private final RoleWiseAccessPermissionRepository roleWiseAccessPermissionRepository;
+
+    public RoleWiseAccessPermissionService(RoleWiseAccessPermissionDao roleWiseAccessPermissionDao
+            , RoleWiseAccessPermissionRepository roleWiseAccessPermissionRepository) {
         this.roleWiseAccessPermissionDao = roleWiseAccessPermissionDao;
+        this.roleWiseAccessPermissionRepository = roleWiseAccessPermissionRepository;
     }
 
 
-    public List<PermissionListDto> getScreens(BigInteger roleId) {
+    public ResponseEntity<?> getScreens(BigInteger roleId) {
         List<PermissionListDto> permissionListDtos;
-        boolean isRoleMapped = roleWiseAccessPermissionDao.getIsRoleMapped(roleId);
-        if (isRoleMapped) {
+        RoleWiseAccessPermission isRoleMapped = roleWiseAccessPermissionRepository.findTop1ByRoleId(roleId);
+        if (isRoleMapped != null) {
             permissionListDtos = roleWiseAccessPermissionDao.getRoleMappedScreens(roleId);
         } else {
             permissionListDtos = roleWiseAccessPermissionDao.getRoleUnmappedScreens();
         }
-        return permissionListDtos;
+        return ResponseEntity.ok(permissionListDtos);
     }
 
     public List<PermissionListDto> getRoleMappedScreens(BigInteger roleId) {
         return roleWiseAccessPermissionDao.getRoleMappedScreens(roleId);
     }
 
-    /*public ResponseMessage savePermission(PermissionDTO permissionDTO, CurrentUser currentUser) {
-        ResponseMessage responseMessage = new ResponseMessage();
+    public ResponseEntity<?> savePermission(PermissionDto permissionDto) {
         RoleWiseAccessPermission permission = new RoleWiseAccessPermission();
-        String permissionId;
 
-        for (PermissionListDTO permissionListDTO : permissionDTO.getPermissionListDTOS()) {
-            permissionId = UuidGenerator.generateUuid();
-            permission.setScreenId(permissionListDTO.getScreenId());
-            permission.setRoleId(permissionDTO.getRoleId());
-            permission.setViewAllowed(permissionListDTO.getViewAllowed());
-            permission.setSaveAllowed(permissionListDTO.getSaveAllowed());
-            permission.setEditAllowed(permissionListDTO.getEditAllowed());
-            permission.setDeleteAllowed(permissionListDTO.getDeleteAllowed());
-            permission.setCreatedBy(currentUser.getUserId());
-            permission.setCreatedDate(new Date());
-            if (!permissionListDTO.getPermissionId().equals("")) {
-                permission.setPermissionId(permissionListDTO.getPermissionId());
-                roleWiseAccessPermissionRepository.save(permission);
-            } else {
-                permission.setPermissionId(permissionId);
+        for (PermissionListDto permissionListDto : permissionDto.getPermissionListDtos()) {
+            permission.setScreenId(permissionListDto.getScreen_id());
+            permission.setRoleId(permissionListDto.getRole_id());
+            permission.setViewAllowed(permissionListDto.getView_allowed());
+            permission.setSaveAllowed(permissionListDto.getSave_allowed());
+            permission.setEditAllowed(permissionListDto.getEdit_allowed());
+            permission.setDeleteAllowed(permissionListDto.getDelete_allowed());
+
+            if (permissionListDto.getPermission_id() != null) {
                 roleWiseAccessPermissionRepository.save(permission);
             }
+//            else {
+////                permission.setPermissionId(permissionId);
+//                roleWiseAccessPermissionRepository.save(permission);
+//            }
         }
-        responseMessage.setStatus(SystemDataInt.MESSAGE_STATUS_SUCCESSFUL.value());
-        responseMessage.setText("Saved successfully.");
-        return responseMessage;
-    }*/
+        return ResponseEntity.ok("Data saved successfully.");
+    }
 }
