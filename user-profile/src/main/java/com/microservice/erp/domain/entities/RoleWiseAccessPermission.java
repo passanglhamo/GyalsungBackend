@@ -11,12 +11,13 @@ import java.util.Date;
 @Table(name = "sa_access_permission")
 @Setter
 @Getter
-@AttributeOverride(name = "id", column = @Column(name = "permission_id", columnDefinition = "bigint"))
-public class RoleWiseAccessPermission extends Auditable<BigInteger, Long> {
+//@AttributeOverride(name = "id", column = @Column(name = "permission_id", columnDefinition = "bigint"))
+public class RoleWiseAccessPermission {
     //region private variables
-//    @Id
-//    @Column(name = "permission_id", columnDefinition = "bigint")
-//    private BigInteger permissionId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "permission_id", columnDefinition = "bigint")
+    private BigInteger permission_id;
 
     @Column(name = "role_id", columnDefinition = "bigint")
     private BigInteger roleId;

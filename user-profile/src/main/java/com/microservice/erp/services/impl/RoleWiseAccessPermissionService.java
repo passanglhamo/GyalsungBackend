@@ -46,13 +46,13 @@ public class RoleWiseAccessPermissionService implements IRoleWiseAccessPermissio
     @Override
     public ResponseEntity<?> saveAccessPermission(PermissionDto permissionDto) {
         RoleWiseAccessPermission roleWiseAccessPermission = new RoleWiseAccessPermission();
-        roleWiseAccessPermission.setId(permissionDto.getPermissionId());
+        roleWiseAccessPermission.setPermission_id(permissionDto.getPermissionId());
         roleWiseAccessPermission.setScreenId(permissionDto.getScreenId());
         roleWiseAccessPermission.setRoleId(permissionDto.getRoleId());
-        roleWiseAccessPermission.setViewAllowed(permissionDto.getViewAllowed());
-        roleWiseAccessPermission.setSaveAllowed(permissionDto.getSaveAllowed());
-        roleWiseAccessPermission.setEditAllowed(permissionDto.getEditAllowed());
-        roleWiseAccessPermission.setDeleteAllowed(permissionDto.getDeleteAllowed());
+        roleWiseAccessPermission.setViewAllowed(permissionDto.getViewAllowed() == null ? 'N' : permissionDto.getViewAllowed());
+        roleWiseAccessPermission.setSaveAllowed(permissionDto.getSaveAllowed() == null ? 'N' : permissionDto.getSaveAllowed());
+        roleWiseAccessPermission.setEditAllowed(permissionDto.getEditAllowed() == null ? 'N' : permissionDto.getEditAllowed());
+        roleWiseAccessPermission.setDeleteAllowed(permissionDto.getDeleteAllowed() == null ? 'N' : permissionDto.getDeleteAllowed());
         roleWiseAccessPermissionRepository.save(roleWiseAccessPermission);
         return ResponseEntity.ok("Data saved successfully.");
     }
