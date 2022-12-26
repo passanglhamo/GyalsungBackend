@@ -22,8 +22,10 @@ public class SaRoleService implements ISaRoleService {
 
     @Override
     public ResponseEntity<?> saveRole(SaRole role) {
-        if(repository.existsByIsOpenUser('Y')){
-            return ResponseEntity.badRequest().body(new MessageResponse("There can be only one student role."));
+        if (role.getIsOpenUser().equals('Y')) {
+            if (repository.existsByIsOpenUser('Y')) {
+                return ResponseEntity.badRequest().body(new MessageResponse("There can be only one student role."));
+            }
         }
         repository.save(role);
         return ResponseEntity.ok("Data saved successfully");
@@ -41,6 +43,12 @@ public class SaRoleService implements ISaRoleService {
 
     @Override
     public ResponseEntity<?> updateRole(RoleDto role) {
+
+
+        if (repository.existsByIsOpenUserAndIdNot('Y', role.getId())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("There can be only one student role."));
+        }
+
         repository.findById(role.getId()).ifPresent(d -> {
             d.setRoleName(role.getRoleName());
             d.setIsOpenUser(role.getIsOpenUser());
