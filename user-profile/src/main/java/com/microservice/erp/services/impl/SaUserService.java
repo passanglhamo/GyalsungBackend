@@ -92,6 +92,7 @@ public class SaUserService implements ISaUserService {
             saRoles.add(saRoleDb);
         });
         saUser.setRoles(saRoles);
+        saUser.setSecrets(SaUser.createRandomMapOfSecret());
         iSaUserRepository.save(saUser);
         String emailBody = "Dear " + userDto.getFullName() + ", " + "Your information has been added to Gyalsung MIS against this your email. " + "Please login in using email: " + userDto.getEmail() + " and password " + password;
         String subject = "User Added to Gyalsung System";
