@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -22,7 +23,7 @@ import java.util.Date;
 public class ResetPasswordService implements IResetPasswordService {
     private final IRequestPasswordChangeRepository requestPasswordChangeRepository;
     private final ISaUserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder encoder;
     private final AddToQueue addToQueue;
 
     public ResponseEntity<?> requestPasswordChange(ResetPasswordDto resetPasswordDto) throws Exception {
@@ -77,7 +78,7 @@ public class ResetPasswordService implements IResetPasswordService {
                     return ResponseEntity.badRequest().body(new MessageResponse("You have already changed password using this link. Please request new link."));
                 }
                 SaUser user = new ModelMapper().map(userDb, SaUser.class);
-                user.setPassword(passwordEncoder.encode(resetPasswordDto.getPassword()));
+                user.setPassword(encoder.encode(resetPasswordDto.getPassword()));
                 userRepository.save(user);
 
                 pwChangeRequest.setStatus('C');//P =  Requested, C = Changed

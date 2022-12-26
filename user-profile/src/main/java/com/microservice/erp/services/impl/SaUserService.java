@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -32,7 +33,8 @@ public class SaUserService implements ISaUserService {
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
 
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder encoder;
+
 
 //    @Value("${topic.email}")
 //    private String emailTopic;
@@ -81,7 +83,7 @@ public class SaUserService implements ISaUserService {
         saUser.setStatus('A');
         saUser.setSignupUser('N');
         String password = generatePassword(8); //to generate password and send email
-        saUser.setPassword(passwordEncoder.encode(password));
+        saUser.setPassword(encoder.encode(password));
         List<BigInteger> saRoleDtos = userDto.getRoles();
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));

@@ -7,7 +7,6 @@ import com.microservice.erp.domain.entities.*;
 import com.microservice.erp.domain.helper.*;
 import com.microservice.erp.domain.repositories.*;
 import com.microservice.erp.services.iServices.IProfileService;
-import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.*;
@@ -27,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-@AllArgsConstructor
+//@AllArgsConstructor
 public class ProfileService implements IProfileService {
     private final UserDao userDao;
     private final ISaUserRepository iSaUserRepository;
@@ -35,9 +34,21 @@ public class ProfileService implements IProfileService {
     private final IChangeEmailVerificationCodeRepository iChangeEmailVerificationCodeRepository;
 
     private final PasswordEncoder encoder;
-    private final BCryptPasswordEncoder passwordEncoder;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
     private final AddToQueue addToQueue;
+
+    public ProfileService(UserDao userDao, ISaUserRepository iSaUserRepository
+            , IChangeMobileNoSmsOtpRepository iChangeMobileNoSmsOtpRepository
+            , IChangeEmailVerificationCodeRepository iChangeEmailVerificationCodeRepository
+            , PasswordEncoder encoder
+            , AddToQueue addToQueue) {
+        this.userDao = userDao;
+        this.iSaUserRepository = iSaUserRepository;
+        this.iChangeMobileNoSmsOtpRepository = iChangeMobileNoSmsOtpRepository;
+        this.iChangeEmailVerificationCodeRepository = iChangeEmailVerificationCodeRepository;
+        this.encoder = encoder;
+        this.addToQueue = addToQueue;
+    }
 
     @Override
     public ResponseEntity<?> getProfileInfo(String authHeader, BigInteger userId) {
@@ -176,18 +187,18 @@ public class ProfileService implements IProfileService {
         SaUser saUser = new ModelMapper().map(saUserDb, SaUser.class);
 
         //current pw must be equal to existing pw
-//        TODO: need to check pw match
-//        String curPw =  userProfileDto.getCurrentPassword();
-//        if (!passwordEncoder.matches(saUserDb.getPassword(), curPw)) {
-//            return ResponseEntity.badRequest().body(new MessageResponse("Current password doesn't match."));
-//        }
+//        TODO: need to check pw match, matches method is not working. need to check one more time
+        String curPw = userProfileDto.getCurrentPassword();
+        if (!encoder.matches(saUserDb.getPassword(), curPw)) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Current password doesn't match."));
+        }
 
         //confirm current pw must be equal to pw
         if (!Objects.equals(userProfileDto.getNewPassword(), userProfileDto.getConfirmPassword())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Confirm password doesn't match."));
         }
 
-        saUser.setPassword(passwordEncoder.encode(userProfileDto.getNewPassword()));
+        saUser.setPassword(encoder.encode(userProfileDto.getNewPassword()));
         iSaUserRepository.save(saUser);
         //TODO: send email after changing password
         return ResponseEntity.ok(new MessageResponse("Password changed successfully."));
@@ -341,7 +352,7 @@ public class ProfileService implements IProfileService {
             return ResponseEntity.badRequest().body(new MessageResponse("Confirm password doesn't match."));
         }
 
-        saUser.setPassword(passwordEncoder.encode(userProfileDto.getNewPassword()));
+        saUser.setPassword(encoder.encode(userProfileDto.getNewPassword()));
         iSaUserRepository.save(saUser);
 
         //TODO: send email after resetting password
