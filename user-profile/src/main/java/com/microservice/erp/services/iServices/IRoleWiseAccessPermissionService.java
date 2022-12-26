@@ -9,4 +9,6 @@ public interface IRoleWiseAccessPermissionService {
     ResponseEntity<?> getScreens(BigInteger roleId);
 
     ResponseEntity<?> savePermission(PermissionDto permissionDto);
+
+    ResponseEntity<?> saveAccessPermission(PermissionDto permissionDto);
 }

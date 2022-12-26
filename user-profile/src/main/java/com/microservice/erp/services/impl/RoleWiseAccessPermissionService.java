@@ -4,8 +4,10 @@ import com.microservice.erp.domain.dao.RoleWiseAccessPermissionDao;
 import com.microservice.erp.domain.dto.PermissionDto;
 import com.microservice.erp.domain.dto.PermissionListDto;
 import com.microservice.erp.domain.entities.RoleWiseAccessPermission;
+import com.microservice.erp.domain.entities.SaUser;
 import com.microservice.erp.domain.repositories.RoleWiseAccessPermissionRepository;
 import com.microservice.erp.services.iServices.IRoleWiseAccessPermissionService;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,20 @@ public class RoleWiseAccessPermissionService implements IRoleWiseAccessPermissio
 
     public List<PermissionListDto> getRoleMappedScreens(BigInteger roleId) {
         return roleWiseAccessPermissionDao.getRoleMappedScreens(roleId);
+    }
+
+    @Override
+    public ResponseEntity<?> saveAccessPermission(PermissionDto permissionDto) {
+        RoleWiseAccessPermission roleWiseAccessPermission = new RoleWiseAccessPermission();
+        roleWiseAccessPermission.setPermission_id(permissionDto.getPermissionId());
+        roleWiseAccessPermission.setScreenId(permissionDto.getScreenId());
+        roleWiseAccessPermission.setRoleId(permissionDto.getRoleId());
+        roleWiseAccessPermission.setViewAllowed(permissionDto.getViewAllowed() == null ? 'N' : permissionDto.getViewAllowed());
+        roleWiseAccessPermission.setSaveAllowed(permissionDto.getSaveAllowed() == null ? 'N' : permissionDto.getSaveAllowed());
+        roleWiseAccessPermission.setEditAllowed(permissionDto.getEditAllowed() == null ? 'N' : permissionDto.getEditAllowed());
+        roleWiseAccessPermission.setDeleteAllowed(permissionDto.getDeleteAllowed() == null ? 'N' : permissionDto.getDeleteAllowed());
+        roleWiseAccessPermissionRepository.save(roleWiseAccessPermission);
+        return ResponseEntity.ok("Data saved successfully.");
     }
 
     public ResponseEntity<?> savePermission(PermissionDto permissionDto) {
