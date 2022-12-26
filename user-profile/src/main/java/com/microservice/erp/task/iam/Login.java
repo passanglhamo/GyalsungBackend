@@ -110,7 +110,7 @@ public class Login extends TokenizerTask {
                     BigInteger roleId = saRole.getId();
                     List<PermissionListDto> permissionListDtos = roleWiseAccessPermissionService.getRoleMappedScreens(roleId);
                     for (PermissionListDto permissionListDto : permissionListDtos) {
-                        Integer screenId = permissionListDto.getScreen_id();
+                        String screenId = permissionListDto.getScreen_id();
                         //Screen permissions
                         if (permissionListDto.getView_allowed() != null && permissionListDto.getView_allowed() == 'Y') {
                             accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.VIEW));

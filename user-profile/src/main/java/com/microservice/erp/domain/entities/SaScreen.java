@@ -10,8 +10,8 @@ public class SaScreen {
 
     //region private variables
     @Id
-    @Column(name = "screen_id", columnDefinition = "int")
-    private Integer screenId;
+    @Column(name = "screen_id", columnDefinition = "varchar(255)")
+    private String screenId;
 
     @Column(name = "screen_name", columnDefinition = "varchar(255)")
     private String screenName;
@@ -21,11 +21,12 @@ public class SaScreen {
     //endregion
 
     //region setters and getters
-    public Integer getScreenId() {
+
+    public String getScreenId() {
         return screenId;
     }
 
-    public void setScreenId(Integer screenId) {
+    public void setScreenId(String screenId) {
         this.screenId = screenId;
     }
 
@@ -44,5 +45,6 @@ public class SaScreen {
     public void setScreenUrl(String screenUrl) {
         this.screenUrl = screenUrl;
     }
+
     //endregion
 }
