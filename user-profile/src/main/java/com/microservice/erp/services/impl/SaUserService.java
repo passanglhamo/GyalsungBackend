@@ -14,6 +14,7 @@ import com.microservice.erp.services.iServices.ISaUserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -29,7 +30,9 @@ public class SaUserService implements ISaUserService {
     private final ISaRoleRepository iSaRoleRepository;
     private final UserDao userDao;
     private final AddToQueue addToQueue;
-    //    private final BCryptPasswordEncoder passwordEncoder;
+    private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
+
+    private final BCryptPasswordEncoder passwordEncoder;
 
 //    @Value("${topic.email}")
 //    private String emailTopic;
@@ -77,9 +80,8 @@ public class SaUserService implements ISaUserService {
         saUser.setUsername(userDto.getEmail());
         saUser.setStatus('A');
         saUser.setSignupUser('N');
-        //todo:generate password and send email
-        String password = "pw";
-        saUser.setPassword(password);//todo:encode pw and save
+        String password = generatePassword(8); //to generate password and send email
+        saUser.setPassword(passwordEncoder.encode(password));
         List<BigInteger> saRoleDtos = userDto.getRoles();
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
@@ -138,5 +140,14 @@ public class SaUserService implements ISaUserService {
         addToQueue.addToQueue("email", eventBusEmail);
         addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
+    }
+
+    public static String generatePassword(int count) {
+        StringBuilder builder = new StringBuilder();
+        while (count-- != 0) {
+            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
+            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
+        }
+        return builder.toString();
     }
 }
