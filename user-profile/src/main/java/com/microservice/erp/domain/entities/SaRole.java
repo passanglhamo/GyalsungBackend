@@ -14,7 +14,7 @@ public class SaRole extends Auditable<BigInteger, Long> {
     private String roleName;
 
     @Column(name = "is_open_user", columnDefinition = "char(1)")
-    private String isOpenUser;
+    private Character isOpenUser;
 
     //endregion
 
@@ -28,13 +28,14 @@ public class SaRole extends Auditable<BigInteger, Long> {
         this.roleName = roleName;
     }
 
-    public String getIsOpenUser() {
+    public Character getIsOpenUser() {
         return isOpenUser;
     }
 
-    public void setIsOpenUser(String isOpenUser) {
+    public void setIsOpenUser(Character isOpenUser) {
         this.isOpenUser = isOpenUser;
     }
 
-    //endregion
+
+//endregion
 }

@@ -1,5 +1,6 @@
 package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.RoleDto;
 import com.microservice.erp.domain.entities.SaRole;
 import com.microservice.erp.domain.mapper.RoleMapper;
@@ -20,8 +21,12 @@ public class SaRoleService implements ISaRoleService {
     private final RoleMapper mapper;
 
     @Override
-    public SaRole saveRole(SaRole role) {
-        return repository.save(role);
+    public ResponseEntity<?> saveRole(SaRole role) {
+        if(repository.existsByIsOpenUser('Y')){
+            return ResponseEntity.badRequest().body(new MessageResponse("There can be only one student role."));
+        }
+        repository.save(role);
+        return ResponseEntity.ok("Data saved successfully");
     }
 
     @Override

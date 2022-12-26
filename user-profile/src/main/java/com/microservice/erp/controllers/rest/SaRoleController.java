@@ -19,7 +19,7 @@ public class SaRoleController {
     private final ISaRoleService service;
 
     @PostMapping
-    public SaRole saveRole(@Valid @RequestBody SaRole role) {
+    public ResponseEntity<?> saveRole(@Valid @RequestBody SaRole role) {
         return service.saveRole(role);
     }
 

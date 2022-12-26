@@ -14,12 +14,12 @@ import java.math.BigInteger;
 public class RoleDto {
     private BigInteger id;
     private String roleName;
-    private String isOpenUser;
+    private Character isOpenUser;
 
     public static RoleDto withId(
             BigInteger id,
             String roleName,
-            String isOpenUser) {
+            Character isOpenUser) {
         return new RoleDto(
                 id,
                 roleName,

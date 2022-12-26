@@ -27,21 +27,18 @@ public class DefermentExemptionValidation {
         StatusResponse responseMessage = new StatusResponse();
         ExemptionInfo exemptionInfo = exemptionInfoRepository.getExemptionByUserIdNotCancelled(userId, ApprovalStatus.CANCELED.value());
         if (!Objects.isNull(exemptionInfo)) {
+            responseMessage.setStatus(ApprovalStatus.APPROVED.value());
             if (exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
-                responseMessage.setStatus(ApprovalStatus.APPROVED.value());
                 responseMessage.setSavingStatus("EA");
                 responseMessage.setMessage("There is approved exemption. You can not proceed.");
-                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
             if (exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                responseMessage.setStatus(ApprovalStatus.PENDING.value());
                 responseMessage.setSavingStatus("EP");
-                responseMessage.setMessage("There is still some exemption which are not approved. If you continue," +
-                        " then the pending exemption will be cancelled.");
-                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
+                responseMessage.setMessage("There is still some exemption which are not approved.You can not proceed.");
+
 
             }
-
+            return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
         }
         DefermentInfo defermentInfo = defermentInfoRepository.getDefermentByUserIdNotCancelled(userId, ApprovalStatus.CANCELED.value());
         if (!Objects.isNull(defermentInfo)) {

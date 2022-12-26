@@ -13,4 +13,7 @@ import java.util.List;
 public interface ISaRoleRepository extends JpaRepository<SaRole, BigInteger> {
 
     List<SaRole> findAllByOrderByRoleNameAsc();
+
+   SaRole findByIsOpenUser(Character isOpenUser);
+   boolean existsByIsOpenUser(Character isOpenUser);
 }
