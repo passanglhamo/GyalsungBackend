@@ -189,7 +189,7 @@ public class ProfileService implements IProfileService {
 
         saUser.setPassword(passwordEncoder.encode(userProfileDto.getNewPassword()));
         iSaUserRepository.save(saUser);
-        //TODO: send email after cahnging password
+        //TODO: send email after changing password
         return ResponseEntity.ok(new MessageResponse("Password changed successfully."));
     }
 
