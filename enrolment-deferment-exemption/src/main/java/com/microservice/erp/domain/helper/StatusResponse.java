@@ -8,7 +8,6 @@ import lombok.Setter;
 public class StatusResponse {
     //region private declaration
     private Character status;
-    private String savingStatus;
     private String message;
     //endregion
 

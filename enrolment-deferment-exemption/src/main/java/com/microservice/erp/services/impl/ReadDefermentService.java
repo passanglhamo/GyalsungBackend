@@ -45,7 +45,7 @@ public class ReadDefermentService implements IReadDefermentService {
             RestTemplate restTemplate = new RestTemplate();
             HttpEntity<String> request = headerToken.tokenHeader(authHeader);
 
-            String userUrl = "USER-PROFILE/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
+            String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
             ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
             item.setFullName(Objects.requireNonNull(userResponse.getBody()).getFullName());
             item.setCid(Objects.requireNonNull(userResponse.getBody()).getCid());
@@ -109,19 +109,8 @@ public class ReadDefermentService implements IReadDefermentService {
 
     @Override
     public ResponseEntity<?> getDefermentValidation(BigInteger userId) {
-        ResponseEntity<?> responseEntity = defermentExemptionValidation
+        return defermentExemptionValidation
                 .getDefermentAndExemptValidation(userId);
-        StatusResponse responseMessage = (StatusResponse) responseEntity.getBody();
-        if (!Objects.isNull(responseMessage)) {
-            if (responseMessage.getSavingStatus().equals("DA")) {
-                responseMessage.setStatus(ApprovalStatus.PENDING.value());
-                responseMessage.setSavingStatus("DP");
-                responseMessage.setMessage("There is approved deferment. You can not proceed.");
-                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-            }
-        }
-
-        return responseEntity;
     }
 
 }

@@ -28,11 +28,8 @@ import java.util.Objects;
 public class UpdateExemptionService implements IUpdateExemptionService {
 
     private final IExemptionInfoRepository repository;
-    private final IDefermentInfoRepository defermentInfoRepository;
-    private final IEnrolmentInfoRepository enrolmentInfoRepository;
     private final HeaderToken headerToken;
     private final AddToQueue addToQueue;
-    private final DefermentExemptionValidation defermentExemptionValidation;
 
 
     @Override
@@ -69,23 +66,21 @@ public class UpdateExemptionService implements IUpdateExemptionService {
     @Override
     public ResponseEntity<?> rejectByIds(String authHeader, UpdateExemptionCommand command) {
 
-        ExemptionInfo exemptionInfo = repository.findAllById(command.getExemptionIds())
-                .stream()
-                .filter(d -> (d.getStatus().equals(ApprovalStatus.APPROVED.value()) ||
-                        d.getStatus().equals(ApprovalStatus.REJECTED.value()))
-                ).findFirst().orElse(null);
-
-        if (!Objects.isNull(exemptionInfo)) {
-            return new ResponseEntity<>("There are some application that are already approved or rejected.", HttpStatus.ALREADY_REPORTED);
-
-        }
+//        ExemptionInfo exemptionInfo = repository.findAllById(command.getExemptionIds())
+//                .stream()
+//                .filter(d -> (d.getStatus().equals(ApprovalStatus.APPROVED.value()) ||
+//                        d.getStatus().equals(ApprovalStatus.REJECTED.value()))
+//                ).findFirst().orElse(null);
+//
+//        if (!Objects.isNull(exemptionInfo)) {
+//            return new ResponseEntity<>("There are some application that are already approved or rejected.", HttpStatus.ALREADY_REPORTED);
+//
+//        }
 
         repository.findAllById(command.getExemptionIds()).forEach(d -> {
-            if(d.getStatus().equals(ApprovalStatus.PENDING.value())){
                 d.setStatus(ApprovalStatus.REJECTED.value());
                 d.setApprovalRemarks(command.getRemarks());
                 repository.save(d);
-            }
             try {
                 sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.REJECTED.value());
             } catch (Exception e) {

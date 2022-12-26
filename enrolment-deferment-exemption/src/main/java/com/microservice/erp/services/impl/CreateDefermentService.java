@@ -31,12 +31,10 @@ import java.util.Objects;
 public class CreateDefermentService implements ICreateDefermentService {
 
     private final IDefermentInfoRepository repository;
-    private final IExemptionInfoRepository exemptionInfoRepository;
     private final DefermentMapper mapper;
     private final HeaderToken headerToken;
     private final AddToQueue addToQueue;
     private final DefermentExemptionValidation defermentExemptionValidation;
-    private final IEnrolmentInfoRepository enrolmentInfoRepository;
     Integer fileLength = 5;
 
 
@@ -52,41 +50,11 @@ public class CreateDefermentService implements ICreateDefermentService {
         StatusResponse responseMessage = (StatusResponse) defermentExemptionValidation
                 .getDefermentAndExemptValidation(command.getUserId()).getBody();
         if (!Objects.isNull(responseMessage)) {
-            if (responseMessage.getSavingStatus().equals("EA")) {
-                return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
+            if (responseMessage.getStatus().equals(ApprovalStatus.APPROVED.value())) {
+                return new ResponseEntity<>(new MessageResponse(responseMessage.getMessage()), HttpStatus.ALREADY_REPORTED);
 
-            }
-            if (responseMessage.getSavingStatus().equals("DA")) {
-                return new ResponseEntity<>("User has already applied for deferment.", HttpStatus.ALREADY_REPORTED);
-
-            }
-            if (responseMessage.getSavingStatus().equals("DP")) {
-                DefermentInfo defermentInfoVal = repository.getDefermentByUserId(command.getUserId());
-                repository.findById(defermentInfoVal.getId()).ifPresent(dVal -> {
-                    dVal.setStatus(ApprovalStatus.CANCELED.value());
-                    repository.save(dVal);
-                });
-            }
-            if (responseMessage.getSavingStatus().equals("EP")) {
-                ExemptionInfo exemptionInfo = exemptionInfoRepository.getExemptionByUserId(command.getUserId());
-                if (exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                    exemptionInfoRepository.findById(exemptionInfo.getId()).ifPresent(dVal -> {
-                        dVal.setStatus(ApprovalStatus.CANCELED.value());
-                        exemptionInfoRepository.save(dVal);
-                    });
-                }
-            }
-            if (responseMessage.getSavingStatus().equals("ENP") || responseMessage.getSavingStatus().equals("ENA")) {
-                EnrolmentInfo enrolmentInfo = enrolmentInfoRepository.findByUserId(command.getUserId());
-                if (enrolmentInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                    enrolmentInfoRepository.findById(enrolmentInfo.getId()).ifPresent(dVal -> {
-                        dVal.setStatus(ApprovalStatus.CANCELED.value());
-                        enrolmentInfoRepository.save(dVal);
-                    });
-                }
             }
         }
-
 
         var deferment = repository.save(
                 mapper.mapToEntity(

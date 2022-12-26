@@ -29,53 +29,44 @@ public class DefermentExemptionValidation {
         if (!Objects.isNull(exemptionInfo)) {
             responseMessage.setStatus(ApprovalStatus.APPROVED.value());
             if (exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
-                responseMessage.setSavingStatus("EA");
                 responseMessage.setMessage("There is approved exemption. You can not proceed.");
+                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
             if (exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                responseMessage.setSavingStatus("EP");
                 responseMessage.setMessage("There is still some exemption which are not approved.You can not proceed.");
-
-
+                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
-            return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
+
         }
         DefermentInfo defermentInfo = defermentInfoRepository.getDefermentByUserIdNotCancelled(userId, ApprovalStatus.CANCELED.value());
         if (!Objects.isNull(defermentInfo)) {
+            responseMessage.setStatus(ApprovalStatus.APPROVED.value());
             if (defermentInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                responseMessage.setStatus(ApprovalStatus.PENDING.value());
-                responseMessage.setSavingStatus("DP");
-                responseMessage.setMessage("There is still some deferment which are not approved. If you continue," +
-                        " then the pending deferment will be cancelled.");
+                responseMessage.setMessage("There is still some deferment which are not approved.You can not proceed.");
                 return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
             if (defermentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
-                responseMessage.setStatus(ApprovalStatus.PENDING.value());
-                responseMessage.setSavingStatus("DA");
-                responseMessage.setMessage("There is approved deferment. If you continue, then deferment application will be cancelled.");
+                responseMessage.setMessage("There is approved deferment. You can not proceed.");
                 return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
+
 
         }
         EnrolmentInfo enrolmentInfo = enrolmentInfoRepository.findByUserId(userId);
         if (!Objects.isNull(enrolmentInfo)) {
+            responseMessage.setStatus(ApprovalStatus.APPROVED.value());
             if (enrolmentInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                responseMessage.setStatus(ApprovalStatus.PENDING.value());
-                responseMessage.setSavingStatus("ENP");
-                responseMessage.setMessage("There is still some enrolment which are not approved. If you continue," +
-                        " then the pending enrolment will be cancelled.");
+                responseMessage.setMessage("There is still some enrolment which are not approved. You can not proceed.");
                 return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             } else if (enrolmentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
-                responseMessage.setStatus(ApprovalStatus.PENDING.value());
-                responseMessage.setSavingStatus("ENA");
                 responseMessage.setMessage("There is approved enrolment. If you continue, then enrolment application will be cancelled.");
                 return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-
             }
+
+
         }
 
         responseMessage.setStatus('I');
-        responseMessage.setSavingStatus(ApprovalStatus.APPROVED.value().toString());
         responseMessage.setMessage("No Validation");
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }

@@ -30,9 +30,6 @@ public class UpdateDefermentService implements IUpdateDefermentService {
     private final IDefermentInfoRepository repository;
     private final HeaderToken headerToken;
     private final AddToQueue addToQueue;
-    private final DefermentExemptionValidation defermentExemptionValidation;
-    private final IExemptionInfoRepository exemptionInfoRepository;
-    private final IEnrolmentInfoRepository enrolmentInfoRepository;
 
 
     @Override
@@ -70,18 +67,17 @@ public class UpdateDefermentService implements IUpdateDefermentService {
     @Override
     public ResponseEntity<?> rejectByIds(String authHeader, @Valid UpdateDefermentCommand command) {
 
-        DefermentInfo defermentInfo = repository.findAllById(command.getDefermentIds())
-                .stream()
-                .filter(d -> (d.getStatus().equals(ApprovalStatus.APPROVED.value()) ||
-                        d.getStatus().equals(ApprovalStatus.REJECTED.value()))
-                ).findFirst().orElse(null);
-
-        if (!Objects.isNull(defermentInfo)) {
-            return new ResponseEntity<>("There are some application that are already approved or rejected.", HttpStatus.ALREADY_REPORTED);
-
-        }
+//        DefermentInfo defermentInfo = repository.findAllById(command.getDefermentIds())
+//                .stream()
+//                .filter(d -> (d.getStatus().equals(ApprovalStatus.APPROVED.value()) ||
+//                        d.getStatus().equals(ApprovalStatus.REJECTED.value()))
+//                ).findFirst().orElse(null);
+//
+//        if (!Objects.isNull(defermentInfo)) {
+//            return new ResponseEntity<>("There are some application that are already approved or rejected.", HttpStatus.ALREADY_REPORTED);
+//
+//        }
         repository.findAllById(command.getDefermentIds()).forEach(d -> {
-            if(d.getStatus().equals(ApprovalStatus.PENDING.value())){
                 d.setStatus(ApprovalStatus.REJECTED.value());
                 d.setApprovalRemarks(command.getRemarks());
                 repository.save(d);
@@ -90,8 +86,6 @@ public class UpdateDefermentService implements IUpdateDefermentService {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-
-            }
 
         });
 
