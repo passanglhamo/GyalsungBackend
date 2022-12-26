@@ -2,9 +2,12 @@ package com.microservice.erp.controllers.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.infoworks.lab.jjwt.JWTPayload;
+import com.infoworks.lab.jjwt.TokenValidator;
 import com.microservice.erp.domain.entities.SaUser;
 import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.services.iServices.IUserInfoService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,9 +32,11 @@ public class UserInfoController {
         this.iSaUserRepository = iSaUserRepository;
     }
     @GetMapping("/hello")
-    public ResponseEntity<String> getHello() throws JsonProcessingException {
+    public ResponseEntity<String> getHello(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws JsonProcessingException {
+        JWTPayload jwtPayload = TokenValidator.parsePayload(token, JWTPayload.class);
+        String userName = jwtPayload.getSub();
         Integer count = 121;
-        return ResponseEntity.ok(mapper.writeValueAsString(count));
+        return ResponseEntity.ok(mapper.writeValueAsString("Transaction Counts:- " + count + ", User Name:- " + userName));
     }
 
     @GetMapping("/rowCount")

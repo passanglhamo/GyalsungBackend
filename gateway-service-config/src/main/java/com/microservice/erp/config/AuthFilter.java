@@ -62,10 +62,10 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
             //Make authentication call to Validate-Token-API:
             String token = authHeader.substring("Bearer ".length());
             Mono<Void> filterChain = builder.build()
-                    //.get()
-                    //OR following
                     .get()
-                    //.uri(String.format("%s?token=%s", config.authValidationURL, token))
+                    //.uri(String.format("%s?token=%s", authValidationURL, token))
+                    //OR following
+                    //.post()
                     .uri(config.authValidationURL)
                     //.uri("http://localhost:8083/api/auth/auth/v1/isValidToken")
                     .header(HttpHeaders.AUTHORIZATION, authHeader)

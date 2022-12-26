@@ -70,6 +70,7 @@ public class SpringCloudConfig {
 
     @Bean("CustomAuthFilter")
     public GatewayFilter getAuthFilter(WebClient.Builder builder) {
+
         return AuthFilter.createGatewayFilter(builder, new AuthFilter.Config(authValidationURL));
     }
 
@@ -110,8 +111,7 @@ public class SpringCloudConfig {
                         , r -> r.path("/api/consumer/**")
                                 .uri(secondURL))
                 .route("userProfile"
-                        , r ->
-                                r.path("/api/user/profile/**")
+                        , r -> r.path("/api/user/profile/**")
                                 .filters(f -> f.filter(authFilter)
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(userProfileURL))
@@ -137,12 +137,7 @@ public class SpringCloudConfig {
                                 .uri(notificationURL))
                 .route("authModule"
                         , r -> r.path("/api/auth/**")
-                                .filters(f -> f.filter(authFilter)
-                                        .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
-                                .uri(authURL))
-                /*.route("authModule"
-                        , r -> r.path("/api/auth/**")
-                            .uri(authURL))*/
+                            .uri(authURL))
                 .build();
     }
 
