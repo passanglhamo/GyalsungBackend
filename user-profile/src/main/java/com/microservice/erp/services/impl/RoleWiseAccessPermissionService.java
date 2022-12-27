@@ -3,6 +3,7 @@ package com.microservice.erp.services.impl;
 import com.microservice.erp.domain.dao.RoleWiseAccessPermissionDao;
 import com.microservice.erp.domain.dto.PermissionDto;
 import com.microservice.erp.domain.dto.PermissionListDto;
+import com.microservice.erp.domain.dto.ScreenDto;
 import com.microservice.erp.domain.entities.RoleWiseAccessPermission;
 import com.microservice.erp.domain.entities.SaUser;
 import com.microservice.erp.domain.repositories.RoleWiseAccessPermissionRepository;
@@ -77,5 +78,9 @@ public class RoleWiseAccessPermissionService implements IRoleWiseAccessPermissio
 //            }
         }
         return ResponseEntity.ok("Data saved successfully.");
+    }
+
+    public ScreenDto getAccessScreen(BigInteger screenId) {
+        return roleWiseAccessPermissionDao.getAccessScreen(screenId);
     }
 }

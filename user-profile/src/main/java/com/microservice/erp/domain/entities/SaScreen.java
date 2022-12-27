@@ -6,28 +6,31 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity(name = "sa_screen")
-public class SaScreen {
+@AttributeOverride(name = "id", column = @Column(name = "screen_id", columnDefinition = "bigint"))
+public class SaScreen extends Auditable<BigInteger, Long> {
 
     //region private variables
-    @Id
-    @Column(name = "screen_id", columnDefinition = "varchar(255)")
-    private String screenId;
+    @Column(name = "screen_group_id", columnDefinition = "bigint")
+    private BigInteger screenGroupId;
 
     @Column(name = "screen_name", columnDefinition = "varchar(255)")
     private String screenName;
 
     @Column(name = "screen_url", columnDefinition = "varchar(255)")
     private String screenUrl;
+
+    @Column(name = "screen_icon_name", columnDefinition = "varchar(255)")
+    private String screenIconName;
     //endregion
 
     //region setters and getters
 
-    public String getScreenId() {
-        return screenId;
+    public BigInteger getScreenGroupId() {
+        return screenGroupId;
     }
 
-    public void setScreenId(String screenId) {
-        this.screenId = screenId;
+    public void setScreenGroupId(BigInteger screenGroupId) {
+        this.screenGroupId = screenGroupId;
     }
 
     public String getScreenName() {
@@ -44,6 +47,14 @@ public class SaScreen {
 
     public void setScreenUrl(String screenUrl) {
         this.screenUrl = screenUrl;
+    }
+
+    public String getScreenIconName() {
+        return screenIconName;
+    }
+
+    public void setScreenIconName(String screenIconName) {
+        this.screenIconName = screenIconName;
     }
 
     //endregion

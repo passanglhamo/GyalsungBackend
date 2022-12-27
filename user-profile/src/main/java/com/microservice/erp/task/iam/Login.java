@@ -7,6 +7,7 @@ import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.sql.query.models.Property;
 import com.microservice.erp.controllers.rest.LoginRequest;
 import com.microservice.erp.domain.dto.PermissionListDto;
+import com.microservice.erp.domain.dto.ScreenDto;
 import com.microservice.erp.domain.entities.SaRole;
 import com.microservice.erp.domain.entities.SaUser;
 import com.microservice.erp.domain.helper.Permission;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Login extends TokenizerTask {
 
@@ -92,13 +94,11 @@ public class Login extends TokenizerTask {
             //PasswordEncoder::matches(RawPassword, EncodedPassword) == will return true/false
             if (!encoder.matches(request.getPassword(), saUser.get().getPassword()))
                 return new Response().setStatus(401).setMessage("Password didn't matched.");
-
             //Now existing password matched: lets create the JWT token;
             try {
                 //We create a token for 1 Hour:
                 Calendar timeToLive = getTimeToLive();
                 String tokenKey = getToken(saUser.get(), timeToLive);
-
                 Map<String, Object> data = new HashMap<>();
                 data.put("accessToken", tokenKey);
                 data.put("userId", saUser.get().getId());
@@ -106,14 +106,17 @@ public class Login extends TokenizerTask {
 
                 //todo: need to check without data in sa_screen
                 Set<GrantedAuthority> accessPermissions = new HashSet<>();
+                List<ScreenDto> accessScreens = new ArrayList<>();
                 for (SaRole saRole : saUser.get().getRoles()) {
                     BigInteger roleId = saRole.getId();
                     List<PermissionListDto> permissionListDtos = roleWiseAccessPermissionService.getRoleMappedScreens(roleId);
                     for (PermissionListDto permissionListDto : permissionListDtos) {
-                        String screenId = permissionListDto.getScreen_id();
+                        BigInteger screenId = permissionListDto.getScreen_id();
                         //Screen permissions
                         if (permissionListDto.getView_allowed() != null && permissionListDto.getView_allowed() == 'Y') {
                             accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.VIEW));
+                            ScreenDto screenDto = roleWiseAccessPermissionService.getAccessScreen(screenId);
+                            accessScreens.add(screenDto);
                         }
                         if (permissionListDto.getSave_allowed() != null && permissionListDto.getSave_allowed() == 'Y') {
                             accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.ADD));
@@ -127,7 +130,7 @@ public class Login extends TokenizerTask {
                     }
                 }
                 data.put("accessPermissions", accessPermissions);
-
+                data.put("accessScreens", accessScreens);
                 return new Response().setStatus(200).setMessage(Message.marshal(data));
             } catch (IOException e) {
                 return new Response().setStatus(500).setMessage(e.getMessage());
