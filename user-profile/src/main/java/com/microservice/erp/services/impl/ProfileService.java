@@ -422,4 +422,10 @@ public class ProfileService implements IProfileService {
         return ResponseEntity.ok(userProfileDto);
     }
 
+    @Override
+    public ResponseEntity<?> getProfileInfoByIds(List<BigInteger> userIds) {
+        List<SaUser> saUsers = iSaUserRepository.findAllById(userIds);
+        return ResponseEntity.ok(saUsers);
+    }
+
 }

@@ -11,7 +11,7 @@ import java.util.Date;
 @Getter
 public class UserProfileDto {
     //region private variables
-    private BigInteger userId;
+    private BigInteger id;
     private Integer age;
     private String username;
     private String full_name;

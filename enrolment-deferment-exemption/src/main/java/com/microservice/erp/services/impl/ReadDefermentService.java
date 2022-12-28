@@ -4,18 +4,16 @@ import com.microservice.erp.domain.dto.DefermentDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.DefermentFileInfo;
 import com.microservice.erp.domain.entities.DefermentInfo;
-import com.microservice.erp.domain.helper.*;
+import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
+import com.microservice.erp.domain.helper.ResponseMessage;
+import com.microservice.erp.domain.helper.SystemDataInt;
 import com.microservice.erp.domain.mapper.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentFileInfoRepository;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.IReadDefermentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -31,32 +29,43 @@ public class ReadDefermentService implements IReadDefermentService {
     private final IDefermentInfoRepository repository;
     private final IDefermentFileInfoRepository repositoryFile;
     private final DefermentMapper mapper;
-    private final HeaderToken headerToken;
     private final DefermentExemptionValidation defermentExemptionValidation;
+    private final UserInformationService userInformationService;
 
     @Override
     public List<DefermentDto> getAllDefermentList(String authHeader) {
+        //To get deferment list
         List<DefermentDto> defermentDtoList = repository.findAll()
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
 
-        defermentDtoList.forEach(item -> {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpEntity<String> request = headerToken.tokenHeader(authHeader);
+        List<BigInteger> userIdsVal = defermentDtoList
+                .stream()
+                .map(DefermentDto::getUserId)
+                .collect(Collectors.toList());
 
-            String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
-            ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
-            item.setFullName(Objects.requireNonNull(userResponse.getBody()).getFullName());
-            item.setCid(Objects.requireNonNull(userResponse.getBody()).getCid());
-            item.setDob(Objects.requireNonNull(userResponse.getBody()).getDob());
-            item.setGender(Objects.requireNonNull(userResponse.getBody()).getGender());
+
+        List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsVal,authHeader);
+
+
+        //Merge deferment and user information
+        defermentDtoList.forEach(defermentDto -> {
+            UserProfileDto userProfileDto = userProfileDtos
+                    .stream()
+                    .filter(user -> defermentDto.getUserId().equals(user.getId()))
+                    .findAny()
+                    .orElse(null);
+            defermentDto.setFullName(Objects.requireNonNull(userProfileDto).getFullName());
+            defermentDto.setCid(Objects.requireNonNull(userProfileDto).getCid());
+            defermentDto.setDob(Objects.requireNonNull(userProfileDto).getDob());
+            defermentDto.setGender(Objects.requireNonNull(userProfileDto).getGender());
         });
-
 
         return defermentDtoList;
 
     }
+
 
     @Override
     public ResponseEntity<?> downloadFiles(BigInteger defermentId, HttpServletResponse response) {
@@ -78,31 +87,39 @@ public class ReadDefermentService implements IReadDefermentService {
     }
 
     @Override
-    public List<DefermentDto> getDefermentListByToDateStatus(String authHeader,Date toDate, Character status) {
+    public List<DefermentDto> getDefermentListByToDateStatus(String authHeader, Date toDate, Character status) {
         List<DefermentDto> defermentDtoList = repository.getDefermentListByToDateStatus(
-                        toDate, status)
+                toDate, status)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
-        defermentDtoList.forEach(item -> {
-            RestTemplate restTemplate = new RestTemplate();
-            HttpEntity<String> request = headerToken.tokenHeader(authHeader);
+        List<BigInteger> userIdsVal = defermentDtoList
+                .stream()
+                .map(DefermentDto::getUserId)
+                .collect(Collectors.toList());
 
-            String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
-            ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
-            item.setFullName(Objects.requireNonNull(userResponse.getBody()).getFullName());
-            item.setCid(Objects.requireNonNull(userResponse.getBody()).getCid());
-            item.setDob(Objects.requireNonNull(userResponse.getBody()).getDob());
-            item.setGender(Objects.requireNonNull(userResponse.getBody()).getGender());
+
+        List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsVal,authHeader);
+
+        //Merge deferment and user information
+        defermentDtoList.forEach(defermentDto -> {
+            UserProfileDto userProfileDto = userProfileDtos
+                    .stream()
+                    .filter(user -> defermentDto.getUserId().equals(user.getId()))
+                    .findAny()
+                    .orElse(null);
+            defermentDto.setFullName(Objects.requireNonNull(userProfileDto).getFullName());
+            defermentDto.setCid(Objects.requireNonNull(userProfileDto).getCid());
+            defermentDto.setDob(Objects.requireNonNull(userProfileDto).getDob());
+            defermentDto.setGender(Objects.requireNonNull(userProfileDto).getGender());
         });
-
 
         return defermentDtoList;
     }
 
     @Override
     public ResponseEntity<?> getDefermentByUserId(BigInteger userId) {
-        DefermentInfo defermentInfo = Objects.isNull(repository.getDefermentByUserId(userId))?null:
+        DefermentInfo defermentInfo = Objects.isNull(repository.getDefermentByUserId(userId)) ? null :
                 repository.getDefermentByUserId(userId);
         return ResponseEntity.ok(defermentInfo);
     }

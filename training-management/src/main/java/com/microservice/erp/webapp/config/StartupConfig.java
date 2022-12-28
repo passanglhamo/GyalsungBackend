@@ -21,6 +21,6 @@ public class StartupConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Startup Done Rajib....");
+        System.out.println("Startup Done For Training MicroService");
     }
 }

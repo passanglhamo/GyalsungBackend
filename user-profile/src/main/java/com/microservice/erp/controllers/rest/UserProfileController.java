@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -42,6 +43,11 @@ public class UserProfileController {
     @GetMapping("/getProfileInfo")
     public ResponseEntity<?> getProfileInfo(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") BigInteger userId) {
         return iProfileService.getProfileInfo(authHeader, userId);
+    }
+
+    @GetMapping("/getProfileInfoByIds")
+    public ResponseEntity<?> getProfileInfoByIds(@RequestParam("userIds") List<BigInteger> userIds) {
+        return iProfileService.getProfileInfoByIds(userIds);
     }
 
     @PostMapping("/changeUsername")

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 public interface IProfileService {
 
@@ -56,4 +57,6 @@ public interface IProfileService {
     ResponseEntity<?> getAllUsersEligibleForTraining(Date paramDate, Integer paramAge);
 
     ResponseEntity<?> checkUnderAge(BigInteger userId, Date paramDate);
+
+    ResponseEntity<?> getProfileInfoByIds(List<BigInteger> userIds);
 }
