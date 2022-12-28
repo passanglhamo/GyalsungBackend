@@ -21,7 +21,7 @@ public class SaScreenService implements ISaScreenService {
     @Override
     public ResponseEntity<?> saveScreen(SaScreen saScreen) {
         saScreenRepository.save(saScreen);
-        return ResponseEntity.ok("Data saved successfully");
+        return ResponseEntity.ok("Data saved successfully.");
     }
 
     @Override

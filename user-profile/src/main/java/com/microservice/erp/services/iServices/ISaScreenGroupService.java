@@ -11,4 +11,5 @@ public interface ISaScreenGroupService {
     ResponseEntity<?> getAllScreens();
 
     ResponseEntity<?> getScreenById(BigInteger id);
+
 }

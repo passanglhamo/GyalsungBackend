@@ -20,7 +20,7 @@ public class SaScreenGroupService implements ISaScreenGroupService {
     @Override
     public ResponseEntity<?> saveScreenGroup(SaScreenGroup saScreenGroup) {
         saScreenGroupRepository.save(saScreenGroup);
-        return ResponseEntity.ok("Data saved successfully");
+        return ResponseEntity.ok("Data saved successfully.");
     }
 
     @Override
@@ -33,6 +33,6 @@ public class SaScreenGroupService implements ISaScreenGroupService {
     public ResponseEntity<?> getScreenById(BigInteger id) {
         SaScreenGroup saScreenGroup = saScreenGroupRepository.findById(id).get();
         return ResponseEntity.ok(saScreenGroup);
-
     }
+
 }

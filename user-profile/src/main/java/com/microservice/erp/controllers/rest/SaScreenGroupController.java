@@ -32,4 +32,5 @@ public class SaScreenGroupController {
     public ResponseEntity<?> getScreenById(@RequestParam("id") BigInteger id) {
         return iSaScreenGroupService.getScreenById(id);
     }
+
 }
