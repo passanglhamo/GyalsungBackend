@@ -28,7 +28,7 @@ public class SaRoleService implements ISaRoleService {
             }
         }
         repository.save(role);
-        return ResponseEntity.ok("Data saved successfully");
+        return ResponseEntity.ok("Data saved successfully.");
     }
 
     @Override
@@ -55,6 +55,6 @@ public class SaRoleService implements ISaRoleService {
             repository.save(d);
 
         });
-        return ResponseEntity.ok("Data updated successfully");
+        return ResponseEntity.ok("Data updated successfully.");
     }
 }
