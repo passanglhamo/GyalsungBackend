@@ -10,7 +10,7 @@ import java.math.BigInteger;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/screenGroups")
+@RequestMapping("/saScreenGroups")
 public class SaScreenGroupController {
     private final ISaScreenGroupService iSaScreenGroupService;
 
