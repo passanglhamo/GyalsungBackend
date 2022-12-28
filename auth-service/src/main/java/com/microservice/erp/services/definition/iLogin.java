@@ -12,7 +12,7 @@ public interface iLogin {
 
     ResponseEntity<?> isValidToken(String token, UserDetails principal);
 
+    ResponseEntity<?> doLogout(String token, UserDetails principal);
+
 //    Response refreshToken(String token, UserDetails principal);
-//
-//    Response doLogout(String token,UserDetails principal);
 }

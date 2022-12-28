@@ -9,4 +9,6 @@ public interface IAuthService {
     ResponseEntity<?> doLogin(LoginRequest loginRequest) throws IOException;
 
     ResponseEntity<?> isValidToken(String token);
+
+    ResponseEntity<?> doLogout(String token);
 }

@@ -64,20 +64,15 @@ public class LoginService implements iLogin {
 //        return new RefreshToken(token, userRepository, Duration.ofMillis(tokenTtl)).execute(null);
 //    }
 //
-//    @Override
-//    public Response doLogout(String token, UserDetails principal) {
-//        Response response = new Response().setMessage("Not Implemented").setStatus(HttpStatus.NOT_IMPLEMENTED.value());
-//        //
-//        TaskStack logoutStack = TaskStack.createSync(true);
-//        logoutStack.push(new CheckTokenValidity(token, userRepository));
-//        logoutStack.push(new Logout(token));
-//        logoutStack.push(new MakeTokenExpired(token));
-//        logoutStack.commit(true, (message, state) -> {
-//            LOG.info("Logout Status: " + state.name());
-//            if (message != null)
-//                response.unmarshallingFromMap(message.marshallingToMap(true), true);
-//        });
-//        //
-//        return response;
-//    }
+    @Override
+    public ResponseEntity<?> doLogout(String token, UserDetails principal) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(principal.toString(), headers);
+
+        String userUrl = "http://localhost:8084/api/user/profile/auth/signout?token=" + token;
+
+        return restTemplate.exchange(userUrl, HttpMethod.POST, entity, String.class);
+    }
 }

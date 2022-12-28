@@ -1,5 +1,6 @@
 package com.microservice.erp.controllers.rest;
 
+import com.infoworks.lab.jjwt.TokenValidator;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.data.base.DataSource;
 import com.microservice.erp.domain.models.LoginRequest;
@@ -132,18 +133,11 @@ public class AuthController {
 //        return ResponseEntity.ok(response.toString());
 //    }
 
-    // For future reference
-//    @PostMapping("/logout")
-//    public ResponseEntity<String> logout(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
-//            , @ApiIgnore @AuthenticationPrincipal UserDetails principal) {
-//        token = TokenValidator.parseToken(token, "Bearer ");
-//        Response response = login.doLogout(token, principal);
-//        if (response.getStatus() == HttpStatus.OK.value()) {
-//            return ResponseEntity.ok(response.toString());
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
-//        }
-//    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
+            , @ApiIgnore @AuthenticationPrincipal UserDetails principal) {
+        return login.doLogout(token, principal);
+    }
 
 //    @PostMapping("/reset")
 //    public ResponseEntity<String> reset(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token

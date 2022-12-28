@@ -30,4 +30,9 @@ public class AuthController {
         return iAuthService.isValidToken(token);
 
     }
+
+    @PostMapping("/signout")
+    public ResponseEntity<?> logout(@RequestParam("token") String token) {
+        return iAuthService.doLogout(token);
+    }
 }

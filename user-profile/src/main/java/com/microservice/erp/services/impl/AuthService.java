@@ -6,11 +6,12 @@ import com.infoworks.lab.jjwt.TokenValidator;
 import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
 import com.microservice.erp.controllers.rest.LoginRequest;
-import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.repositories.ISaUserRepository;
 import com.microservice.erp.services.iServices.IAuthService;
 import com.microservice.erp.task.iam.CheckUserExist;
 import com.microservice.erp.task.iam.Login;
+import com.microservice.erp.task.iam.Logout;
+import com.microservice.erp.task.iam.MakeTokenExpired;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,4 +80,25 @@ public class AuthService implements IAuthService {
 
     }
 
+    @Override
+    public ResponseEntity<?> doLogout(String token) {
+        token = TokenValidator.parseToken(token, "Bearer ");
+        Response response = new Response().setMessage("Not Implemented").setStatus(HttpStatus.NOT_IMPLEMENTED.value());
+        //
+        TaskStack logoutStack = TaskStack.createSync(true);
+        logoutStack.push(new CheckTokenValidity(token, iSaUserRepository));
+        logoutStack.push(new Logout(token));
+        logoutStack.push(new MakeTokenExpired(token));
+        logoutStack.commit(true, (message, state) -> {
+            if (message != null)
+                response.unmarshallingFromMap(message.marshallingToMap(true), true);
+        });
+        if (response.getStatus() == HttpStatus.OK.value()) {
+            return ResponseEntity.ok(response.toString());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
+        }
+    }
 }
+
+

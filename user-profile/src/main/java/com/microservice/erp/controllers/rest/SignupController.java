@@ -56,28 +56,5 @@ public class SignupController {
         return iSignupService.signup(signupRequestDto);
     }
 
-    //@PostMapping("/signin")
-//    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-//
-//        List<String> roles = new ArrayList<>();
-//        roles.add("USER");
-//
-//        SaUser saUser = iSaUserRepository.findByCid(loginRequest.getUsername());
-//        if (saUser == null) {
-//            ResponseEntity.badRequest().body(new MessageResponse("Invalid username or password."));
-//        }
-//
-//        assert saUser != null;
-//
-//        return ResponseEntity.ok(new JwtResponse("staticToken",
-//                saUser.getId(),
-//                saUser.getFullName(),
-//                saUser.getCid(),
-//                saUser.getGender(),
-//                saUser.getMobileNo(),
-//                saUser.getUsername(),
-//                saUser.getEmail(),
-//                roles));
-//    }
 
 }
