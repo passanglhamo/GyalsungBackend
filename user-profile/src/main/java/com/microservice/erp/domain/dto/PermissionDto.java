@@ -13,7 +13,7 @@ public class PermissionDto {
     //region private variables
     private BigInteger roleId;
     private BigInteger permissionId;
-    private String screenId;
+    private BigInteger screenId;
     private Character viewAllowed;
     private Character saveAllowed;
     private Character editAllowed;

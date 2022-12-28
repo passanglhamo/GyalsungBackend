@@ -12,6 +12,15 @@ public class JwtResponse {
     private String userId;
     private Object roles;
     private Object accessPermissions;
+    private Object accessScreens;
+
+    public Object getAccessScreens() {
+        return accessScreens;
+    }
+
+    public void setAccessScreens(Object accessScreens) {
+        this.accessScreens = accessScreens;
+    }
 
     public String getAccessToken() {
         return accessToken;

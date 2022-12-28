@@ -42,7 +42,6 @@ public class SignupService implements ISignupService {
     private final ISaRoleRepository iSaRoleRepository;
 
     private final PasswordEncoder encoder;
-    private final BCryptPasswordEncoder passwordEncoder;
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
     //private final DataSource<String,LoginRetryCount> cache;
@@ -160,7 +159,7 @@ public class SignupService implements ISignupService {
         saUser.setStatus('A');
         saUser.setSignupUser('Y');
         saUser.setUsername(signupRequestDto.getCid());
-        saUser.setPassword(passwordEncoder.encode(signupRequestDto.getPassword()));
+        saUser.setPassword(encoder.encode(signupRequestDto.getPassword()));
         Set<SaRole> saRoles = new HashSet<>();
         SaRole saRoleDb = iSaRoleRepository.findByIsOpenUser('Y');// to get student user role information
         saRoles.add(saRoleDb);
