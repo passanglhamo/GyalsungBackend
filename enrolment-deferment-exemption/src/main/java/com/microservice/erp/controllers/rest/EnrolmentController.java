@@ -27,11 +27,16 @@ import java.util.Objects;
 public class EnrolmentController {
 //    private static Logger LOG = LoggerFactory.getLogger(EnrolmentController.class.getSimpleName());
 
-    private IEnrolmentInfoService iEnrolmentInfoService;
+    private final IEnrolmentInfoService iEnrolmentInfoService;
 
     @RequestMapping(value = "/getRegistrationDateInfo", method = RequestMethod.GET)
     public ResponseEntity<?> getRegistrationDateInfo() {
         return iEnrolmentInfoService.getRegistrationDateInfo();
+    }
+
+    @RequestMapping(value = "/getMyEnrolmentInfo", method = RequestMethod.GET)
+    public ResponseEntity<?> getMyEnrolmentInfo(@RequestParam("userId") BigInteger userId) {
+        return iEnrolmentInfoService.getMyEnrolmentInfo(userId);
     }
 
 //    @RequestMapping(value = "/downloadParentConsentForm", method = RequestMethod.GET)
@@ -72,7 +77,7 @@ public class EnrolmentController {
 
     @PostMapping(value = "/changeTrainingAcademy")
     public ResponseEntity<?> changeTrainingAcademy(@RequestHeader("Authorization") String authHeader,
-                                                @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) throws Exception {
+                                                   @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) throws Exception {
 
         return iEnrolmentInfoService.changeTrainingAcademy(authHeader, command);
     }

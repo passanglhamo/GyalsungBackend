@@ -33,11 +33,11 @@ import java.util.Objects;
 @AllArgsConstructor
 public class EnrolmentInfoService implements IEnrolmentInfoService {
 
-    private IEnrolmentInfoRepository iEnrolmentInfoRepository;
-    private IEnrolmentCoursePreferenceRepository iEnrolmentCoursePreferenceRepository;
-    private EnrolmentMapper enrolmentMapper;
+    private final IEnrolmentInfoRepository iEnrolmentInfoRepository;
+    private final IEnrolmentCoursePreferenceRepository iEnrolmentCoursePreferenceRepository;
+    private final EnrolmentMapper enrolmentMapper;
     private final IRegistrationDateInfoRepository iRegistrationDateInfoRepository;
-    private EnrolmentDao enrolmentDao;
+    private final EnrolmentDao enrolmentDao;
     private final AddToQueue addToQueue;
     private final DefermentExemptionValidation defermentExemptionValidation;
 
@@ -46,6 +46,17 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     public ResponseEntity<?> getRegistrationDateInfo() {
         RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus('A');
         return ResponseEntity.ok(registrationDateInfo);
+    }
+
+    @Override
+    public ResponseEntity<?> getMyEnrolmentInfo(BigInteger userId) {
+        EnrolmentInfo enrolmentInfo = iEnrolmentInfoRepository.findByUserId(userId);
+        if (enrolmentInfo != null) {
+            enrolmentInfo.setEnrolmentCoursePreferences(null);
+            return ResponseEntity.ok(enrolmentInfo);
+        } else {
+            return ResponseEntity.badRequest().body("Information not found.");
+        }
     }
 
     @Override
@@ -172,7 +183,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         }
         //to save update enrolment info
         iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
-            if(item.getStatus().equals(ApprovalStatus.PENDING.value())){
+            if (item.getStatus().equals(ApprovalStatus.PENDING.value())) {
                 item.setStatus(ApprovalStatus.APPROVED.value());
                 item.setTrainingAcademyId(command.getTrainingAcademyId());
                 item.setAllocatedCourseId(command.getAllocatedCourseId());

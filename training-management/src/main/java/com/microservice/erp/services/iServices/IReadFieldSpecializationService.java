@@ -10,6 +10,7 @@ public interface IReadFieldSpecializationService {
     ResponseEntity<?> getAllFieldSpecByStatus(Character status);
 
     ResponseEntity<?> getAllMathRequiredCourses();
+
     ResponseEntity<?> getAllDefaultCourses();
 
     List<FieldSpecialization> getAllFieldSpecList();

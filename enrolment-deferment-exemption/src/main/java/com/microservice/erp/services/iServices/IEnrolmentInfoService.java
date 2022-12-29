@@ -32,6 +32,8 @@ public interface IEnrolmentInfoService {
 
     ResponseEntity<?> getEnrolmentValidation(BigInteger userId);
 
+    ResponseEntity<?> getMyEnrolmentInfo(BigInteger userId);
+
     @Getter
     @Setter
     @AllArgsConstructor

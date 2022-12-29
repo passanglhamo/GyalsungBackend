@@ -21,6 +21,7 @@ public class EnrolmentInfo extends Auditable<BigInteger, Long> {
     @Column(name = "under_age", columnDefinition = "char(1)")
     private Character underAge;
     @Column(name = "year", columnDefinition = "char(4)")
+
     private String year;
     @Column(name = "training_academy_id", columnDefinition = "int")
     private Integer trainingAcademyId;
