@@ -1,5 +1,7 @@
 package com.microservice.erp.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.*;
 
@@ -13,9 +15,11 @@ public class Policy extends Auditable<Long, Long> {
     private String type;
 
     @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<User> users;
 
     @ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<Role> roles;
 
     @OneToMany(targetEntity = Statement.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)

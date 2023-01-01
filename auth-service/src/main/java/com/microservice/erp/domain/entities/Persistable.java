@@ -11,6 +11,7 @@ public class Persistable<ID,VERSION> extends Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private ID id;
 
     @Version @JsonIgnore

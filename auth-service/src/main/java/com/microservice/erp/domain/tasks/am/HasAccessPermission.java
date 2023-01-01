@@ -58,8 +58,8 @@ public class HasAccessPermission extends AbstractTask<Message, AccessPermission>
                     .collect(Collectors.toList());
             //
             Action existingAction = Action.maxInOrder(matchedAction);
-
-            return (permission.getStatement().getAction() != existingAction)
+            return (permission.getStatement().getAction() == Action.None
+                    || permission.getStatement().getAction() != existingAction)
                     ? (AccessPermission) permission.setMessage("Action Didn't Matched").setStatus(401)
                     : (AccessPermission) permission.setMessage("Action Matched").setStatus(200);
         }

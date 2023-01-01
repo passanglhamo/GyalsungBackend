@@ -34,6 +34,8 @@ public class User extends Auditable<Long, Long> implements UserDetails {
 
     private String firstName;
     private String lastName;
+
+    @JsonIgnore
     private boolean enabled;
 
     @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -42,7 +44,7 @@ public class User extends Auditable<Long, Long> implements UserDetails {
     @ManyToMany(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Policy> policies;
 
-    @Override
+    @Override @JsonIgnore @Transient
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (roles == null) return new ArrayList<>();
         return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(toList());
@@ -58,17 +60,17 @@ public class User extends Auditable<Long, Long> implements UserDetails {
         return username;
     }
 
-    @Override
+    @Override @JsonIgnore @Transient
     public boolean isAccountNonExpired() {
         return false;
     }
 
-    @Override
+    @Override @JsonIgnore @Transient
     public boolean isAccountNonLocked() {
         return enabled;
     }
 
-    @Override
+    @Override @JsonIgnore @Transient
     public boolean isCredentialsNonExpired() {
         return false;
     }
