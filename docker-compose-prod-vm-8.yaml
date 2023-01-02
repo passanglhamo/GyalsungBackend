@@ -1,0 +1,106 @@
+version: '3.5'
+
+networks:
+  web-app-net:
+    name: my-web-app-net
+    #driver: overlay
+    driver: bridge
+
+volumes:
+  redis-inmemory-storage:
+  activemq-storage:
+  pg-notifyDB-storage:
+  pgadmin-notifyDB-data:
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    networks:
+      - web-app-net
+    volumes:
+      - redis-inmemory-storage:/data
+
+  activemq:
+    image: webcenter/activemq
+    ports:
+      - 8161:8161
+      - 61616:61616
+      - 61613:61613
+    environment:
+      - ACTIVEMQ_MIN_MEMORY=512
+      - ACTIVEMQ_MAX_MEMORY=2048
+      - ACTIVEMQ_ADMIN_LOGIN=admin
+      - ACTIVEMQ_ADMIN_PASSWORD=admin
+    restart: on-failure
+    networks:
+      - web-app-net
+    volumes:
+      - activemq-storage:/var/log/activemq
+
+  fake-smtp:
+    image: rnwood/smtp4dev
+    ports:
+      - 587:25
+      - 3000:80
+    networks:
+      - web-app-net
+
+  pg-notifyDB:
+    image: postgres
+    environment:
+      POSTGRES_DB: notifyDB
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root@123
+    ports:
+      - 5432:5432
+    networks:
+      - web-app-net
+    volumes:
+      - pg-notifyDB-storage:/var/lib/postgresql/data
+
+  pgadmin-notifyDB:
+    image: dpage/pgadmin4
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@mypage.com
+      PGADMIN_DEFAULT_PASSWORD: root@123
+    volumes:
+      - pgadmin-notifyDB-data:/var/lib/pgadmin
+    restart: on-failure
+    networks:
+      - web-app-net
+    depends_on:
+      - pg-notifyDB
+
+  exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - 9100
+    networks:
+      - web-app-net
+
+  prom:
+    image: prometheus-db:1.0
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - 9090:9090
+    depends_on:
+      - exporter
+    networks:
+      - web-app-net
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    depends_on:
+      - prom
+    networks:
+      - web-app-net
+
+#end of scripts

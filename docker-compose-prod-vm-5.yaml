@@ -1,0 +1,133 @@
+version: '3.5'
+
+networks:
+  web-app-net:
+    name: my-web-app-net
+    #driver: overlay
+    driver: bridge
+
+volumes:
+  pg-trainingDB-storage:
+  pgadmin-trainingDB-data:
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    ports:
+      - 2181:2181
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - web-app-net
+
+  kafka:
+    image: bitnami/kafka:latest
+    ports:
+      - 9092:9092
+      - 9093:9093
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      #Place Device-Current IP Or EC2-Private-IP
+      #To connect from an external machine, change localhost to your host's external IP/hostname,
+      #EXTERNAL://localhost:9093, If we need to access the kafka from our host-machine for debug purpose.
+      #EXTERNAL://<ec2-private-ip>:9093, In case of aws-ec2 instance, we have to broadcast on the ec2's private ip, other wise can't be listen from other ec2 instance.
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_LISTENERS=CLIENT://:9092,EXTERNAL://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+      #
+    depends_on:
+      - zookeeper
+    networks:
+      - web-app-net
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    ports:
+      - 8091:8080
+    restart: on-failure
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+      - KAFKA_CLUSTERS_0_READONLY=false
+    depends_on:
+      - kafka
+    networks:
+      - web-app-net
+
+  pg-trainingDB:
+    image: postgres
+    environment:
+      POSTGRES_DB: trainingDB
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root@123
+    ports:
+      - 5432:5432
+    networks:
+      - web-app-net
+    volumes:
+      - pg-trainingDB-storage:/var/lib/postgresql/data
+
+  pgadmin-trainingDB:
+    image: dpage/pgadmin4
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@mypage.com
+      PGADMIN_DEFAULT_PASSWORD: root@123
+    volumes:
+      - pgadmin-trainingDB-data:/var/lib/pgadmin
+    restart: on-failure
+    networks:
+      - web-app-net
+    depends_on:
+      - pg-trainingDB
+
+  auth-webapp:
+    image: auth-web-service:1.0
+    build:
+      context: .
+      dockerfile: ./auth-service/Dockerfile
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: ${app.eureka.service.host}
+      app.eureka.service.port: ${app.eureka.service.port}
+    ports:
+      - 8053:8083
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  user-profile-webapp:
+    image: user-profile-web-service:1.0
+    build:
+      context: .
+      dockerfile: ./user-profile/Dockerfile
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: ${app.eureka.service.host}
+      app.eureka.service.port: ${app.eureka.service.port}
+    ports:
+      - 8054:8084
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  training-management-webapp:
+    image: training-management-web-service:1.0
+    build:
+      context: .
+      dockerfile: ./training-management/Dockerfile
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: ${app.eureka.service.host}
+      app.eureka.service.port: ${app.eureka.service.port}
+    ports:
+      - 8056:8086
+    restart: on-failure
+    networks:
+      - web-app-net
+
+#end of scripts

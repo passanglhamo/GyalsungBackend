@@ -1,0 +1,27 @@
+version: '3.5'
+
+networks:
+  web-app-net:
+    name: my-web-app-net
+    #driver: overlay
+    driver: bridge
+
+services:
+  api-gateway:
+    image: api-gateway:1.0
+    build:
+      context: .
+      dockerfile: ./gateway-service-config/Dockerfile
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus,gateway
+      app.eureka.service.host: ${app.eureka.service.host}
+      app.eureka.service.port: ${app.eureka.service.port}
+      redis.host: ${redis.host}
+      redis.port: ${redis.port}
+    ports:
+      - 80:80
+    restart: on-failure
+    networks:
+      - web-app-net
+
+#end of scripts

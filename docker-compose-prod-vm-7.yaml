@@ -1,0 +1,87 @@
+version: '3.5'
+
+networks:
+  web-app-net:
+    name: my-web-app-net
+    #driver: overlay
+    driver: bridge
+
+volumes:
+  pg-medicalDB-storage:
+  pgadmin-medicalDB-data:
+
+services:
+  pg-medicalDB:
+    image: postgres
+    environment:
+      POSTGRES_DB: medicalDB
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root@123
+    ports:
+      - 5432:5432
+    networks:
+      - web-app-net
+    volumes:
+      - pg-medicalDB-storage:/var/lib/postgresql/data
+
+  pgadmin-medicalDB:
+    image: dpage/pgadmin4
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@mypage.com
+      PGADMIN_DEFAULT_PASSWORD: root@123
+    volumes:
+      - pgadmin-medicalDB-data:/var/lib/pgadmin
+    restart: on-failure
+    networks:
+      - web-app-net
+    depends_on:
+      - pg-medicalDB
+
+  enrolment-deferment-exemption-webapp:
+    image: enrolment-deferment-exemption-web-service:1.0
+    build:
+      context: .
+      dockerfile: ./enrolment-deferment-exemption/Dockerfile
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: ${app.eureka.service.host}
+      app.eureka.service.port: ${app.eureka.service.port}
+    ports:
+      - 8077:8087
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  medical-screening-webapp:
+    image: medical-screening-web-service:1.0
+    build:
+      context: .
+      dockerfile: ./medical-screening/Dockerfile
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: ${app.eureka.service.host}
+      app.eureka.service.port: ${app.eureka.service.port}
+    ports:
+      - 8078:8088
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  notification-webapp:
+    image: notification-web-service:1.0
+    build:
+      context: .
+      dockerfile: ./notification/Dockerfile
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: ${app.eureka.service.host}
+      app.eureka.service.port: ${app.eureka.service.port}
+    ports:
+      - 8075:8085
+    restart: on-failure
+    networks:
+      - web-app-net
+
+#end of scripts
