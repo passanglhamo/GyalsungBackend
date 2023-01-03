@@ -76,14 +76,14 @@ scrape_configs:
     scrape_interval: 5s
     #localhost || machine-ip || aws-public-dns:port
     static_configs:
-      - targets: ['user-webapp:8084']
+      - targets: ['user-profile-webapp:8084']
 
   - job_name: 'training-management'
     metrics_path: '/api/training/management/actuator/prometheus'
     scrape_interval: 5s
     #localhost || machine-ip || aws-public-dns:port
     static_configs:
-      - targets: ['training-webapp:8086']
+      - targets: ['training-management-webapp:8086']
 
   - job_name: 'enrolment-deferment-exemption-management'
     metrics_path: '/api/enrolment/deferment/exemption/actuator/prometheus'
