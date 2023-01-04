@@ -143,7 +143,7 @@ public class SpringCloudConfig {
                         , r -> r.path("/api/auth/**")
                                 .filters(f -> f.filter(authFilter)
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
-                                .uri(notificationURL))
+                                .uri(authURL))
                 .build();
     }
 
