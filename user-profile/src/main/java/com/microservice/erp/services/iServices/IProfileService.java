@@ -18,8 +18,6 @@ public interface IProfileService {
 
     ResponseEntity<?> getProfilePicture(BigInteger userId) throws IOException;
 
-    ResponseEntity<?> changeUsername(UserProfileDto userProfileDto);
-
     ResponseEntity<?> changeMobileNo(UserProfileDto userProfileDto);
 
     ResponseEntity<?> checkEmailExistOrNot(String email);
@@ -30,7 +28,6 @@ public interface IProfileService {
 
     ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto) throws Exception;
 
-    ResponseEntity<?> changePassword(UserProfileDto userProfileDto);
 
     ResponseEntity<?> changeParentInfo(UserProfileDto userProfileDto);
 
@@ -47,8 +44,6 @@ public interface IProfileService {
     ResponseEntity<?> syncCensusRecord(UserProfileDto userProfileDto) throws ParseException;
 
     ResponseEntity<?> searchUser(String searchKey);
-
-    ResponseEntity<?> resetUserPassword(UserProfileDto userProfileDto);
 
     ResponseEntity<?> changeProfilePic(HttpServletRequest request, UserProfileDto userProfileDto) throws IOException;
 

@@ -76,24 +76,6 @@ public class UserProfileController {
         return iProfileService.changeEmail(userProfileDto);
     }
 
-    //todo: need to add this method in auth microservice
-    @PostMapping("/changePassword")
-    public ResponseEntity<?> changePassword(@RequestBody UserProfileDto userProfileDto) {
-        return iProfileService.changePassword(userProfileDto);
-    }
-
-    //todo: need to add this method in auth microservice
-    @PostMapping("/changeUsername")
-    public ResponseEntity<?> changeUsername(@RequestBody UserProfileDto userProfileDto) {
-        return iProfileService.changeUsername(userProfileDto);
-    }
-
-    //todo: need to add this method in auth microservice
-    @PostMapping("/resetUserPassword")
-    public ResponseEntity<?> resetUserPassword(@RequestBody UserProfileDto userProfileDto) {
-        return iProfileService.resetUserPassword(userProfileDto);
-    }
-
     @PostMapping("/changeParentInfo")
     public ResponseEntity<?> changeParentInfo(@RequestBody UserProfileDto userProfileDto) {
         return iProfileService.changeParentInfo(userProfileDto);
