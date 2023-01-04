@@ -71,4 +71,39 @@ scrape_configs:
     static_configs:
       - targets: ['second-webapp:8082']
 
+  - job_name: 'user-profile'
+    metrics_path: '/api/user/profile/actuator/prometheus'
+    scrape_interval: 5s
+    #localhost || machine-ip || aws-public-dns:port
+    static_configs:
+      - targets: ['user-profile-webapp:8084']
+
+  - job_name: 'training-management'
+    metrics_path: '/api/training/management/actuator/prometheus'
+    scrape_interval: 5s
+    #localhost || machine-ip || aws-public-dns:port
+    static_configs:
+      - targets: ['training-management-webapp:8086']
+
+  - job_name: 'enrolment-deferment-exemption-management'
+    metrics_path: '/api/enrolment/deferment/exemption/actuator/prometheus'
+    scrape_interval: 5s
+    #localhost || machine-ip || aws-public-dns:port
+    static_configs:
+      - targets: ['enrolment-deferment-exemption-webapp:8087']
+
+  - job_name: 'medical-screening'
+    metrics_path: '/api/medical/screening/actuator/prometheus'
+    scrape_interval: 5s
+    #localhost || machine-ip || aws-public-dns:port
+    static_configs:
+      - targets: ['medical-screening-webapp:8088']
+
+  - job_name: 'notification'
+    metrics_path: '/api/notification/actuator/prometheus'
+    scrape_interval: 5s
+    #localhost || machine-ip || aws-public-dns:port
+    static_configs:
+      - targets: ['notification-webapp:8085']
+
 #End Of File
