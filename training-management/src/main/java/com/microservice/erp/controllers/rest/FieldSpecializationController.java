@@ -3,6 +3,7 @@ package com.microservice.erp.controllers.rest;
 import com.microservice.erp.domain.entities.FieldSpecialization;
 import com.microservice.erp.services.iServices.ICreateFieldSpecializationService;
 import com.microservice.erp.services.iServices.IReadFieldSpecializationService;
+import com.microservice.erp.services.iServices.IUpdateFieldSpecializationService;
 import com.microservice.erp.services.impl.services.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +20,7 @@ import java.util.List;
 public class FieldSpecializationController {
     private final ICreateFieldSpecializationService service;
     private final IReadFieldSpecializationService readService;
-
+    private final IUpdateFieldSpecializationService updateService;
 
     @PostMapping
     public FieldSpecialization saveFieldSpec(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @Valid @RequestBody FieldSpecialization fieldSpecialization) {
@@ -56,5 +57,12 @@ public class FieldSpecializationController {
     @GetMapping
     public List<FieldSpecialization> getAllFieldSpecList() {
         return readService.getAllFieldSpecList();
+    }
+
+    @PutMapping("/updateCourse")
+    public ResponseEntity<?> updateCourse(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                          @Valid @RequestBody FieldSpecialization fieldSpecialization) {
+        SpringSecurityAuditorAware.setToken(token);
+        return updateService.updateCourse(fieldSpecialization);
     }
 }

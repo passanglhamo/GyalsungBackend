@@ -1,9 +1,15 @@
 package com.microservice.erp.controllers.rest;
 
+import com.microservice.erp.domain.entities.MedicalQuestionCategory;
 import com.microservice.erp.domain.entities.MedicalQuestionnaire;
 import com.microservice.erp.services.iServices.ICreateMedicalQuestionService;
 import com.microservice.erp.services.iServices.IReadMedicalQuestionService;
+import com.microservice.erp.services.iServices.IUpdateMedicalCategoryService;
+import com.microservice.erp.services.iServices.IUpdateMedicalQuestionService;
+import com.microservice.erp.services.impl.services.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,9 +23,12 @@ public class MedicalQuestionController {
 
     private final ICreateMedicalQuestionService service;
     private final IReadMedicalQuestionService readService;
+    private final IUpdateMedicalQuestionService updateService;
 
     @PostMapping
-    public MedicalQuestionnaire saveMedicalQuestionnaire(@Valid @RequestBody MedicalQuestionnaire medicalQuestionnaire) {
+    public MedicalQuestionnaire saveMedicalQuestionnaire(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                         @Valid @RequestBody MedicalQuestionnaire medicalQuestionnaire) {
+        SpringSecurityAuditorAware.setToken(token);
         return service.saveMedicalQuestionnaire(medicalQuestionnaire);
     }
 
@@ -31,5 +40,12 @@ public class MedicalQuestionController {
     @GetMapping("/getAllMedicalQuestionnaireById")
     public MedicalQuestionnaire getAllMedicalQuestionnaireById(@RequestParam("id") BigInteger id) {
         return readService.getAllMedicalQuestionnaireById(id);
+    }
+
+    @PutMapping("/updateMedicalQuestionnaire")
+    public ResponseEntity<?> updateMedicalQuestionnaire(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                     @Valid @RequestBody MedicalQuestionnaire medicalQuestionnaire) {
+        SpringSecurityAuditorAware.setToken(token);
+        return updateService.updateMedicalQuestionnaire(medicalQuestionnaire);
     }
 }

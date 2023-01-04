@@ -16,3 +16,4 @@ public interface iLogin {
 
     Response doLogout(String token, UserDetails principal);
 }
+
