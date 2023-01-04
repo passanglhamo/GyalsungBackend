@@ -4,7 +4,9 @@ import com.microservice.erp.domain.entities.DzongkhagHospitalMapping;
 import com.microservice.erp.services.iServices.ICreateDzongkhagHospitalMappingService;
 import com.microservice.erp.services.iServices.IReadDzongkhagHospitalMappingService;
 import com.microservice.erp.services.iServices.IUpdateDzongkhagHospitalMappingService;
+import com.microservice.erp.services.impl.services.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,9 @@ public class DzongkhagHospitalMappingController {
     private final IUpdateDzongkhagHospitalMappingService updateService;
 
     @PostMapping
-    public ResponseEntity<?> saveDzongkhagHospital(@Valid @RequestBody DzongkhagHospitalMapping dzongkhagHospitalMapping) {
+    public ResponseEntity<?> saveDzongkhagHospital(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                   @Valid @RequestBody DzongkhagHospitalMapping dzongkhagHospitalMapping) {
+        SpringSecurityAuditorAware.setToken(token);
         return service.saveDzongkhagHospital(dzongkhagHospitalMapping);
     }
 
@@ -42,8 +46,9 @@ public class DzongkhagHospitalMappingController {
     }
 
     @PutMapping("/updateDzongkhagHospitalMapping")
-    public ResponseEntity<?> updateDzongkhagHospitalMapping(@Valid @RequestBody DzongkhagHospitalMapping dzongkhagHospitalMapping) {
-
+    public ResponseEntity<?> updateDzongkhagHospitalMapping(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                            @Valid @RequestBody DzongkhagHospitalMapping dzongkhagHospitalMapping) {
+        SpringSecurityAuditorAware.setToken(token);
         return updateService.updateDzongkhagHospitalMapping(dzongkhagHospitalMapping);
     }
 

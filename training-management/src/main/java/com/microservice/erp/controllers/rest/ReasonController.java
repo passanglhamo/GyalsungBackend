@@ -5,8 +5,11 @@ import com.infoworks.lab.jjwt.TokenValidator;
 import com.microservice.erp.domain.entities.Reason;
 import com.microservice.erp.services.iServices.ICreateReasonService;
 import com.microservice.erp.services.iServices.IReadReasonService;
+import com.microservice.erp.services.iServices.IUpdateReasonService;
+import com.microservice.erp.services.impl.services.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,9 +23,12 @@ public class ReasonController {
 
     private final IReadReasonService readService;
     private final ICreateReasonService service;
+    private final IUpdateReasonService updateService;
 
     @PostMapping
-    public Reason saveReason(@Valid @RequestBody Reason reason) {
+    public Reason saveReason(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                             @Valid @RequestBody Reason reason) {
+        SpringSecurityAuditorAware.setToken(token);
         return service.saveReason(reason);
     }
 
@@ -46,6 +52,13 @@ public class ReasonController {
     @GetMapping("/getAllReasonByStatus")
     public List<Reason> getAllReasonByStatus(@RequestParam("status") String status) {
         return readService.getAllReasonByStatus(status);
+    }
+
+    @PutMapping("/updateReason")
+    public ResponseEntity<?> updateReason(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                          @Valid @RequestBody Reason reason) {
+        SpringSecurityAuditorAware.setToken(token);
+        return updateService.updateReason(reason);
     }
 
 }

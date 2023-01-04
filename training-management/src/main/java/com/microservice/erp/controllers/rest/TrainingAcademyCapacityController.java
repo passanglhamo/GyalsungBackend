@@ -5,7 +5,9 @@ import com.microservice.erp.domain.entities.TrainingAcademyCapacity;
 import com.microservice.erp.services.iServices.ICreateTrainingAcademyCapacityService;
 import com.microservice.erp.services.iServices.IReadTrainingAcademyCapacityService;
 import com.microservice.erp.services.iServices.IUpdateTrainingAcademyIntakeService;
+import com.microservice.erp.services.impl.services.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +26,10 @@ public class TrainingAcademyCapacityController {
     private final IUpdateTrainingAcademyIntakeService updateService;
 
     @PostMapping
-    public ResponseEntity<?> saveTrainingAcaCap(@Valid @RequestBody TrainingAcademyCapacityDto trainingAcademyCapacityDto)
+    public ResponseEntity<?> saveTrainingAcaCap(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                @Valid @RequestBody TrainingAcademyCapacityDto trainingAcademyCapacityDto)
             throws IOException, ParseException {
-
+        SpringSecurityAuditorAware.setToken(token);
         return service.saveTrainingAcaCap(trainingAcademyCapacityDto);
     }
 
@@ -42,8 +45,9 @@ public class TrainingAcademyCapacityController {
     }
 
     @PutMapping("/updateTrainingAcademyIntake")
-    public ResponseEntity<?> updateTrainingAcademyIntake(@Valid @RequestBody TrainingAcademyCapacityDto trainingAcademyCapacityDto) {
-
+    public ResponseEntity<?> updateTrainingAcademyIntake(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                         @Valid @RequestBody TrainingAcademyCapacityDto trainingAcademyCapacityDto) {
+        SpringSecurityAuditorAware.setToken(token);
         return updateService.updateTrainingAcademyIntake(trainingAcademyCapacityDto);
     }
 }

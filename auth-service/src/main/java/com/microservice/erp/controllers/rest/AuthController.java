@@ -97,13 +97,8 @@ public class AuthController {
 
     @PostMapping("/nonblock/login")
     public ResponseEntity<?> nonBlockingLogin(@Valid @RequestBody LoginRequest request) throws IOException {
-        //
          return login.doLogin(request);
-//        if (responsegetStatus() == HttpStatus.OK.value()) {
-//            return ResponseEntity.ok(response.toString());
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
-//        }
+
     }
 
     @PostMapping("/login")

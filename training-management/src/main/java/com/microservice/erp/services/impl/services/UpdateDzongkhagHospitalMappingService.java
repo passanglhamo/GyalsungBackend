@@ -24,12 +24,11 @@ public class UpdateDzongkhagHospitalMappingService implements IUpdateDzongkhagHo
             return new ResponseEntity<>("Selected hospital is already mapped.", HttpStatus.ALREADY_REPORTED);
         }
 
-        repository.findById(dzongkhagHospitalMapping.getId()).map(d -> {
+        repository.findById(dzongkhagHospitalMapping.getId()).ifPresent(d -> {
             d.setDzongkhagId(dzongkhagHospitalMapping.getDzongkhagId());
             d.setHospitalId(dzongkhagHospitalMapping.getHospitalId());
             d.setStatus(dzongkhagHospitalMapping.getStatus());
             repository.save(d);
-            return d;
         });
 
         return ResponseEntity.ok("Dzongkhag and hospital mapping information updated successfully.");

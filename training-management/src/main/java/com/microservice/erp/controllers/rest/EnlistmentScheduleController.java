@@ -5,7 +5,9 @@ import com.microservice.erp.domain.entities.EnlistmentSchedule;
 import com.microservice.erp.services.iServices.ICreateEnlistmentScheduleService;
 import com.microservice.erp.services.iServices.IReadEnlistmentScheduleService;
 import com.microservice.erp.services.iServices.IUpdateEnlistmentScheduleService;
+import com.microservice.erp.services.impl.services.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +26,9 @@ public class EnlistmentScheduleController {
     private final IUpdateEnlistmentScheduleService updateService;
 
     @PostMapping
-    public ResponseEntity<?> saveEnlistment(@RequestBody EnlistmentScheduleDto enlistmentScheduleDto)
+    public ResponseEntity<?> saveEnlistment(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody EnlistmentScheduleDto enlistmentScheduleDto)
             throws IOException, ParseException {
-
+        SpringSecurityAuditorAware.setToken(token);
         return service.saveEnlistmentSchedule(enlistmentScheduleDto);
     }
 
@@ -42,9 +44,9 @@ public class EnlistmentScheduleController {
     }
 
     @PutMapping("/updateEnlistmentSchedule")
-    public ResponseEntity<?> updateEnlistment(@RequestBody
+    public ResponseEntity<?> updateEnlistment(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestBody
     EnlistmentScheduleDto enlistmentScheduleDto) {
-
+        SpringSecurityAuditorAware.setToken(token);
         return updateService.updateEnlistmentSchedule(enlistmentScheduleDto);
     }
 
