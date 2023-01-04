@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.entities;
 
 import lombok.Getter;
@@ -40,3 +41,4 @@ public class RoleWiseAccessPermission {
     //endregion
 
 }
+*/

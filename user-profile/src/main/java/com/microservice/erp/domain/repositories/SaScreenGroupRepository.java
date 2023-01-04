@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.repositories;
 
 import com.microservice.erp.domain.entities.SaScreenGroup;
@@ -9,3 +10,4 @@ import java.util.List;
 public interface SaScreenGroupRepository extends JpaRepository<SaScreenGroup, BigInteger> {
     List<SaScreenGroup> findAllByOrderByScreenGroupNameAsc();
 }
+*/

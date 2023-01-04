@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.services.iServices;
 
 import com.microservice.erp.domain.dto.RoleDto;
@@ -13,3 +14,4 @@ public interface ISaRoleService {
 
      ResponseEntity<?> updateRole(RoleDto role);
 }
+*/

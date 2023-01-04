@@ -32,12 +32,12 @@ public class SaveRoleTest {
     @Test
     public void execute() {
         Role role = new Role();
-        role.setName("SHOP-ADMIN");
-        when(repository.findRoleByName(any(String.class))).thenReturn(Optional.empty());
+        role.setRoleName("SHOP-ADMIN");
+        when(repository.findRoleByRoleName(any(String.class))).thenReturn(Optional.empty());
 
         Role role2 = new Role();
         role2.unmarshallingFromMap(role.marshallingToMap(true), true);
-        role2.setId(101l);
+        //role2.setId(101l);
         when(repository.save(any(Role.class))).thenReturn(role2);
         //
         Task<Message, Response> task = new SaveRole(repository, role);

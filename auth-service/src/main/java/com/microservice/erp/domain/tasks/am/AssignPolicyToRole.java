@@ -41,7 +41,7 @@ public class AssignPolicyToRole extends AbstractTask<Message, Response> {
             role.unmarshallingFromMap(savedData, true);
         }
         if (repository != null){
-            Optional<Role> existingRole = repository.findRoleByName(role.getName());
+            Optional<Role> existingRole = repository.findRoleByRoleName(role.getRoleName());
             if(!existingRole.isPresent()) return new Response().setMessage("Role Not Found.").setStatus(500);
 
             Optional<Policy> existingPolicy = policyRepository.findByServiceName(policy.getServiceName());

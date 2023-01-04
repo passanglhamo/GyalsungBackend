@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.entities.SaScreen;
@@ -36,3 +37,4 @@ public class SaScreenService implements ISaScreenService {
         return ResponseEntity.ok(saScreen);
     }
 }
+*/

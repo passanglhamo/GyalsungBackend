@@ -38,7 +38,6 @@ public class SaveUser extends AbstractTask<Message, Response> {
                 user.setId(exist.get().getId());
                 user.setUsername(exist.get().getUsername());
                 user.setEmail(exist.get().getEmail());
-                user.setMobile(exist.get().getMobile());
                 User saved = repository.save(user);
                 response.setMessage("User successfully updated: " + saved.getId());
             }

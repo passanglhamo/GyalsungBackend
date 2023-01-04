@@ -69,12 +69,12 @@ public class StartupConfig implements CommandLineRunner {
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setEmail(username);
-        user.setMobile(mobile);
+        //user.setMobile(mobile);
         user.setEnabled(true);
         user.setSecrets(User.createRandomMapOfSecret());
         //
         Role role = new Role();
-        role.setName(userRole);
+        role.setRoleName(userRole);
         user.addRoles(role);
         //
         Statement statement = new Statement();

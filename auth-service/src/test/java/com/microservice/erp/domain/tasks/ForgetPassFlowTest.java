@@ -56,7 +56,7 @@ public class ForgetPassFlowTest extends BaseTaskTest {
         User user = new User();
         user.setUsername("m@gmail.com");
         user.setEmail("m@gmail.com");
-        user.setMobile("01712645571");
+        //user.setMobile("01712645571");
         user.setPassword(encoder.encode("112233"));
         user.setSecrets(createRandomSecrets());
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
@@ -95,7 +95,7 @@ public class ForgetPassFlowTest extends BaseTaskTest {
         User user = new User();
         user.setUsername("m@gmail.com");
         user.setEmail("m@gmail.com");
-        user.setMobile("01712645571");
+        //user.setMobile("01712645571");
         user.setPassword(encoder.encode("112233"));
         user.setSecrets(createRandomSecrets());
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
@@ -145,7 +145,7 @@ public class ForgetPassFlowTest extends BaseTaskTest {
         user.setUsername("m@gmail.com");
         user.setPassword(encoder.encode("112233"));
         user.setEmail("m@gmail.com");
-        user.setMobile("01712645571");
+        //user.setMobile("01712645571");
         user.setEnabled(true);
         user.setSecrets(createRandomSecrets());
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
@@ -163,7 +163,7 @@ public class ForgetPassFlowTest extends BaseTaskTest {
         User user1 = new User();
         user1.setUsername("m@gmail.com");
         user1.setEmail("m@gmail.com");
-        user1.setMobile("01712645571");
+        //user1.setMobile("01712645571");
         user1.setPassword(encoder.encode("112233"));
         user1.setSecrets(createRandomSecrets());
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user1));
@@ -196,7 +196,7 @@ public class ForgetPassFlowTest extends BaseTaskTest {
         //
         TaskStack loginStack = TaskStack.createSync(true);
         loginStack.push(new CheckUserExist(repository, request.getUsername()));
-        loginStack.push(new Login(repository, encoder, request));
+        loginStack.push(new Login(repository, encoder, null,request));
         loginStack.commit(true, (message, state) -> {
             LOG.info("Login Status: " + state.name());
             if (message != null)

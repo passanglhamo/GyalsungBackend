@@ -39,13 +39,13 @@ public class SaveUserTest {
         user.setUsername("m@gmail.com");
         user.setPassword(encoder.encode("112233"));
         user.setEmail("m@gmail.com");
-        user.setMobile("01712645571");
+        //user.setMobile("01712645571");
         user.setEnabled(true);
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.empty());
         //
         User user2 = new User();
         user2.unmarshallingFromMap(user.marshallingToMap(true), true);
-        user2.setId(101l);
+        //user2.setId(101l);
         when(repository.save(any(User.class))).thenReturn(user2);
         //
         Task<Message, Response> task = new SaveUser(repository, user);
@@ -59,11 +59,11 @@ public class SaveUserTest {
     public void abort() {
         when(encoder.encode(any(CharSequence.class))).thenReturn("$2a$10$rM6UzzKoB4iVmEJ9sjLnYeBo4GdLfZH1lh1UjF9Gepa8FHW9YDObi");
         User user = new User();
-        user.setId(101l);
+        //user.setId(101l);
         user.setUsername("m@gmail.com");
         user.setPassword(encoder.encode("112233"));
         user.setEmail("m@gmail.com");
-        user.setMobile("01712645571");
+        //user.setMobile("01712645571");
         user.setEnabled(true);
         //when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
         //

@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.rest;
 
 import com.microservice.erp.domain.entities.SaUser;
@@ -21,10 +22,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigInteger;
 
+*/
 /**
  * @author Rajib Kumer Ghosh
  *
- */
+ *//*
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {WebApplicationTest.class
@@ -73,13 +76,15 @@ public class SaUserControllerIntegrationTest {
     @Test
     public void query(){
         //
-        /*controller.insert(new SaUser("Rajib The Coder", Gender.MALE, 24));
+        */
+/*controller.insert(new SaUser("Rajib The Coder", Gender.MALE, 24));
         controller.insert(new SaUser("Zepa The Pankha Coder", Gender.MALE, 24));
-        controller.insert(new SaUser("Passang The Pagla", Gender.MALE, 26));*/
+        controller.insert(new SaUser("Passang The Pagla", Gender.MALE, 26));*//*
+
         //
         int size = Long.valueOf(controller.getRowCount()).intValue();
         //List<SaUser> items = controller.query(size, 0);
         //items.stream().forEach(userInfo -> System.out.println(userInfo.getName()));
     }
 
-}
+}*/

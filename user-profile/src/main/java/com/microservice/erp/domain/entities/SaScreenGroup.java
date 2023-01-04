@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.entities;
 
 import javax.persistence.AttributeOverride;
@@ -36,3 +37,4 @@ public class SaScreenGroup extends Auditable<BigInteger, Long> {
     }
     //endregion
 }
+*/

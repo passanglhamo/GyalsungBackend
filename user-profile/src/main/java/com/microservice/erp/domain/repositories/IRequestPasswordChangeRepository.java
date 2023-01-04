@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.repositories;
 
  import com.microservice.erp.domain.entities.PwChangeRequest;
@@ -10,3 +11,4 @@ public interface IRequestPasswordChangeRepository extends JpaRepository<PwChange
 
     PwChangeRequest findByRequestIdAndEmail(BigInteger requestId, String email);
 }
+*/

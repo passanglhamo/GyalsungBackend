@@ -3,7 +3,7 @@ package com.microservice.erp.controllers.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.SignupRequestDto;
-import com.microservice.erp.domain.repositories.ISaUserRepository;
+import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISignupService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +19,11 @@ import java.text.ParseException;
 public class SignupController {
 
     private final ISignupService iSignupService;
-    private final ISaUserRepository iSaUserRepository;
+    private final IUserInfoRepository iUserInfoRepository;
 
-    public SignupController(ISignupService iSignupService, ISaUserRepository iSaUserRepository) {
+    public SignupController(ISignupService iSignupService, IUserInfoRepository iUserInfoRepository) {
         this.iSignupService = iSignupService;
-        this.iSaUserRepository = iSaUserRepository;
+        this.iUserInfoRepository = iUserInfoRepository;
     }
 
     @GetMapping("/getCitizenDetails")
@@ -52,7 +52,7 @@ public class SignupController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) throws ParseException {
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) throws ParseException, JsonProcessingException {
         return iSignupService.signup(signupRequestDto);
     }
 

@@ -37,10 +37,10 @@ public class HasAccessPermissionTest {
         //
         User user = new User();
         user.setUsername("hcafe@gmail.com");
-        user.setFirstName("hCafe");
+        //user.setFirstName("hCafe");
 
         Role role = new Role();
-        role.setName("SHOP-ADMIN");
+        //role.setName("SHOP-ADMIN");
         user.addRoles(role);
 
         Statement statement1 = new Statement();
@@ -74,10 +74,10 @@ public class HasAccessPermissionTest {
         //
         User user = new User();
         user.setUsername("hcafe@gmail.com");
-        user.setFirstName("hCafe");
+        //user.setFirstName("hCafe");
 
         Role role1 = new Role();
-        role1.setName("SHOP-ADMIN");
+        //role1.setName("SHOP-ADMIN");
         user.addRoles(role1);
 
         Statement statement1 = new Statement();
@@ -94,7 +94,7 @@ public class HasAccessPermissionTest {
 
         //.....
         Role role2 = new Role();
-        role2.setName("USER");
+        //role2.setName("USER");
         user.addRoles(role2);
 
         Statement statement3 = new Statement();
@@ -124,10 +124,10 @@ public class HasAccessPermissionTest {
         //
         User user = new User();
         user.setUsername("hcafe@gmail.com");
-        user.setFirstName("hCafe");
+        //user.setFirstName("hCafe");
 
         Role role1 = new Role();
-        role1.setName("USER");
+        //role1.setName("USER");
         user.addRoles(role1);
 
         Statement statement1 = new Statement();
@@ -144,7 +144,7 @@ public class HasAccessPermissionTest {
 
         //.....
         Role role2 = new Role();
-        role2.setName("SHOP-ADMIN");
+        //role2.setName("SHOP-ADMIN");
         user.addRoles(role2);
 
         Statement statement3 = new Statement();

@@ -29,7 +29,7 @@ public class SaveRole extends AbstractTask<Message, Response> {
             role.unmarshallingFromMap(savedData, true);
         }
         if (repository != null){
-            Optional<Role> exist = repository.findRoleByName(role.getName());
+            Optional<Role> exist = repository.findRoleByRoleName(role.getRoleName());
             if (!exist.isPresent()){
                 Role saved = repository.save(role);
                 return new Response().setMessage("Role successfully created: " + saved.getId()).setStatus(200);

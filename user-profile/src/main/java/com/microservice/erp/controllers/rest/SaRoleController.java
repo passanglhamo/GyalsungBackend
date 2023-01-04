@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.RoleDto;
@@ -35,3 +36,4 @@ public class SaRoleController {
         return service.updateRole(roleDto);
     }
 }
+*/

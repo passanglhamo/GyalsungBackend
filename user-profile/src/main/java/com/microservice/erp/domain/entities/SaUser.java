@@ -1,38 +1,34 @@
+/*
 package com.microservice.erp.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.math.BigInteger;
-import java.util.*;
-
-import static java.util.stream.Collectors.toList;
+import java.util.Date;
 
 //@Setter
 //@Getter
 @AllArgsConstructor
 @Entity(name = "sa_user")
 @AttributeOverride(name = "id", column = @Column(name = "user_id", columnDefinition = "bigint"))
-public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
+public class SaUser extends Auditable<BigInteger, Long> {
 
-    @NotNull(message = "Username must not be null.")
-    @Basic(optional = false)
-    @Column(name = "username", columnDefinition = "varchar(255)")
-    private String username;
+//    @NotNull(message = "Username must not be null.")
+//    @Basic(optional = false)
+//    @Column(name = "username", columnDefinition = "varchar(255)")
+//    private String username;
 
-    @NotNull(message = "Password cannot be null")
-    @Size(max = 250)
-    @Basic(optional = false)
-    @Column(name = "password", columnDefinition = "varchar(255)")
-    private String password;
+//    @NotNull(message = "Password cannot be null")
+//    @Size(max = 250)
+//    @Basic(optional = false)
+//    @Column(name = "password", columnDefinition = "varchar(255)")
+//    private String password;
 
     @Basic(optional = false)
     @NotNull(message = "Full name cannot be null")
@@ -163,102 +159,6 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
     @NotNull
     @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "sa_user_role_mapping",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<SaRole> roles = new HashSet<>();
-
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "sa_user_secret")
-    @Column(name = "secret")
-    @JsonIgnore
-    private Map<Integer, String> secrets;
-
-
-    private boolean enabled;
-
-    public static Map<Integer, String> createRandomMapOfSecret() {
-        Map<Integer, String> secrets = new HashMap<>();
-        secrets.put(1110, UUID.randomUUID().toString());
-        secrets.put(1111, UUID.randomUUID().toString());
-        secrets.put(1112, UUID.randomUUID().toString());
-        secrets.put(1113, UUID.randomUUID().toString());
-        secrets.put(1114, UUID.randomUUID().toString());
-        return secrets;
-    }
-
-    public SaUser addRoles(SaRole... roles) {
-        if (getRoles() == null) {
-            setRoles(new HashSet<>());
-        }
-        getRoles().addAll(Arrays.asList(roles));
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SaUser user = (SaUser) o;
-        return getId().equals(user.getId()) && username.equals(user.username);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), username);
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (roles == null) return new ArrayList<>();
-        return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(toList());
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return enabled;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-
-    public SaUser() {
-
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getFullName() {
         return fullName;
@@ -587,24 +487,5 @@ public class SaUser extends Auditable<BigInteger, Long> implements UserDetails {
     public void setStatus(Character status) {
         this.status = status;
     }
-
-    public Set<SaRole> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<SaRole> roles) {
-        this.roles = roles;
-    }
-
-    public Map<Integer, String> getSecrets() {
-        return secrets;
-    }
-
-    public void setSecrets(Map<Integer, String> secrets) {
-        this.secrets = secrets;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
 }
+*/

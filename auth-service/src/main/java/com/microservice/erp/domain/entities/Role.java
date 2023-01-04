@@ -3,17 +3,23 @@ package com.microservice.erp.domain.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name="roles", indexes = {@Index(name = "idx_name",columnList = "name")})
-public class Role extends Auditable<Long, Long> {
+@Table(name="roles", indexes = {@Index(name = "idx_role_name",columnList = "role_name")})
+@AttributeOverride(name = "id", column = @Column(name = "role_id", columnDefinition = "bigint"))
+public class Role extends Auditable<BigInteger, Long> {
 
-    @Column(length = 250, unique = true, nullable = false)
-    private String name;
+    @Column(name = "role_name", columnDefinition = "varchar(255)")
+    private String roleName;
+
+    @Column(name = "is_open_user", columnDefinition = "char(1)")
+    private Character isOpenUser;
+
 
     @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -22,12 +28,20 @@ public class Role extends Auditable<Long, Long> {
     @ManyToMany(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Policy> policies;
 
-    public String getName() {
-        return name;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public Character getIsOpenUser() {
+        return isOpenUser;
+    }
+
+    public void setIsOpenUser(Character isOpenUser) {
+        this.isOpenUser = isOpenUser;
     }
 
     public Set<User> getUsers() {
@@ -67,11 +81,11 @@ public class Role extends Auditable<Long, Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Role role = (Role) o;
-        return getId().equals(role.getId()) && name.equals(role.name);
+        return getId().equals(role.getId()) && roleName.equals(role.roleName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), name);
+        return Objects.hash(getId(), roleName);
     }
 }

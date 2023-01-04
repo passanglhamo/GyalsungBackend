@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dao.RoleWiseAccessPermissionDao;
@@ -84,3 +85,4 @@ public class RoleWiseAccessPermissionService implements IRoleWiseAccessPermissio
         return roleWiseAccessPermissionDao.getAccessScreen(screenId);
     }
 }
+*/

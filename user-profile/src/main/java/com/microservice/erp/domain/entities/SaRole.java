@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.entities;
 
 import javax.persistence.AttributeOverride;
@@ -39,3 +40,4 @@ public class SaRole extends Auditable<BigInteger, Long> {
 
 //endregion
 }
+*/

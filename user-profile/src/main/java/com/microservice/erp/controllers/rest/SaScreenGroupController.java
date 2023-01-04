@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.entities.SaScreenGroup;
@@ -34,3 +35,4 @@ public class SaScreenGroupController {
     }
 
 }
+*/

@@ -1,6 +1,6 @@
 package com.microservice.erp.domain.repositories;
 
-import com.microservice.erp.domain.entities.SaUser;
+import com.microservice.erp.domain.entities.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -10,19 +10,19 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface ISaUserRepository extends JpaRepository<SaUser, BigInteger> {
+public interface IUserInfoRepository extends JpaRepository<UserInfo, BigInteger> {
 
     @Override
     long count();
 
-    SaUser findByCid(String cid);
+    UserInfo findByCid(String cid);
 
-    SaUser findByEmail(String searchKey);
+    UserInfo findByEmail(String searchKey);
 
-    SaUser findByUsername(String searchKey);
+    UserInfo findByUsername(String searchKey);
 
     @Query(value = "select * from sa_user u where date_part('year',age(:paramDate, u.dob)) >=:paramAge", nativeQuery = true)
-    List<SaUser> getAllUsersEligibleForTraining(Date paramDate, Integer paramAge);
+    List<UserInfo> getAllUsersEligibleForTraining(Date paramDate, Integer paramAge);
 
-    List<SaUser> findAllBySignupUserOrderByFullNameAsc(char signupUser);
+    List<UserInfo> findAllBySignupUserOrderByFullNameAsc(char signupUser);
 }

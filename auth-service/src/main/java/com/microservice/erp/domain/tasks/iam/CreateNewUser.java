@@ -52,11 +52,11 @@ public class CreateNewUser extends AbstractTask<NewAccountRequest, Response> {
         if (roleRepository != null) {
             if (account.getRole() != null && !account.getRole().isEmpty()){
                 Role role = new Role();
-                Optional<Role> opt = roleRepository.findRoleByName(account.getRole());
+                Optional<Role> opt = roleRepository.findRoleByRoleName(account.getRole());
                 if (opt.isPresent()){
                     role = opt.get();
                 }else {
-                    role.setName(account.getRole());
+                    role.setRoleName(account.getRole());
                 }
                 user.addRoles(role);
             }

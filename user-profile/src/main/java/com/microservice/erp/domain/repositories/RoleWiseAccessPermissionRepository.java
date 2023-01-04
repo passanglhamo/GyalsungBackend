@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.repositories;
 
 import com.microservice.erp.domain.dto.PermissionListDto;
@@ -10,3 +11,4 @@ public interface RoleWiseAccessPermissionRepository extends JpaRepository<RoleWi
 
     RoleWiseAccessPermission findTop1ByRoleId(BigInteger roleId);
 }
+*/

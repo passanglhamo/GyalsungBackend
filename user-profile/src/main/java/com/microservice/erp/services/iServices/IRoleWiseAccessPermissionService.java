@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.services.iServices;
 
 import com.microservice.erp.domain.dto.PermissionDto;
@@ -12,3 +13,4 @@ public interface IRoleWiseAccessPermissionService {
 
     ResponseEntity<?> saveAccessPermission(PermissionDto permissionDto);
 }
+*/

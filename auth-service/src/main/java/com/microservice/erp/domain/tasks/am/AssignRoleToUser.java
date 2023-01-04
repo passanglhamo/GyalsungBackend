@@ -44,7 +44,7 @@ public class AssignRoleToUser extends AbstractTask<Message, Response> {
             Optional<User> existingUser = userRepository.findByUsername(user.getUsername());
             if(!existingUser.isPresent()) return new Response().setMessage("User Not Found.").setStatus(500);
 
-            Optional<Role> existingRole = roleRepository.findRoleByName(role.getName());
+            Optional<Role> existingRole = roleRepository.findRoleByRoleName(role.getRoleName());
             if(!existingRole.isPresent()) return new Response().setMessage("Role Not Found.").setStatus(500);
 
             user = existingUser.get();

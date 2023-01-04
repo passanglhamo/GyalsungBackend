@@ -73,7 +73,7 @@ public class AccessController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access!");
         }
         Role role = new Role();
-        role.setName(roleName);
+        role.setRoleName(roleName);
         SaveRole saveRole = new SaveRole(roleRepository, role);
         Response response = saveRole.execute(null);
         return (response.getStatus() == 200)
@@ -153,7 +153,7 @@ public class AccessController {
         User user = new User();
         user.setUsername(username);
         Role role = new Role();
-        role.setName(roleName);
+        role.setRoleName(roleName);
         AssignRoleToUser assignRole = new AssignRoleToUser(userRepository, roleRepository, user, role);
         Response response = assignRole.execute(null);
         return (response.getStatus() == 200)
@@ -172,7 +172,7 @@ public class AccessController {
         }
         User user = new User();
         user.setUsername(username);
-        Optional<Role> opt = roleRepository.findRoleByName(roleName);
+        Optional<Role> opt = roleRepository.findRoleByRoleName(roleName);
         Role role = opt.isPresent() ? opt.get() : new Role();
         //role.setName(roleName);
         RemoveRoleFromUser removeRole = new RemoveRoleFromUser(userRepository, user, role);
@@ -192,7 +192,7 @@ public class AccessController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access!");
         }
         Role role = new Role();
-        role.setName(roleName);
+        role.setRoleName(roleName);
         Policy policy = new Policy();
         policy.setServiceName(policyName);
         AssignPolicyToRole assignPolicy = new AssignPolicyToRole(roleRepository, policyRepository, role, policy);
@@ -212,7 +212,7 @@ public class AccessController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access!");
         }
         Role role = new Role();
-        role.setName(roleName);
+        role.setRoleName(roleName);
         Optional<Policy> policyOpt = policyRepository.findByServiceName(serviceName);
         Policy policy = (policyOpt.isPresent()) ? policyOpt.get() : new Policy();
         //policy.setServiceName(serviceName);

@@ -1,9 +1,7 @@
 package com.microservice.erp.webapp.config;
 
-import com.microservice.erp.domain.entities.SaRole;
-import com.microservice.erp.domain.entities.SaUser;
 import com.microservice.erp.domain.helper.Action;
-import com.microservice.erp.domain.repositories.ISaUserRepository;
+import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,10 +25,10 @@ public class StartupConfig implements CommandLineRunner {
 //    public void handleContextStoppedListener(ContextClosedEvent event){
 //        System.out.println("ContextStopped....");
 //    }
-    private ISaUserRepository userRepository;
+    private IUserInfoRepository userRepository;
     private PasswordEncoder passwordEncoder;
 
-    public StartupConfig(ISaUserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public StartupConfig(IUserInfoRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -69,24 +67,24 @@ public class StartupConfig implements CommandLineRunner {
                 , resource);
     }
 
-    private void createGodUser(ISaUserRepository userRepository
+    private void createGodUser(IUserInfoRepository userRepository
             , String username, String password, String mobile, String userRole
             , String policyName, Action action, String resource) {
 
-        SaUser userInfo = userRepository.findByUsername(username);
-        if (!Objects.isNull(userInfo)) return;
-
-        SaUser user = new SaUser();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
-        user.setFullName("Admin");
-        user.setEmail("Admin@gmail.com");
-        user.setMobileNo(mobile);
-        user.setSignupUser('A');
-        user.setStatus('A');
-        user.setEmail(username);
-
-        user.setSecrets(SaUser.createRandomMapOfSecret());
+//        SaUser userInfo = userRepository.findByUsername(username);
+//        if (!Objects.isNull(userInfo)) return;
+//
+//        SaUser user = new SaUser();
+//        user.setUsername(username);
+//        user.setPassword(passwordEncoder.encode(password));
+//        user.setFullName("Admin");
+//        user.setEmail("Admin@gmail.com");
+//        user.setMobileNo(mobile);
+//        user.setSignupUser('A');
+//        user.setStatus('A');
+//        user.setEmail(username);
+//
+//        user.setSecrets(SaUser.createRandomMapOfSecret());
         //
 //        SaRole role = new SaRole();
 //        role.setRoleName(userRole);
@@ -102,7 +100,7 @@ public class StartupConfig implements CommandLineRunner {
 //        policy.addStatements(statement);
 //        role.addPolicies(policy);
         //
-        userRepository.save(user);
+//        userRepository.save(user);
     }
 
 

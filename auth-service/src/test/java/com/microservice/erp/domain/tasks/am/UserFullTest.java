@@ -41,26 +41,26 @@ public class UserFullTest {
 
         User user = new User();
         user.setUsername("hcafe@gmail.com");
-        user.setFirstName("hCafe");
+        //user.setFirstName("hCafe");
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
 
         User user1 = new User();
         user1.unmarshallingFromMap(user.marshallingToMap(true), true);
-        user1.setId(101l);
+        //user1.setId(101l);
         when(userRepository.save(any(User.class))).thenReturn(user1);
         when(userRepository1.save(any(User.class))).thenReturn(user1);
         when(userRepository1.findByUsername(any(String.class))).thenReturn(Optional.of(user1));
 
         Role role = new Role();
-        role.setName("SHOP-ADMIN");
-        when(roleRepository.findRoleByName(any(String.class))).thenReturn(Optional.empty());
+        //role.setName("SHOP-ADMIN");
+        when(roleRepository.findRoleByRoleName(any(String.class))).thenReturn(Optional.empty());
 
         Role role1 = new Role();
         role1.unmarshallingFromMap(role.marshallingToMap(true), true);
-        role1.setId(101l);
+        //role1.setId(101l);
         when(roleRepository.save(any(Role.class))).thenReturn(role1);
         when(roleRepository1.save(any(Role.class))).thenReturn(role1);
-        when(roleRepository1.findRoleByName(any(String.class))).thenReturn(Optional.of(role1));
+        when(roleRepository1.findRoleByRoleName(any(String.class))).thenReturn(Optional.of(role1));
 
         Statement statement1 = new Statement();
         statement1.setAction(Action.Write);

@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.controllers.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -5,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infoworks.lab.jjwt.JWTPayload;
 import com.infoworks.lab.jjwt.TokenValidator;
 import com.microservice.erp.domain.entities.SaUser;
-import com.microservice.erp.domain.repositories.ISaUserRepository;
+import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.IUserInfoService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+*/
 /**
  * @author Rajib Kumer Ghosh
- */
+ *//*
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/userinfo")
@@ -24,12 +27,12 @@ public class UserInfoController {
 
     private IUserInfoService service;
     private ObjectMapper mapper;
-    private ISaUserRepository iSaUserRepository;
+    private IUserInfoRepository iUserInfoRepository;
 
-    public UserInfoController(IUserInfoService service, ObjectMapper mapper, ISaUserRepository iSaUserRepository) {
+    public UserInfoController(IUserInfoService service, ObjectMapper mapper, IUserInfoRepository iUserInfoRepository) {
         this.service = service;
         this.mapper = mapper;
-        this.iSaUserRepository = iSaUserRepository;
+        this.iUserInfoRepository = iUserInfoRepository;
     }
     @GetMapping("/hello")
     public ResponseEntity<String> getHello(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws JsonProcessingException {
@@ -74,3 +77,4 @@ public class UserInfoController {
         return deleted;
     }
 }
+*/

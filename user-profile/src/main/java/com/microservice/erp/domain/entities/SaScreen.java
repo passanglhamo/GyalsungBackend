@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.entities;
 
 import javax.persistence.*;
@@ -59,3 +60,4 @@ public class SaScreen extends Auditable<BigInteger, Long> {
 
     //endregion
 }
+*/

@@ -54,12 +54,12 @@ public class AuthControllerIntegrationTest extends BaseServiceTest {
         user.setUsername("01712645571");
         user.setPassword(passwordEncoder.encode("112233"));
         user.setEmail("m@gmail.com");
-        user.setMobile("01712645571");
+        //user.setMobile("01712645571");
         user.setEnabled(true);
         user.setSecrets(createRandomSecrets());
         //
         Role role = new Role();
-        role.setName("ADMIN");
+        //role.setName("ADMIN");
         user.addRoles(role);
         //
         Statement statement = new Statement();
@@ -105,7 +105,7 @@ public class AuthControllerIntegrationTest extends BaseServiceTest {
         System.out.println("User count: " + userRepository.count());
         Optional<User> user = userRepository.findByUsername("01712645571");
         if (user.isPresent()) {
-            Optional<Role> role = roleRepository.findRoleByName("ADMIN");
+            Optional<Role> role = roleRepository.findRoleByRoleName("ADMIN");
             if (role.isPresent()){
                 Optional<Policy> policy = role.get().getPolicies().stream().findFirst();
                 System.out.println(policy.get().toString());

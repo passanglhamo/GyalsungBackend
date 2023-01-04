@@ -6,37 +6,49 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
 @Entity
-@Table(name="users", indexes = {@Index(name = "idx_username",columnList = "username")
+@Table(name = "users", indexes = {@Index(name = "idx_username", columnList = "username")
         , @Index(name = "idx_email", columnList = "email")})
-public class User extends Auditable<Long, Long> implements UserDetails {
+@AttributeOverride(name = "id", column = @Column(name = "id", columnDefinition = "bigint"))
+public class User extends Auditable<BigInteger, Long> implements UserDetails {
+//todo:Added user id for time being
+    @Column(name = "user_id",  columnDefinition = "bigint")
+    private BigInteger userId;
 
     @Column(length = 250, unique = true, nullable = false)
     private String username;
 
-    @Column(nullable = false) @JsonIgnore
+    @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "users_secrets")
-    @Column(name = "secrets") @JsonIgnore
-    private Map<Integer, String> secrets;
 
     @Column(length = 200, unique = true)
     private String email;
 
     @Column(length = 200, unique = true)
-    private String mobile;
+    private String cid;
 
-    private String firstName;
-    private String lastName;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "users_secrets")
+    @Column(name = "secrets")
+    @JsonIgnore
+    private Map<Integer, String> secrets;
+
 
     @JsonIgnore
     private boolean enabled;
+//
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "sa_user_role_mapping",
+//            joinColumns = @JoinColumn(name = "auth_id"),
+//            inverseJoinColumns = @JoinColumn(name = "role_id"))
+//    private Set<Role> roles = new HashSet<>();
 
     @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Role> roles;
@@ -44,10 +56,20 @@ public class User extends Auditable<Long, Long> implements UserDetails {
     @ManyToMany(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Policy> policies;
 
-    @Override @JsonIgnore @Transient
+    @Override
+    @JsonIgnore
+    @Transient
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (roles == null) return new ArrayList<>();
-        return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(toList());
+        return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(toList());
+    }
+
+    public BigInteger getUserId() {
+        return userId;
+    }
+
+    public void setUserId(BigInteger userId) {
+        this.userId = userId;
     }
 
     @Override
@@ -60,17 +82,23 @@ public class User extends Auditable<Long, Long> implements UserDetails {
         return username;
     }
 
-    @Override @JsonIgnore @Transient
+    @Override
+    @JsonIgnore
+    @Transient
     public boolean isAccountNonExpired() {
         return false;
     }
 
-    @Override @JsonIgnore @Transient
+    @Override
+    @JsonIgnore
+    @Transient
     public boolean isAccountNonLocked() {
         return enabled;
     }
 
-    @Override @JsonIgnore @Transient
+    @Override
+    @JsonIgnore
+    @Transient
     public boolean isCredentialsNonExpired() {
         return false;
     }
@@ -84,21 +112,6 @@ public class User extends Auditable<Long, Long> implements UserDetails {
         this.username = username;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
     public String getEmail() {
         return email;
@@ -124,13 +137,6 @@ public class User extends Auditable<Long, Long> implements UserDetails {
         this.roles = roles;
     }
 
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
 
     public Map<Integer, String> getSecrets() {
         return secrets;
@@ -138,6 +144,14 @@ public class User extends Auditable<Long, Long> implements UserDetails {
 
     public void setSecrets(Map<Integer, String> secrets) {
         this.secrets = secrets;
+    }
+
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
     }
 
     public static Map<Integer, String> createRandomMapOfSecret() {
@@ -150,12 +164,11 @@ public class User extends Auditable<Long, Long> implements UserDetails {
         return secrets;
     }
 
-    public User addRoles(Role...roles){
-        if (getRoles() == null){
+    public void addRoles(Role... roles) {
+        if (getRoles() == null) {
             setRoles(new HashSet<>());
         }
         getRoles().addAll(Arrays.asList(roles));
-        return this;
     }
 
     @Override
@@ -179,8 +192,8 @@ public class User extends Auditable<Long, Long> implements UserDetails {
         this.policies = policies;
     }
 
-    public User addPolicies(Policy...policies){
-        if (getPolicies() == null){
+    public User addPolicies(Policy... policies) {
+        if (getPolicies() == null) {
             setPolicies(new HashSet<>());
         }
         getPolicies().addAll(Arrays.asList(policies));

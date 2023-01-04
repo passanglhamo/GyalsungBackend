@@ -57,7 +57,7 @@ public class LoginFlowTest extends BaseTaskTest{
         user.setUsername("m@gmail.com");
         user.setPassword(passwordEncoder.encode("112233"));
         user.setEmail("m@gmail.com");
-        user.setMobile("01712645571");
+        //user.setMobile("01712645571");
         user.setEnabled(true);
         user.setSecrets(createRandomSecrets());
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
@@ -72,7 +72,7 @@ public class LoginFlowTest extends BaseTaskTest{
         //
         TaskStack loginStack = TaskStack.createSync(true);
         loginStack.push(new CheckUserExist(repository, request.getUsername()));
-        loginStack.push(new Login(repository, passwordEncoder, request));
+        loginStack.push(new Login(repository, passwordEncoder, null,request));
         loginStack.commit(true, (message, state) -> {
             LOG.info("Login Status: " + state.name());
             if (message != null)
@@ -88,7 +88,7 @@ public class LoginFlowTest extends BaseTaskTest{
         //
         User user = new User();
         user.setUsername("m@gmail.com");
-        user.setMobile("01712645571");
+        //user.setMobile("01712645571");
         user.setPassword(passwordEncoder.encode("112233"));
         user.setSecrets(createRandomSecrets());
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
@@ -109,7 +109,7 @@ public class LoginFlowTest extends BaseTaskTest{
         //
         User user = new User();
         user.setUsername("m@gmail.com");
-        user.setMobile("01712645571");
+        //user.setMobile("01712645571");
         user.setPassword(passwordEncoder.encode("112233"));
         user.setSecrets(createRandomSecrets());
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
@@ -130,7 +130,7 @@ public class LoginFlowTest extends BaseTaskTest{
         //
         User user = new User();
         user.setUsername("m@gmail.com");
-        user.setMobile("01712645571");
+        //user.setMobile("01712645571");
         user.setPassword(passwordEncoder.encode("112233"));
         user.setSecrets(createRandomSecrets());
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
@@ -164,7 +164,7 @@ public class LoginFlowTest extends BaseTaskTest{
         User user = new User();
         user.setUsername("m@gmail.com");
         user.setEmail("m@gmail.com");
-        user.setMobile("01712645571");
+        //user.setMobile("01712645571");
         user.setPassword(passwordEncoder.encode("123456"));
         user.setSecrets(createRandomSecrets());
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user));

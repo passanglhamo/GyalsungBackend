@@ -21,6 +21,6 @@ public interface ISignupService {
 
     ResponseEntity<?> verifyEmailVcode(NotificationRequestDto notificationRequestDto);
 
-    ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException;
+    ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, JsonProcessingException;
 
 }

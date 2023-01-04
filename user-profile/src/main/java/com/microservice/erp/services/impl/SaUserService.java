@@ -4,32 +4,26 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dao.UserDao;
 import com.microservice.erp.domain.dto.EventBus;
 import com.microservice.erp.domain.dto.MessageResponse;
-import com.microservice.erp.domain.dto.SaRoleDto;
 import com.microservice.erp.domain.dto.UserDto;
-import com.microservice.erp.domain.entities.SaRole;
-import com.microservice.erp.domain.entities.SaUser;
-import com.microservice.erp.domain.repositories.ISaRoleRepository;
-import com.microservice.erp.domain.repositories.ISaUserRepository;
+import com.microservice.erp.domain.entities.UserInfo;
+import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISaUserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
 @AllArgsConstructor
 public class SaUserService implements ISaUserService {
-    private final ISaUserRepository iSaUserRepository;
-    private final ISaRoleRepository iSaRoleRepository;
-    private final UserDao userDao;
+    private final IUserInfoRepository iUserInfoRepository;
+     private final UserDao userDao;
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
 
@@ -44,12 +38,13 @@ public class SaUserService implements ISaUserService {
 
     @Override
     public ResponseEntity<?> getAllRoles() {
-        List<SaRole> saRoleList = iSaRoleRepository.findAllByOrderByRoleNameAsc();
+      /*  List<SaRole> saRoleList = iSaRoleRepository.findAllByOrderByRoleNameAsc();
         if (saRoleList.size() > 0) {
             return ResponseEntity.ok(saRoleList);
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not found."));
-        }
+        }*/
+            return ResponseEntity.badRequest().body(new MessageResponse("Roles not found."));
     }
 
     @Override
@@ -65,7 +60,7 @@ public class SaUserService implements ISaUserService {
 
     @Override
     public ResponseEntity<?> getUsers() {
-        List<SaUser> saUsers = iSaUserRepository.findAllBySignupUserOrderByFullNameAsc('N');
+        List<UserInfo> saUsers = iUserInfoRepository.findAllBySignupUserOrderByFullNameAsc('N');
         if (saUsers.size() > 0) {
             return ResponseEntity.ok(saUsers);
         } else {
@@ -74,16 +69,15 @@ public class SaUserService implements ISaUserService {
     }
 
     private ResponseEntity<?> addNewUser(UserDto userDto) throws JsonProcessingException {
-        SaUser saUserEmail = iSaUserRepository.findByEmail(userDto.getEmail());
+      /*  UserInfo saUserEmail = iUserInfoRepository.findByEmail(userDto.getEmail());
         if (saUserEmail != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
-        SaUser saUser = new ModelMapper().map(userDto, SaUser.class);
+        UserInfo saUser = new ModelMapper().map(userDto, UserInfo.class);
         saUser.setUsername(userDto.getEmail());
-        saUser.setStatus('A');
-        saUser.setSignupUser('N');
+         saUser.setSignupUser('N');
         String password = generatePassword(8); //to generate password and send email
-        saUser.setPassword(encoder.encode(password));
+//        saUser.setPassword(encoder.encode(password));
         List<BigInteger> saRoleDtos = userDto.getRoles();
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
@@ -95,7 +89,7 @@ public class SaUserService implements ISaUserService {
         });
         saUser.setRoles(saRoles);
         saUser.setSecrets(SaUser.createRandomMapOfSecret());
-        iSaUserRepository.save(saUser);
+        iUserInfoRepository.save(saUser);
         String emailBody = "Dear " + userDto.getFullName() + ", " + "Your information has been added to Gyalsung MIS against this your email. " + "Please login in using email: " + userDto.getEmail() + " and password " + password;
         String subject = "User Added to Gyalsung System";
         EventBus eventBusEmail = EventBus.withId(userDto.getEmail(), null, null, emailBody, subject, null);
@@ -104,7 +98,7 @@ public class SaUserService implements ISaUserService {
         EventBus eventBusSms = EventBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
 //todo:need to get topic name from properties file
         addToQueue.addToQueue("email", eventBusEmail);
-        addToQueue.addToQueue("sms", eventBusSms);
+        addToQueue.addToQueue("sms", eventBusSms);*/
         return ResponseEntity.ok(new MessageResponse("User added successfully!"));
     }
 
@@ -113,7 +107,7 @@ public class SaUserService implements ISaUserService {
         if (isEmailAlreadyInUse != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
-        SaUser saUserDb = iSaUserRepository.findById(userDto.getUserId()).get();
+        /*SaUser saUserDb = iUserInfoRepository.findById(userDto.getUserId()).get();
         SaUser saUser = new ModelMapper().map(saUserDb, SaUser.class);
         saUser.setFullName(userDto.getFullName());
         saUser.setGender(userDto.getGender());
@@ -131,7 +125,7 @@ public class SaUserService implements ISaUserService {
             saRoles.add(saRoleDb);
         });
         saUser.setRoles(saRoles);
-        iSaUserRepository.save(saUser);
+        iUserInfoRepository.save(saUser);
         String emailBody = "Dear " + saUser.getFullName() + ", " + "Your information in Gyalsung MIS has been updated. " + "Please login in using email: " + saUser.getEmail();
         String subject = "User Updated in Gyalsung System";
         EventBus eventBusEmail = EventBus.withId(userDto.getEmail(), null, null, emailBody, subject, userDto.getMobileNo());
@@ -141,7 +135,7 @@ public class SaUserService implements ISaUserService {
 
         //todo:need to get topic name from properties file
         addToQueue.addToQueue("email", eventBusEmail);
-        addToQueue.addToQueue("sms", eventBusSms);
+        addToQueue.addToQueue("sms", eventBusSms);*/
         return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
     }
 

@@ -1,8 +1,8 @@
+/*
 package com.microservice.erp.repositories;
 
 import com.microservice.erp.domain.entities.SaUser;
-import com.microservice.erp.domain.models.Gender;
-import com.microservice.erp.domain.repositories.ISaUserRepository;
+import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.webapp.config.TestJPAH2Config;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,10 +16,12 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+*/
 /**
  * @author Rajib Kumer Ghosh
  *
- */
+ *//*
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {TestJPAH2Config.class})
@@ -28,20 +30,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class ISaUserTestRepositoryUnitTest {
 
     @Autowired
-    ISaUserRepository repository;
+    IUserInfoRepository repository;
 
     @Test
     public void insert(){
         SaUser saUser = new SaUser();
         repository.save(saUser);
 
-        /*List<SaUser> list = repository.findByName("Rajib The Coder");
+        */
+/*List<SaUser> list = repository.findByName("Rajib The Coder");
         Assert.assertTrue(Objects.nonNull(list));
 
         if (list != null && list.size() > 0){
             SaUser userInfo2 = list.get(0);
             Assert.assertTrue(Objects.equals(saUser.getId(), userInfo2.getId()));
-        }*/
+        }*//*
+
     }
 
     @Test
@@ -76,4 +80,4 @@ public class ISaUserTestRepositoryUnitTest {
                 , Sort.by(Sort.Order.asc("name"))));
         paged.get().forEach(userInfo -> System.out.println(userInfo.getId()));
     }
-}
+}*/

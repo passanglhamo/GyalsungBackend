@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.domain.repositories;
 
 
@@ -19,3 +20,4 @@ public interface ISaRoleRepository extends JpaRepository<SaRole, BigInteger> {
 
     boolean existsByIsOpenUserAndIdNot(Character isOpenUser, BigInteger id);
 }
+*/

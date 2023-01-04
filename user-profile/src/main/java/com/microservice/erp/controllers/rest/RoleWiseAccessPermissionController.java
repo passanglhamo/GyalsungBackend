@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.PermissionDto;
@@ -32,3 +33,4 @@ public class RoleWiseAccessPermissionController {
         return iRoleWiseAccessPermissionService.savePermission(permissionDto);
     }
 }
+*/

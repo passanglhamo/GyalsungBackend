@@ -1,7 +1,8 @@
+/*
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.entities.SaUser;
-import com.microservice.erp.domain.repositories.ISaUserRepository;
+import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.IUserInfoService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -9,22 +10,24 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+*/
 /**
  * @author Rajib Kumer Ghosh
  *
- */
+ *//*
+
 
 @Service
 public class UserInfoService implements IUserInfoService {
 
-    private ISaUserRepository repository;
+    private IUserInfoRepository repository;
 
-    public UserInfoService(ISaUserRepository repository) {
+    public UserInfoService(IUserInfoRepository repository) {
         this.repository = repository;
     }
 
     @Override
-    public void setIUserInfoRepository(ISaUserRepository repository) {
+    public void setIUserInfoRepository(IUserInfoRepository repository) {
         this.repository = repository;
     }
 
@@ -71,3 +74,4 @@ public class UserInfoService implements IUserInfoService {
         return repository.findAll(PageRequest.of(page, size)).getContent();
     }
 }
+*/

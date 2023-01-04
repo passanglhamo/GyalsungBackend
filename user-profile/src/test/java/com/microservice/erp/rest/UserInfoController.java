@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,10 +11,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+*/
 /**
  * @author Rajib Kumer Ghosh
  *
- */
+ *//*
+
 
 @RestController
 @RequestMapping("/userinfo")
@@ -70,3 +73,4 @@ public class UserInfoController {
     }
 
 }
+*/

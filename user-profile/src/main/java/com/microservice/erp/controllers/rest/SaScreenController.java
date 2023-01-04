@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.entities.SaScreen;
@@ -33,3 +34,4 @@ public class SaScreenController {
         return iSaScreenService.getScreenById(id);
     }
 }
+*/

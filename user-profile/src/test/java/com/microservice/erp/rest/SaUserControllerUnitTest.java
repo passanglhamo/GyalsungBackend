@@ -1,3 +1,4 @@
+/*
 package com.microservice.erp.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,10 +30,12 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+*/
 /**
  * @author Rajib Kumer Ghosh
  *
- */
+ *//*
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK,
@@ -107,3 +110,4 @@ public class SaUserControllerUnitTest {
     }
 
 }
+*/

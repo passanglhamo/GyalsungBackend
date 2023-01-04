@@ -13,9 +13,9 @@ import java.io.File;
 @NoArgsConstructor
 public class EventBus {
     String destinationEmail;
-    String sentMailFrom;
+    String roles;
     File attachmentFile;
-    String messageBody;
+    String email;
     String subject;
     String mobileNo;
 

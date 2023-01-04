@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth/v1")
@@ -95,14 +96,14 @@ public class AuthController {
     }
 
     @PostMapping("/nonblock/login")
-    public ResponseEntity<String> nonBlockingLogin(@Valid @RequestBody LoginRequest request){
+    public ResponseEntity<?> nonBlockingLogin(@Valid @RequestBody LoginRequest request) throws IOException {
         //
-        Response response = login.doLogin(request);
-        if (response.getStatus() == HttpStatus.OK.value()) {
-            return ResponseEntity.ok(response.toString());
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
-        }
+         return login.doLogin(request);
+//        if (responsegetStatus() == HttpStatus.OK.value()) {
+//            return ResponseEntity.ok(response.toString());
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
+//        }
     }
 
     @PostMapping("/login")
@@ -122,18 +123,19 @@ public class AuthController {
                 }
             }
         }
+        return null;
         //
-        Response response = login.doLogin(request);
-        //If-Login Failed: then track-login-failed-count:
-        if (response.getStatus() == HttpStatus.OK.value()) {
-            if (count != null) cache.remove(request.getUsername());
-            return ResponseEntity.ok(response.toString());
-        } else {
-            if (count == null) count = new LoginRetryCount(loginMaxRetryCount);
-            count.incrementFailedCount();
-            cache.put(request.getUsername(), count);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
-        }
+//        Response response = login.doLogin(request);
+//        //If-Login Failed: then track-login-failed-count:
+//        if (response.getStatus() == HttpStatus.OK.value()) {
+//            if (count != null) cache.remove(request.getUsername());
+//            return ResponseEntity.ok(response.toString());
+//        } else {
+//            if (count == null) count = new LoginRetryCount(loginMaxRetryCount);
+//            count.incrementFailedCount();
+//            cache.put(request.getUsername(), count);
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
+//        }
     }
 
     @GetMapping("/forget")

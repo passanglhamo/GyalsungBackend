@@ -28,11 +28,12 @@ public abstract class TokenizerTask extends AbstractTask<Response, Response> {
         //
         JWTHeader header = new JWTHeader().setTyp("round").setKid(kid.toString());
         JWTPayload payload = new JWTPayload()
-                .setSub(exist.getUsername())
+                .setSub(exist.getUserId().toString())
+//                .setSub(exist.getId().toString())
                 .setIss(exist.getUsername())
                 .setIat(new Date().getTime())
                 .setExp(timeToLive.getTimeInMillis())
-                .addData("mobile", exist.getMobile())
+                //.addData("mobile", exist.getMobile())
                 .addData("email", exist.getEmail());
         //Adding Roles to Claim:
         if (exist.getAuthorities().size() > 0){

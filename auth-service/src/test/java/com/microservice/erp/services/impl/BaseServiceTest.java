@@ -30,11 +30,11 @@ public class BaseServiceTest {
         //
         JWTHeader header = new JWTHeader().setTyp("round").setKid(kid.toString());
         JWTPayload payload = new JWTPayload()
-                .setSub(user.getUsername())
+                .setSub(user.getId().toString())
                 .setIss(user.getUsername())
                 .setIat(new Date().getTime())
                 .setExp(TokenProvider.defaultTokenTimeToLive().getTimeInMillis())
-                .addData("mobile", user.getMobile());
+                .addData("mobile", user.getCid());
         //
         TokenProvider token = new JWTokenProvider(secret)
                 .setHeader(header)
