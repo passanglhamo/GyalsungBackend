@@ -237,6 +237,14 @@
 		</dependency>
 		<!-- lombok start-->
 
+		<!-- data mapper start-->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<!-- data mapper end-->
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

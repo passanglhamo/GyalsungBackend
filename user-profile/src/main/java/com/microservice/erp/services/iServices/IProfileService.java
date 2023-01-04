@@ -24,7 +24,7 @@ public interface IProfileService {
 
     ResponseEntity<?> checkEmailExistOrNot(String email);
 
-    ResponseEntity<?> changeEmail(UserProfileDto userProfileDto);
+    ResponseEntity<?> changeEmail(UserProfileDto userProfileDto) throws JsonProcessingException;
 
     ResponseEntity<?> receiveOtp(UserProfileDto userProfileDto) throws JsonProcessingException;
 

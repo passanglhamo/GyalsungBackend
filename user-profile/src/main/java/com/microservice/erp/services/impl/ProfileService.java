@@ -145,7 +145,7 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public ResponseEntity<?> changeEmail(UserProfileDto userProfileDto) {
+    public ResponseEntity<?> changeEmail(UserProfileDto userProfileDto) throws JsonProcessingException {
 
         UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
         UserInfo userInfo = new ModelMapper().map(userInfoDb, UserInfo.class);
@@ -161,6 +161,10 @@ public class ProfileService implements IProfileService {
         }
         userInfoDb.setEmail(userProfileDto.getEmail());
         iUserInfoRepository.save(userInfoDb);
+        //add to queue to update email in auth microservices
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, userInfo.getEmail()
+                , null, null, null, null);
+        addToQueue.addToUserQueue("changeEmail", eventBusUser);
         return ResponseEntity.ok(new MessageResponse("Email changed successfully."));
     }
 

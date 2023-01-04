@@ -11,6 +11,7 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.modelmapper.ModelMapper;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -66,6 +67,16 @@ public class AddUserEventService {
         }
 
 
+    }
+
+    @KafkaListener(topics = {"${topic.changeEmail}"}, concurrency = "1")
+    public void changeEmail(@Payload String message, Acknowledgment ack) throws Exception {
+        Gson gson = new Gson();
+        EventBusUser userEventInfo = gson.fromJson(message, EventBusUser.class);
+        Optional<User> userDb = repository.findByUserId(userEventInfo.userId);
+        User userInfo = new ModelMapper().map(userDb, User.class);
+        userInfo.setEmail(userEventInfo.email);
+        repository.save(userInfo);
     }
 
 

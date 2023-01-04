@@ -50,10 +50,6 @@ public class UserProfileController {
         return iProfileService.getProfileInfoByIds(userIds);
     }
 
-    @PostMapping("/changeUsername")
-    public ResponseEntity<?> changeUsername(@RequestBody UserProfileDto userProfileDto) {
-        return iProfileService.changeUsername(userProfileDto);
-    }
 
     @PostMapping("/receiveOtp")
     public ResponseEntity<?> receiveOtp(@RequestBody UserProfileDto userProfileDto) throws JsonProcessingException {
@@ -76,13 +72,26 @@ public class UserProfileController {
     }
 
     @PostMapping("/changeEmail")
-    public ResponseEntity<?> changeEmail(@RequestBody UserProfileDto userProfileDto) {
+    public ResponseEntity<?> changeEmail(@RequestBody UserProfileDto userProfileDto) throws JsonProcessingException {
         return iProfileService.changeEmail(userProfileDto);
     }
 
+    //todo: need to add this method in auth microservice
     @PostMapping("/changePassword")
     public ResponseEntity<?> changePassword(@RequestBody UserProfileDto userProfileDto) {
         return iProfileService.changePassword(userProfileDto);
+    }
+
+    //todo: need to add this method in auth microservice
+    @PostMapping("/changeUsername")
+    public ResponseEntity<?> changeUsername(@RequestBody UserProfileDto userProfileDto) {
+        return iProfileService.changeUsername(userProfileDto);
+    }
+
+    //todo: need to add this method in auth microservice
+    @PostMapping("/resetUserPassword")
+    public ResponseEntity<?> resetUserPassword(@RequestBody UserProfileDto userProfileDto) {
+        return iProfileService.resetUserPassword(userProfileDto);
     }
 
     @PostMapping("/changeParentInfo")
@@ -123,11 +132,6 @@ public class UserProfileController {
     @GetMapping("/searchUser")
     public ResponseEntity<?> searchUser(@RequestParam("searchKey") String searchKey) {
         return iProfileService.searchUser(searchKey);
-    }
-
-    @PostMapping("/resetUserPassword")
-    public ResponseEntity<?> resetUserPassword(@RequestBody UserProfileDto userProfileDto) {
-        return iProfileService.resetUserPassword(userProfileDto);
     }
 
     @PostMapping("/changeProfilePic")

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class ResetPasswordController {
     private final IResetPasswordService iResetPasswordService;
 
+    //todo: need to move these codes to auth microservices
     @RequestMapping(value = "/requestPasswordChange", method = RequestMethod.POST)
     public ResponseEntity<?> requestPasswordChange(@RequestBody ResetPasswordDto resetPasswordDto) throws Exception {
         return iResetPasswordService.requestPasswordChange(resetPasswordDto);
