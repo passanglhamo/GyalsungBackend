@@ -7,14 +7,15 @@ import com.infoworks.lab.rest.models.events.EventType;
 import javax.persistence.*;
 
 @MappedSuperclass
-public class Persistable<ID,VERSION> extends Event {
+public class Persistable<ID, VERSION> extends Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
     private ID id;
 
-    @Version @JsonIgnore
+    @Version
+    @JsonIgnore
     private VERSION version;
 
     public ID getId() {
@@ -35,17 +36,17 @@ public class Persistable<ID,VERSION> extends Event {
 
     @JsonIgnore
     public String getPrimaryKeyName() {
-        if (getClass().isAnnotationPresent(AttributeOverride.class)){
+        if (getClass().isAnnotationPresent(AttributeOverride.class)) {
             AttributeOverride attr = getClass().getAnnotation(AttributeOverride.class);
             return attr.column().name();
         }
         return "id";
     }
 
-    @JsonIgnore
-    private String uuid;
-    @JsonIgnore
-    private String timestamp;
-    @JsonIgnore
-    private EventType eventType;
+//    @JsonIgnore
+//    private String uuid;
+//    @JsonIgnore
+//    private String timestamp;
+//    @JsonIgnore
+//    private EventType eventType;
 }

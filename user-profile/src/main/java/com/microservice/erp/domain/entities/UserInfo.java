@@ -13,7 +13,7 @@ import java.util.Date;
 //@Setter
 //@Getter
 @AllArgsConstructor
-@Entity(name = "sa_user")
+@Entity(name = "user_info")
 @AttributeOverride(name = "id", column = @Column(name = "user_id", columnDefinition = "bigint"))
 public class UserInfo extends Auditable<BigInteger, Long> {
 

@@ -15,7 +15,7 @@ public class EventBus {
     String destinationEmail;
     String roles;
     File attachmentFile;
-    String email;
+    String messageBody;
     String subject;
     String mobileNo;
 
@@ -23,14 +23,14 @@ public class EventBus {
             String destinationEmail,
             String sentMailFrom,
             File attachmentFile,
-            String reasonId,
+            String messageBody,
             String subject,
             String mobileNo) {
         return new EventBus(
                 destinationEmail,
                 sentMailFrom,
                 attachmentFile,
-                reasonId,
+                messageBody,
                 subject,
                 mobileNo);
     }

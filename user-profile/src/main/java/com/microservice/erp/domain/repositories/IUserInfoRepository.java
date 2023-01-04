@@ -21,7 +21,7 @@ public interface IUserInfoRepository extends JpaRepository<UserInfo, BigInteger>
 
     UserInfo findByUsername(String searchKey);
 
-    @Query(value = "select * from sa_user u where date_part('year',age(:paramDate, u.dob)) >=:paramAge", nativeQuery = true)
+    @Query(value = "select * from user_info u where date_part('year',age(:paramDate, u.dob)) >=:paramAge", nativeQuery = true)
     List<UserInfo> getAllUsersEligibleForTraining(Date paramDate, Integer paramAge);
 
     List<UserInfo> findAllBySignupUserOrderByFullNameAsc(char signupUser);
