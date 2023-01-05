@@ -101,21 +101,6 @@ public class ProfileService implements IProfileService {
         return ResponseEntity.ok(changeMobileNoSmsOtp);
     }
 
-    @Override
-    public ResponseEntity<?> changeUsername(UserProfileDto userProfileDto) {
-        UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
-
-        ResponseEntity<?> checkUsernameExistOrNot = checkUsernameExistOrNot(userProfileDto.getUsername());
-        if (checkUsernameExistOrNot.getStatusCode().value() != HttpStatus.OK.value()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Username already in use."));
-        }
-
-        UserInfo userInfoObject = new ModelMapper().map(userInfoDb, UserInfo.class);
-
-//        userInfoObject.setUsername(userProfileDto.getUsername());
-        iUserInfoRepository.save(userInfoDb);
-        return ResponseEntity.ok(new MessageResponse("Username updated successfully."));
-    }
 
     @Override
     public ResponseEntity<?> checkEmailExistOrNot(String email) {
@@ -184,28 +169,6 @@ public class ProfileService implements IProfileService {
         return ResponseEntity.ok(changeEmailVerificationCode);
     }
 
-    @Override
-    public ResponseEntity<?> changePassword(UserProfileDto userProfileDto) {
-//        UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
-//        UserInfo userInfo = new ModelMapper().map(userInfoDb, UserInfo.class);
-//
-//        //current pw must be equal to existing pw
-////        TODO: need to check pw match, matches method is not working. need to check one more time
-//        String curPw = userProfileDto.getCurrentPassword();
-//        if (!encoder.matches(userInfoDb.getPassword(), curPw)) {
-//            return ResponseEntity.badRequest().body(new MessageResponse("Current password doesn't match."));
-//        }
-//
-//        //confirm current pw must be equal to pw
-//        if (!Objects.equals(userProfileDto.getNewPassword(), userProfileDto.getConfirmPassword())) {
-//            return ResponseEntity.badRequest().body(new MessageResponse("Confirm password doesn't match."));
-//        }
-//
-//        userInfo.setPassword(encoder.encode(userProfileDto.getNewPassword()));
-//        iUserInfoRepository.save(userInfo);
-        //TODO: send email after changing password
-        return ResponseEntity.ok(new MessageResponse("Password changed successfully."));
-    }
 
     @Override
     public ResponseEntity<?> changeParentInfo(UserProfileDto userProfileDto) {
@@ -346,23 +309,6 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public ResponseEntity<?> resetUserPassword(UserProfileDto userProfileDto) {
-//        UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
-//        UserInfo userInfo = new ModelMapper().map(userInfoDb, UserInfo.class);
-//
-//        //confirm current pw must be equal to new pw
-//        if (!Objects.equals(userProfileDto.getNewPassword(), userProfileDto.getConfirmPassword())) {
-//            return ResponseEntity.badRequest().body(new MessageResponse("Confirm password doesn't match."));
-//        }
-//
-//        userInfo.setPassword(encoder.encode(userProfileDto.getNewPassword()));
-//        iUserInfoRepository.save(userInfo);
-//
-//        //TODO: send email after resetting password
-        return ResponseEntity.ok(new MessageResponse("Password changed successfully."));
-    }
-
-    @Override
     public ResponseEntity<?> changeProfilePic(HttpServletRequest request, UserProfileDto userProfileDto) throws IOException {
 
         MultipartFile profilePicture = userProfileDto.getProfilePicture();
@@ -388,14 +334,6 @@ public class ProfileService implements IProfileService {
         return ResponseEntity.ok(new MessageResponse("Profile changed successfully."));
     }
 
-    private ResponseEntity<?> checkUsernameExistOrNot(String username) {
-        UserInfo userInfoDb = iUserInfoRepository.findByUsername(username);
-        if (userInfoDb != null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Username already in use."));
-        } else {
-            return ResponseEntity.ok(new MessageResponse("Username available."));
-        }
-    }
 
     private ResponseEntity<?> verifyOtp(UserProfileDto userProfileDto) {
         ChangeMobileNoSmsOtp changeMobileNoSmsOtp = iChangeMobileNoSmsOtpRepository.findById(userProfileDto.getUserId()).get();
