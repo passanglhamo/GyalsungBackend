@@ -9,7 +9,9 @@ import java.util.List;
 public interface IScreenService {
     ResponseEntity<?> saveScreen(Screen saScreen);
 
-    List<Screen> getAllScreens();
+    ResponseEntity<?> getAllScreens();
 
     ResponseEntity<?> getScreenById(BigInteger id);
+
+    ResponseEntity<?> updateScreen(Screen saScreen);
 }

@@ -31,4 +31,35 @@ public class Auditable<ID, VERSION> extends Persistable<ID, VERSION> {
     @LastModifiedBy
     Username lastModifiedBy;
 
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public LocalDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LocalDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public Username getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Username createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Username getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(Username lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
 }

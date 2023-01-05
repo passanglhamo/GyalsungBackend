@@ -33,5 +33,11 @@ public class ScreenGroupController {
         return iSaScreenGroupService.getScreenById(id);
     }
 
+    @PutMapping
+    public ResponseEntity<?> updateScreenGroup(@Valid @RequestBody ScreenGroup saScreenGroup) {
+
+        return iSaScreenGroupService.updateScreenGroup(saScreenGroup);
+    }
+
 }
 

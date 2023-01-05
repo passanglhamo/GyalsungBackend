@@ -24,14 +24,28 @@ public class ScreenService implements IScreenService {
     }
 
     @Override
-    public List<Screen> getAllScreens() {
-        return saScreenRepository.findAllByOrderByScreenNameAsc();
+    public ResponseEntity<?> getAllScreens() {
+        List<Screen> saScreenGroups = saScreenRepository.findAllByOrderByScreenNameAsc();
+        return ResponseEntity.ok(saScreenGroups);
     }
 
     @Override
     public ResponseEntity<?> getScreenById(BigInteger id) {
         Screen saScreen = saScreenRepository.findById(id).get();
         return ResponseEntity.ok(saScreen);
+    }
+
+    @Override
+    public ResponseEntity<?> updateScreen(Screen saScreen) {
+        saScreenRepository.findById(saScreen.getId()).ifPresent(d -> {
+            d.setScreenGroupId(saScreen.getScreenGroupId());
+            d.setScreenIconName(saScreen.getScreenIconName());
+            d.setScreenName(saScreen.getScreenName());
+            d.setScreenUrl(saScreen.getScreenUrl());
+            saScreenRepository.save(d);
+
+        });
+        return ResponseEntity.ok("Data updated successfully.");
     }
 }
 

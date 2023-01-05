@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Setter
 @Getter
@@ -19,7 +20,7 @@ public class EventBusUser {
     String username;
     String password;
     Character isOpenUser;
-    String roles;
+    List<BigInteger> roles;
 
     public static EventBusUser withId(
             BigInteger userId,
@@ -28,7 +29,7 @@ public class EventBusUser {
             String username,
             String password,
             Character isOpenUser,
-            String roles) {
+            List<BigInteger> roles) {
         return new EventBusUser(
                 userId,
                 cid,

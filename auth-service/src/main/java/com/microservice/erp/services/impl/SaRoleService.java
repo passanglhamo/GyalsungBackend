@@ -7,6 +7,7 @@ import com.microservice.erp.domain.mapper.RoleMapper;
 import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.services.definition.IRoleService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class SaRoleService implements IRoleService {
     public ResponseEntity<?> saveRole(Role role) {
         if (role.getIsOpenUser().equals('Y')) {
             if (repository.existsByIsOpenUser('Y')) {
-                return ResponseEntity.badRequest().body(new MessageResponse("There can be only one student role."));
+                return new ResponseEntity<>("There can be only one student role.", HttpStatus.ALREADY_REPORTED);
             }
         }
         repository.save(role);
@@ -47,7 +48,7 @@ public class SaRoleService implements IRoleService {
 
         if(role.getIsOpenUser().equals('Y')){
             if (repository.existsByIsOpenUserAndIdNot('Y', role.getId())) {
-                return ResponseEntity.badRequest().body(new MessageResponse("There can be only one student role."));
+                return new ResponseEntity<>("There can be only one student role.", HttpStatus.ALREADY_REPORTED);
             }
         }
 

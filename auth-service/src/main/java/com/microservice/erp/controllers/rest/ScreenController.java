@@ -1,4 +1,5 @@
 package com.microservice.erp.controllers.rest;
+
 import com.microservice.erp.domain.entities.Screen;
 import com.microservice.erp.services.definition.IScreenService;
 import org.springframework.http.ResponseEntity;
@@ -6,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.math.BigInteger;
-import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -24,13 +24,19 @@ public class ScreenController {
     }
 
     @GetMapping
-    public List<Screen> getAllScreens() {
+    public ResponseEntity<?> getAllScreens() {
         return iSaScreenService.getAllScreens();
     }
 
     @GetMapping("/getScreenById")
     public ResponseEntity<?> getScreenById(@RequestParam("id") BigInteger id) {
         return iSaScreenService.getScreenById(id);
+    }
+
+    @PutMapping
+    public ResponseEntity<?> updateScreen(@Valid @RequestBody Screen saScreen) {
+
+        return iSaScreenService.updateScreen(saScreen);
     }
 }
 

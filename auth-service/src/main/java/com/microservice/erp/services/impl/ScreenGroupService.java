@@ -35,5 +35,16 @@ public class ScreenGroupService implements IScreenGroupService {
         return ResponseEntity.ok(saScreenGroup);
     }
 
+    @Override
+    public ResponseEntity<?> updateScreenGroup(ScreenGroup saScreenGroup) {
+        saScreenGroupRepository.findById(saScreenGroup.getId()).ifPresent(d -> {
+            d.setScreenGroupName(saScreenGroup.getScreenGroupName());
+            d.setScreenGroupIconName(saScreenGroup.getScreenGroupIconName());
+            saScreenGroupRepository.save(d);
+
+        });
+        return ResponseEntity.ok("Data updated successfully.");
+    }
+
 }
 

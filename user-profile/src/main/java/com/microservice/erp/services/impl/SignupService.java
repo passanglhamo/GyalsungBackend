@@ -155,12 +155,6 @@ public class SignupService implements ISignupService {
         UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
         userInfo.setSignupUser('Y');
         userInfo.setUsername(signupRequestDto.getCid());
-//        userInfo.setPassword(encoder.encode(signupRequestDto.getPassword()));
-//        Set<SaRole> saRoles = new HashSet<>();
-//        SaRole saRoleDb = iSaRoleRepository.findByIsOpenUser('Y');// to get student user role information
-//        saRoles.add(saRoleDb);
-//        userInfo.setRoles(saRoles);
-//        userInfo.setSecrets(UserInfo.createRandomMapOfSecret());
         BigInteger userId = iUserInfoRepository.save(userInfo).getId();
 //        todo: add to queue following data: password, roles, email, username, userId
 

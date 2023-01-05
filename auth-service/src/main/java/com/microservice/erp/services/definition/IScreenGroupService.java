@@ -12,4 +12,5 @@ public interface IScreenGroupService {
 
     ResponseEntity<?> getScreenById(BigInteger id);
 
+    ResponseEntity<?> updateScreenGroup(ScreenGroup saScreenGroup);
 }

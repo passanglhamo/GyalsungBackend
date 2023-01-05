@@ -3,6 +3,7 @@ package com.microservice.erp.services.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dao.UserDao;
 import com.microservice.erp.domain.dto.EventBus;
+import com.microservice.erp.domain.dto.EventBusUser;
 import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.UserDto;
 import com.microservice.erp.domain.entities.UserInfo;
@@ -69,7 +70,7 @@ public class SaUserService implements ISaUserService {
     }
 
     private ResponseEntity<?> addNewUser(UserDto userDto) throws JsonProcessingException {
-      /*  UserInfo saUserEmail = iUserInfoRepository.findByEmail(userDto.getEmail());
+        UserInfo saUserEmail = iUserInfoRepository.findByEmail(userDto.getEmail());
         if (saUserEmail != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
@@ -77,28 +78,25 @@ public class SaUserService implements ISaUserService {
         saUser.setUsername(userDto.getEmail());
          saUser.setSignupUser('N');
         String password = generatePassword(8); //to generate password and send email
-//        saUser.setPassword(encoder.encode(password));
         List<BigInteger> saRoleDtos = userDto.getRoles();
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
-        Set<SaRole> saRoles = new HashSet<>();
-        saRoleDtos.forEach(roleId -> {
-            SaRole saRoleDb = iSaRoleRepository.findById(roleId).get();
-            saRoles.add(saRoleDb);
-        });
-        saUser.setRoles(saRoles);
-        saUser.setSecrets(SaUser.createRandomMapOfSecret());
-        iUserInfoRepository.save(saUser);
+
+        saUser.setSignupUser('N');
+        BigInteger userId = iUserInfoRepository.save(saUser).getId();
+        EventBusUser eventBusUser = EventBusUser.withId(userId, saUser.getCid(), saUser.getEmail()
+                , saUser.getUsername(), password, saUser.getSignupUser(), userDto.getRoles());
+        addToQueue.addToUserQueue("addUser", eventBusUser);
+
         String emailBody = "Dear " + userDto.getFullName() + ", " + "Your information has been added to Gyalsung MIS against this your email. " + "Please login in using email: " + userDto.getEmail() + " and password " + password;
         String subject = "User Added to Gyalsung System";
         EventBus eventBusEmail = EventBus.withId(userDto.getEmail(), null, null, emailBody, subject, null);
-
         String smsBody = "Dear " + userDto.getFullName() + ", " + " Your information has been added to Gyalsung MIS against this your email. " + "Please check your email " + userDto.getEmail() + " to see login credentials.";
         EventBus eventBusSms = EventBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
 //todo:need to get topic name from properties file
-        addToQueue.addToQueue("email", eventBusEmail);
-        addToQueue.addToQueue("sms", eventBusSms);*/
+//        addToQueue.addToQueue("email", eventBusEmail);
+//        addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("User added successfully!"));
     }
 
