@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.math.BigInteger;
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -23,7 +24,7 @@ public class ScreenController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllScreens() {
+    public List<Screen> getAllScreens() {
         return iSaScreenService.getAllScreens();
     }
 

@@ -24,9 +24,8 @@ public class ScreenService implements IScreenService {
     }
 
     @Override
-    public ResponseEntity<?> getAllScreens() {
-        List<Screen> saScreenGroups = saScreenRepository.findAllByOrderByScreenNameAsc();
-        return ResponseEntity.ok(saScreenGroups);
+    public List<Screen> getAllScreens() {
+        return saScreenRepository.findAllByOrderByScreenNameAsc();
     }
 
     @Override

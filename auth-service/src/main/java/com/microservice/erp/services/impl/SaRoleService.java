@@ -45,8 +45,10 @@ public class SaRoleService implements IRoleService {
     public ResponseEntity<?> updateRole(RoleDto role) {
 
 
-        if (repository.existsByIsOpenUserAndIdNot('Y', role.getId())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("There can be only one student role."));
+        if(role.getIsOpenUser().equals('Y')){
+            if (repository.existsByIsOpenUserAndIdNot('Y', role.getId())) {
+                return ResponseEntity.badRequest().body(new MessageResponse("There can be only one student role."));
+            }
         }
 
         repository.findById(role.getId()).ifPresent(d -> {
