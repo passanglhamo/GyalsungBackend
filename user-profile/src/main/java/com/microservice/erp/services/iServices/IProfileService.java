@@ -24,6 +24,8 @@ public interface IProfileService {
 
     ResponseEntity<?> changeEmail(UserProfileDto userProfileDto) throws JsonProcessingException;
 
+    ResponseEntity<?> changeUsername(UserProfileDto userProfileDto) throws JsonProcessingException;
+
     ResponseEntity<?> receiveOtp(UserProfileDto userProfileDto) throws JsonProcessingException;
 
     ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto) throws Exception;
@@ -54,4 +56,5 @@ public interface IProfileService {
     ResponseEntity<?> checkUnderAge(BigInteger userId, Date paramDate);
 
     ResponseEntity<?> getProfileInfoByIds(List<BigInteger> userIds);
+
 }

@@ -59,18 +59,6 @@ public class SecuritySettingService implements ISecuritySettingService {
         return ResponseEntity.ok(new MessageResponse("Password changed successfully."));
     }
 
-    @Override
-    public ResponseEntity<?> changeUsername(UserProfileDto userProfileDto) {
-        Optional<User> userDb = userRepository.findByUserId(userProfileDto.getUserId());
-        ResponseEntity<?> checkUsernameExistOrNot = checkUsernameExistOrNot(userProfileDto.getUsername());
-        if (checkUsernameExistOrNot.getStatusCode().value() != HttpStatus.OK.value()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Username already in use."));
-        }
-        User user = new ModelMapper().map(userDb, User.class);
-        user.setUsername(userProfileDto.getUsername());
-        userRepository.save(user);
-        return ResponseEntity.ok(new MessageResponse("Username updated successfully."));
-    }
 
     @Override
     public ResponseEntity<?> resetUserPassword(UserProfileDto userProfileDto) {
@@ -157,12 +145,4 @@ public class SecuritySettingService implements ISecuritySettingService {
         }
     }
 
-    private ResponseEntity<?> checkUsernameExistOrNot(String username) {
-        Optional<User> userInfoDb = userRepository.findByUsername(username);
-        if (userInfoDb.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Username already in use."));
-        } else {
-            return ResponseEntity.ok(new MessageResponse("Username available."));
-        }
-    }
 }

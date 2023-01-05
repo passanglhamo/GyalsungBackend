@@ -5,16 +5,17 @@ import com.infoworks.lab.rest.models.events.Event;
 import com.infoworks.lab.rest.models.events.EventType;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @MappedSuperclass
-public class Persistable<ID, VERSION> extends Event implements Serializable {
+public class Persistable<ID, VERSION> extends Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    //@JsonIgnore
     private ID id;
 
     @Version
+    //@JsonIgnore
     private VERSION version;
 
     public ID getId() {
@@ -48,5 +49,4 @@ public class Persistable<ID, VERSION> extends Event implements Serializable {
     private String timestamp;
     @JsonIgnore
     private EventType eventType;
-
 }

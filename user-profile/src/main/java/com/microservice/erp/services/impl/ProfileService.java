@@ -154,6 +154,33 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
+    public ResponseEntity<?> changeUsername(UserProfileDto userProfileDto) throws JsonProcessingException {
+        UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
+        ResponseEntity<?> checkUsernameExistOrNot = checkUsernameExistOrNot(userProfileDto.getUsername());
+        if (checkUsernameExistOrNot.getStatusCode().value() != HttpStatus.OK.value()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Username already in use."));
+        }
+        UserInfo userInfo = new ModelMapper().map(userInfoDb, UserInfo.class);
+        userInfo.setUsername(userProfileDto.getUsername());
+        iUserInfoRepository.save(userInfo);
+        //add to queue to update username in auth microservices
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, null
+                , userInfo.getUsername(), null, null, null);
+        addToQueue.addToUserQueue("changeUsername", eventBusUser);
+        return ResponseEntity.ok(new MessageResponse("Username updated successfully."));
+    }
+
+
+    private ResponseEntity<?> checkUsernameExistOrNot(String username) {
+        UserInfo userInfoDb = iUserInfoRepository.findByUsername(username);
+        if (userInfoDb != null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Username already in use."));
+        } else {
+            return ResponseEntity.ok(new MessageResponse("Username available."));
+        }
+    }
+
+    @Override
     public ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto) throws Exception {
         String verificationCode = generateVerificationCode(6);
 
