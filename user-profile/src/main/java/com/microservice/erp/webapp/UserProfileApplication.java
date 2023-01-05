@@ -17,14 +17,14 @@ import org.springframework.context.annotation.ComponentScan;
         , "com.microservice.erp.webapp.config"
         , "com.microservice.erp.task.iam"
         , "com.microservice.erp.domain"})
-public class WebApplication extends SpringBootServletInitializer {
+public class UserProfileApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        SpringApplication.run(WebApplication.class, args);
+        SpringApplication.run(UserProfileApplication.class, args);
     }
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return builder.sources(WebApplication.class);
+        return builder.sources(UserProfileApplication.class);
     }
 }
