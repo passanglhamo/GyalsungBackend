@@ -79,5 +79,15 @@ public class AddUserEventService {
         repository.save(userInfo);
     }
 
+    @KafkaListener(topics = {"${topic.changeUsername}"}, concurrency = "1")
+    public void changeUsername(@Payload String message, Acknowledgment ack) throws Exception {
+        Gson gson = new Gson();
+        EventBusUser userEventInfo = gson.fromJson(message, EventBusUser.class);
+        Optional<User> userDb = repository.findByUserId(userEventInfo.userId);
+        User userInfo = new ModelMapper().map(userDb, User.class);
+        userInfo.setUsername(userEventInfo.username);
+        repository.save(userInfo);
+    }
+
 
 }

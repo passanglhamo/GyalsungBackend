@@ -43,10 +43,10 @@ public class Persistable<ID, VERSION> extends Event {
         return "id";
     }
 
-//    @JsonIgnore
-//    private String uuid;
-//    @JsonIgnore
-//    private String timestamp;
-//    @JsonIgnore
-//    private EventType eventType;
+    @JsonIgnore
+    private String uuid;
+    @JsonIgnore
+    private String timestamp;
+    @JsonIgnore
+    private EventType eventType;
 }

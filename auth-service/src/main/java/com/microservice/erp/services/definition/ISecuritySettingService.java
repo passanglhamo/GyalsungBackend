@@ -7,8 +7,6 @@ import org.springframework.http.ResponseEntity;
 public interface ISecuritySettingService {
     ResponseEntity<?> changePassword(UserProfileDto userProfileDto);
 
-    ResponseEntity<?> changeUsername(UserProfileDto userProfileDto);
-
     ResponseEntity<?> resetUserPassword(UserProfileDto userProfileDto);
 
     ResponseEntity<?> requestPasswordChange(ResetPasswordDto resetPasswordDto) throws Exception;

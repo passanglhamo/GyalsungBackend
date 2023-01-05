@@ -21,11 +21,6 @@ public class SecuritySettingController {
         return iSecuritySettingService.changePassword(userProfileDto);
     }
 
-    @PostMapping("/changeUsername")
-    public ResponseEntity<?> changeUsername(@RequestBody UserProfileDto userProfileDto) {
-        return iSecuritySettingService.changeUsername(userProfileDto);
-    }
-
     @PostMapping("/resetUserPassword")
     public ResponseEntity<?> resetUserPassword(@RequestBody UserProfileDto userProfileDto) {
         return iSecuritySettingService.resetUserPassword(userProfileDto);

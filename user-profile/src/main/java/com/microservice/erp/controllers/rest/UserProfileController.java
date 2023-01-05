@@ -76,6 +76,11 @@ public class UserProfileController {
         return iProfileService.changeEmail(userProfileDto);
     }
 
+    @PostMapping("/changeUsername")
+    public ResponseEntity<?> changeUsername(@RequestBody UserProfileDto userProfileDto) throws JsonProcessingException {
+        return iProfileService.changeUsername(userProfileDto);
+    }
+
     @PostMapping("/changeParentInfo")
     public ResponseEntity<?> changeParentInfo(@RequestBody UserProfileDto userProfileDto) {
         return iProfileService.changeParentInfo(userProfileDto);
