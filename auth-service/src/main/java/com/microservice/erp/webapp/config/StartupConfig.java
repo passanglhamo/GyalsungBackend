@@ -73,7 +73,7 @@ public class StartupConfig implements CommandLineRunner {
         if (opt.isPresent()) return;
 
         Role role= new Role();
-        if( userRepository.findAll().size()!=0){
+        if( roleRepository.findAll().size()==0){
             role.setRoleName(userRole);
             role.setIsOpenUser('N');
             roleRepository.save(role);
@@ -88,11 +88,21 @@ public class StartupConfig implements CommandLineRunner {
         //user.setMobile(mobile);
         user.setEnabled(true);
         user.setSecrets(User.createRandomMapOfSecret());
+        if (userRole != null && !userRole.isEmpty()){
 
-        Set<Role> saRoles = new HashSet<>();
-        Role saRoleDb = roleRepository.findRoleByRoleName(userRole).get();// to get student user role information
-        saRoles.add(saRoleDb);
-        user.setRoles(saRoles);
+            Optional<Role> roleDb = roleRepository.findRoleByRoleName(userRole);
+            if (roleDb.isPresent()){
+                role = roleDb.get();
+            }else {
+                role.setRoleName(userRole);
+            }
+            user.addRoles(role);
+        }
+
+//        Set<Role> saRoles = new HashSet<>();
+//        Role saRoleDb = roleRepository.findRoleByRoleName(userRole).get();// to get student user role information
+//        saRoles.add(saRoleDb);
+//        user.setRoles(saRoles);
         //
 //        Role role = new Role();
 //        role.setRoleName(userRole);
