@@ -137,8 +137,28 @@ public class AuthController {
     public ResponseEntity<String> forget(@RequestParam("username") String username){
         //
         Response response = resetPassword.didForget(username);
+        //Remove the message part from response when deploy in Production:-
+        response.setMessage("");
         return ResponseEntity.ok(response.toString());
     }
+
+    @PostMapping("/forget/reset")
+    public ResponseEntity<String> reset(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
+            , @RequestParam(name = "password") String password) {
+        //
+        token = TokenValidator.parseToken(token, "Bearer ");
+        //Password Validation:
+        ChangePassRequest.applyPasswordRules(password);
+        //
+        Response response = resetPassword.doReset(token
+                , null, password);
+        if (response.getStatus() == HttpStatus.OK.value()) {
+            return ResponseEntity.ok(response.toString());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
+        }
+    }
+
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
