@@ -5,19 +5,24 @@ import com.microservice.erp.domain.entities.Role;
 import com.microservice.erp.domain.entities.Statement;
 import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.models.Action;
+import com.microservice.erp.domain.repositories.RoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class StartupConfig implements CommandLineRunner {
 
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
+    private RoleRepository roleRepository;
+
 
     @Value("${app.god.user.username}")
     private String username;
@@ -40,9 +45,11 @@ public class StartupConfig implements CommandLineRunner {
     @Value("${app.god.user.resource}")
     private String resource;
 
-    public StartupConfig(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public StartupConfig(UserRepository userRepository, PasswordEncoder passwordEncoder,RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
+
     }
 
     @Override
@@ -64,6 +71,15 @@ public class StartupConfig implements CommandLineRunner {
 
         Optional<User> opt = userRepository.findByUsername(username);
         if (opt.isPresent()) return;
+
+        Role role= new Role();
+        if( roleRepository.findAll().size()==0){
+            role.setRoleName(userRole);
+            role.setIsOpenUser('N');
+            roleRepository.save(role);
+        }
+
+
         //
         User user = new User();
         user.setUsername(username);
@@ -72,10 +88,25 @@ public class StartupConfig implements CommandLineRunner {
         //user.setMobile(mobile);
         user.setEnabled(true);
         user.setSecrets(User.createRandomMapOfSecret());
+        if (userRole != null && !userRole.isEmpty()){
+
+            Optional<Role> roleDb = roleRepository.findRoleByRoleName(userRole);
+            if (roleDb.isPresent()){
+                role = roleDb.get();
+            }else {
+                role.setRoleName(userRole);
+            }
+            user.addRoles(role);
+        }
+
+//        Set<Role> saRoles = new HashSet<>();
+//        Role saRoleDb = roleRepository.findRoleByRoleName(userRole).get();// to get student user role information
+//        saRoles.add(saRoleDb);
+//        user.setRoles(saRoles);
         //
-        Role role = new Role();
-        role.setRoleName(userRole);
-        user.addRoles(role);
+//        Role role = new Role();
+//        role.setRoleName(userRole);
+//        user.addRoles(role);
         //
         Statement statement = new Statement();
         statement.setAction(action);
