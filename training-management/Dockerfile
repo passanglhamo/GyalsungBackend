@@ -1,8 +1,8 @@
-FROM library/tomcat:8.5.35
+FROM openjdk:8
 MAINTAINER erp.microservice.com
 
-# Delete existing ROOT folder
-RUN rm -rf /usr/local/tomcat/webapps/ROOT
+RUN mkdir -m 755 -p /home/logs
+ADD target/*.jar ROOT.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "ROOT.jar"]
 
-# Now deploy web-application.war to ../tomcat/webapps
-ADD target/ROOT.war /usr/local/tomcat/webapps/

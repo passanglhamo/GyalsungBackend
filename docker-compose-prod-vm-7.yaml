@@ -42,8 +42,8 @@ services:
   enrolment-deferment-exemption-webapp:
     image: enrolment-deferment-exemption-web-service:1.0
     build:
-      context: .
-      dockerfile: ./enrolment-deferment-exemption/Dockerfile
+      context: ./enrolment-deferment-exemption
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: ${app.eureka.service.host}
@@ -57,8 +57,8 @@ services:
   medical-screening-webapp:
     image: medical-screening-web-service:1.0
     build:
-      context: .
-      dockerfile: ./medical-screening/Dockerfile
+      context: ./medical-screening
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: ${app.eureka.service.host}
@@ -72,8 +72,8 @@ services:
   notification-webapp:
     image: notification-web-service:1.0
     build:
-      context: .
-      dockerfile: ./notification/Dockerfile
+      context: ./notification
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: ${app.eureka.service.host}
