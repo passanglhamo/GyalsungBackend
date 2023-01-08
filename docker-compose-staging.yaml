@@ -268,6 +268,14 @@ services:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: discovery-service
       app.eureka.service.port: 801
+      app.redis.host: redis
+      app.redis.port: 6379
+      app.mail.host: 192.168.221.144
+      app.mail.port: 587
+      app.activemq.host: activemq
+      app.activemq.port: 61616
+      app.db.host: pg-authDB
+      app.db.port: 5432
     ports:
       - 8083:8083
     depends_on:
