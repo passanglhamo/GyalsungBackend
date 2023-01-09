@@ -14,15 +14,16 @@ public class Policy extends Auditable<Long, Long> {
 
     private String type;
 
-    @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY, mappedBy = "policies")
     @JsonIgnore
-    private Set<User> users;
+    private Set<User> users = new HashSet<>();
 
-    @ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY, mappedBy = "policies")
     @JsonIgnore
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     @OneToMany(targetEntity = Statement.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "fk_policies")
     private List<Statement> statements;
 
     public String getServiceName() {
@@ -57,13 +58,13 @@ public class Policy extends Auditable<Long, Long> {
         this.statements = statements;
     }
 
-    public Policy addRoles(Role...roles){
+    /*public Policy addRoles(Role...roles){
         if (getRoles() == null){
             setRoles(new HashSet<>());
         }
         getRoles().addAll(Arrays.asList(roles));
         return this;
-    }
+    }*/
 
     public Policy addStatements(Statement...statements){
         if (getStatements() == null){

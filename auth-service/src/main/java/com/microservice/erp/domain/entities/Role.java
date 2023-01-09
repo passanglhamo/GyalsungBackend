@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name="roles", indexes = {@Index(name = "idx_role_name",columnList = "role_name")})
@@ -21,9 +22,9 @@ public class Role extends Auditable<BigInteger, Long> {
     private Character isOpenUser;
 
 
-    @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY, mappedBy = "roles")
     @JsonIgnore
-    private Set<User> users;
+    private Set<User> users = new HashSet<>();
 
     @ManyToMany(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Policy> policies;
@@ -60,19 +61,24 @@ public class Role extends Auditable<BigInteger, Long> {
         this.policies = policies;
     }
 
-    public Role addUsers(User...users){
+    /*public Role addUsers(User...users){
         if (getUsers() == null){
             setUsers(new HashSet<>());
         }
         getUsers().addAll(Arrays.asList(users));
         return this;
-    }
+    }*/
 
     public Role addPolicies(Policy...policies){
         if (getPolicies() == null){
             setPolicies(new HashSet<>());
         }
-        getPolicies().addAll(Arrays.asList(policies));
+        //getPolicies().addAll(Arrays.asList(policies));
+        Stream.of(policies)
+                .forEach(policy -> {
+                    policy.getRoles().add(this);
+                    this.addPolicies(policy);
+                });
         return this;
     }
 

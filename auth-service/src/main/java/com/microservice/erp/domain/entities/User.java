@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -137,6 +138,17 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
         this.roles = roles;
     }
 
+    public void addRoles(Role... roles) {
+        if (getRoles() == null) {
+            setRoles(new HashSet<>());
+        }
+        //getRoles().addAll(Arrays.asList(roles));
+        Stream.of(roles)
+                .forEach(role -> {
+                    this.getRoles().add(role);
+                    role.getUsers().add(this);
+                });
+    }
 
     public Map<Integer, String> getSecrets() {
         return secrets;
@@ -164,11 +176,25 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
         return secrets;
     }
 
-    public void addRoles(Role... roles) {
-        if (getRoles() == null) {
-            setRoles(new HashSet<>());
+    public Set<Policy> getPolicies() {
+        return policies;
+    }
+
+    public void setPolicies(Set<Policy> policies) {
+        this.policies = policies;
+    }
+
+    public User addPolicies(Policy... policies) {
+        if (getPolicies() == null) {
+            setPolicies(new HashSet<>());
         }
-        getRoles().addAll(Arrays.asList(roles));
+        //getPolicies().addAll(Arrays.asList(policies));
+        Stream.of(policies)
+                .forEach(policy -> {
+                    policy.getUsers().add(this);
+                    this.getPolicies().add(policy);
+                });
+        return this;
     }
 
     @Override
@@ -182,21 +208,5 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
     @Override
     public int hashCode() {
         return Objects.hash(getId(), username);
-    }
-
-    public Set<Policy> getPolicies() {
-        return policies;
-    }
-
-    public void setPolicies(Set<Policy> policies) {
-        this.policies = policies;
-    }
-
-    public User addPolicies(Policy... policies) {
-        if (getPolicies() == null) {
-            setPolicies(new HashSet<>());
-        }
-        getPolicies().addAll(Arrays.asList(policies));
-        return this;
     }
 }
