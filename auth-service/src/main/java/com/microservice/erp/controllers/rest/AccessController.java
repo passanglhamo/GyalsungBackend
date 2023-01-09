@@ -5,8 +5,8 @@ import com.microservice.erp.domain.entities.Role;
 import com.microservice.erp.domain.entities.Statement;
 import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.models.AccessPermission;
-import com.microservice.erp.domain.repositories.PolicyRepository;
-import com.microservice.erp.domain.repositories.RoleRepository;
+import com.microservice.erp.domain.repositories.IPolicyRepository;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import com.microservice.erp.domain.tasks.am.*;
 import com.infoworks.lab.rest.models.Response;
@@ -31,12 +31,12 @@ import java.util.Optional;
 public class AccessController {
 
     private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private PolicyRepository policyRepository;
+    private IRoleRepository roleRepository;
+    private IPolicyRepository policyRepository;
 
     public AccessController(UserRepository userRepository
-    , RoleRepository roleRepository
-    , PolicyRepository policyRepository) {
+    , IRoleRepository roleRepository
+    , IPolicyRepository policyRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.policyRepository = policyRepository;
@@ -87,12 +87,12 @@ public class AccessController {
             , @PathVariable("policyName") String policyName
             , @RequestParam(required = false) String policyType) {
         //
-        if (!SecurityConfig.matchAnyAdminRole(principal.getAuthorities())){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access!");
-        }
+//        if (!SecurityConfig.matchAnyAdminRole(principal.getAuthorities())){
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access!");
+//        }
         Policy policy = new Policy();
-        policy.setServiceName(policyName);
-        policy.setType(policyType);
+        policy.setPolicyName(policyName);
+        //policy.setType(policyType);
         SavePolicy savePolicy = new SavePolicy(policyRepository, policy);
         Response response = savePolicy.execute(null);
         return (response.getStatus() == 200)
@@ -112,7 +112,7 @@ public class AccessController {
         User user = new User();
         user.setUsername(username);
         Policy policy = new Policy();
-        policy.setServiceName(policyName);
+        policy.setPolicyName(policyName);
         AssignPolicyToUser assignPolicy = new AssignPolicyToUser(userRepository, policyRepository, user, policy);
         Response response = assignPolicy.execute(null);
         return (response.getStatus() == 200)
@@ -131,7 +131,7 @@ public class AccessController {
         }
         User user = new User();
         user.setUsername(username);
-        Optional<Policy> opt = policyRepository.findByServiceName(serviceName);
+        Optional<Policy> opt = policyRepository.findByPolicyName(serviceName);
         Policy policy = opt.isPresent() ? opt.get() : new Policy();
         //policy.setServiceName(serviceName);
         RemovePolicyFromUser removePolicy = new RemovePolicyFromUser(userRepository, user, policy);
@@ -172,7 +172,7 @@ public class AccessController {
         }
         User user = new User();
         user.setUsername(username);
-        Optional<Role> opt = roleRepository.findRoleByRoleName(roleName);
+        Optional<Role> opt = roleRepository.findByRoleName(roleName);
         Role role = opt.isPresent() ? opt.get() : new Role();
         //role.setName(roleName);
         RemoveRoleFromUser removeRole = new RemoveRoleFromUser(userRepository, user, role);
@@ -194,7 +194,7 @@ public class AccessController {
         Role role = new Role();
         role.setRoleName(roleName);
         Policy policy = new Policy();
-        policy.setServiceName(policyName);
+        policy.setPolicyName(policyName);
         AssignPolicyToRole assignPolicy = new AssignPolicyToRole(roleRepository, policyRepository, role, policy);
         Response response = assignPolicy.execute(null);
         return (response.getStatus() == 200)
@@ -213,7 +213,7 @@ public class AccessController {
         }
         Role role = new Role();
         role.setRoleName(roleName);
-        Optional<Policy> policyOpt = policyRepository.findByServiceName(serviceName);
+        Optional<Policy> policyOpt = policyRepository.findByPolicyName(serviceName);
         Policy policy = (policyOpt.isPresent()) ? policyOpt.get() : new Policy();
         //policy.setServiceName(serviceName);
         //
@@ -234,7 +234,7 @@ public class AccessController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access!");
         }
         Policy policy = new Policy();
-        policy.setServiceName(serviceName);
+        policy.setPolicyName(serviceName);
         AddStatementToPolicy addStmt = new AddStatementToPolicy(policyRepository, policy, statement);
         Response response = addStmt.execute(null);
         return (response.getStatus() == 200)
@@ -252,7 +252,7 @@ public class AccessController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access!");
         }
         Policy policy = new Policy();
-        policy.setServiceName(serviceName);
+        policy.setPolicyName(serviceName);
         RemoveStatementFromPolicy addStmt = new RemoveStatementFromPolicy(policyRepository, policy, statement);
         Response response = addStmt.execute(null);
         return (response.getStatus() == 200)

@@ -53,7 +53,7 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
     @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Set<Role> roles;
 
-    @ManyToMany(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Set<Policy> policies;
 
     @Override

@@ -1,7 +1,6 @@
 package com.microservice.erp.controllers.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.microservice.erp.controllers.rest.AuthController;
 import com.microservice.erp.domain.models.ChangePassRequest;
 import com.microservice.erp.domain.models.LoginRetryCount;
 import com.microservice.erp.domain.entities.Policy;
@@ -10,7 +9,7 @@ import com.microservice.erp.domain.entities.Statement;
 import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.models.Action;
 import com.microservice.erp.domain.models.LoginRequest;
-import com.microservice.erp.domain.repositories.RoleRepository;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
@@ -67,7 +66,7 @@ public class AuthControllerIntegrationTest extends BaseServiceTest {
         statement.setResource("product/add");
         //
         Policy policy = new Policy();
-        policy.setServiceName("product");
+        policy.setPolicyName("product");
         policy.addStatements(statement);
         role.addPolicies(policy);
         //
@@ -95,7 +94,7 @@ public class AuthControllerIntegrationTest extends BaseServiceTest {
     private UserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private IRoleRepository roleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -105,7 +104,7 @@ public class AuthControllerIntegrationTest extends BaseServiceTest {
         System.out.println("User count: " + userRepository.count());
         Optional<User> user = userRepository.findByUsername("01712645571");
         if (user.isPresent()) {
-            Optional<Role> role = roleRepository.findRoleByRoleName("ADMIN");
+            Optional<Role> role = roleRepository.findByRoleName("ADMIN");
             if (role.isPresent()){
                 Optional<Policy> policy = role.get().getPolicies().stream().findFirst();
                 System.out.println(policy.get().toString());

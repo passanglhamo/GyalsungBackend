@@ -3,8 +3,8 @@ package com.microservice.erp.domain.tasks.am;
 import com.infoworks.lab.beans.tasks.nuts.AbstractTask;
 import com.microservice.erp.domain.entities.Policy;
 import com.microservice.erp.domain.entities.Role;
-import com.microservice.erp.domain.repositories.PolicyRepository;
-import com.microservice.erp.domain.repositories.RoleRepository;
+import com.microservice.erp.domain.repositories.IPolicyRepository;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.sql.query.models.Property;
@@ -14,12 +14,12 @@ import java.util.Optional;
 
 public class AssignPolicyToRole extends AbstractTask<Message, Response> {
 
-    private RoleRepository repository;
-    private PolicyRepository policyRepository;
+    private IRoleRepository repository;
+    private IPolicyRepository policyRepository;
     private Role role;
     private Policy policy;
 
-    public AssignPolicyToRole(RoleRepository repository, PolicyRepository policyRepository, Role role, Policy policy) {
+    public AssignPolicyToRole(IRoleRepository repository, IPolicyRepository policyRepository, Role role, Policy policy) {
         super(new Property("role", role.marshallingToMap(true))
                 , new Property("policy", policy.marshallingToMap(true)));
         this.repository = repository;
@@ -41,10 +41,10 @@ public class AssignPolicyToRole extends AbstractTask<Message, Response> {
             role.unmarshallingFromMap(savedData, true);
         }
         if (repository != null){
-            Optional<Role> existingRole = repository.findRoleByRoleName(role.getRoleName());
+            Optional<Role> existingRole = repository.findById(role.getId());
             if(!existingRole.isPresent()) return new Response().setMessage("Role Not Found.").setStatus(500);
 
-            Optional<Policy> existingPolicy = policyRepository.findByServiceName(policy.getServiceName());
+            Optional<Policy> existingPolicy = policyRepository.findById(policy.getId());
             if(!existingPolicy.isPresent()) return new Response().setMessage("Policy Not Found.").setStatus(500);
 
             role = existingRole.get();

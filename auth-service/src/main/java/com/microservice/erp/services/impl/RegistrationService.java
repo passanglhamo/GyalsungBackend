@@ -3,7 +3,7 @@ package com.microservice.erp.services.impl;
 import com.infoworks.lab.beans.tasks.definition.TaskStack;
 import com.microservice.erp.domain.models.NewAccountRequest;
 import com.microservice.erp.domain.models.NewTenantRequest;
-import com.microservice.erp.domain.repositories.RoleRepository;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import com.microservice.erp.domain.tasks.iam.CheckUserExist;
 import com.microservice.erp.domain.tasks.iam.CreateNewTenant;
@@ -30,7 +30,7 @@ public class RegistrationService implements iRegistration {
     private static Logger LOG = LoggerFactory.getLogger(RegistrationService.class.getSimpleName());
     private PasswordEncoder passwordEncoder;
     private UserRepository repository;
-    private RoleRepository roleRepository;
+    private IRoleRepository roleRepository;
     private RestTemplate notifyTemplate;
     private RestTemplate mailTemplate;
 
@@ -38,7 +38,7 @@ public class RegistrationService implements iRegistration {
     private String noReply;
 
     public RegistrationService(UserRepository repository
-            , RoleRepository roleRepository
+            , IRoleRepository roleRepository
             , PasswordEncoder passwordEncoder
             , @Qualifier("notifyTemplate") RestTemplate notifyTemplate
             , @Qualifier("mailTemplate") RestTemplate mailTemplate) {

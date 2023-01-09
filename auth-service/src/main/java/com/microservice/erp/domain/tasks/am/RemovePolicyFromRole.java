@@ -3,21 +3,21 @@ package com.microservice.erp.domain.tasks.am;
 import com.infoworks.lab.beans.tasks.nuts.AbstractTask;
 import com.microservice.erp.domain.entities.Policy;
 import com.microservice.erp.domain.entities.Role;
-import com.microservice.erp.domain.repositories.RoleRepository;
 import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.sql.query.models.Property;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 
 import java.util.Map;
 import java.util.Optional;
 
 public class RemovePolicyFromRole extends AbstractTask<Message, Response> {
 
-    private RoleRepository repository;
+    private IRoleRepository repository;
     private Role role;
     private Policy policy;
 
-    public RemovePolicyFromRole(RoleRepository repository, Role role, Policy policy) {
+    public RemovePolicyFromRole(IRoleRepository repository, Role role, Policy policy) {
         super(new Property("role", role.marshallingToMap(true))
                 , new Property("policy", policy.marshallingToMap(true)));
         this.repository = repository;
@@ -42,7 +42,7 @@ public class RemovePolicyFromRole extends AbstractTask<Message, Response> {
             return new Response().setMessage("Policy Not Found.").setStatus(500);
 
         if (repository != null){
-            Optional<Role> exist = repository.findRoleByRoleName(role.getRoleName());
+            Optional<Role> exist = repository.findByRoleName(role.getRoleName());
             if (exist.isPresent()){
                 role = exist.get();
                 role.getPolicies().remove(policy);

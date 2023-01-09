@@ -4,7 +4,7 @@ import com.infoworks.lab.beans.tasks.nuts.AbstractTask;
 import com.microservice.erp.domain.entities.Role;
 import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.models.NewAccountRequest;
-import com.microservice.erp.domain.repositories.RoleRepository;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import com.infoworks.lab.rest.models.Response;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,14 +15,14 @@ public class CreateNewUser extends AbstractTask<NewAccountRequest, Response> {
 
     private PasswordEncoder encoder;
     private UserRepository repository;
-    private RoleRepository roleRepository;
+    private IRoleRepository roleRepository;
 
     public CreateNewUser(PasswordEncoder encoder, UserRepository repository) {
         this.encoder = encoder;
         this.repository = repository;
     }
 
-    public CreateNewUser(PasswordEncoder encoder, UserRepository repository, RoleRepository roleRepository) {
+    public CreateNewUser(PasswordEncoder encoder, UserRepository repository, IRoleRepository roleRepository) {
         this(encoder, repository);
         this.roleRepository = roleRepository;
     }
@@ -33,7 +33,7 @@ public class CreateNewUser extends AbstractTask<NewAccountRequest, Response> {
         this.repository = repository;
     }
 
-    public CreateNewUser(PasswordEncoder encoder, UserRepository repository, RoleRepository roleRepository, NewAccountRequest request) {
+    public CreateNewUser(PasswordEncoder encoder, UserRepository repository, IRoleRepository roleRepository, NewAccountRequest request) {
         this(encoder, repository, request);
         this.roleRepository = roleRepository;
     }
@@ -52,7 +52,7 @@ public class CreateNewUser extends AbstractTask<NewAccountRequest, Response> {
         if (roleRepository != null) {
             if (account.getRole() != null && !account.getRole().isEmpty()){
                 Role role = new Role();
-                Optional<Role> opt = roleRepository.findRoleByRoleName(account.getRole());
+                Optional<Role> opt = roleRepository.findByRoleName(account.getRole());
                 if (opt.isPresent()){
                     role = opt.get();
                 }else {

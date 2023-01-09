@@ -3,16 +3,19 @@ package com.microservice.erp.domain.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.*;
 
 @Entity
-@Table(name="policies", indexes = {@Index(name = "idx_serviceName",columnList = "serviceName")})
-public class Policy extends Auditable<Long, Long> {
+//@Table(name = "policies", indexes = {@Index(name = "idx_policyName", columnList = "policyName")})
+@Table(name = "policies")
+@AttributeOverride(name = "id", column = @Column(name = "policy_id", columnDefinition = "bigint"))
+public class Policy extends Auditable<BigInteger, Long> {
 
-    @Column(length = 250, unique = true, nullable = false)
-    private String serviceName;
+    @Column(length = 250, nullable = false)
+    private String policyName;
 
-    private String type;
+    //private String type;
 
     @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -22,24 +25,24 @@ public class Policy extends Auditable<Long, Long> {
     @JsonIgnore
     private Set<Role> roles;
 
-    @OneToMany(targetEntity = Statement.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(targetEntity = Statement.class, fetch = FetchType.EAGER)
     private List<Statement> statements;
 
-    public String getServiceName() {
-        return serviceName;
+    public String getPolicyName() {
+        return policyName;
     }
 
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public void setPolicyName(String policyName) {
+        this.policyName = policyName;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
+//    public String getType() {
+//        return type;
+//    }
+//
+//    public void setType(String type) {
+//        this.type = type;
+//    }
 
     public Set<Role> getRoles() {
         return roles;
@@ -57,16 +60,16 @@ public class Policy extends Auditable<Long, Long> {
         this.statements = statements;
     }
 
-    public Policy addRoles(Role...roles){
-        if (getRoles() == null){
+    public Policy addRoles(Role... roles) {
+        if (getRoles() == null) {
             setRoles(new HashSet<>());
         }
         getRoles().addAll(Arrays.asList(roles));
         return this;
     }
 
-    public Policy addStatements(Statement...statements){
-        if (getStatements() == null){
+    public Policy addStatements(Statement... statements) {
+        if (getStatements() == null) {
             setStatements(new ArrayList<>());
         }
         getStatements().addAll(Arrays.asList(statements));
@@ -78,12 +81,12 @@ public class Policy extends Auditable<Long, Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Policy policy = (Policy) o;
-        return getId().equals(policy.getId()) && serviceName.equals(policy.serviceName);
+        return getId().equals(policy.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), serviceName);
+        return Objects.hash(getId());
     }
 
     public Set<User> getUsers() {
