@@ -56,9 +56,12 @@ public class HasAccessPermissionTest {
         role.addPolicies(policy);
         //
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
+        //UseCase: product/add had Write permission, but asking for Read permission:
+        //Expected result : 200
         AccessPermission permission = new AccessPermission();
         Statement ss = new Statement();
         ss.setResource("product/add");
+        ss.setAction(Action.Read);
         permission.setStatement(ss);
         permission.setUsername(user.getUsername());
         //
@@ -66,7 +69,7 @@ public class HasAccessPermissionTest {
         AccessPermission nP = hasPermission.execute(null);
         //
         Assert.assertTrue(nP.getMessage(), nP.getStatus() == 200);
-        Assert.assertTrue(nP.getStatement().getAction() == Action.Write);
+        Assert.assertTrue(nP.getStatement().getAction() == Action.Read);
     }
 
     @Test
@@ -81,7 +84,7 @@ public class HasAccessPermissionTest {
         user.addRoles(role1);
 
         Statement statement1 = new Statement();
-        statement1.setAction(Action.Write);
+        statement1.setAction(Action.Read);
         statement1.setResource("product/add");
 
         Statement statement2 = new Statement();
@@ -91,31 +94,21 @@ public class HasAccessPermissionTest {
         Policy policy = new Policy();
         policy.addStatements(statement1, statement2);
         role1.addPolicies(policy);
-
-        //.....
-        Role role2 = new Role();
-        //role2.setName("USER");
-        user.addRoles(role2);
-
-        Statement statement3 = new Statement();
-        statement3.setAction(Action.Read);
-        statement3.setResource("product/add");
-
-        Policy policy2 = new Policy();
-        policy2.addStatements(statement3);
-        role2.addPolicies(policy2);
         //
         when(repository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
+        //UseCase: product/add had Read permission, but asking for Write permission:
+        //Expected result : 200
         AccessPermission permission = new AccessPermission();
         Statement ss = new Statement();
         ss.setResource("product/add");
+        ss.setAction(Action.Write);
         permission.setStatement(ss);
         permission.setUsername(user.getUsername());
         //
         HasAccessPermission hasPermission = new HasAccessPermission(repository, permission);
         AccessPermission nP = hasPermission.execute(null);
         //
-        Assert.assertTrue(nP.getMessage(), nP.getStatus() == 200);
+        Assert.assertTrue(nP.getMessage(), nP.getStatus() == 401);
         Assert.assertTrue(nP.getStatement().getAction() == Action.Write);
     }
 

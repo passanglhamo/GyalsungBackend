@@ -57,9 +57,12 @@ public class HasAccessPermission extends AbstractTask<Message, AccessPermission>
                     .map(statement -> statement.getAction())
                     .collect(Collectors.toList());
             //
-            Action existingAction = Action.maxInOrder(matchedAction);
-            return (permission.getStatement().getAction() == Action.None
-                    || permission.getStatement().getAction() != existingAction)
+            Action saved = Action.maxInOrder(matchedAction);
+            Action asking = permission.getStatement().getAction();
+            //Action.Write = 0; Action.Read=1; Action.None=2;
+            //AskingPermission either equal or greater then SavedPermission:
+            boolean isGranted = (asking != Action.None) && (asking.ordinal() >= saved.ordinal());
+            return (!isGranted)
                     ? (AccessPermission) permission.setMessage("Action Didn't Matched").setStatus(401)
                     : (AccessPermission) permission.setMessage("Action Matched").setStatus(200);
         }
