@@ -1,7 +1,9 @@
 package com.microservice.erp.services.impl;
 
 import com.infoworks.lab.beans.tasks.definition.TaskStack;
+import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
+import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.models.LoginRequest;
 import com.microservice.erp.domain.repositories.UserRepository;
 import com.microservice.erp.domain.tasks.iam.*;
@@ -10,11 +12,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.type.TypeReference;
 
+import java.io.IOException;
 import java.time.Duration;
+import java.util.Map;
 
 @Service
 public class LoginService implements iLogin {
@@ -35,7 +41,7 @@ public class LoginService implements iLogin {
     private long tokenTtl;
 
     @Override
-    public Response doLogin(LoginRequest request) {
+    public ResponseEntity<?> doLogin(LoginRequest request) throws IOException {
         Response response = new Response().setMessage("Not Implemented").setStatus(HttpStatus.NOT_IMPLEMENTED.value());
         //
         request.setTokenTtl(tokenTtl);
@@ -48,14 +54,14 @@ public class LoginService implements iLogin {
                 response.unmarshallingFromMap(message.marshallingToMap(true), true);
         });
 
-        return response;
-        /*Map<String, Object> data = Message.unmarshal(new TypeReference<Map<String, Object>>() {
+//        return response;
+        Map<String, Object> data = Message.unmarshal(new TypeReference<Map<String, Object>>() {
         }, response.getMessage());
         if (data == null) {
-            return ResponseEntity.badRequest().body();
+            return ResponseEntity.badRequest().body(new MessageResponse(response.getMessage()));
         } else {
             return ResponseEntity.ok(data);
-        }*/
+        }
     }
 
     @Override

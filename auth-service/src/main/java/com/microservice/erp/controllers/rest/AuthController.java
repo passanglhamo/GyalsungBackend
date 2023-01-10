@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth/v1")
@@ -33,7 +34,7 @@ public class AuthController {
     private iLogin login;
     private iRegistration registration;
     private iResetPassword resetPassword;
-    private DataSource<String,LoginRetryCount> cache;
+    private DataSource<String, LoginRetryCount> cache;
 
     @Value("${app.login.retry.count}")
     private int loginMaxRetryCount;
@@ -52,7 +53,7 @@ public class AuthController {
     }
 
     @GetMapping("/isAccountExist")
-    public ResponseEntity<String> isExist(@RequestParam("username") String username){
+    public ResponseEntity<String> isExist(@RequestParam("username") String username) {
         Response response = registration.isAccountExist(username);
         if (response.getStatus() == HttpStatus.OK.value())
             return ResponseEntity.ok(response.toString());
@@ -63,10 +64,10 @@ public class AuthController {
     @PostMapping("/new/user/account")
     public ResponseEntity<String> newUserAccount(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
             , @ApiIgnore @AuthenticationPrincipal UserDetails principal
-            , @Valid @RequestBody NewAccountRequest account){
+            , @Valid @RequestBody NewAccountRequest account) {
         //
         //token = TokenValidator.parseToken(token, "Bearer ");
-        if (!SecurityConfig.matchAnyAdminRole(principal.getAuthorities())){
+        if (!SecurityConfig.matchAnyAdminRole(principal.getAuthorities())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access!");
         }
         account.setRole("USER");
@@ -80,10 +81,10 @@ public class AuthController {
     @PostMapping("/new/admin/account")
     public ResponseEntity<String> newAdminAccount(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
             , @ApiIgnore @AuthenticationPrincipal UserDetails principal
-            , @Valid @RequestBody NewAccountRequest account){
+            , @Valid @RequestBody NewAccountRequest account) {
         //
         //token = TokenValidator.parseToken(token, "Bearer ");
-        if (!SecurityConfig.matchAnyAdminRole(principal.getAuthorities())){
+        if (!SecurityConfig.matchAnyAdminRole(principal.getAuthorities())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized Access!");
         }
         account.setRole("ADMIN");
@@ -95,14 +96,15 @@ public class AuthController {
     }
 
     @PostMapping("/nonblock/login")
-    public ResponseEntity<String> nonBlockingLogin(@Valid @RequestBody LoginRequest request){
+    public ResponseEntity<?> nonBlockingLogin(@Valid @RequestBody LoginRequest request) throws IOException {
         //
-        Response response = login.doLogin(request);
-        if (response.getStatus() == HttpStatus.OK.value()) {
-            return ResponseEntity.ok(response.toString());
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
-        }
+//        Response response = login.doLogin(request);
+//        if (response.getStatus() == HttpStatus.OK.value()) {
+//            return ResponseEntity.ok(response.toString());
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
+//        }
+        return login.doLogin(request);
     }
 
     @PostMapping("/login")
@@ -110,10 +112,10 @@ public class AuthController {
         //Check login-retry-count: if exceed then refuse login action:
         LoginRetryCount count = cache.read(request.getUsername());
         if (count != null) {
-            if (count.isMaxTryExceed()){
+            if (count.isMaxTryExceed()) {
                 if (count.isTimePassed(blockDurationInMillis)) {
                     count.resetFailedCount();
-                }else {
+                } else {
                     long timeRemain = (blockDurationInMillis - count.timeElapsed()) / 1000;
                     Response response = new Response()
                             .setStatus(HttpStatus.FORBIDDEN.value())
@@ -123,7 +125,8 @@ public class AuthController {
             }
         }
         //
-        Response response = login.doLogin(request);
+//        Response response = login.doLogin(request);
+        Response response =null;
         //If-Login Failed: then track-login-failed-count:
         if (response.getStatus() == HttpStatus.OK.value()) {
             if (count != null) cache.remove(request.getUsername());
@@ -137,7 +140,7 @@ public class AuthController {
     }
 
     @GetMapping("/forget")
-    public ResponseEntity<String> forget(@RequestParam("username") String username){
+    public ResponseEntity<String> forget(@RequestParam("username") String username) {
         //
         Response response = resetPassword.didForget(username);
         //Remove the message part from response when deploy in Production:-
@@ -165,7 +168,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
-            , @ApiIgnore @AuthenticationPrincipal UserDetails principal){
+            , @ApiIgnore @AuthenticationPrincipal UserDetails principal) {
         token = TokenValidator.parseToken(token, "Bearer ");
         Response response = login.doLogout(token, principal);
         if (response.getStatus() == HttpStatus.OK.value()) {
@@ -177,7 +180,7 @@ public class AuthController {
 
     @PostMapping("/reset")
     public ResponseEntity<String> reset(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
-            , @Valid @RequestBody ChangePassRequest changeRequest){
+            , @Valid @RequestBody ChangePassRequest changeRequest) {
         //
         token = TokenValidator.parseToken(token, "Bearer ");
         Response response = resetPassword.doReset(token
@@ -192,7 +195,7 @@ public class AuthController {
 
     @GetMapping("/isValidToken")
     public ResponseEntity<String> isValid(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
-            , @ApiIgnore @AuthenticationPrincipal UserDetails principal){
+            , @ApiIgnore @AuthenticationPrincipal UserDetails principal) {
 
         LOG.info("isValidToken Called with token: {}; username:{}", token, principal.getUsername());
 
@@ -208,7 +211,7 @@ public class AuthController {
 
     @GetMapping("/refreshToken")
     public ResponseEntity<String> refreshToken(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
-            , @ApiIgnore @AuthenticationPrincipal UserDetails principal){
+            , @ApiIgnore @AuthenticationPrincipal UserDetails principal) {
         //
         token = TokenValidator.parseToken(token, "Bearer ");
         Response response = login.refreshToken(token, principal);
