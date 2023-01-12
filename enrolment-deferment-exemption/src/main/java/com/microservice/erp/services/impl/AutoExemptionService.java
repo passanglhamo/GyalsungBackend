@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -74,5 +75,24 @@ public class AutoExemptionService implements IAutoExemptionService {
         }
 
         return ResponseEntity.ok(new MessageResponse("Uploaded successfully."));
+    }
+
+    @Override
+    public ResponseEntity<?> getUploadedFiles() {
+        List<AutoExemptionFile> autoExemptionFiles = iAutoExemptionFileRepository.findAllByOrderByCreatedDateDesc();
+        if (autoExemptionFiles.size() > 0) {
+            return ResponseEntity.ok(autoExemptionFiles);
+        } else {
+            return ResponseEntity.badRequest().body(new MessageResponse("File not uploaded yet."));
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> deleteFile(BigInteger id) {
+//        AutoExemptionFile autoExemptionFile = new AutoExemptionFile();
+//        autoExemptionFile.setId(id);
+//        iAutoExemptionFileRepository.delete(autoExemptionFile);
+        iAutoExemptionFileRepository.deleteById(id);
+        return ResponseEntity.ok(new MessageResponse("File deleted successfully."));
     }
 }
