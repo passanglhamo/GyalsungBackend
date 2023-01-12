@@ -69,7 +69,7 @@ public class StartupConfig implements CommandLineRunner {
             , String username, String password, String mobile, String userRole
             , String policyName, Action action, String resource) {
 
-        Optional<User> opt = userRepository.findByUsername(username);
+       /* Optional<User> opt = userRepository.findByUsername(username);
         if (opt.isPresent()) return;
 
         Role role= new Role();
@@ -117,7 +117,7 @@ public class StartupConfig implements CommandLineRunner {
         policy.addStatements(statement);
         role.addPolicies(policy);
         //
-        userRepository.save(user);
+        userRepository.save(user);*/
     }
 
 
