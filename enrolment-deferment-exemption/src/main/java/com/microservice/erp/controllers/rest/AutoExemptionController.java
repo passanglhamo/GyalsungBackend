@@ -45,4 +45,9 @@ public class AutoExemptionController {
         return iAutoExemptionService.deleteFile(fileId);
     }
 
+    @RequestMapping(value = "/getExemptedList", method = RequestMethod.GET)
+    public ResponseEntity<?> getExemptedList() {
+        return iAutoExemptionService.getExemptedList();
+    }
+
 }

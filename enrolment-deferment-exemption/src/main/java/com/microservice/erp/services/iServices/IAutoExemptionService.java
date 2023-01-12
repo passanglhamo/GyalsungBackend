@@ -15,4 +15,6 @@ public interface IAutoExemptionService {
     ResponseEntity<?> getUploadedFiles();
 
     ResponseEntity<?> deleteFile(BigInteger fileId);
+
+    ResponseEntity<?> getExemptedList();
 }

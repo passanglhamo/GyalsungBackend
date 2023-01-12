@@ -92,4 +92,15 @@ public class AutoExemptionService implements IAutoExemptionService {
         iAutoExemptionFileRepository.deleteById(fileId);
         return ResponseEntity.ok(new MessageResponse("File deleted successfully."));
     }
+
+    @Override
+    public ResponseEntity<?> getExemptedList() {
+        //by default top 50 will be displayed
+        List<AutoExemption> autoExemptions = iAutoExemptionRepository.findTop50ByOrderByCreatedDateDescFullNameAsc();
+        if (autoExemptions.size() > 0) {
+            return ResponseEntity.ok(autoExemptions);
+        } else {
+            return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
+        }
+    }
 }
