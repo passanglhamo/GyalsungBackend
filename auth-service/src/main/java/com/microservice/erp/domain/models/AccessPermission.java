@@ -1,5 +1,6 @@
 package com.microservice.erp.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.microservice.erp.domain.entities.Statement;
 import com.infoworks.lab.rest.models.Response;
 
@@ -31,4 +32,16 @@ public class AccessPermission extends Response {
     public void setStatement(Statement statement) {
         this.statement = statement;
     }
+
+    @JsonIgnore
+    private Integer status = 200;
+
+    @JsonIgnore
+    private String error;
+
+    @JsonIgnore
+    private String message;
+
+    @JsonIgnore
+    private String payload;
 }
