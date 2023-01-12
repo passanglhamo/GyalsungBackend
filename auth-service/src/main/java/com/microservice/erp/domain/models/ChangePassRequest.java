@@ -3,7 +3,9 @@ package com.microservice.erp.domain.models;
 import com.infoworks.lab.rest.models.Response;
 import com.infoworks.lab.rest.validation.Password.PasswordRule;
 
+import javax.validation.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.Set;
 
 public class ChangePassRequest extends Response {
 
@@ -21,6 +23,19 @@ public class ChangePassRequest extends Response {
             , @NotEmpty(message = "newPassword must not null or empty!") String newPassword) {
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
+    }
+
+    public static boolean applyPasswordRules(String password) throws ValidationException {
+        ChangePassRequest request = new ChangePassRequest(password, password);
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<ChangePassRequest>> violations = validator.validate(request);
+        if (violations.isEmpty()) return true;
+        StringBuilder msg = new StringBuilder();
+        for (ConstraintViolation<ChangePassRequest> violation : violations) {
+            msg.append(violation.getMessage() + "\n");
+        }
+        throw new ValidationException(msg.toString());
     }
 
     public String getOldPassword() {

@@ -42,7 +42,7 @@ public class RemovePolicyFromRole extends AbstractTask<Message, Response> {
             return new Response().setMessage("Policy Not Found.").setStatus(500);
 
         if (repository != null){
-            Optional<Role> exist = repository.findByRoleName(role.getRoleName());
+            Optional<Role> exist = repository.findById(role.getId());
             if (exist.isPresent()){
                 role = exist.get();
                 role.getPolicies().remove(policy);

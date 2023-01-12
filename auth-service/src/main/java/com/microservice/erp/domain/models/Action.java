@@ -18,7 +18,7 @@ public enum Action {
 
     public static com.microservice.erp.domain.models.Action maxInOrder(List<Action> actions){
         //actions.sort((a, b) -> a.ordinal() < b.ordinal() ? -1 : 1); //Sort Ascending order.
-        actions.sort((a, b) -> a.compareTo(b)); //Sort Ascending order.
+        actions.sort(Enum::compareTo); //Sort Descending order.
         return (actions.size() > 0) ? actions.get(0) : None;
     }
 }

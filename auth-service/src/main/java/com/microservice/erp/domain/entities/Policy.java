@@ -7,25 +7,26 @@ import java.math.BigInteger;
 import java.util.*;
 
 @Entity
-//@Table(name = "policies", indexes = {@Index(name = "idx_policyName", columnList = "policyName")})
-@Table(name = "policies")
+//@Table(name="policies", indexes = {@Index(name = "idx_serviceName",columnList = "serviceName")})
+@Table(name="policies")
 @AttributeOverride(name = "id", column = @Column(name = "policy_id", columnDefinition = "bigint"))
 public class Policy extends Auditable<BigInteger, Long> {
 
-    @Column(length = 250, nullable = false)
+    @Column(length = 250,  nullable = false)
     private String policyName;
 
-    //private String type;
+    private String type;
 
-    @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY, mappedBy = "policies")
     @JsonIgnore
-    private Set<User> users;
+    private Set<User> users = new HashSet<>();
 
-    @ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY, mappedBy = "policies")
     @JsonIgnore
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
-    @ManyToMany(targetEntity = Statement.class, fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = Statement.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "fk_policies")
     private List<Statement> statements;
 
     public String getPolicyName() {
@@ -36,13 +37,13 @@ public class Policy extends Auditable<BigInteger, Long> {
         this.policyName = policyName;
     }
 
-//    public String getType() {
-//        return type;
-//    }
-//
-//    public void setType(String type) {
-//        this.type = type;
-//    }
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public Set<Role> getRoles() {
         return roles;
@@ -60,16 +61,16 @@ public class Policy extends Auditable<BigInteger, Long> {
         this.statements = statements;
     }
 
-    public Policy addRoles(Role... roles) {
-        if (getRoles() == null) {
+    /*public Policy addRoles(Role...roles){
+        if (getRoles() == null){
             setRoles(new HashSet<>());
         }
         getRoles().addAll(Arrays.asList(roles));
         return this;
-    }
+    }*/
 
-    public Policy addStatements(Statement... statements) {
-        if (getStatements() == null) {
+    public Policy addStatements(Statement...statements){
+        if (getStatements() == null){
             setStatements(new ArrayList<>());
         }
         getStatements().addAll(Arrays.asList(statements));
@@ -81,12 +82,12 @@ public class Policy extends Auditable<BigInteger, Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Policy policy = (Policy) o;
-        return getId().equals(policy.getId());
+        return getId().equals(policy.getId()) && policyName.equals(policy.policyName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(getId(), policyName);
     }
 
     public Set<User> getUsers() {

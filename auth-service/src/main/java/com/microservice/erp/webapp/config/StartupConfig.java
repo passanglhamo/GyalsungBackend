@@ -108,23 +108,7 @@ public class StartupConfig implements CommandLineRunner {
             user.addRoles(role);
         }
 
-//        Set<Role> saRoles = new HashSet<>();
-//        Role saRoleDb = roleRepository.findRoleByRoleName(userRole).get();// to get student user role information
-//        saRoles.add(saRoleDb);
-//        user.setRoles(saRoles);
-        //
-//        Role role = new Role();
-//        role.setRoleName(userRole);
-//        user.addRoles(role);
-        //
-//        Optional<Policy> policyDb = policyRepository.findByPolicyName(policyName);
-//        role.addPolicies(policyDb.get());
 
-        //
-//        policy.setPolicyName(policyName);
-//        policy.addStatements(statement);
-//        role.addPolicies(policy);
-        //
         userRepository.save(user);
     }
 

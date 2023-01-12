@@ -28,6 +28,10 @@ public class ChangePassword extends TokenizerTask {
         this.encoder = encoder;
     }
 
+    public ChangePassword(String token, String newPass, UserRepository repository, PasswordEncoder encoder) {
+        this(token, null, newPass, repository, encoder);
+    }
+
     @Override
     public Response execute(Response response) throws RuntimeException {
         if (repository == null)
@@ -36,7 +40,6 @@ public class ChangePassword extends TokenizerTask {
             throw new RuntimeException("PasswordEncoder must not be null!");
         //
         String token = getPropertyValue("token").toString();
-        String oldPass = getPropertyValue("oldPass").toString();
         String newPass = getPropertyValue("newPass").toString();
         //
         JWTHeader header = TokenValidator.parseHeader(token, JWTHeader.class);
@@ -46,8 +49,17 @@ public class ChangePassword extends TokenizerTask {
             String secret = getSecret(exist.get(), Integer.valueOf(header.getKid()));
             //
             boolean isValid = new JWTValidator().isValid(token, secret);
-            boolean oldPassMatch = encoder.matches(oldPass, exist.get().getPassword());
-            String msg = isValid ? "Invalid Token" : "Old-Password didn't matched";
+            boolean oldPassMatch = true;
+            try {
+                if (getPropertyValue("oldPass") != null) {
+                    String oldPass = getPropertyValue("oldPass").toString();
+                    oldPassMatch = encoder.matches(oldPass, exist.get().getPassword());
+                }
+            } catch (RuntimeException e) {}
+            String msg = isValid
+                    ? (oldPassMatch ? "" : "Old-Password didn't matched")
+                    : "Invalid Token";
+
             //
             if (isValid && oldPassMatch){
                 User user = exist.get();

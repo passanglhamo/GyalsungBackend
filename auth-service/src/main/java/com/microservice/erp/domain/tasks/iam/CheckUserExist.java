@@ -27,19 +27,43 @@ public class CheckUserExist extends AbstractTask<Message, Response> {
 
     @Override
     public Response execute(Message message) throws RuntimeException {
-        String username = (accountRequest != null) ? accountRequest.getUsername() : getPropertyValue("username").toString();
-        if (repository != null){
-            Optional<User> optUser = repository.findByUsername(username);
-            if (optUser.isPresent()){
+        /*String username = (accountRequest != null) ? accountRequest.getUsername() : getPropertyValue("username").toString();
+        if (repository != null) {
+             Optional<User> optUser = repository.findByUsername(username);
+            if (!optUser.isPresent()) {
+                optUser = repository.findByCid(username);
+            }
+            if (!optUser.isPresent()) {
+                optUser = repository.findByEmail(username);
+            }
+            if (optUser.isPresent()) {
                 return (accountRequest == null)
                         ? new NewAccountRequest(username, null, null, null)
-                                                .setStatus(200).setMessage(username + " exist.")
+                        .setStatus(200).setMessage(username + " exist.")
                         : accountRequest.setStatus(200).setMessage(username + " exist.");
-            }else {
+            } else {
                 return accountRequest.setStatus(404).setMessage(username + " doesn't exist.");
             }
         }
+        */
+
+        String username = getPropertyValue("username").toString();
+        if (repository != null) {
+            Optional<User> optUser = repository.findByUsername(username);
+            if (!optUser.isPresent()) {
+                optUser = repository.findByCid(username);
+            }
+            if (!optUser.isPresent()) {
+                optUser = repository.findByEmail(username);
+            }
+            if (optUser.isPresent()) {
+                return new Response().setStatus(200).setMessage(username + " exist.");
+            } else {
+                return new Response().setStatus(404).setMessage(username + " doesn't exist.");
+            }
+        }
         throw new RuntimeException("UserRepository Must Not Be Null");
+
     }
 
     @Override

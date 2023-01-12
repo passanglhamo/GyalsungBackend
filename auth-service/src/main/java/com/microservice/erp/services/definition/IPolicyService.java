@@ -18,6 +18,10 @@ public interface IPolicyService {
 
     ResponseEntity<List<Policy>> getAllPolicyList();
 
+    ResponseEntity<List<Policy>> getAllMappedPolicyStatementList();
+
+    ResponseEntity<?> updatePolicy(Policy policy);
+
 
     @Getter
     @Setter
@@ -27,8 +31,8 @@ public interface IPolicyService {
         private BigInteger id;
         @NotNull(message = "Policy cannot be null")
         private String policyName;
-        @NotNull(message = "Statement cannot be null")
-        private BigInteger statementId;
+        @NotNull(message = "Policy Type cannot be null")
+        private String type;
     }
 
 

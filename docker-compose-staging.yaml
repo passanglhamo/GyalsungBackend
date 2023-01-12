@@ -222,8 +222,8 @@ services:
   discovery-service:
     image: discovery-service:1.0
     build:
-      context: .
-      dockerfile: ./eureka-service-discovery/Dockerfile
+      context: ./eureka-service-discovery
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
     ports:
@@ -235,8 +235,8 @@ services:
   api-gateway:
     image: api-gateway:1.0
     build:
-      context: .
-      dockerfile: ./gateway-service-config/Dockerfile
+      context: ./gateway-service-config
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus,gateway
       app.eureka.service.host: discovery-service
@@ -262,12 +262,20 @@ services:
   auth-webapp:
     image: auth-web-service:1.0
     build:
-      context: .
-      dockerfile: ./auth-service/Dockerfile
+      context: ./auth-service
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: discovery-service
       app.eureka.service.port: 801
+      app.redis.host: redis
+      app.redis.port: 6379
+      app.mail.host: 192.168.221.144
+      app.mail.port: 587
+      app.activemq.host: activemq
+      app.activemq.port: 61616
+      app.db.host: pg-authDB
+      app.db.port: 5432
     ports:
       - 8083:8083
     depends_on:
@@ -279,8 +287,8 @@ services:
   first-webapp:
     image: first-web-service:1.0
     build:
-      context: .
-      dockerfile: ./first-service/Dockerfile
+      context: ./first-service
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.home.logs: /home/logs
@@ -297,8 +305,8 @@ services:
   second-webapp:
     image: second-web-service:1.0
     build:
-      context: .
-      dockerfile: ./second-service/Dockerfile
+      context: ./second-service
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: discovery-service
@@ -314,8 +322,8 @@ services:
   user-profile-webapp:
     image: user-profile-web-service:1.0
     build:
-      context: .
-      dockerfile: ./user-profile/Dockerfile
+      context: ./user-profile
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: discovery-service
@@ -331,8 +339,8 @@ services:
   training-management-webapp:
     image: training-management-web-service:1.0
     build:
-      context: .
-      dockerfile: ./training-management/Dockerfile
+      context: ./training-management
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: discovery-service
@@ -348,8 +356,8 @@ services:
   enrolment-deferment-exemption-webapp:
     image: enrolment-deferment-exemption-web-service:1.0
     build:
-      context: .
-      dockerfile: ./enrolment-deferment-exemption/Dockerfile
+      context: ./enrolment-deferment-exemption
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: discovery-service
@@ -365,8 +373,8 @@ services:
   medical-screening-webapp:
     image: medical-screening-web-service:1.0
     build:
-      context: .
-      dockerfile: ./medical-screening/Dockerfile
+      context: ./medical-screening
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: discovery-service
@@ -382,8 +390,8 @@ services:
   notification-webapp:
     image: notification-web-service:1.0
     build:
-      context: .
-      dockerfile: ./notification/Dockerfile
+      context: ./notification
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: discovery-service

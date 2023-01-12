@@ -10,8 +10,8 @@ services:
   api-gateway:
     image: api-gateway:1.0
     build:
-      context: .
-      dockerfile: ./gateway-service-config/Dockerfile
+      context: ./gateway-service-config
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus,gateway
       app.eureka.service.host: ${app.eureka.service.host}

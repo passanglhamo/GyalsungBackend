@@ -41,7 +41,7 @@ public class AssignPolicyToUser extends AbstractTask<Message, Response> {
             policy.unmarshallingFromMap(savedData, true);
         }
         if (userRepository != null) {
-            Optional<User> existingUser = userRepository.findByUsername(user.getUsername());
+            Optional<User> existingUser = userRepository.findByUserId(user.getUserId());
             if (!existingUser.isPresent()) return new Response().setMessage("User Not Found.").setStatus(500);
 
             Optional<Policy> existingPolicy = policyRepository.findById(policy.getId());

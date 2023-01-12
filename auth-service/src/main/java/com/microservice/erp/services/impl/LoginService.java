@@ -1,12 +1,12 @@
 package com.microservice.erp.services.impl;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.infoworks.lab.beans.tasks.definition.TaskStack;
 import com.infoworks.lab.rest.models.Message;
+import com.infoworks.lab.rest.models.Response;
+import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.models.LoginRequest;
 import com.microservice.erp.domain.repositories.UserRepository;
 import com.microservice.erp.domain.tasks.iam.*;
-import com.infoworks.lab.rest.models.Response;
 import com.microservice.erp.services.definition.iLogin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +16,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 
 @Service
-public class LoginService implements iLogin{
+public class LoginService implements iLogin {
 
     private static Logger LOG = LoggerFactory.getLogger(LoginService.class.getSimpleName());
     private UserRepository userRepository;
@@ -30,7 +31,7 @@ public class LoginService implements iLogin{
     private RoleWiseAccessPermissionService roleWiseAccessPermissionService;
 
 
-    public LoginService(UserRepository userRepository, PasswordEncoder passwordEncoder,RoleWiseAccessPermissionService roleWiseAccessPermissionService) {
+    public LoginService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleWiseAccessPermissionService = roleWiseAccessPermissionService;
@@ -46,17 +47,18 @@ public class LoginService implements iLogin{
         request.setTokenTtl(tokenTtl);
         TaskStack loginStack = TaskStack.createSync(true);
         loginStack.push(new CheckUserExist(userRepository, request.getUsername()));
-        loginStack.push(new Login(userRepository, passwordEncoder,roleWiseAccessPermissionService,request));
+        loginStack.push(new Login(userRepository, passwordEncoder, roleWiseAccessPermissionService, request));
         loginStack.commit(true, (message, state) -> {
             LOG.info("Login Status: " + state.name());
             if (message != null)
                 response.unmarshallingFromMap(message.marshallingToMap(true), true);
         });
 
+//        return response;
         Map<String, Object> data = Message.unmarshal(new TypeReference<Map<String, Object>>() {
         }, response.getMessage());
         if (data == null) {
-            return ResponseEntity.badRequest().body(response.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(response.getMessage()));
         } else {
             return ResponseEntity.ok(data);
         }

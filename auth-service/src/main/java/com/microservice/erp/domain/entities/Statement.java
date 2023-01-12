@@ -18,8 +18,8 @@ public class Statement extends Auditable<BigInteger, Long> {
 
     private String resource;
 
-    @ManyToMany(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    private Set<Policy> policies;
+//    @ManyToOne(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+//    private Policy policy;
 
     public Action getAction() {
         return action;
@@ -37,13 +37,13 @@ public class Statement extends Auditable<BigInteger, Long> {
         this.resource = resource;
     }
 
-    public Set<Policy> getPolicies() {
-        return policies;
-    }
-
-    public void setPolicies(Set<Policy> policies) {
-        this.policies = policies;
-    }
+//    public Policy getPolicy() {
+//        return policy;
+//    }
+//
+//    public void setPolicy(Policy policy) {
+//        this.policy = policy;
+//    }
 
     @Override
     public boolean equals(Object o) {

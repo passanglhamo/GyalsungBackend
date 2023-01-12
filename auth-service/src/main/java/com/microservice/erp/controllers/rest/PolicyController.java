@@ -3,6 +3,7 @@ package com.microservice.erp.controllers.rest;
 import com.microservice.erp.domain.entities.Policy;
 import com.microservice.erp.services.definition.IPolicyService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,5 +27,18 @@ public class PolicyController {
 
         return iPolicyService.getAllPolicyList();
     }
+
+    @GetMapping("/getAllMappedPolicyStatementList")
+    public ResponseEntity<List<Policy>> getAllMappedPolicyStatementList() {
+
+        return iPolicyService.getAllMappedPolicyStatementList();
+    }
+
+    @PutMapping("/updatePolicy")
+    public ResponseEntity<?> updatePolicy(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                          @Valid @RequestBody Policy policy) {
+        return iPolicyService.updatePolicy(policy);
+    }
+
 
 }

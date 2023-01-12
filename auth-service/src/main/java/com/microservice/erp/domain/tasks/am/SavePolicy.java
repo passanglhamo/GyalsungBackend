@@ -31,12 +31,12 @@ public class SavePolicy extends AbstractTask<Message, Response> {
         }
         if (repository != null){
             Optional<Policy> exist = Objects.isNull(policy.getId())?Optional.empty():repository.findById(policy.getId());
-//            Optional<Policy> exist = repository.findByPolicyName(policy.getPolicyName());
             if (!exist.isPresent()){
                 Policy saved = repository.save(policy);
                 return new Response().setMessage("Policy successfully created for: " + policy.getPolicyName()).setStatus(200);
             } else {
                 policy.setId(exist.get().getId());
+                policy.setVersion(exist.get().getVersion());
                 Policy saved = repository.save(policy);
                 return new Response().setMessage("Policy successfully updated for: " +  policy.getPolicyName()).setStatus(200);
             }

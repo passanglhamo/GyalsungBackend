@@ -1,0 +1,173 @@
+version: '3.5'
+
+networks:
+  web-app-net:
+    name: my-web-app-net
+    #driver: overlay
+    driver: bridge
+
+volumes:
+  redis-inmemory-storage:
+  activemq-storage:
+  pg-authDB-storage:
+  pgadmin-authDB-data:
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    networks:
+      - web-app-net
+    volumes:
+      - redis-inmemory-storage:/data
+
+  activemq:
+    image: webcenter/activemq
+    ports:
+      - 8161:8161
+      - 61616:61616
+      - 61613:61613
+    environment:
+      - ACTIVEMQ_MIN_MEMORY=512
+      - ACTIVEMQ_MAX_MEMORY=2048
+      - ACTIVEMQ_ADMIN_LOGIN=admin
+      - ACTIVEMQ_ADMIN_PASSWORD=admin
+    restart: on-failure
+    networks:
+      - web-app-net
+    volumes:
+      - activemq-storage:/var/log/activemq
+
+  fake-smtp:
+    image: rnwood/smtp4dev
+    ports:
+      - 587:25
+      - 3000:80
+    networks:
+      - web-app-net
+
+  pg-authDB:
+    image: postgres
+    environment:
+      POSTGRES_DB: authDB
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root@123
+    ports:
+      - 5432:5432
+    networks:
+      - web-app-net
+    volumes:
+      - pg-authDB-storage:/var/lib/postgresql/data
+
+  pgadmin-authDB:
+    image: dpage/pgadmin4
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@mypage.com
+      PGADMIN_DEFAULT_PASSWORD: root@123
+    volumes:
+      - pgadmin-authDB-data:/var/lib/pgadmin
+    restart: on-failure
+    networks:
+      - web-app-net
+    depends_on:
+      - pg-authDB
+
+  discovery-service:
+    image: discovery-service:1.0
+    build:
+      context: ./eureka-service-discovery
+      dockerfile: Dockerfile
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+    ports:
+      - 801:801
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  api-gateway:
+    image: api-gateway:1.0
+    build:
+      context: ./gateway-service-config
+      dockerfile: Dockerfile
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus,gateway
+      app.eureka.service.host: discovery-service
+      app.eureka.service.port: 801
+      redis.host: redis
+      redis.port: 6379
+    ports:
+      - 80:80
+    depends_on:
+      - discovery-service
+      - auth-webapp
+      - first-webapp
+      - second-webapp
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  auth-webapp:
+    image: auth-web-service:1.0
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: discovery-service
+      app.eureka.service.port: 801
+      app.redis.host: redis
+      app.redis.port: 6379
+      app.mail.host: 192.168.221.144
+      app.mail.port: 587
+      app.activemq.host: activemq
+      app.activemq.port: 61616
+      app.db.host: pg-authDB
+      app.db.port: 5432
+    ports:
+      - 8083:8083
+    depends_on:
+      - discovery-service
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  first-webapp:
+    image: first-web-service:1.0
+    build:
+      context: ./first-service
+      dockerfile: Dockerfile
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.home.logs: /home/logs
+      app.eureka.service.host: discovery-service
+      app.eureka.service.port: 801
+    ports:
+      - 8081:8081
+    depends_on:
+      - discovery-service
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  second-webapp:
+    image: second-web-service:1.0
+    build:
+      context: ./second-service
+      dockerfile: Dockerfile
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: discovery-service
+      app.eureka.service.port: 801
+    ports:
+      - 8082:8082
+    depends_on:
+      - discovery-service
+    restart: on-failure
+    networks:
+      - web-app-net
+
+#end of scripts

@@ -9,6 +9,7 @@ import com.it.soul.lab.sql.query.models.Property;
 import com.microservice.erp.domain.repositories.IPolicyRepository;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class AddStatementToPolicy extends AbstractTask<Message, Response> {
@@ -32,7 +33,7 @@ public class AddStatementToPolicy extends AbstractTask<Message, Response> {
             policy.unmarshallingFromMap(savedData, true);
         }
         if (repository != null){
-            Optional<Policy> exist = repository.findByPolicyName(policy.getPolicyName());
+            Optional<Policy> exist = repository.findById(policy.getId());
             if (exist.isPresent()){
                 policy = exist.get();
                 policy.addStatements(statements);

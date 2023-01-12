@@ -42,8 +42,8 @@ services:
   auth-webapp:
     image: auth-web-service:1.0
     build:
-      context: .
-      dockerfile: ./auth-service/Dockerfile
+      context: ./auth-service
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: ${app.eureka.service.host}
@@ -57,8 +57,8 @@ services:
   user-profile-webapp:
     image: user-profile-web-service:1.0
     build:
-      context: .
-      dockerfile: ./user-profile/Dockerfile
+      context: ./user-profile
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: ${app.eureka.service.host}
@@ -72,8 +72,8 @@ services:
   training-management-webapp:
     image: training-management-web-service:1.0
     build:
-      context: .
-      dockerfile: ./training-management/Dockerfile
+      context: ./training-management
+      dockerfile: Dockerfile
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: ${app.eureka.service.host}
