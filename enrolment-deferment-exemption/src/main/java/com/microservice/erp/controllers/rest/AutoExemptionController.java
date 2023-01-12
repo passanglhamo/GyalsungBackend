@@ -1,6 +1,7 @@
 package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.AutoExemptionDto;
+import com.microservice.erp.domain.entities.AutoExemption;
 import com.microservice.erp.services.iServices.IAutoExemptionService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.File;
 import java.math.BigInteger;
 
@@ -50,4 +52,8 @@ public class AutoExemptionController {
         return iAutoExemptionService.getExemptedList();
     }
 
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public ResponseEntity<?> update(@Valid @RequestBody AutoExemption autoExemption) {
+        return iAutoExemptionService.update(autoExemption);
+    }
 }

@@ -103,4 +103,17 @@ public class AutoExemptionService implements IAutoExemptionService {
             return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
         }
     }
+
+    @Override
+    public ResponseEntity<?> update(AutoExemption autoExemption) {
+        iAutoExemptionRepository.findById(autoExemption.getId()).ifPresent(d -> {
+            d.setCid(autoExemption.getCid());
+            //todo: check if cid is already exist in db or not using id
+            d.setFullName(autoExemption.getFullName());
+            d.setDob(autoExemption.getDob());
+            d.setGender(autoExemption.getGender());
+            iAutoExemptionRepository.save(d);
+        });
+        return ResponseEntity.ok("Data updated successfully.");
+    }
 }

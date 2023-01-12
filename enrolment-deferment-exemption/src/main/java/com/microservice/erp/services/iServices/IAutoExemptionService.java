@@ -1,6 +1,7 @@
 package com.microservice.erp.services.iServices;
 
 import com.microservice.erp.domain.dto.AutoExemptionDto;
+import com.microservice.erp.domain.entities.AutoExemption;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,4 +18,6 @@ public interface IAutoExemptionService {
     ResponseEntity<?> deleteFile(BigInteger fileId);
 
     ResponseEntity<?> getExemptedList();
+
+    ResponseEntity<?> update(AutoExemption autoExemption);
 }
