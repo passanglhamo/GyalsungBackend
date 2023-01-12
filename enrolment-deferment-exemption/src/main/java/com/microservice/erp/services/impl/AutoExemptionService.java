@@ -88,11 +88,8 @@ public class AutoExemptionService implements IAutoExemptionService {
     }
 
     @Override
-    public ResponseEntity<?> deleteFile(BigInteger id) {
-//        AutoExemptionFile autoExemptionFile = new AutoExemptionFile();
-//        autoExemptionFile.setId(id);
-//        iAutoExemptionFileRepository.delete(autoExemptionFile);
-        iAutoExemptionFileRepository.deleteById(id);
+    public ResponseEntity<?> deleteFile(BigInteger fileId) {
+        iAutoExemptionFileRepository.deleteById(fileId);
         return ResponseEntity.ok(new MessageResponse("File deleted successfully."));
     }
 }

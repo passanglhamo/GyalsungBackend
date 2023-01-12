@@ -40,9 +40,9 @@ public class AutoExemptionController {
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @RequestMapping(value = "/deleteFile", method = RequestMethod.POST)
-    public ResponseEntity<?> deleteFile(@RequestParam("id") BigInteger id) {
-        return iAutoExemptionService.deleteFile(id);
+    @RequestMapping(value = "/deleteFile", method = RequestMethod.GET)
+    public ResponseEntity<?> deleteFile(@RequestParam("fileId") BigInteger fileId) {
+        return iAutoExemptionService.deleteFile(fileId);
     }
 
 }
