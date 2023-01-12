@@ -7,7 +7,7 @@ import com.infoworks.lab.rest.models.Response;
 public class AccessPermission extends Response {
     private String username;
     private String resource;
-    private String action;
+    private String action = Action.None.value();
 
     @JsonIgnore
     private Statement statement;
