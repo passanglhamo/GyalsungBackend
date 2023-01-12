@@ -1,14 +1,13 @@
 package com.microservice.erp.domain.entities;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.math.BigInteger;
-import java.util.Date;
-import java.util.Set;
 
 @Entity(name = "ede_auto_exemption_file")
 @AttributeOverride(name = "id", column = @Column(name = "file_id", columnDefinition = "bigint"))
-public class AutoExemptionUploadedFile extends Auditable<BigInteger, Long> {
+public class AutoExemptionFile extends Auditable<BigInteger, Long> {
     //region private variables
     @Column(name = "file_name", columnDefinition = "varchar(255)")
     private String fileName;

@@ -8,7 +8,7 @@ import java.math.BigInteger;
 
 @Setter
 @Getter
-public class AutomaticExemptionDto {
+public class AutoExemptionDto {
     //region private variables
     private MultipartFile attachedFile;
 //    private byte[] attachedFileByte;
