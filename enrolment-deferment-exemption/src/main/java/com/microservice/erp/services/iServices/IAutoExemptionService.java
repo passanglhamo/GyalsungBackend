@@ -28,6 +28,8 @@ public interface IAutoExemptionService {
 
     ResponseEntity<?> deleteList(AutoExemptionCommand command);
 
+    ResponseEntity<?> save(AutoExemption autoExemption);
+
     @Getter
     @Setter
     @AllArgsConstructor

@@ -130,4 +130,16 @@ public class AutoExemptionService implements IAutoExemptionService {
         return ResponseEntity.ok("Deleted successfully.");
     }
 
+    @Override
+    public ResponseEntity<?> save(AutoExemption autoExemption) {
+        AutoExemption autoExemptionDb = iAutoExemptionRepository.findByCid(autoExemption.getCid());
+        if (autoExemptionDb != null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("CID already " + autoExemption.getCid() + " exist."));
+
+        } else {
+            iAutoExemptionRepository.save(autoExemption);
+            return ResponseEntity.ok("Data saved successfully.");
+        }
+
+    }
 }

@@ -10,4 +10,5 @@ public interface IAutoExemptionRepository extends JpaRepository<AutoExemption, B
 
     List<AutoExemption> findTop50ByOrderByCreatedDateDescFullNameAsc();
 
+    AutoExemption findByCid(String cid);
 }
