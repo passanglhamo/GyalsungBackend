@@ -3,6 +3,7 @@ package com.microservice.erp.controllers.rest;
 import com.microservice.erp.domain.dto.AutoExemptionDto;
 import com.microservice.erp.domain.entities.AutoExemption;
 import com.microservice.erp.services.iServices.IAutoExemptionService;
+import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
 import java.math.BigInteger;
+import java.util.List;
 
 @RestController
 @RequestMapping("/autoExemption")
@@ -56,4 +58,10 @@ public class AutoExemptionController {
     public ResponseEntity<?> update(@Valid @RequestBody AutoExemption autoExemption) {
         return iAutoExemptionService.update(autoExemption);
     }
+
+    @PostMapping(value = "/deleteList")
+    public ResponseEntity<?> deleteList(@RequestBody IAutoExemptionService.AutoExemptionCommand command) {
+        return iAutoExemptionService.deleteList(command);
+    }
+
 }

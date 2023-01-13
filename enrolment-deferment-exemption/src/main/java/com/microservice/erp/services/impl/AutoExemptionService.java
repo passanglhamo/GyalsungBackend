@@ -116,4 +116,12 @@ public class AutoExemptionService implements IAutoExemptionService {
         });
         return ResponseEntity.ok("Data updated successfully.");
     }
+
+    @Override
+    public ResponseEntity<?> deleteList(AutoExemptionCommand command) {
+        List<AutoExemption> autoExemptionList = iAutoExemptionRepository.findAllById(command.getIds());
+        iAutoExemptionRepository.deleteAll(autoExemptionList);
+        return ResponseEntity.ok("Deleted successfully.");
+    }
+
 }
