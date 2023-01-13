@@ -1,5 +1,6 @@
 package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dao.AutoExemptionDao;
 import com.microservice.erp.domain.dto.AutoExemptionDto;
 import com.microservice.erp.domain.entities.AutoExemptionFile;
 import com.microservice.erp.domain.entities.AutoExemption;
@@ -30,10 +31,12 @@ import java.util.Objects;
 public class AutoExemptionService implements IAutoExemptionService {
     private final IAutoExemptionRepository iAutoExemptionRepository;
     private final IAutoExemptionFileRepository iAutoExemptionFileRepository;
+    private final AutoExemptionDao autoExemptionDao;
 
-    public AutoExemptionService(IAutoExemptionRepository iAutoExemptionRepository, IAutoExemptionFileRepository iAutoExemptionFileRepository) {
+    public AutoExemptionService(IAutoExemptionRepository iAutoExemptionRepository, IAutoExemptionFileRepository iAutoExemptionFileRepository, AutoExemptionDao autoExemptionDao) {
         this.iAutoExemptionRepository = iAutoExemptionRepository;
         this.iAutoExemptionFileRepository = iAutoExemptionFileRepository;
+        this.autoExemptionDao = autoExemptionDao;
     }
 
     @Override
@@ -108,7 +111,10 @@ public class AutoExemptionService implements IAutoExemptionService {
     public ResponseEntity<?> update(AutoExemption autoExemption) {
         iAutoExemptionRepository.findById(autoExemption.getId()).ifPresent(d -> {
             d.setCid(autoExemption.getCid());
-            //todo: check if cid is already exist in db or not using id
+            String isEmailAlreadyInUse = autoExemptionDao.isCidAlreadyExist(autoExemption.getCid(), autoExemption.getId());
+            if (isEmailAlreadyInUse != null) {
+                return;
+            }
             d.setFullName(autoExemption.getFullName());
             d.setDob(autoExemption.getDob());
             d.setGender(autoExemption.getGender());
