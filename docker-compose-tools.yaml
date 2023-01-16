@@ -16,6 +16,7 @@ volumes:
 services:
   mysql-db:
     image: mysql:8.0.13
+    platform: linux/x86_64
     environment:
       MYSQL_DATABASE: testDB
       MYSQL_ROOT_PASSWORD: root@123
@@ -28,6 +29,7 @@ services:
 
   auth-db:
     image: mysql:8.0.13
+    platform: linux/x86_64
     environment:
       MYSQL_DATABASE: authDB
       MYSQL_ROOT_PASSWORD: root@123
@@ -40,6 +42,7 @@ services:
 
   phpadmin-auth:
     image: phpmyadmin/phpmyadmin
+    platform: linux/x86_64
     environment:
       PMA_HOST: auth-db
       PMA_PORT: 3307
@@ -56,15 +59,13 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_DB: authDB
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root@123
+      POSTGRES_PASSWORD: root
     ports:
       - 5432:5432
     networks:
       - web-app-net
     volumes:
-      - postgres-storage:/var/lib/postgresql/data
+      - postgres-storage:/Library/PostgreSQL/15/data
 
   pgadmin:
     image: dpage/pgadmin4
@@ -72,7 +73,7 @@ services:
       - 5050:80
     environment:
       PGADMIN_DEFAULT_EMAIL: root@mypage.com
-      PGADMIN_DEFAULT_PASSWORD: root@123
+      PGADMIN_DEFAULT_PASSWORD: root
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     restart: on-failure
