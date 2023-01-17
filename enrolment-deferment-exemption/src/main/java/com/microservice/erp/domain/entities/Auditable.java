@@ -15,8 +15,7 @@ import java.time.LocalDateTime;
 public class Auditable<ID, VERSION> extends Persistable<ID, VERSION> {
 
     @AttributeOverride(name = "username", column = @Column(name = "created_by"))
-    @Embedded
-    @CreatedBy
+    @Embedded @CreatedBy
     Username createdBy;
 
     @CreatedDate
@@ -24,12 +23,42 @@ public class Auditable<ID, VERSION> extends Persistable<ID, VERSION> {
     LocalDateTime createdDate;
 
     @AttributeOverride(name = "username", column = @Column(name = "last_modified_by"))
-    @Embedded
-    @LastModifiedBy
+    @Embedded @LastModifiedBy
     Username lastModifiedBy;
 
     @LastModifiedDate
     @Column(name = "last_modified_date")
     LocalDateTime lastModifiedDate;
 
+    public Username getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Username createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Username getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(Username lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public LocalDateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
 }

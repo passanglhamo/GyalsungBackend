@@ -1,22 +1,23 @@
 package com.microservice.erp.domain.entities;
 
 import javax.persistence.Embeddable;
+import java.math.BigInteger;
 
 @Embeddable
 public class Username {
 
-    private String username;
+    private BigInteger username;
 
     public Username() {}
-    public Username(String username) {
+    public Username(BigInteger username) {
         this.username = username;
     }
 
-    public String getUsername() {
+    public BigInteger getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(BigInteger username) {
         this.username = username;
     }
 }

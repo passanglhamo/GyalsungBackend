@@ -44,15 +44,6 @@ public class AddUserEventService {
             userInfo.setSecrets(User.createRandomMapOfSecret());
             Set<Role> saRoles = new HashSet<>();
             if (userEventInfo.getIsOpenUser().equals('Y')) {
-//                Optional<Role> roleDb = roleRepository.findRoleByRoleName(userRole);
-//                if (roleDb.isPresent()){
-//                    role = roleDb.get();
-//                }else {
-//                    role.setRoleName(userRole);
-//                }
-//                user.addRoles(role);
-
-
                 Role saRoleDb = roleRepository.findByIsOpenUser('Y');// to get student user role information
                 saRoles.add(saRoleDb);
                 userInfo.setRoles(saRoles);
@@ -66,14 +57,11 @@ public class AddUserEventService {
             repository.save(userInfo);
 
         } else {
-            repository.findById(userEventInfo.userId).ifPresent(user -> {
+            repository.findByUserId(userEventInfo.userId).ifPresent(user -> {
                 user.setUserId(userEventInfo.userId);
-                user.setUsername(userEventInfo.getCid());
-                user.setEmail(userEventInfo.getEmail());
-                user.setCid(userEventInfo.getCid());
-                user.setPassword(encoder.encode(userEventInfo.getPassword()));
-                user.setSecrets(User.createRandomMapOfSecret());
                 Set<Role> saRoles = new HashSet<>();
+                Set<Role> roleDb=user.getRoles();
+                user.getRoles().removeAll(roleDb);
                 if (userEventInfo.getIsOpenUser().equals('Y')) {
                     Role saRoleDb = roleRepository.findByIsOpenUser('Y');// to get student user role information
                     saRoles.add(saRoleDb);
@@ -83,7 +71,7 @@ public class AddUserEventService {
                         Role saRoleDb = roleRepository.findById(roleId).get();
                         saRoles.add(saRoleDb);
                     });
-                    userInfo.setRoles(saRoles);
+                    user.setRoles(saRoles);
                 }
                 repository.save(user);
             });

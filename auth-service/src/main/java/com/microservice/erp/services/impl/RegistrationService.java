@@ -1,6 +1,7 @@
 package com.microservice.erp.services.impl;
 
 import com.infoworks.lab.beans.tasks.definition.TaskStack;
+import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.models.NewAccountRequest;
 import com.microservice.erp.domain.models.NewTenantRequest;
 import com.microservice.erp.domain.repositories.IRoleRepository;
@@ -17,10 +18,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -110,5 +113,10 @@ public class RegistrationService implements iRegistration {
             }
         });
         return response;
+    }
+
+    @Override
+    public ResponseEntity<?> userByUserId(BigInteger userId) {
+        return ResponseEntity.ok(repository.findByUserId(userId).get());
     }
 }

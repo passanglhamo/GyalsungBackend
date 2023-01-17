@@ -2,30 +2,32 @@ package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dao.UserDao;
-import com.microservice.erp.domain.dto.EventBus;
-import com.microservice.erp.domain.dto.EventBusUser;
-import com.microservice.erp.domain.dto.MessageResponse;
-import com.microservice.erp.domain.dto.UserDto;
+import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.UserInfo;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISaUserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigInteger;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
 public class SaUserService implements ISaUserService {
     private final IUserInfoRepository iUserInfoRepository;
-     private final UserDao userDao;
+    private final UserDao userDao;
     private final AddToQueue addToQueue;
+    private final HeaderToken headerToken;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
 
     private final PasswordEncoder encoder;
@@ -45,7 +47,7 @@ public class SaUserService implements ISaUserService {
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not found."));
         }*/
-            return ResponseEntity.badRequest().body(new MessageResponse("Roles not found."));
+        return ResponseEntity.badRequest().body(new MessageResponse("Roles not found."));
     }
 
     @Override
@@ -60,10 +62,27 @@ public class SaUserService implements ISaUserService {
     }
 
     @Override
-    public ResponseEntity<?> getUsers() {
+    public ResponseEntity<?> getUsers(String authHeader) {
         List<UserInfo> saUsers = iUserInfoRepository.findAllBySignupUserOrderByFullNameAsc('N');
+        List<UserProfileDto> userProfileDtos = new ArrayList<>();
+        saUsers.forEach(item -> {
+            UserProfileDto userProfileDto = new UserProfileDto();
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", authHeader);
+            HttpEntity<String> request = new HttpEntity<>(headers);
+            String url = "http://localhost:8083/api/auth/auth/v1/userByUserId?userId=" + item.getId();
+            ResponseEntity<AuthUserDto> response = restTemplate.exchange(url, HttpMethod.GET, request, AuthUserDto.class);
+            userProfileDto.setUserId(item.getId());
+            userProfileDto.setFullName(item.getFullName());
+            userProfileDto.setMobileNo(item.getMobileNo());
+            userProfileDto.setEmail(item.getEmail());
+            userProfileDto.setGender(item.getGender());
+            userProfileDto.setRoles(Objects.requireNonNull(response.getBody()).getRoles());
+            userProfileDtos.add(userProfileDto);
+        });
         if (saUsers.size() > 0) {
-            return ResponseEntity.ok(saUsers);
+            return ResponseEntity.ok(userProfileDtos);
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
         }
@@ -76,7 +95,7 @@ public class SaUserService implements ISaUserService {
         }
         UserInfo saUser = new ModelMapper().map(userDto, UserInfo.class);
         saUser.setUsername(userDto.getEmail());
-         saUser.setSignupUser('N');
+        saUser.setSignupUser('N');
         String password = generatePassword(8); //to generate password and send email
         List<BigInteger> saRoleDtos = userDto.getRoles();
         if (saRoleDtos.size() == 0) {
@@ -95,8 +114,8 @@ public class SaUserService implements ISaUserService {
         String smsBody = "Dear " + userDto.getFullName() + ", " + " Your information has been added to Gyalsung MIS against this your email. " + "Please check your email " + userDto.getEmail() + " to see login credentials.";
         EventBus eventBusSms = EventBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
 //todo:need to get topic name from properties file
-//        addToQueue.addToQueue("email", eventBusEmail);
-//        addToQueue.addToQueue("sms", eventBusSms);
+        addToQueue.addToQueue("email", eventBusEmail);
+        addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("User added successfully!"));
     }
 
@@ -105,25 +124,23 @@ public class SaUserService implements ISaUserService {
         if (isEmailAlreadyInUse != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
-        /*SaUser saUserDb = iUserInfoRepository.findById(userDto.getUserId()).get();
-        SaUser saUser = new ModelMapper().map(saUserDb, SaUser.class);
+
+        UserInfo saUserDb = iUserInfoRepository.findById(userDto.getUserId()).get();
+        UserInfo saUser = new ModelMapper().map(saUserDb, UserInfo.class);
         saUser.setFullName(userDto.getFullName());
         saUser.setGender(userDto.getGender());
         saUser.setMobileNo(userDto.getMobileNo());
         saUser.setEmail(userDto.getEmail());
-        saUser.setStatus(userDto.getStatus());
+        //saUser.setStatus(userDto.getStatus());
         List<BigInteger> saRoleDtos = userDto.getRoles();
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
+        BigInteger userId = iUserInfoRepository.save(saUser).getId();
+        EventBusUser eventBusUser = EventBusUser.withId(userId, saUser.getCid(), saUser.getEmail()
+                , saUser.getUsername(), null, saUser.getSignupUser(), userDto.getRoles());
+        addToQueue.addToUserQueue("addUser", eventBusUser);
 
-        Set<SaRole> saRoles = new HashSet<>();
-        saRoleDtos.forEach(roleId -> {
-            SaRole saRoleDb = iSaRoleRepository.findById(roleId).get();
-            saRoles.add(saRoleDb);
-        });
-        saUser.setRoles(saRoles);
-        iUserInfoRepository.save(saUser);
         String emailBody = "Dear " + saUser.getFullName() + ", " + "Your information in Gyalsung MIS has been updated. " + "Please login in using email: " + saUser.getEmail();
         String subject = "User Updated in Gyalsung System";
         EventBus eventBusEmail = EventBus.withId(userDto.getEmail(), null, null, emailBody, subject, userDto.getMobileNo());
@@ -133,7 +150,7 @@ public class SaUserService implements ISaUserService {
 
         //todo:need to get topic name from properties file
         addToQueue.addToQueue("email", eventBusEmail);
-        addToQueue.addToQueue("sms", eventBusSms);*/
+        addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
     }
 

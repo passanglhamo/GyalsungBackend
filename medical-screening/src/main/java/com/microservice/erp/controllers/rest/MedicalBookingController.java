@@ -2,7 +2,9 @@ package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.MedicalBookingDto;
 import com.microservice.erp.services.iServices.IMedicalBookingService;
+import com.microservice.erp.services.impl.services.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +17,10 @@ public class MedicalBookingController {
     private IMedicalBookingService iMedicalBookingService;
 
     @PostMapping(value = "/bookMedicalAppointment")
-    public ResponseEntity<?> bookMedicalAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody MedicalBookingDto medicalBookingDto) throws Exception {
+    public ResponseEntity<?> bookMedicalAppointment(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                    @RequestHeader("Authorization") String authHeader,
+                                                    @RequestBody MedicalBookingDto medicalBookingDto) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
         return iMedicalBookingService.bookMedicalAppointment(authHeader, medicalBookingDto);
     }
 
@@ -25,7 +30,10 @@ public class MedicalBookingController {
     }
 
     @PostMapping(value = "/changeMedicalAppointment")
-    public ResponseEntity<?> changeMedicalAppointment(@RequestHeader("Authorization") String authHeader, @RequestBody MedicalBookingDto medicalBookingDto) throws Exception {
+    public ResponseEntity<?> changeMedicalAppointment(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                      @RequestHeader("Authorization") String authHeader,
+                                                      @RequestBody MedicalBookingDto medicalBookingDto) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
         return iMedicalBookingService.changeMedicalAppointment(authHeader, medicalBookingDto);
     }
 
@@ -35,7 +43,9 @@ public class MedicalBookingController {
     }
 
     @PostMapping(value = "/resubmitSelfDeclaration")
-    public ResponseEntity<?> resubmitSelfDeclaration(@RequestBody MedicalBookingDto medicalBookingDto) {
+    public ResponseEntity<?> resubmitSelfDeclaration(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                     @RequestBody MedicalBookingDto medicalBookingDto) {
+        SpringSecurityAuditorAware.setToken(token);
         return iMedicalBookingService.resubmitSelfDeclaration(medicalBookingDto);
     }
 }

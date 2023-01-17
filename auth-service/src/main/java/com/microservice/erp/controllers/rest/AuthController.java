@@ -1,16 +1,17 @@
 package com.microservice.erp.controllers.rest;
 
+import com.infoworks.lab.jjwt.TokenValidator;
+import com.infoworks.lab.rest.models.Response;
+import com.it.soul.lab.data.base.DataSource;
+import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.models.ChangePassRequest;
 import com.microservice.erp.domain.models.LoginRequest;
 import com.microservice.erp.domain.models.LoginRetryCount;
 import com.microservice.erp.domain.models.NewAccountRequest;
-import com.infoworks.lab.jjwt.TokenValidator;
-import com.infoworks.lab.rest.models.Response;
 import com.microservice.erp.services.definition.iLogin;
 import com.microservice.erp.services.definition.iRegistration;
 import com.microservice.erp.services.definition.iResetPassword;
 import com.microservice.erp.webapp.config.SecurityConfig;
-import com.it.soul.lab.data.base.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,6 +26,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.math.BigInteger;
 
 @RestController
 @RequestMapping("/auth/v1")
@@ -126,7 +128,7 @@ public class AuthController {
         }
         //
 //        Response response = login.doLogin(request);
-        Response response =null;
+        Response response = null;
         //If-Login Failed: then track-login-failed-count:
         if (response.getStatus() == HttpStatus.OK.value()) {
             if (count != null) cache.remove(request.getUsername());
@@ -221,5 +223,11 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
         }
     }
+
+    @GetMapping("/userByUserId")
+    public ResponseEntity<?> userByUserIds(@RequestParam("userId") BigInteger userId) {
+        return registration.userByUserId(userId);
+    }
+
 
 }
