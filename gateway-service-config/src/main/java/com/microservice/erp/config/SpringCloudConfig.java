@@ -30,6 +30,9 @@ import java.time.Duration;
 @PropertySource("classpath:service-names.properties")
 public class SpringCloudConfig {
 
+    @Value("${app.auth.has.permission.url}")
+    private String accessPermissionFilterURL;
+
     @Value("${app.auth.validation.url}")
     private String authValidationURL;
 
@@ -74,9 +77,15 @@ public class SpringCloudConfig {
         return AuthFilter.createGatewayFilter(builder, new AuthFilter.Config(authValidationURL));
     }
 
+    @Bean("CustomAccessPermissionFilter")
+    public GatewayFilter getAccessPermissionFilter(WebClient.Builder builder) {
+        return AccessPermissionFilter.createGatewayFilter(builder, accessPermissionFilterURL);
+    }
+
     @Bean
     public RouteLocator gatewayRoutes(RouteLocatorBuilder builder
             , @Qualifier("CustomAuthFilter") GatewayFilter authFilter
+            , @Qualifier("CustomAccessPermissionFilter") GatewayFilter accessPermissionFilter
             , RedisRateLimiter rateLimiter) {
 
         return builder.routes()
@@ -94,6 +103,7 @@ public class SpringCloudConfig {
                                 .filters(f -> {
                                     //Code breakdown for readability:
                                     return f.filter(authFilter)
+                                            .filter(accessPermissionFilter)
                                             .circuitBreaker(c -> c.setName("id-employee-circuit")
                                                     .setFallbackUri("/api/employee/v1/errorFallback"))
                                             .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE");
@@ -104,6 +114,7 @@ public class SpringCloudConfig {
                 .route("employeeModule"
                         , r -> r.path("/api/employee/v1/**")
                                 .filters(f -> f.filter(authFilter)
+                                        .filter(accessPermissionFilter)
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE")
                                 )
                                 .uri(firstURL))
@@ -113,26 +124,31 @@ public class SpringCloudConfig {
                 .route("userProfile"
                         , r -> r.path("/api/user/profile/**")
                                 .filters(f -> f.filter(authFilter)
+                                        .filter(accessPermissionFilter)
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(userProfileURL))
                 .route("trainingManagement"
                         , r -> r.path("/api/training/management/**")
                                 .filters(f -> f.filter(authFilter)
+                                        .filter(accessPermissionFilter)
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(trainingManagementURL))
                 .route("enrolmentDefermentExemption"
                         , r -> r.path("/api/enrolment/deferment/exemption/**")
                                 .filters(f -> f.filter(authFilter)
+                                        .filter(accessPermissionFilter)
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(enrolmentDefermentExemptionURL))
                 .route("medicalScreening"
                         , r -> r.path("/api/medical/screening/**")
                                 .filters(f -> f.filter(authFilter)
+                                        .filter(accessPermissionFilter)
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(medicalScreeningURL))
                 .route("notification"
                         , r -> r.path("/api/notification/**")
                                 .filters(f -> f.filter(authFilter)
+                                        .filter(accessPermissionFilter)
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(notificationURL))
 //                .route("authModule"
@@ -142,6 +158,7 @@ public class SpringCloudConfig {
                 .route("authModule"
                         , r -> r.path("/api/auth/**")
                                 .filters(f -> f.filter(authFilter)
+                                        .filter(accessPermissionFilter)
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(authURL))
                 .build();
