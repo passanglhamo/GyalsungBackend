@@ -14,51 +14,52 @@ volumes:
   activemq-storage:
 
 services:
-  mysql-db:
-    image: mysql:8.0.13
-    platform: linux/x86_64
-    environment:
-      MYSQL_DATABASE: testDB
-      MYSQL_ROOT_PASSWORD: root@123
-    ports:
-      - 3306:3306
-    networks:
-      - web-app-net
-    volumes:
-      - mysql-db-storage:/var/lib/mysql
-
-  auth-db:
-    image: mysql:8.0.13
-    platform: linux/x86_64
-    environment:
-      MYSQL_DATABASE: authDB
-      MYSQL_ROOT_PASSWORD: root@123
-    ports:
-      - 3307:3307
-    networks:
-      - web-app-net
-    volumes:
-      - auth-db-storage:/var/lib/mysql
-
-  phpadmin-auth:
-    image: phpmyadmin/phpmyadmin
-    platform: linux/x86_64
-    environment:
-      PMA_HOST: auth-db
-      PMA_PORT: 3307
-      PMA_PMADB: authDB
-      MYSQL_ROOT_PASSWORD: root@123
-    ports:
-      - 8092:80
-    networks:
-      - web-app-net
-    depends_on:
-      - auth-db
-    restart: on-failure
+#  mysql-db:
+#    image: mysql:8.0.13
+#    platform: linux/x86_64
+#    environment:
+#      MYSQL_DATABASE: testDB
+#      MYSQL_ROOT_PASSWORD: root@123
+#    ports:
+#      - 3306:3306
+#    networks:
+#      - web-app-net
+#    volumes:
+#      - mysql-db-storage:/var/lib/mysql
+#
+#  auth-db:
+#    image: mysql:8.0.13
+#    platform: linux/x86_64
+#    environment:
+#      MYSQL_DATABASE: authDB
+#      MYSQL_ROOT_PASSWORD: root@123
+#    ports:
+#      - 3307:3307
+#    networks:
+#      - web-app-net
+#    volumes:
+#      - auth-db-storage:/var/lib/mysql
+#
+#  phpadmin-auth:
+#    image: phpmyadmin/phpmyadmin
+#    platform: linux/x86_64
+#    environment:
+#      PMA_HOST: auth-db
+#      PMA_PORT: 3307
+#      PMA_PMADB: authDB
+#      MYSQL_ROOT_PASSWORD: root@123
+#    ports:
+#      - 8092:80
+#    networks:
+#      - web-app-net
+#    depends_on:
+#      - auth-db
+#    restart: on-failure
 
   postgres:
     image: postgres
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
     ports:
       - 5432:5432

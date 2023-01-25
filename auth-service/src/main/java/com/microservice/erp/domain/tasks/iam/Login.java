@@ -13,6 +13,8 @@ import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.sql.query.models.Property;
 import com.microservice.erp.services.impl.RoleWiseAccessPermissionService;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +23,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.util.*;
+
+import java.math.BigInteger;
 
 public class Login extends TokenizerTask {
 
@@ -112,21 +116,32 @@ public class Login extends TokenizerTask {
                     if (permissionListDtos != null) {
                         for (PermissionListDto permissionListDto : permissionListDtos) {
                             BigInteger screenId = permissionListDto.getScreen_id();
-                            //Screen permissions
-                            if (permissionListDto.getView_allowed() != null && permissionListDto.getView_allowed() == 'Y') {
-                                accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.VIEW));
-                                ScreenDto screenDto = roleWiseAccessPermissionService.getAccessScreen(screenId);
-                                accessScreens.add(screenDto);
-                            }
+                            ScreenDto screenDto = roleWiseAccessPermissionService.getAccessScreen(screenId);
+                            screenDto.setView(false);
+                            screenDto.setDelete(false);
+                            screenDto.setEdit(false);
+                            screenDto.setSave(false);
+
                             if (permissionListDto.getSave_allowed() != null && permissionListDto.getSave_allowed() == 'Y') {
                                 accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.ADD));
+                                screenDto.setSave(true);
                             }
                             if (permissionListDto.getEdit_allowed() != null && permissionListDto.getEdit_allowed() == 'Y') {
                                 accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.EDIT));
+                                screenDto.setEdit(true);
                             }
                             if (permissionListDto.getDelete_allowed() != null && permissionListDto.getDelete_allowed() == 'Y') {
                                 accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.DELETE));
+                                screenDto.setDelete(true);
                             }
+                            //Screen permissions
+                            if (permissionListDto.getView_allowed() != null && permissionListDto.getView_allowed() == 'Y') {
+                                accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.VIEW));
+                                screenDto.setView(true);
+                                accessScreens.add(screenDto);
+                                //accessScreens.add(tempScreenDto);
+                            }
+
                         }
                     }
                 }
@@ -146,5 +161,4 @@ public class Login extends TokenizerTask {
         String reason = message != null ? message.getPayload() : "UnknownError! @" + this.getClass().getSimpleName();
         return new Response().setMessage(reason).setStatus(500);
     }
-
 }

@@ -125,8 +125,8 @@ public class AuthController {
             }
         }
         //
-//        Response response = login.doLogin(request);
-        Response response =null;
+        // Response response = login.doLogin(request);
+        Response response = null;
         //If-Login Failed: then track-login-failed-count:
         if (response.getStatus() == HttpStatus.OK.value()) {
             if (count != null) cache.remove(request.getUsername());

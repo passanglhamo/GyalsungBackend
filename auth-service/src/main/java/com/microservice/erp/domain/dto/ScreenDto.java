@@ -16,5 +16,9 @@ public class ScreenDto {
     private String screen_name;
     private String screen_url;
     private String screen_icon_name;
+    private Boolean view;
+    private Boolean edit;
+    private Boolean delete;
+    private Boolean save;
     //endregion
 }
