@@ -133,7 +133,11 @@ public class AuthController {
             }
         }
         //
+<<<<<<< HEAD
+        // Response response = login.doLogin(request);
+=======
 //        Response response = login.doLogin(request);
+>>>>>>> 77e5ae0cdff5b459d87394883ab563e4354a098e
         Response response = null;
         //If-Login Failed: then track-login-failed-count:
         if (response.getStatus() == HttpStatus.OK.value()) {
