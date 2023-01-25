@@ -2,20 +2,24 @@ package com.microservice.erp.domain.entities;
 
 import com.microservice.erp.domain.models.Action;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.math.BigInteger;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name="statements")
-public class Statement extends Auditable<Long, Long> {
+@AttributeOverride(name = "id", column = @Column(name = "statement_id", columnDefinition = "bigint"))
+public class Statement extends Auditable<BigInteger, Long> {
 
     @Enumerated(EnumType.STRING)
     private Action action = Action.None;
 
     private String resource;
+
+//    @ManyToOne(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+//    private Policy policy;
 
     public Action getAction() {
         return action;
@@ -32,6 +36,14 @@ public class Statement extends Auditable<Long, Long> {
     public void setResource(String resource) {
         this.resource = resource;
     }
+
+//    public Policy getPolicy() {
+//        return policy;
+//    }
+//
+//    public void setPolicy(Policy policy) {
+//        this.policy = policy;
+//    }
 
     @Override
     public boolean equals(Object o) {

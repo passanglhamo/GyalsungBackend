@@ -2,18 +2,14 @@ package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dto.EventBus;
 import com.microservice.erp.domain.dto.UserProfileDto;
-import com.microservice.erp.domain.entities.DefermentInfo;
-import com.microservice.erp.domain.entities.EnrolmentInfo;
-import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.helper.StatusResponse;
 import com.microservice.erp.domain.mapper.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
-import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
-import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -36,6 +32,7 @@ public class CreateDefermentService implements ICreateDefermentService {
     private final AddToQueue addToQueue;
     private final DefermentExemptionValidation defermentExemptionValidation;
     Integer fileLength = 5;
+    Environment environment;
 
 
     @Transactional
@@ -78,7 +75,7 @@ public class CreateDefermentService implements ICreateDefermentService {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authTokenHeader);
 
-        String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + userId;
+        String userUrl = "http://localhost:80/api/user/profile/userProfile/getProfileInfo?userId=" + userId;
         ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
         String subject = "Acknowledged for Deferment";
 

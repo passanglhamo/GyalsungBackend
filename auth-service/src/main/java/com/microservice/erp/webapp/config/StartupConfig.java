@@ -1,28 +1,25 @@
 package com.microservice.erp.webapp.config;
 
-import com.microservice.erp.domain.entities.Policy;
 import com.microservice.erp.domain.entities.Role;
-import com.microservice.erp.domain.entities.Statement;
 import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.models.Action;
-import com.microservice.erp.domain.repositories.RoleRepository;
+import com.microservice.erp.domain.repositories.IPolicyRepository;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 @Component
 public class StartupConfig implements CommandLineRunner {
 
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
-    private RoleRepository roleRepository;
-
+    private IRoleRepository roleRepository;
+    private IPolicyRepository policyRepository;
 
     @Value("${app.god.user.username}")
     private String username;
@@ -45,10 +42,12 @@ public class StartupConfig implements CommandLineRunner {
     @Value("${app.god.user.resource}")
     private String resource;
 
-    public StartupConfig(UserRepository userRepository, PasswordEncoder passwordEncoder,RoleRepository roleRepository) {
+    public StartupConfig(UserRepository userRepository, PasswordEncoder passwordEncoder, IRoleRepository roleRepository,
+                         IPolicyRepository policyRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
+        this.policyRepository = policyRepository;
 
     }
 
@@ -69,15 +68,25 @@ public class StartupConfig implements CommandLineRunner {
             , String username, String password, String mobile, String userRole
             , String policyName, Action action, String resource) {
 
-       /* Optional<User> opt = userRepository.findByUsername(username);
+        Optional<User> opt = userRepository.findByUsername(username);
         if (opt.isPresent()) return;
 
-        Role role= new Role();
-        if( roleRepository.findAll().size()==0){
+        Role role = new Role();
+        if (roleRepository.findAll().size() == 0) {
             role.setRoleName(userRole);
             role.setIsOpenUser('N');
             roleRepository.save(role);
         }
+
+//        Policy policy = new Policy();
+//        if (policyRepository.findAll().size() == 0) {
+//            Statement statement = new Statement();
+//            statement.setAction(action);
+//            statement.setResource(resource);
+//            policy.setPolicyName(policyName);
+//            policy.addStatements(statement);
+//            policyRepository.save(policy);
+//        }
 
 
         //
@@ -88,36 +97,19 @@ public class StartupConfig implements CommandLineRunner {
         //user.setMobile(mobile);
         user.setEnabled(true);
         user.setSecrets(User.createRandomMapOfSecret());
-        if (userRole != null && !userRole.isEmpty()){
+        if (userRole != null && !userRole.isEmpty()) {
 
-            Optional<Role> roleDb = roleRepository.findRoleByRoleName(userRole);
-            if (roleDb.isPresent()){
+            Optional<Role> roleDb = roleRepository.findByRoleName(userRole);
+            if (roleDb.isPresent()) {
                 role = roleDb.get();
-            }else {
+            } else {
                 role.setRoleName(userRole);
             }
             user.addRoles(role);
         }
 
-//        Set<Role> saRoles = new HashSet<>();
-//        Role saRoleDb = roleRepository.findRoleByRoleName(userRole).get();// to get student user role information
-//        saRoles.add(saRoleDb);
-//        user.setRoles(saRoles);
-        //
-//        Role role = new Role();
-//        role.setRoleName(userRole);
-//        user.addRoles(role);
-        //
-        Statement statement = new Statement();
-        statement.setAction(action);
-        statement.setResource(resource);
-        //
-        Policy policy = new Policy();
-        policy.setServiceName(policyName);
-        policy.addStatements(statement);
-        role.addPolicies(policy);
-        //
-        userRepository.save(user);*/
+
+        userRepository.save(user);
     }
 
 

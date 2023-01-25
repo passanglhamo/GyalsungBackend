@@ -4,6 +4,7 @@ import com.microservice.erp.domain.dto.ExemptionDto;
 import com.microservice.erp.services.iServices.ICreateExemptionService;
 import com.microservice.erp.services.iServices.IReadExemptionService;
 import com.microservice.erp.services.iServices.IUpdateExemptionService;
+import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -26,8 +27,10 @@ public class ExemptionController {
     private final IUpdateExemptionService updateService;
 
     @PostMapping
-    public ResponseEntity<?> saveExemption(HttpServletRequest request, @ModelAttribute
-    ICreateExemptionService.CreateExemptionCommand command) throws Exception {
+    public ResponseEntity<?> saveExemption(HttpServletRequest request,
+                                           @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                           @ModelAttribute ICreateExemptionService.CreateExemptionCommand command) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
         return service.saveExemption(request, command);
     }
 
@@ -39,15 +42,17 @@ public class ExemptionController {
 
     @PostMapping(value = "/approveByIds")
     public ResponseEntity<?> approveByIds(@RequestHeader("Authorization") String authHeader,
+                                          @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                           @RequestBody IUpdateExemptionService.UpdateExemptionCommand command) {
-
-        return updateService.approveByIds(authHeader,command);
+        SpringSecurityAuditorAware.setToken(token);
+        return updateService.approveByIds(authHeader, command);
     }
 
     @PostMapping(value = "/rejectByIds")
     public ResponseEntity<?> rejectByIds(@RequestHeader("Authorization") String authHeader,
+                                         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                          @RequestBody IUpdateExemptionService.UpdateExemptionCommand command) {
-
+        SpringSecurityAuditorAware.setToken(token);
         return updateService.rejectByIds(authHeader, command);
     }
 

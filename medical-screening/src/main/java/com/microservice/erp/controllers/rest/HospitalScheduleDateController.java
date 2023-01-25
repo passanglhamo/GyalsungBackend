@@ -5,7 +5,9 @@ import com.microservice.erp.domain.dto.HospitalScheduleTimeDto;
 import com.microservice.erp.services.iServices.ICreateHospitalScheduleDateService;
 import com.microservice.erp.services.iServices.IReadHospitalScheduleDateService;
 import com.microservice.erp.services.iServices.IUpdateHospitalScheduleTimeService;
+import com.microservice.erp.services.impl.services.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +27,10 @@ public class HospitalScheduleDateController {
     private final IUpdateHospitalScheduleTimeService updateService;
 
     @PostMapping
-    public ResponseEntity<?> saveScheduleDate(@RequestBody HospitalScheduleDateDto hospitalScheduleTimeDto) throws IOException {
-
+    public ResponseEntity<?> saveScheduleDate(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                              @RequestBody HospitalScheduleDateDto hospitalScheduleTimeDto)
+            throws IOException {
+        SpringSecurityAuditorAware.setToken(token);
         return service.saveScheduleDate(hospitalScheduleTimeDto);
     }
 
@@ -37,8 +41,9 @@ public class HospitalScheduleDateController {
     }
 
     @PostMapping(value = "/updateScheduleTimes")
-    public ResponseEntity<?> updateScheduleTimes(@RequestBody HospitalScheduleTimeDto hospitalScheduleTimeListDto) throws IOException {
-
+    public ResponseEntity<?> updateScheduleTimes(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                 @RequestBody HospitalScheduleTimeDto hospitalScheduleTimeListDto) throws IOException {
+        SpringSecurityAuditorAware.setToken(token);
         return updateService.updateScheduleTimes(hospitalScheduleTimeListDto);
     }
 

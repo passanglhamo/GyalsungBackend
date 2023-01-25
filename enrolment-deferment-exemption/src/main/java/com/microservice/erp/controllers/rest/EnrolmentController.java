@@ -4,6 +4,7 @@ import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import com.microservice.erp.services.iServices.IUpdateDefermentService;
+import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
@@ -46,7 +47,10 @@ public class EnrolmentController {
 //    }
 
     @PostMapping(value = "/saveEnrolment")
-    public ResponseEntity<?> saveEnrolment(@RequestHeader("Authorization") String authHeader, @RequestBody EnrolmentDto enrolmentDto) throws Exception {
+    public ResponseEntity<?> saveEnrolment(@RequestHeader("Authorization") String authHeader,
+                                           @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                           @RequestBody EnrolmentDto enrolmentDto) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
         return iEnrolmentInfoService.saveEnrolment(authHeader, enrolmentDto);
     }
 
@@ -60,8 +64,9 @@ public class EnrolmentController {
 
     @PostMapping(value = "/allocateEnrolments")
     public ResponseEntity<?> allocateEnrolments(@RequestHeader("Authorization") String authHeader,
+                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                                 @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) throws Exception {
-
+        SpringSecurityAuditorAware.setToken(token);
         return iEnrolmentInfoService.allocateEnrolments(authHeader, command);
     }
 
@@ -77,8 +82,9 @@ public class EnrolmentController {
 
     @PostMapping(value = "/changeTrainingAcademy")
     public ResponseEntity<?> changeTrainingAcademy(@RequestHeader("Authorization") String authHeader,
+                                                   @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                                    @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) throws Exception {
-
+        SpringSecurityAuditorAware.setToken(token);
         return iEnrolmentInfoService.changeTrainingAcademy(authHeader, command);
     }
 

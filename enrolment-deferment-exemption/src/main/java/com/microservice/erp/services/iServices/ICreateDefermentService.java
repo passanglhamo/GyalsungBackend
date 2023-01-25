@@ -11,18 +11,14 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Date;
 
-/**
- * @author Passang Lhamo
- */
 
 @Validated
 public interface ICreateDefermentService {
 
-    ResponseEntity<?> saveDeferment(HttpServletRequest request, @Valid CreateDefermentCommand command) throws Exception;
+    ResponseEntity<?> saveDeferment(HttpServletRequest token, @Valid CreateDefermentCommand command) throws Exception;
 
     @Getter
     @Setter

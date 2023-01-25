@@ -2,20 +2,20 @@ package com.microservice.erp.domain.tasks.am;
 
 import com.infoworks.lab.beans.tasks.nuts.AbstractTask;
 import com.microservice.erp.domain.entities.Role;
-import com.microservice.erp.domain.repositories.RoleRepository;
 import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.sql.query.models.Property;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 
 import java.util.Map;
 import java.util.Optional;
 
 public class SaveRole extends AbstractTask<Message, Response> {
 
-    private RoleRepository repository;
+    private IRoleRepository repository;
     private Role role;
 
-    public SaveRole(RoleRepository repository, Role data) {
+    public SaveRole(IRoleRepository repository, Role data) {
         super(new Property("role", data.marshallingToMap(true)));
         this.repository = repository;
         this.role = data;
@@ -29,7 +29,7 @@ public class SaveRole extends AbstractTask<Message, Response> {
             role.unmarshallingFromMap(savedData, true);
         }
         if (repository != null){
-            Optional<Role> exist = repository.findRoleByRoleName(role.getRoleName());
+            Optional<Role> exist = repository.findByRoleName(role.getRoleName());
             if (!exist.isPresent()){
                 Role saved = repository.save(role);
                 return new Response().setMessage("Role successfully created: " + saved.getId()).setStatus(200);

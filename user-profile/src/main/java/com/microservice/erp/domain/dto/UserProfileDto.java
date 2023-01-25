@@ -63,5 +63,6 @@ public class UserProfileDto {
     private String profilePictureUrl;
     private MultipartFile profilePicture;
     private byte[] profilePhoto;
+    private Object roles;
     //endregion
 }

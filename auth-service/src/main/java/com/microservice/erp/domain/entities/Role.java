@@ -27,6 +27,7 @@ public class Role extends Auditable<BigInteger, Long> {
     private Set<User> users = new HashSet<>();
 
     @ManyToMany(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Policy> policies;
 
     public String getRoleName() {
@@ -61,26 +62,34 @@ public class Role extends Auditable<BigInteger, Long> {
         this.policies = policies;
     }
 
-    /*public Role addUsers(User...users){
-        if (getUsers() == null){
-            setUsers(new HashSet<>());
-        }
-        getUsers().addAll(Arrays.asList(users));
-        return this;
-    }*/
+//    public Role addUsers(User...users){
+//        if (getUsers() == null){
+//            setUsers(new HashSet<>());
+//        }
+//        getUsers().addAll(Arrays.asList(users));
+//        return this;
+//    }
+
 
     public Role addPolicies(Policy...policies){
         if (getPolicies() == null){
-            setPolicies(new HashSet<>());
+            setUsers(new HashSet<>());
         }
-        //getPolicies().addAll(Arrays.asList(policies));
-        Stream.of(policies)
-                .forEach(policy -> {
-                    policy.getRoles().add(this);
-                    this.addPolicies(policy);
-                });
+        getPolicies().addAll(Arrays.asList(policies));
         return this;
     }
+//    public Role addPolicies(Policy...policies){
+//        if (getPolicies() == null){
+//            setPolicies(new HashSet<>());
+//        }
+//        //getPolicies().addAll(Arrays.asList(policies));
+//        Stream.of(policies)
+//                .forEach(policy -> {
+//                    policy.getRoles().add(this);
+//                    this.addPolicies(policy);
+//                });
+//        return this;
+//    }
 
     @Override
     public boolean equals(Object o) {

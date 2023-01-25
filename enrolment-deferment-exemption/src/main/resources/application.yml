@@ -32,3 +32,5 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://${app.eureka.service.host}:${app.eureka.service.port}/eureka
+
+user.url: http://localhost:80/api/user/profile/userProfile/getProfileInfo?userId=

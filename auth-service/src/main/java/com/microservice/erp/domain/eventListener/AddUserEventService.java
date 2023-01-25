@@ -3,7 +3,7 @@ package com.microservice.erp.domain.eventListener;
 import com.google.gson.Gson;
 import com.microservice.erp.domain.entities.Role;
 import com.microservice.erp.domain.entities.User;
-import com.microservice.erp.domain.repositories.RoleRepository;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -13,7 +13,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,7 +22,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class AddUserEventService {
     private final UserRepository repository;
-    private final RoleRepository roleRepository;
+    private final IRoleRepository roleRepository;
     private final PasswordEncoder encoder;
 
     @KafkaListener(topics = {"${topic.addUser}"}, concurrency = "1")
@@ -45,15 +44,6 @@ public class AddUserEventService {
             userInfo.setSecrets(User.createRandomMapOfSecret());
             Set<Role> saRoles = new HashSet<>();
             if (userEventInfo.getIsOpenUser().equals('Y')) {
-//                Optional<Role> roleDb = roleRepository.findRoleByRoleName(userRole);
-//                if (roleDb.isPresent()){
-//                    role = roleDb.get();
-//                }else {
-//                    role.setRoleName(userRole);
-//                }
-//                user.addRoles(role);
-
-
                 Role saRoleDb = roleRepository.findByIsOpenUser('Y');// to get student user role information
                 saRoles.add(saRoleDb);
                 userInfo.setRoles(saRoles);
@@ -67,14 +57,11 @@ public class AddUserEventService {
             repository.save(userInfo);
 
         } else {
-            repository.findById(userEventInfo.userId).ifPresent(user -> {
+            repository.findByUserId(userEventInfo.userId).ifPresent(user -> {
                 user.setUserId(userEventInfo.userId);
-                user.setUsername(userEventInfo.getCid());
-                user.setEmail(userEventInfo.getEmail());
-                user.setCid(userEventInfo.getCid());
-                user.setPassword(encoder.encode(userEventInfo.getPassword()));
-                user.setSecrets(User.createRandomMapOfSecret());
                 Set<Role> saRoles = new HashSet<>();
+                Set<Role> roleDb=user.getRoles();
+                user.getRoles().removeAll(roleDb);
                 if (userEventInfo.getIsOpenUser().equals('Y')) {
                     Role saRoleDb = roleRepository.findByIsOpenUser('Y');// to get student user role information
                     saRoles.add(saRoleDb);
@@ -84,7 +71,7 @@ public class AddUserEventService {
                         Role saRoleDb = roleRepository.findById(roleId).get();
                         saRoles.add(saRoleDb);
                     });
-                    userInfo.setRoles(saRoles);
+                    user.setRoles(saRoles);
                 }
                 repository.save(user);
             });

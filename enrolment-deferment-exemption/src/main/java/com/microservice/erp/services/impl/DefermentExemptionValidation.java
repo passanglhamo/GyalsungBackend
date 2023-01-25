@@ -29,11 +29,11 @@ public class DefermentExemptionValidation {
         if (!Objects.isNull(exemptionInfo)) {
             responseMessage.setStatus(ApprovalStatus.APPROVED.value());
             if (exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
-                responseMessage.setMessage("There is approved exemption. You can not proceed.");
+                responseMessage.setMessage("There is already one approved exempted application. In order to add new application, please reject the approved exemption.");
                 return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
             if (exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                responseMessage.setMessage("There is still some exemption which are not approved.You can not proceed.");
+                responseMessage.setMessage("There is already one pending exempted application. In order to add new application, please reject the pending exemption.");
                 return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
 
@@ -42,11 +42,11 @@ public class DefermentExemptionValidation {
         if (!Objects.isNull(defermentInfo)) {
             responseMessage.setStatus(ApprovalStatus.APPROVED.value());
             if (defermentInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                responseMessage.setMessage("There is still some deferment which are not approved.You can not proceed.");
+                responseMessage.setMessage("There is already one pending deferred application. In order to add new application, please reject the pending deferment.");
                 return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
             if (defermentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
-                responseMessage.setMessage("There is approved deferment. You can not proceed.");
+                responseMessage.setMessage("There is already one approved deferred application. In order to add new application, please reject the approved deferment.");
                 return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
 
@@ -56,10 +56,10 @@ public class DefermentExemptionValidation {
         if (!Objects.isNull(enrolmentInfo)) {
             responseMessage.setStatus(ApprovalStatus.APPROVED.value());
             if (enrolmentInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                responseMessage.setMessage("There is still some enrolment which are not approved. You can not proceed.");
+                responseMessage.setMessage("There is already one pending enrolment application. In order to add new application, please reject the pending enrolment.");
                 return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             } else if (enrolmentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
-                responseMessage.setMessage("There is approved enrolment. If you continue, then enrolment application will be cancelled.");
+                responseMessage.setMessage("There is already one approved enrolment application. In order to add new application, please reject the approved enrolment.");
                 return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
 

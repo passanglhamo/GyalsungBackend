@@ -2,9 +2,9 @@ package com.microservice.erp.domain.tasks.am;
 
 import com.infoworks.lab.beans.tasks.definition.Task;
 import com.microservice.erp.domain.entities.Role;
-import com.microservice.erp.domain.repositories.RoleRepository;
 import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,13 +27,13 @@ public class SaveRoleTest {
     }
 
     @Mock
-    private RoleRepository repository;
+    private IRoleRepository repository;
 
     @Test
     public void execute() {
         Role role = new Role();
         role.setRoleName("SHOP-ADMIN");
-        when(repository.findRoleByRoleName(any(String.class))).thenReturn(Optional.empty());
+        when(repository.findByRoleName(any(String.class))).thenReturn(Optional.empty());
 
         Role role2 = new Role();
         role2.unmarshallingFromMap(role.marshallingToMap(true), true);

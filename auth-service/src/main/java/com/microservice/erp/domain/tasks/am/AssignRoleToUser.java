@@ -3,7 +3,7 @@ package com.microservice.erp.domain.tasks.am;
 import com.infoworks.lab.beans.tasks.nuts.AbstractTask;
 import com.microservice.erp.domain.entities.Role;
 import com.microservice.erp.domain.entities.User;
-import com.microservice.erp.domain.repositories.RoleRepository;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
@@ -15,11 +15,11 @@ import java.util.Optional;
 public class AssignRoleToUser extends AbstractTask<Message, Response> {
 
     private UserRepository userRepository;
-    private RoleRepository roleRepository;
+    private IRoleRepository roleRepository;
     private User user;
     private Role role;
 
-    public AssignRoleToUser(UserRepository userRepository, RoleRepository roleRepository, User user, Role role) {
+    public AssignRoleToUser(UserRepository userRepository, IRoleRepository roleRepository, User user, Role role) {
         super(new Property("user", user.marshallingToMap(true))
                 , new Property("role", role.marshallingToMap(true)));
         this.userRepository = userRepository;
@@ -44,7 +44,7 @@ public class AssignRoleToUser extends AbstractTask<Message, Response> {
             Optional<User> existingUser = userRepository.findByUsername(user.getUsername());
             if(!existingUser.isPresent()) return new Response().setMessage("User Not Found.").setStatus(500);
 
-            Optional<Role> existingRole = roleRepository.findRoleByRoleName(role.getRoleName());
+            Optional<Role> existingRole = roleRepository.findByRoleName(role.getRoleName());
             if(!existingRole.isPresent()) return new Response().setMessage("Role Not Found.").setStatus(500);
 
             user = existingUser.get();

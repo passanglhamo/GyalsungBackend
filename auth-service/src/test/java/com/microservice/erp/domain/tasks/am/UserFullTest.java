@@ -6,8 +6,8 @@ import com.microservice.erp.domain.entities.Role;
 import com.microservice.erp.domain.entities.Statement;
 import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.models.Action;
-import com.microservice.erp.domain.repositories.PolicyRepository;
-import com.microservice.erp.domain.repositories.RoleRepository;
+import com.microservice.erp.domain.repositories.IPolicyRepository;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.math.BigInteger;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -31,10 +32,10 @@ public class UserFullTest {
 
     @Mock private UserRepository userRepository;
     @Mock private UserRepository userRepository1;
-    @Mock private RoleRepository roleRepository;
-    @Mock private RoleRepository roleRepository1;
-    @Mock private PolicyRepository policyRepository;
-    @Mock private PolicyRepository policyRepository1;
+    @Mock private IRoleRepository roleRepository;
+    @Mock private IRoleRepository roleRepository1;
+    @Mock private IPolicyRepository policyRepository;
+    @Mock private IPolicyRepository policyRepository1;
 
     @Test
     public void fullTest(){
@@ -53,14 +54,14 @@ public class UserFullTest {
 
         Role role = new Role();
         //role.setName("SHOP-ADMIN");
-        when(roleRepository.findRoleByRoleName(any(String.class))).thenReturn(Optional.empty());
+        when(roleRepository.findByRoleName(any(String.class))).thenReturn(Optional.empty());
 
         Role role1 = new Role();
         role1.unmarshallingFromMap(role.marshallingToMap(true), true);
         //role1.setId(101l);
         when(roleRepository.save(any(Role.class))).thenReturn(role1);
         when(roleRepository1.save(any(Role.class))).thenReturn(role1);
-        when(roleRepository1.findRoleByRoleName(any(String.class))).thenReturn(Optional.of(role1));
+        when(roleRepository1.findByRoleName(any(String.class))).thenReturn(Optional.of(role1));
 
         Statement statement1 = new Statement();
         statement1.setAction(Action.Write);
@@ -71,15 +72,15 @@ public class UserFullTest {
         statement2.setResource("product/update");
 
         Policy policy = new Policy();
-        policy.setServiceName("Admin-Policy");
-        when(policyRepository.findByServiceName(any(String.class))).thenReturn(Optional.empty());
+        policy.setPolicyName("Admin-Policy");
+        when(policyRepository.findByPolicyName(any(String.class))).thenReturn(Optional.empty());
 
         Policy policy1 = new Policy();
         policy1.unmarshallingFromMap(policy.marshallingToMap(true), true);
-        policy1.setId(101l);
+        policy1.setId(new BigInteger(String.valueOf(101l)));
         when(policyRepository.save(any(Policy.class))).thenReturn(policy1);
         when(policyRepository1.save(any(Policy.class))).thenReturn(policy1);
-        when(policyRepository1.findByServiceName(any(String.class))).thenReturn(Optional.of(policy1));
+        when(policyRepository1.findByPolicyName(any(String.class))).thenReturn(Optional.of(policy1));
 
         //
         TaskStack stack = TaskStack.createSync(true);

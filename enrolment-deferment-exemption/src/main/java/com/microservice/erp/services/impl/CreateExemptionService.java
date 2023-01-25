@@ -75,7 +75,7 @@ public class CreateExemptionService implements ICreateExemptionService {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authTokenHeader);
 
-        String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + userId;
+        String userUrl = "http://localhost:80/api/user/profile/userProfile/getProfileInfo?userId=" + userId;
         ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
 
         String subject = "Acknowledged for Exemption";

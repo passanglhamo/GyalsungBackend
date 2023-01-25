@@ -3,14 +3,17 @@ package com.microservice.erp.domain.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.*;
 
 @Entity
-@Table(name="policies", indexes = {@Index(name = "idx_serviceName",columnList = "serviceName")})
-public class Policy extends Auditable<Long, Long> {
+//@Table(name="policies", indexes = {@Index(name = "idx_serviceName",columnList = "serviceName")})
+@Table(name="policies")
+@AttributeOverride(name = "id", column = @Column(name = "policy_id", columnDefinition = "bigint"))
+public class Policy extends Auditable<BigInteger, Long> {
 
-    @Column(length = 250, unique = true, nullable = false)
-    private String serviceName;
+    @Column(length = 250,  nullable = false)
+    private String policyName;
 
     private String type;
 
@@ -26,12 +29,12 @@ public class Policy extends Auditable<Long, Long> {
     @JoinColumn(name = "fk_policies")
     private List<Statement> statements;
 
-    public String getServiceName() {
-        return serviceName;
+    public String getPolicyName() {
+        return policyName;
     }
 
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public void setPolicyName(String policyName) {
+        this.policyName = policyName;
     }
 
     public String getType() {
@@ -79,12 +82,12 @@ public class Policy extends Auditable<Long, Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Policy policy = (Policy) o;
-        return getId().equals(policy.getId()) && serviceName.equals(policy.serviceName);
+        return getId().equals(policy.getId()) && policyName.equals(policy.policyName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), serviceName);
+        return Objects.hash(getId(), policyName);
     }
 
     public Set<User> getUsers() {

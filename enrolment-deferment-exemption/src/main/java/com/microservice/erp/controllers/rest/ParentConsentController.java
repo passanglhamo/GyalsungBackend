@@ -2,7 +2,9 @@ package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.ParentConsentDto;
 import com.microservice.erp.services.iServices.IParentConsentService;
+import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +18,17 @@ public class ParentConsentController {
     private IParentConsentService parentConsentService;
 
     @PostMapping(value = "/receiveOtp")
-    public ResponseEntity<?> receiveOtp(@RequestBody ParentConsentDto parentConsentDto) throws Exception {
+    public ResponseEntity<?> receiveOtp(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                        @RequestBody ParentConsentDto parentConsentDto) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
+
         return parentConsentService.receiveOtp(parentConsentDto);
     }
 
     @PostMapping(value = "/submitParentConsent")
-    public ResponseEntity<?> submitParentConsent(@RequestBody ParentConsentDto parentConsentDto) throws Exception {
+    public ResponseEntity<?> submitParentConsent( @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                  @RequestBody ParentConsentDto parentConsentDto) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
         return parentConsentService.submitParentConsent(parentConsentDto);
     }
 

@@ -13,8 +13,9 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 @Entity
-@Table(name = "users", indexes = {@Index(name = "idx_username", columnList = "username")
-        , @Index(name = "idx_email", columnList = "email")})
+//@Table(name = "users", indexes = {@Index(name = "idx_username", columnList = "username")
+//        , @Index(name = "idx_email", columnList = "email")})
+@Table(name="users")
 @AttributeOverride(name = "id", column = @Column(name = "id", columnDefinition = "bigint"))
 public class User extends Auditable<BigInteger, Long> implements UserDetails {
 //todo:Added user id for time being
@@ -54,7 +55,7 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
     @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Set<Role> roles;
 
-    @ManyToMany(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Set<Policy> policies;
 
     @Override
@@ -138,17 +139,17 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
         this.roles = roles;
     }
 
-    public void addRoles(Role... roles) {
-        if (getRoles() == null) {
-            setRoles(new HashSet<>());
-        }
-        //getRoles().addAll(Arrays.asList(roles));
-        Stream.of(roles)
-                .forEach(role -> {
-                    this.getRoles().add(role);
-                    role.getUsers().add(this);
-                });
-    }
+//    public void addRoles(Role... roles) {
+//        if (getRoles() == null) {
+//            setRoles(new HashSet<>());
+//        }
+//        //getRoles().addAll(Arrays.asList(roles));
+//        Stream.of(roles)
+//                .forEach(role -> {
+//                    this.getRoles().add(role);
+//                    role.getUsers().add(this);
+//                });
+//    }
 
     public Map<Integer, String> getSecrets() {
         return secrets;
@@ -182,6 +183,14 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
 
     public void setPolicies(Set<Policy> policies) {
         this.policies = policies;
+    }
+
+    public User addRoles(Role...roles){
+        if (getRoles() == null){
+            setRoles(new HashSet<>());
+        }
+        getRoles().addAll(Arrays.asList(roles));
+        return this;
     }
 
     public User addPolicies(Policy... policies) {

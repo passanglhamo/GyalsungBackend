@@ -5,6 +5,7 @@ import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import com.microservice.erp.services.iServices.IReadDefermentService;
 import com.microservice.erp.services.iServices.IUpdateDefermentService;
+import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -28,8 +29,11 @@ public class DefermentController {
 
 
     @PostMapping
-    public ResponseEntity<?> saveDeferment(HttpServletRequest request, @ModelAttribute ICreateDefermentService.
+    public ResponseEntity<?> saveDeferment(HttpServletRequest request,
+                                           @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                           @ModelAttribute ICreateDefermentService.
             CreateDefermentCommand command) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
         return service.saveDeferment(request, command);
     }
 
@@ -40,15 +44,17 @@ public class DefermentController {
 
     @PostMapping(value = "/approveByIds")
     public ResponseEntity<?> approveByIds(@RequestHeader("Authorization") String authHeader,
+                                          @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                           @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
-
+        SpringSecurityAuditorAware.setToken(token);
         return updateService.approveByIds(authHeader,command);
     }
 
     @PostMapping(value = "/rejectByIds")
     public ResponseEntity<?> rejectByIds(@RequestHeader("Authorization") String authHeader,
+                                         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                          @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
-
+        SpringSecurityAuditorAware.setToken(token);
         return updateService.rejectByIds(authHeader, command);
     }
 

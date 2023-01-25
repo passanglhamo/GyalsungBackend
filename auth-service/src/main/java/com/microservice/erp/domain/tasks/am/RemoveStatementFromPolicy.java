@@ -3,10 +3,10 @@ package com.microservice.erp.domain.tasks.am;
 import com.infoworks.lab.beans.tasks.nuts.AbstractTask;
 import com.microservice.erp.domain.entities.Policy;
 import com.microservice.erp.domain.entities.Statement;
-import com.microservice.erp.domain.repositories.PolicyRepository;
 import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.sql.query.models.Property;
+import com.microservice.erp.domain.repositories.IPolicyRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -16,11 +16,11 @@ import java.util.stream.Stream;
 
 public class RemoveStatementFromPolicy extends AbstractTask<Message, Response> {
 
-    private PolicyRepository repository;
+    private IPolicyRepository repository;
     private Policy policy;
     private Statement[] statements;
 
-    public RemoveStatementFromPolicy(PolicyRepository repository, Policy policy, Statement...statements) {
+    public RemoveStatementFromPolicy(IPolicyRepository repository, Policy policy, Statement...statements) {
         super(new Property("policy", policy.marshallingToMap(true)));
         this.repository = repository;
         this.policy = policy;
@@ -35,7 +35,7 @@ public class RemoveStatementFromPolicy extends AbstractTask<Message, Response> {
             policy.unmarshallingFromMap(savedData, true);
         }
         if (repository != null){
-            Optional<Policy> exist = repository.findByServiceName(policy.getServiceName());
+            Optional<Policy> exist = repository.findByPolicyName(policy.getPolicyName());
             if (exist.isPresent()){
                 policy = exist.get();
                 List<String> resources = Stream.of(statements)

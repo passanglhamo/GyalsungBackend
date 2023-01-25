@@ -27,8 +27,8 @@ public class SaUserController {
     }
 
     @GetMapping("/getUsers")
-    public ResponseEntity<?> getUsers() {
-        return iSaUserService.getUsers();
+    public ResponseEntity<?> getUsers(@RequestHeader("Authorization") String authHeader) {
+        return iSaUserService.getUsers(authHeader);
     }
 
     @GetMapping("/getAllRoles")
