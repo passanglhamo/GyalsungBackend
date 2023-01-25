@@ -11,10 +11,7 @@ import com.it.soul.lab.sql.query.models.Property;
 import org.springframework.security.core.authority.AuthorityUtils;
 
 import java.time.Duration;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public abstract class TokenizerTask extends AbstractTask<Response, Response> {
 
@@ -28,7 +25,7 @@ public abstract class TokenizerTask extends AbstractTask<Response, Response> {
         //
         JWTHeader header = new JWTHeader().setTyp("round").setKid(kid.toString());
         JWTPayload payload = new JWTPayload()
-                .setSub(exist.getUserId().toString())
+                .setSub(Objects.isNull(exist.getUserId())?"":exist.getUserId().toString())
 //                .setSub(exist.getId().toString())
                 .setIss(exist.getUsername())
                 .setIat(new Date().getTime())

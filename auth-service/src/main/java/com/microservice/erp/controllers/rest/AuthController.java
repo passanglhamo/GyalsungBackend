@@ -4,29 +4,35 @@ import com.infoworks.lab.jjwt.TokenValidator;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.data.base.DataSource;
 import com.microservice.erp.domain.entities.User;
-import com.microservice.erp.domain.models.ChangePassRequest;
-import com.microservice.erp.domain.models.LoginRequest;
-import com.microservice.erp.domain.models.LoginRetryCount;
-import com.microservice.erp.domain.models.NewAccountRequest;
+import com.microservice.erp.domain.models.*;
 import com.microservice.erp.services.definition.iLogin;
 import com.microservice.erp.services.definition.iRegistration;
 import com.microservice.erp.services.definition.iResetPassword;
 import com.microservice.erp.webapp.config.SecurityConfig;
+import com.squareup.okhttp.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.wso2.client.api.ApiClient;
+import org.wso2.client.api.DCRC_CitizenDetailsAPI.DefaultApi;
+import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizenDetailsResponse;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/auth/v1")
@@ -229,5 +235,32 @@ public class AuthController {
         return registration.userByUserId(userId);
     }
 
+    @PostMapping("/ndiCode")
+    public ResponseEntity<?> ndiCode() throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
+        String requestString = "{\n" +
+                " \"proofName\": \"TTPL\",\n" +
+                " \"proofAttributes\": [\n" +
+                " {\n" +
+                " \"name\":\"ID Number\"," +
+                " \"restrictions\":[]\n" +
+                "}]\n" +
+                "}";
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Resource resource = new ClassPathResource("/ndiapi/ndiApi.properties");
+        Properties props = PropertiesLoaderUtils.loadProperties(resource);
+        String verifyNdi = props.getProperty("verifyNDI.endPointURL");
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestString, headers);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                verifyNdi, HttpMethod.POST, requestEntity, String.class
+        );
+
+
+        return responseEntity;
+    }
 }

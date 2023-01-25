@@ -1,6 +1,7 @@
 package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.infoworks.lab.jjwt.TokenValidator;
 import com.microservice.erp.domain.dao.UserDao;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.UserInfo;
@@ -69,6 +70,7 @@ public class SaUserService implements ISaUserService {
             UserProfileDto userProfileDto = new UserProfileDto();
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
+            //String token = TokenValidator.parseToken(authHeader, "Bearer ");
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
             String url = "http://localhost:8083/api/auth/auth/v1/userByUserId?userId=" + item.getId();

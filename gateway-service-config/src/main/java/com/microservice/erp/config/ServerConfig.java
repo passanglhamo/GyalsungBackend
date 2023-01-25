@@ -30,13 +30,13 @@ public class ServerConfig {
         this.httpHandler = httpHandler;
     }
 
-    @PostConstruct
-    public void start() {
-        int httpPort = Integer.valueOf(env.getProperty("server.http.port"));
-        ReactiveWebServerFactory factory = new NettyReactiveWebServerFactory(httpPort);
-        webServer = factory.getWebServer(httpHandler);
-        webServer.start();
-    }
+//    @PostConstruct
+//    public void start() {
+//        int httpPort = Integer.valueOf(env.getProperty("server.http.port"));
+//        ReactiveWebServerFactory factory = new NettyReactiveWebServerFactory(httpPort);
+//        webServer = factory.getWebServer(httpHandler);
+//        webServer.start();
+//    }
 
     @PreDestroy
     public void stop() {

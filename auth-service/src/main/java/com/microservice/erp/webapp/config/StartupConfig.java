@@ -1,7 +1,6 @@
 package com.microservice.erp.webapp.config;
 
-import com.microservice.erp.domain.entities.Role;
-import com.microservice.erp.domain.entities.User;
+import com.microservice.erp.domain.entities.*;
 import com.microservice.erp.domain.models.Action;
 import com.microservice.erp.domain.repositories.IPolicyRepository;
 import com.microservice.erp.domain.repositories.IRoleRepository;
@@ -36,6 +35,9 @@ public class StartupConfig implements CommandLineRunner {
     @Value("${app.god.user.policy}")
     private String policyName;
 
+    @Value("${app.god.user.policyType}")
+    private String policyType;
+
     @Value("${app.god.user.action}")
     private String action;
 
@@ -57,44 +59,52 @@ public class StartupConfig implements CommandLineRunner {
         createGodUser(userRepository
                 , username
                 , password
-                , mobile
                 , role
                 , policyName
                 , Action.valueOf(action)
-                , resource);
+                , resource
+                , policyType);
     }
 
     private void createGodUser(UserRepository userRepository
-            , String username, String password, String mobile, String userRole
-            , String policyName, Action action, String resource) {
+            , String username, String password,  String userRole
+            , String policyName, Action action, String resource,
+                               String policyType) {
 
         Optional<User> opt = userRepository.findByUsername(username);
         if (opt.isPresent()) return;
 
+
+
+        Policy policy = new Policy();
+        if (policyRepository.findAll().size() == 0) {
+            policy.setPolicyName(policyName);
+            policy.setType(policyType);
+            Statement statement = new Statement();
+            statement.setResource(resource);
+            statement.setAction(action);
+            policy.addStatements(statement);
+            policy.setCreatedBy(new Username(username));
+            policyRepository.save(policy);
+        }
+
         Role role = new Role();
+
         if (roleRepository.findAll().size() == 0) {
             role.setRoleName(userRole);
             role.setIsOpenUser('N');
             roleRepository.save(role);
         }
 
-//        Policy policy = new Policy();
-//        if (policyRepository.findAll().size() == 0) {
-//            Statement statement = new Statement();
-//            statement.setAction(action);
-//            statement.setResource(resource);
-//            policy.setPolicyName(policyName);
-//            policy.addStatements(statement);
-//            policyRepository.save(policy);
-//        }
-
-
+        Role existingRole = roleRepository.findByRoleName(userRole).get();
+        Policy existingPolicy = policyRepository.findByPolicyName(policyName).get();
+        existingRole.addPolicies(existingPolicy);
+        roleRepository.save(existingRole);
         //
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
         user.setEmail(username);
-        //user.setMobile(mobile);
         user.setEnabled(true);
         user.setSecrets(User.createRandomMapOfSecret());
         if (userRole != null && !userRole.isEmpty()) {
