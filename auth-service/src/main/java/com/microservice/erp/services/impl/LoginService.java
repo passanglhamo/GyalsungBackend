@@ -54,7 +54,6 @@ public class LoginService implements iLogin {
                 response.unmarshallingFromMap(message.marshallingToMap(true), true);
         });
 
-//        return response;
         Map<String, Object> data = Message.unmarshal(new TypeReference<Map<String, Object>>() {
         }, response.getMessage());
         if (data == null) {

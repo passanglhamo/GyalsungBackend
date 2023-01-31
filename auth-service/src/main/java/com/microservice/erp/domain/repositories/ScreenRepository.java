@@ -6,8 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ScreenRepository extends JpaRepository<Screen, BigInteger> {
     List<Screen> findAllByOrderByScreenNameAsc();
+
+    Optional<Screen> findByScreenName(String screenName);
 }

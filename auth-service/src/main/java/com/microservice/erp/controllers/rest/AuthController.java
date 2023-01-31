@@ -5,6 +5,7 @@ import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.data.base.DataSource;
 import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.models.*;
+import com.microservice.erp.services.definition.INdiService;
 import com.microservice.erp.services.definition.iLogin;
 import com.microservice.erp.services.definition.iRegistration;
 import com.microservice.erp.services.definition.iResetPassword;
@@ -43,6 +44,7 @@ public class AuthController {
     private iRegistration registration;
     private iResetPassword resetPassword;
     private DataSource<String, LoginRetryCount> cache;
+
 
     @Value("${app.login.retry.count}")
     private int loginMaxRetryCount;
@@ -234,32 +236,4 @@ public class AuthController {
         return registration.userByUserId(userId);
     }
 
-    @PostMapping("/ndiCode")
-    public ResponseEntity<?> ndiCode() throws IOException {
-        RestTemplate restTemplate = new RestTemplate();
-        String requestString = "{\n" +
-                " \"proofName\": \"TTPL\",\n" +
-                " \"proofAttributes\": [\n" +
-                " {\n" +
-                " \"name\":\"ID Number\"," +
-                " \"restrictions\":[]\n" +
-                "}]\n" +
-                "}";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        Resource resource = new ClassPathResource("/ndiapi/ndiApi.properties");
-        Properties props = PropertiesLoaderUtils.loadProperties(resource);
-        String verifyNdi = props.getProperty("verifyNDI.endPointURL");
-
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestString, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-                verifyNdi, HttpMethod.POST, requestEntity, String.class
-        );
-
-
-        return responseEntity;
-    }
 }

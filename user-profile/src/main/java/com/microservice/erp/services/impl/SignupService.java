@@ -10,13 +10,17 @@ import com.microservice.erp.services.iServices.ISignupService;
 import com.squareup.okhttp.OkHttpClient;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.wso2.client.api.ApiClient;
 import org.wso2.client.api.ApiException;
 import org.wso2.client.api.DCRC_CitizenDetailsAPI.DefaultApi;
@@ -41,9 +45,8 @@ public class SignupService implements ISignupService {
     private final PasswordEncoder encoder;
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
-    //private final DataSource<String,LoginRetryCount> cache;
-//    @Value("${app.login.token.ttl.duration.millis}")
-//    private long tokenTtl;
+    private final HeaderToken headerToken;
+
 
 
     @Override
@@ -162,6 +165,41 @@ public class SignupService implements ISignupService {
                 , userInfo.getUsername(), signupRequestDto.getPassword(), userInfo.getSignupUser(), null);
         addToQueue.addToUserQueue("addUser", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));
+    }
+
+    @Override
+    public ResponseEntity<?> getExpectedUserDetails(String authHeader) throws IOException, ParseException {
+        RestTemplate restTemplate = new RestTemplate();
+        Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
+        Properties props = PropertiesLoaderUtils.loadProperties(resource);
+        String getExpectedUserDetails = props.getProperty("getExpectedUserDetails.endPointURL");
+        String userUrl = getExpectedUserDetails+"/2023-01-30/18";
+
+        OkHttpClient httpClient = new OkHttpClient();
+        httpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
+        httpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
+        ApiClient apiClient = new ApiClient();
+        apiClient.setHttpClient(httpClient);
+        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
+        apiClient.setAccessToken(apiAccessToken.getAccess_token());
+        HttpEntity<String> request = headerToken.tokenHeader(apiAccessToken.getAccess_token());
+        ResponseEntity<List<CitizenDetailDto>> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, new ParameterizedTypeReference<List<CitizenDetailDto>>() {
+        });
+//        CitizenDetailDto citizenDetailDto = new CitizenDetailDto();
+//        OkHttpClient httpClient = new OkHttpClient();
+//        httpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
+//        httpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
+//
+//        ApiClient apiClient = new ApiClient();
+//        apiClient.setHttpClient(httpClient);
+//
+//        apiClient.setBasePath(getExpectedUserDetails);
+//        //region off this in stagging
+//        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
+//        apiClient.setAccessToken(apiAccessToken.getAccess_token());
+        //endregion
+        //CitizenDetailsResponse citizenDetailsResponse = api.citizendetailsCidGet(cid);
+        return null;
     }
 
     public static String generateVerificationCode(int count) {

@@ -23,7 +23,7 @@ public class ScreenGroupController {
         return iSaScreenGroupService.saveScreenGroup(saScreenGroup);
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<?> getAllScreens() {
         return iSaScreenGroupService.getAllScreens();
     }

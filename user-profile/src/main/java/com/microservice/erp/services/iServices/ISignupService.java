@@ -23,4 +23,5 @@ public interface ISignupService {
 
     ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, JsonProcessingException;
 
+    ResponseEntity<?> getExpectedUserDetails(String authHeader) throws IOException, ParseException;
 }

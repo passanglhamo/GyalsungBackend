@@ -25,7 +25,8 @@ public abstract class TokenizerTask extends AbstractTask<Response, Response> {
         //
         JWTHeader header = new JWTHeader().setTyp("round").setKid(kid.toString());
         JWTPayload payload = new JWTPayload()
-                .setSub(Objects.isNull(exist.getUserId())?"":exist.getUserId().toString())
+                //todo need to find solution for id
+                .setSub(Objects.isNull(exist.getUserId())?exist.getId().toString():exist.getUserId().toString())
 //                .setSub(exist.getId().toString())
                 .setIss(exist.getUsername())
                 .setIat(new Date().getTime())

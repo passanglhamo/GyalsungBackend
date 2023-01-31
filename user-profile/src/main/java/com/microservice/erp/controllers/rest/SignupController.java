@@ -56,5 +56,9 @@ public class SignupController {
         return iSignupService.signup(signupRequestDto);
     }
 
+    @GetMapping("/getExpectedUserDetails")
+    public ResponseEntity<?> getExpectedUserDetails(@RequestHeader("Authorization") String authHeader) throws IOException, ParseException {
+        return iSignupService.getExpectedUserDetails(authHeader);
+    }
 
 }
