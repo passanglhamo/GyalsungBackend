@@ -101,8 +101,8 @@ public class NdiService implements INdiService {
             if (user.isPresent()) {
                 LoginRequest loginRequest = new LoginRequest();
                 loginRequest.setUsername(user.get().getUsername());
-                //need to decode password
-                loginRequest.setPassword("astfastf");
+                //todo need to decode password
+                loginRequest.setPassword("12345678");
                 try {
                     ResponseEntity<?> response = login.doLogin(loginRequest);
 

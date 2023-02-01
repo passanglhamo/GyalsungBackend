@@ -57,8 +57,10 @@ public class SignupController {
     }
 
     @GetMapping("/getExpectedUserDetails")
-    public ResponseEntity<?> getExpectedUserDetails(@RequestHeader("Authorization") String authHeader) throws IOException, ParseException {
-        return iSignupService.getExpectedUserDetails(authHeader);
+    public ResponseEntity<?> getExpectedUserDetails(@RequestHeader("Authorization") String authHeader,
+                                                    @RequestParam("dateString") String dateString)
+            throws IOException, ParseException {
+        return iSignupService.getExpectedUserDetails(authHeader,dateString);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.*;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
@@ -10,25 +11,25 @@ import com.microservice.erp.services.iServices.ISignupService;
 import com.squareup.okhttp.OkHttpClient;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.wso2.client.api.ApiClient;
 import org.wso2.client.api.ApiException;
 import org.wso2.client.api.DCRC_CitizenDetailsAPI.DefaultApi;
 import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizenDetailsResponse;
 import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -168,39 +169,42 @@ public class SignupService implements ISignupService {
     }
 
     @Override
-    public ResponseEntity<?> getExpectedUserDetails(String authHeader) throws IOException, ParseException {
-        RestTemplate restTemplate = new RestTemplate();
+    public ResponseEntity<?> getExpectedUserDetails(String authHeader, String dateString) throws IOException, ParseException {
+
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
         String getExpectedUserDetails = props.getProperty("getExpectedUserDetails.endPointURL");
-        String userUrl = getExpectedUserDetails+"/2023-01-30/18";
+        String userUrl = getExpectedUserDetails+"/"+dateString+"/18";
+        URL url = new URL(userUrl);
 
-        OkHttpClient httpClient = new OkHttpClient();
-        httpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
-        httpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
-        ApiClient apiClient = new ApiClient();
-        apiClient.setHttpClient(httpClient);
+        ObjectMapper mapper = new ObjectMapper();
+
+
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
         ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
-        apiClient.setAccessToken(apiAccessToken.getAccess_token());
-        HttpEntity<String> request = headerToken.tokenHeader(apiAccessToken.getAccess_token());
-        ResponseEntity<List<CitizenDetailDto>> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, new ParameterizedTypeReference<List<CitizenDetailDto>>() {
-        });
-//        CitizenDetailDto citizenDetailDto = new CitizenDetailDto();
-//        OkHttpClient httpClient = new OkHttpClient();
-//        httpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
-//        httpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
-//
-//        ApiClient apiClient = new ApiClient();
-//        apiClient.setHttpClient(httpClient);
-//
-//        apiClient.setBasePath(getExpectedUserDetails);
-//        //region off this in stagging
-//        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
-//        apiClient.setAccessToken(apiAccessToken.getAccess_token());
-        //endregion
-        //CitizenDetailsResponse citizenDetailsResponse = api.citizendetailsCidGet(cid);
-        return null;
+
+        con.setRequestMethod("GET");
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("Authorization", "Bearer "+apiAccessToken.getAccess_token());
+
+
+        int responseCode = con.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+            return ResponseEntity.ok().body(mapper.writeValueAsString(response));
+        } else {
+            return ResponseEntity.badRequest().body(new MessageResponse("Data  not found."));
+        }
+
     }
+
 
     public static String generateVerificationCode(int count) {
         StringBuilder builder = new StringBuilder();
@@ -218,8 +222,7 @@ public class SignupService implements ISignupService {
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
         String getCitizenDetails = props.getProperty("getCitizenDetails.endPointURL");
 
-//        ResourceBundle resourceBundle = ResourceBundle.getBundle("/apiConfig/wsEndPointURL_en_US");
-//        String getCitizenDetails = resourceBundle.getString("getCitizenDetails.endPointURL");
+
 
         OkHttpClient httpClient = new OkHttpClient();
         httpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
@@ -229,8 +232,6 @@ public class SignupService implements ISignupService {
         apiClient.setHttpClient(httpClient);
 
         apiClient.setBasePath(getCitizenDetails);
-        //for stagging
-//            apiClient.setAccessToken("75354085-5182-36f3-a98d-5548dbec5303");
 
         //region off this in stagging
         ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
@@ -251,7 +252,6 @@ public class SignupService implements ISignupService {
             }
 
             String censusDob = citizendetailsObj.getDob();
-//            Date citizenDob = new SimpleDateFormat("dd/MM/yyyy").parse(censusDob);
 
             if (!censusDob.equals(dob)) {
                 return ResponseEntity.badRequest().body(new MessageResponse("CID and date of birth did not matched."));
