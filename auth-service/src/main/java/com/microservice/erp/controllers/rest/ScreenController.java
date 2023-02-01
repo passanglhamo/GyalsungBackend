@@ -20,7 +20,7 @@ public class ScreenController {
 
     @PostMapping
     public ResponseEntity<?> saveScreen(@Valid @RequestBody Screen saScreen) {
-        return iSaScreenService.saveScreen(saScreen);
+            return iSaScreenService.saveScreen(saScreen);
     }
 
     @GetMapping
@@ -35,7 +35,6 @@ public class ScreenController {
 
     @PutMapping
     public ResponseEntity<?> updateScreen(@Valid @RequestBody Screen saScreen) {
-
         return iSaScreenService.updateScreen(saScreen);
     }
 }

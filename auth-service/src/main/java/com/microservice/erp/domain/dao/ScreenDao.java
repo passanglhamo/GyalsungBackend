@@ -9,20 +9,20 @@ import javax.transaction.Transactional;
 import java.math.BigInteger;
 
 @Repository
-public class AutoExemptionDao extends BaseDao {
-
+public class ScreenDao extends BaseDao {
     private final Environment environment;
 
-    public AutoExemptionDao(Environment environment) {
+    public ScreenDao(Environment environment) {
         this.environment = environment;
     }
 
     @Transactional
-    public String isCidAlreadyExist(String cid, BigInteger id) {
-        String sqlQuery = environment.getProperty("CommonDao.isCidAlreadyExist");
+    public String isScreenIdAlreadyExist(Integer screenId, BigInteger id) {
+        String sqlQuery = environment.getProperty("CommonDao.isScreenIdAlreadyExist");
         NativeQuery hQuery = (NativeQuery) hibernateQuery(sqlQuery)
-                .setParameter("cid", cid)
+                .setParameter("screenId", screenId)
                 .setParameter("id", id);
         return hQuery.list().isEmpty() ? null : (String) hQuery.list().get(0);
     }
+
 }

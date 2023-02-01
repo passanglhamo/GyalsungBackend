@@ -13,4 +13,6 @@ public interface ScreenRepository extends JpaRepository<Screen, BigInteger> {
     List<Screen> findAllByOrderByScreenNameAsc();
 
     Optional<Screen> findByScreenName(String screenName);
+
+    Screen findByScreenId(Integer screenId);
 }

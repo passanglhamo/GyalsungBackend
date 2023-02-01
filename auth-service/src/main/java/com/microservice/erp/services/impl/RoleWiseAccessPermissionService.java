@@ -78,7 +78,7 @@ public class RoleWiseAccessPermissionService implements IRoleWiseAccessPermissio
         return ResponseEntity.ok("Data saved successfully.");
     }
 
-    public ScreenDto getAccessScreen(BigInteger screenId) {
+    public ScreenDto getAccessScreen(Integer screenId) {
         return roleWiseAccessPermissionDao.getAccessScreen(screenId);
     }
 }
