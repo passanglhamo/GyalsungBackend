@@ -21,8 +21,8 @@ public class RoleWiseAccessPermission {
     @Column(name = "role_id", columnDefinition = "bigint")
     private BigInteger roleId;
 
-    @Column(name = "screen_id", columnDefinition = "bigint")
-    private BigInteger screenId;
+    @Column(name = "screen_id", columnDefinition = "int")
+    private Integer screenId;
 
     @Column(name = "view_allowed", columnDefinition = "char(1)")
     private Character viewAllowed;

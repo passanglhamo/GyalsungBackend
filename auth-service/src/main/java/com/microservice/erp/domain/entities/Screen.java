@@ -6,10 +6,14 @@ import javax.persistence.Entity;
 import java.math.BigInteger;
 
 @Entity(name = "sa_screen")
-@AttributeOverride(name = "id", column = @Column(name = "screen_id", columnDefinition = "bigint"))
+//@AttributeOverride(name = "id", column = @Column(name = "screen_id", columnDefinition = "bigint"))
+@AttributeOverride(name = "id", column = @Column(name = "id", columnDefinition = "bigint"))
 public class Screen extends Auditable<BigInteger, Long> {
 
     //region private variables
+    @Column(name = "screen_id", columnDefinition = "bigint")
+    private Integer screenId;
+
     @Column(name = "screen_group_id", columnDefinition = "bigint")
     private BigInteger screenGroupId;
 
@@ -24,6 +28,14 @@ public class Screen extends Auditable<BigInteger, Long> {
     //endregion
 
     //region setters and getters
+
+    public Integer getScreenId() {
+        return screenId;
+    }
+
+    public void setScreenId(Integer screenId) {
+        this.screenId = screenId;
+    }
 
     public BigInteger getScreenGroupId() {
         return screenGroupId;

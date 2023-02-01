@@ -75,7 +75,7 @@ public class StartupConfig implements CommandLineRunner {
 
     public StartupConfig(UserRepository userRepository, PasswordEncoder passwordEncoder, IRoleRepository roleRepository,
                          IPolicyRepository policyRepository, ScreenGroupRepository screenGroupRepository,
-                         ScreenRepository screenRepository,RoleWiseAccessPermissionRepository roleWiseAccessPermissionRepository) {
+                         ScreenRepository screenRepository, RoleWiseAccessPermissionRepository roleWiseAccessPermissionRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
@@ -120,14 +120,12 @@ public class StartupConfig implements CommandLineRunner {
         Optional<User> opt = userRepository.findByUsername(username);
         if (opt.isPresent()) return;
 
-
         ScreenGroup screenGroup = new ScreenGroup();
         if (!screenGroupRepository.findByScreenGroupName(screenGroupName).isPresent()) {
             screenGroup.setScreenGroupName(screenGroupName);
             screenGroup.setScreenGroupIconName(screenGroupName);
             screenGroupRepository.save(screenGroup);
         }
-
 
         if (!screenRepository.findByScreenName(groupName).isPresent()) {
             Screen screen = new Screen();
@@ -172,21 +170,18 @@ public class StartupConfig implements CommandLineRunner {
         }
 
         Role role = new Role();
-
         if (roleRepository.findAll().size() == 0) {
             role.setRoleName(userRole);
             role.setIsOpenUser('N');
             roleRepository.save(role);
         }
 
-
-        Screen screenGroupDb = screenRepository.findByScreenName(groupName).
-                get();
+        Screen screenGroupDb = screenRepository.findByScreenName(groupName).get();
         Role existingRole = roleRepository.findByRoleName(userRole).get();
 
-        if(!roleWiseAccessPermissionRepository.findByScreenId(screenGroupDb.getId()).isPresent()){
+        if (!roleWiseAccessPermissionRepository.findByScreenId(screenGroupDb.getId()).isPresent()) {
             RoleWiseAccessPermission permission = new RoleWiseAccessPermission();
-            permission.setScreenId(screenGroupDb.getId());
+            permission.setScreenId(screenGroupDb.getScreenId());
             permission.setRoleId(existingRole.getId());
             permission.setViewAllowed('Y');
             permission.setSaveAllowed('Y');
@@ -195,11 +190,10 @@ public class StartupConfig implements CommandLineRunner {
             roleWiseAccessPermissionRepository.save(permission);
         }
 
-        Screen screenDb = screenRepository.findByScreenName(screenName).
-                get();
-        if(!roleWiseAccessPermissionRepository.findByScreenId(screenDb.getId()).isPresent()){
+        Screen screenDb = screenRepository.findByScreenName(screenName).get();
+        if (!roleWiseAccessPermissionRepository.findByScreenId(screenDb.getId()).isPresent()) {
             RoleWiseAccessPermission permission = new RoleWiseAccessPermission();
-            permission.setScreenId(screenDb.getId());
+            permission.setScreenId(screenDb.getScreenId());
             permission.setRoleId(existingRole.getId());
             permission.setViewAllowed('Y');
             permission.setSaveAllowed('Y');
@@ -208,11 +202,10 @@ public class StartupConfig implements CommandLineRunner {
             roleWiseAccessPermissionRepository.save(permission);
         }
 
-        Screen screenRoleDb = screenRepository.findByScreenName(roleName).
-                get();
-        if(!roleWiseAccessPermissionRepository.findByScreenId(screenRoleDb.getId()).isPresent()){
+        Screen screenRoleDb = screenRepository.findByScreenName(roleName).get();
+        if (!roleWiseAccessPermissionRepository.findByScreenId(screenRoleDb.getId()).isPresent()) {
             RoleWiseAccessPermission permission = new RoleWiseAccessPermission();
-            permission.setScreenId(screenRoleDb.getId());
+            permission.setScreenId(screenRoleDb.getScreenId());
             permission.setRoleId(existingRole.getId());
             permission.setViewAllowed('Y');
             permission.setSaveAllowed('Y');
@@ -221,11 +214,10 @@ public class StartupConfig implements CommandLineRunner {
             roleWiseAccessPermissionRepository.save(permission);
         }
 
-        Screen screenRoleWisePerDb = screenRepository.findByScreenName(roleWisePermission).
-                get();
-        if(!roleWiseAccessPermissionRepository.findByScreenId(screenRoleWisePerDb.getId()).isPresent()){
+        Screen screenRoleWisePerDb = screenRepository.findByScreenName(roleWisePermission).get();
+        if (!roleWiseAccessPermissionRepository.findByScreenId(screenRoleWisePerDb.getId()).isPresent()) {
             RoleWiseAccessPermission permission = new RoleWiseAccessPermission();
-            permission.setScreenId(screenRoleWisePerDb.getId());
+            permission.setScreenId(screenRoleWisePerDb.getScreenId());
             permission.setRoleId(existingRole.getId());
             permission.setViewAllowed('Y');
             permission.setSaveAllowed('Y');
@@ -237,7 +229,6 @@ public class StartupConfig implements CommandLineRunner {
         Policy existingPolicy = policyRepository.findByPolicyName(policyName).get();
         existingRole.addPolicies(existingPolicy);
         roleRepository.save(existingRole);
-        //
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
@@ -245,7 +236,6 @@ public class StartupConfig implements CommandLineRunner {
         user.setEnabled(true);
         user.setSecrets(User.createRandomMapOfSecret());
         if (userRole != null && !userRole.isEmpty()) {
-
             Optional<Role> roleDb = roleRepository.findByRoleName(userRole);
             if (roleDb.isPresent()) {
                 role = roleDb.get();
@@ -254,8 +244,6 @@ public class StartupConfig implements CommandLineRunner {
             }
             user.addRoles(role);
         }
-
-
         userRepository.save(user);
     }
 

@@ -11,7 +11,7 @@ public class PermissionListDto {
     //region private variables
     private BigInteger permission_id;
     private BigInteger role_id;
-    private BigInteger screen_id;
+    private Integer screen_id;
     private Character view_allowed;
     private Character edit_allowed;
     private Character delete_allowed;

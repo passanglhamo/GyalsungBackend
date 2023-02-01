@@ -115,7 +115,7 @@ public class Login extends TokenizerTask {
                     List<PermissionListDto> permissionListDtos = roleWiseAccessPermissionService.getRoleMappedScreens(roleId);
                     if (permissionListDtos != null) {
                         for (PermissionListDto permissionListDto : permissionListDtos) {
-                            BigInteger screenId = permissionListDto.getScreen_id();
+                            Integer screenId = permissionListDto.getScreen_id();
                             ScreenDto screenDto = roleWiseAccessPermissionService.getAccessScreen(screenId);
                             screenDto.setView(false);
                             screenDto.setDelete(false);

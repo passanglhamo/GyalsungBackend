@@ -39,7 +39,7 @@ public class RoleWiseAccessPermissionDao extends BaseDao {
     }
 
     @Transactional
-    public ScreenDto getAccessScreen(BigInteger screenId) {
+    public ScreenDto getAccessScreen(Integer screenId) {
         String sqlQuery = environment.getProperty("CommonDao.getAccessScreen");
         try {
             return (ScreenDto) entityManager.createNativeQuery(sqlQuery)
