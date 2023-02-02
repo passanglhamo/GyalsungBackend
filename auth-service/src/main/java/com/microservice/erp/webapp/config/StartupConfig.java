@@ -39,6 +39,9 @@ public class StartupConfig implements CommandLineRunner {
     @Value("${app.god.user.policyType}")
     private String policyType;
 
+    @Value("${app.screen.policy.screenUrl}")
+    private String policyUrl;
+
     @Value("${app.god.user.action}")
     private String action;
 
@@ -73,6 +76,7 @@ public class StartupConfig implements CommandLineRunner {
     private String roleWisePermissionUrl;
 
 
+
     public StartupConfig(UserRepository userRepository, PasswordEncoder passwordEncoder, IRoleRepository roleRepository,
                          IPolicyRepository policyRepository, ScreenGroupRepository screenGroupRepository,
                          ScreenRepository screenRepository, RoleWiseAccessPermissionRepository roleWiseAccessPermissionRepository) {
@@ -105,7 +109,9 @@ public class StartupConfig implements CommandLineRunner {
                 , roleName
                 , roleUrl
                 , roleWisePermission
-                , roleWisePermissionUrl);
+                , roleWisePermissionUrl
+                , policyUrl
+                );
     }
 
     private void createGodUser(UserRepository userRepository
@@ -115,7 +121,8 @@ public class StartupConfig implements CommandLineRunner {
                                String groupName, String groupUrl,
                                String screenName, String url,
                                String roleName, String roleUrl,
-                               String roleWisePermission, String roleWisePermissionUrl) {
+                               String roleWisePermission, String roleWisePermissionUrl,
+                               String policyUrl) {
 
         Optional<User> opt = userRepository.findByUsername(username);
         if (opt.isPresent()) return;
@@ -129,6 +136,7 @@ public class StartupConfig implements CommandLineRunner {
 
         if (!screenRepository.findByScreenName(groupName).isPresent()) {
             Screen screen = new Screen();
+            screen.setScreenId(1);
             screen.setScreenName(groupName);
             screen.setScreenUrl(groupUrl);
             screen.setScreenIconName(groupName);
@@ -136,6 +144,7 @@ public class StartupConfig implements CommandLineRunner {
             screenRepository.save(screen);
 
             Screen screen2 = new Screen();
+            screen2.setScreenId(2);
             screen2.setScreenName(screenName);
             screen2.setScreenUrl(url);
             screen2.setScreenIconName(screenName);
@@ -143,6 +152,7 @@ public class StartupConfig implements CommandLineRunner {
             screenRepository.save(screen2);
 
             Screen screen3 = new Screen();
+            screen3.setScreenId(3);
             screen3.setScreenName(roleName);
             screen3.setScreenUrl(roleUrl);
             screen3.setScreenIconName(roleName);
@@ -150,10 +160,19 @@ public class StartupConfig implements CommandLineRunner {
             screenRepository.save(screen3);
 
             Screen screen4 = new Screen();
+            screen4.setScreenId(4);
             screen4.setScreenName(roleWisePermission);
             screen4.setScreenUrl(roleWisePermissionUrl);
             screen4.setScreenIconName(roleWisePermission);
             screen4.setScreenGroupId(screenGroupRepository.findByScreenGroupName(screenGroupName).get().getId());
+            screenRepository.save(screen4);
+
+            Screen screen5 = new Screen();
+            screen5.setScreenId(5);
+            screen5.setScreenName(policyName);
+            screen5.setScreenUrl(policyUrl);
+            screen5.setScreenIconName(policyName);
+            screen5.setScreenGroupId(screenGroupRepository.findByScreenGroupName(screenGroupName).get().getId());
             screenRepository.save(screen4);
         }
 
@@ -179,7 +198,7 @@ public class StartupConfig implements CommandLineRunner {
         Screen screenGroupDb = screenRepository.findByScreenName(groupName).get();
         Role existingRole = roleRepository.findByRoleName(userRole).get();
 
-        if (!roleWiseAccessPermissionRepository.findByScreenId(screenGroupDb.getId()).isPresent()) {
+        if (!roleWiseAccessPermissionRepository.findById(screenGroupDb.getId()).isPresent()) {
             RoleWiseAccessPermission permission = new RoleWiseAccessPermission();
             permission.setScreenId(screenGroupDb.getScreenId());
             permission.setRoleId(existingRole.getId());
@@ -191,7 +210,7 @@ public class StartupConfig implements CommandLineRunner {
         }
 
         Screen screenDb = screenRepository.findByScreenName(screenName).get();
-        if (!roleWiseAccessPermissionRepository.findByScreenId(screenDb.getId()).isPresent()) {
+        if (!roleWiseAccessPermissionRepository.findById(screenDb.getId()).isPresent()) {
             RoleWiseAccessPermission permission = new RoleWiseAccessPermission();
             permission.setScreenId(screenDb.getScreenId());
             permission.setRoleId(existingRole.getId());
@@ -203,7 +222,7 @@ public class StartupConfig implements CommandLineRunner {
         }
 
         Screen screenRoleDb = screenRepository.findByScreenName(roleName).get();
-        if (!roleWiseAccessPermissionRepository.findByScreenId(screenRoleDb.getId()).isPresent()) {
+        if (!roleWiseAccessPermissionRepository.findById(screenRoleDb.getId()).isPresent()) {
             RoleWiseAccessPermission permission = new RoleWiseAccessPermission();
             permission.setScreenId(screenRoleDb.getScreenId());
             permission.setRoleId(existingRole.getId());
@@ -215,7 +234,7 @@ public class StartupConfig implements CommandLineRunner {
         }
 
         Screen screenRoleWisePerDb = screenRepository.findByScreenName(roleWisePermission).get();
-        if (!roleWiseAccessPermissionRepository.findByScreenId(screenRoleWisePerDb.getId()).isPresent()) {
+        if (!roleWiseAccessPermissionRepository.findById(screenRoleWisePerDb.getId()).isPresent()) {
             RoleWiseAccessPermission permission = new RoleWiseAccessPermission();
             permission.setScreenId(screenRoleWisePerDb.getScreenId());
             permission.setRoleId(existingRole.getId());

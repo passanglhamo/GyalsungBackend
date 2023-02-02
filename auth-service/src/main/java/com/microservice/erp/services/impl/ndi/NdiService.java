@@ -104,7 +104,7 @@ public class NdiService implements INdiService {
                 //todo need to decode password
                 loginRequest.setPassword("12345678");
                 try {
-                    ResponseEntity<?> response = login.doLogin(loginRequest);
+                    ResponseEntity<?> response = login.doLogin(loginRequest,true);
 
                     connect.publish("loginData"+threadId,
                             mapper.writeValueAsString(Objects.requireNonNull(response.getBody())).getBytes());

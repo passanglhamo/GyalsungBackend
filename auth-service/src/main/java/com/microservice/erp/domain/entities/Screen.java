@@ -11,7 +11,7 @@ import java.math.BigInteger;
 public class Screen extends Auditable<BigInteger, Long> {
 
     //region private variables
-    @Column(name = "screen_id", columnDefinition = "bigint")
+    @Column(name = "screen_id", columnDefinition = "int")
     private Integer screenId;
 
     @Column(name = "screen_group_id", columnDefinition = "bigint")

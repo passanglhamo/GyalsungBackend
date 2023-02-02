@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.IOException;
 
 public interface iLogin {
-    ResponseEntity<?> doLogin(LoginRequest request) throws IOException;
+    ResponseEntity<?> doLogin(LoginRequest request, Boolean isNDILogin) throws IOException;
 
     Response isValidToken(String token, UserDetails principal);
 

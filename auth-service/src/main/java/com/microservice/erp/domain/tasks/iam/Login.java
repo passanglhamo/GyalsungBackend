@@ -31,21 +31,23 @@ public class Login extends TokenizerTask {
     private UserRepository repository;
     private PasswordEncoder encoder;
     private RoleWiseAccessPermissionService roleWiseAccessPermissionService;
+    private Boolean isNDILogin;
 
 
-    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService, Property... properties) {
+    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,Boolean isNDILogin, Property... properties) {
         super(properties);
         this.repository = repository;
         this.encoder = encoder;
         this.roleWiseAccessPermissionService = roleWiseAccessPermissionService;
+        this.isNDILogin = isNDILogin;
     }
 
-    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService, String username) {
-        this(repository, encoder, roleWiseAccessPermissionService, new Property("username", username));
+    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,Boolean isNDILogin, String username) {
+        this(repository, encoder, roleWiseAccessPermissionService,isNDILogin, new Property("username", username));
     }
 
-    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService, LoginRequest request) {
-        this(repository, encoder, roleWiseAccessPermissionService, request.getRow().getProperties().toArray(new Property[0]));
+    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,Boolean isNDILogin, LoginRequest request) {
+        this(repository, encoder, roleWiseAccessPermissionService,isNDILogin, request.getRow().getProperties().toArray(new Property[0]));
     }
 
     @Override
@@ -93,8 +95,11 @@ public class Login extends TokenizerTask {
         }
         if (exist.isPresent()) {
             //PasswordEncoder::matches(RawPassword, EncodedPassword) == will return true/false
-            if (!encoder.matches(request.getPassword(), exist.get().getPassword()))
-                return new Response().setStatus(401).setMessage("Password didn't matched.");
+            if(!isNDILogin){
+                if (!encoder.matches(request.getPassword(), exist.get().getPassword()))
+                    return new Response().setStatus(401).setMessage("Password didn't matched.");
+            }
+
 
             //Now existing password matched: lets create the JWT token;
             try {

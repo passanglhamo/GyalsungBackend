@@ -72,7 +72,7 @@ public class LoginFlowTest extends BaseTaskTest{
         //
         TaskStack loginStack = TaskStack.createSync(true);
         loginStack.push(new CheckUserExist(repository, request.getUsername()));
-        loginStack.push(new Login(repository, passwordEncoder, null,request));
+        loginStack.push(new Login(repository, passwordEncoder, null,false,request));
         loginStack.commit(true, (message, state) -> {
             LOG.info("Login Status: " + state.name());
             if (message != null)

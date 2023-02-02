@@ -41,13 +41,13 @@ public class LoginService implements iLogin {
     private long tokenTtl;
 
     @Override
-    public ResponseEntity<?> doLogin(LoginRequest request) throws IOException {
+    public ResponseEntity<?> doLogin(LoginRequest request,Boolean isNDILogin) throws IOException {
         Response response = new Response().setMessage("Not Implemented").setStatus(HttpStatus.NOT_IMPLEMENTED.value());
         //
         request.setTokenTtl(tokenTtl);
         TaskStack loginStack = TaskStack.createSync(true);
         loginStack.push(new CheckUserExist(userRepository, request.getUsername()));
-        loginStack.push(new Login(userRepository, passwordEncoder, roleWiseAccessPermissionService, request));
+        loginStack.push(new Login(userRepository, passwordEncoder, roleWiseAccessPermissionService, isNDILogin,request));
         loginStack.commit(true, (message, state) -> {
             LOG.info("Login Status: " + state.name());
             if (message != null)
