@@ -13,6 +13,9 @@ import com.microservice.erp.domain.repositories.IAutoExemptionFileRepository;
 import com.microservice.erp.services.iServices.IAutoExemptionService;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -125,7 +128,8 @@ public class AutoExemptionService implements IAutoExemptionService {
 
     @Override
     public ResponseEntity<?> deleteList(AutoExemptionCommand command) {
-        List<AutoExemption> autoExemptionList = iAutoExemptionRepository.findAllById(command.getIds());
+//        List<AutoExemption> autoExemptionList = iAutoExemptionRepository.findAllById(command.getIds());
+        List<AutoExemption> autoExemptionList = (List<AutoExemption>) iAutoExemptionRepository.findAllById(command.getIds());
         iAutoExemptionRepository.deleteAll(autoExemptionList);
         return ResponseEntity.ok("Deleted successfully.");
     }
@@ -139,6 +143,17 @@ public class AutoExemptionService implements IAutoExemptionService {
         } else {
             iAutoExemptionRepository.save(autoExemption);
             return ResponseEntity.ok("Data saved successfully.");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> searchByNoOfRecords(Integer page, Integer noOfRecords) {
+        Pageable searchBySize = PageRequest.of(page, noOfRecords, Sort.by("createdBy").descending().and(Sort.by("fullName").ascending()));
+        List<AutoExemption> autoExemptions =iAutoExemptionRepository.findAll(searchBySize).getContent();
+        if(autoExemptions.size()>0){
+            return ResponseEntity.ok(autoExemptions);
+        }else {
+            return ResponseEntity.badRequest().body(new MessageResponse("No information found."));
         }
 
     }

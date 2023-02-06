@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
 import java.math.BigInteger;
+import java.util.List;
 
 @RestController
 @RequestMapping("/autoExemption")
@@ -58,7 +59,9 @@ public class AutoExemptionController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ResponseEntity<?> update(@Valid @RequestBody AutoExemption autoExemption) {
+    public ResponseEntity<?> update(@Valid @RequestBody AutoExemption autoExemption,
+                                    @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        SpringSecurityAuditorAware.setToken(token);
         return iAutoExemptionService.update(autoExemption);
     }
 
@@ -74,6 +77,11 @@ public class AutoExemptionController {
                                   @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         SpringSecurityAuditorAware.setToken(token);
         return iAutoExemptionService.save(autoExemption);
+    }
+
+    @RequestMapping(value = "/searchByNoOfRecords", method = RequestMethod.GET)
+    public ResponseEntity<?> searchByNoOfRecords(@RequestParam("page") Integer page,@RequestParam("noOfRecords") Integer noOfRecords) {
+        return iAutoExemptionService.searchByNoOfRecords(page, noOfRecords);
     }
 
 }
