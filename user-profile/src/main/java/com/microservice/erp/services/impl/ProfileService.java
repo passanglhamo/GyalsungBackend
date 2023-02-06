@@ -147,7 +147,7 @@ public class ProfileService implements IProfileService {
         userInfoDb.setEmail(userProfileDto.getEmail());
         iUserInfoRepository.save(userInfoDb);
         //add to queue to update email in auth microservices
-        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, userInfo.getEmail()
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null,null, userInfo.getEmail()
                 , null, null, null, null);
         addToQueue.addToUserQueue("changeEmail", eventBusUser);
         return ResponseEntity.ok(new MessageResponse("Email changed successfully."));
@@ -164,7 +164,7 @@ public class ProfileService implements IProfileService {
         userInfo.setUsername(userProfileDto.getUsername());
         iUserInfoRepository.save(userInfo);
         //add to queue to update username in auth microservices
-        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, null
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null,null, null
                 , userInfo.getUsername(), null, null, null);
         addToQueue.addToUserQueue("changeUsername", eventBusUser);
         return ResponseEntity.ok(new MessageResponse("Username updated successfully."));

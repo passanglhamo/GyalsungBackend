@@ -10,5 +10,6 @@ import java.util.Set;
 @Setter
 public class AuthUserDto {
     private BigInteger userId;
+    private Character status;
     private Object roles;
 }

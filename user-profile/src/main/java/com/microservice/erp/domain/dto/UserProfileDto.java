@@ -64,5 +64,6 @@ public class UserProfileDto {
     private MultipartFile profilePicture;
     private byte[] profilePhoto;
     private Object roles;
+    private Character status;
     //endregion
 }

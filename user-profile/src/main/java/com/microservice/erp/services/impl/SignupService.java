@@ -49,7 +49,6 @@ public class SignupService implements ISignupService {
     private final HeaderToken headerToken;
 
 
-
     @Override
     public ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException {
         return validateCitizenDetails(cid, dob);
@@ -162,7 +161,7 @@ public class SignupService implements ISignupService {
         BigInteger userId = iUserInfoRepository.save(userInfo).getId();
 //        todo: add to queue following data: password, roles, email, username, userId
 
-        EventBusUser eventBusSms = EventBusUser.withId(userId, userInfo.getCid(), userInfo.getEmail()
+        EventBusUser eventBusSms = EventBusUser.withId(userId, 'A', userInfo.getCid(), userInfo.getEmail()
                 , userInfo.getUsername(), signupRequestDto.getPassword(), userInfo.getSignupUser(), null);
         addToQueue.addToUserQueue("addUser", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));
@@ -174,7 +173,7 @@ public class SignupService implements ISignupService {
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
         String getExpectedUserDetails = props.getProperty("getExpectedUserDetails.endPointURL");
-        String userUrl = getExpectedUserDetails+"/"+dateString+"/18";
+        String userUrl = getExpectedUserDetails + "/" + dateString + "/18";
         URL url = new URL(userUrl);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -185,7 +184,7 @@ public class SignupService implements ISignupService {
 
         con.setRequestMethod("GET");
         con.setRequestProperty("Content-Type", "application/json");
-        con.setRequestProperty("Authorization", "Bearer "+apiAccessToken.getAccess_token());
+        con.setRequestProperty("Authorization", "Bearer " + apiAccessToken.getAccess_token());
 
 
         int responseCode = con.getResponseCode();
@@ -221,7 +220,6 @@ public class SignupService implements ISignupService {
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
         String getCitizenDetails = props.getProperty("getCitizenDetails.endPointURL");
-
 
 
         OkHttpClient httpClient = new OkHttpClient();

@@ -22,6 +22,9 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
     @Column(name = "user_id",  columnDefinition = "bigint")
     private BigInteger userId;
 
+    @Column(name = "status", columnDefinition = "char(1)")
+    private Character status;
+
     @Column(length = 250, unique = true, nullable = false)
     private String username;
 
@@ -108,6 +111,14 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public Character getStatus() {
+        return status;
+    }
+
+    public void setStatus(Character status) {
+        this.status = status;
     }
 
     public void setUsername(String username) {
