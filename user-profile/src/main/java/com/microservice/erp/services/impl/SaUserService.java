@@ -172,6 +172,10 @@ public class SaUserService implements ISaUserService {
         if (saUserEmail != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
+        UserInfo saUserCid = iUserInfoRepository.findByCid(userDto.getCid());
+        if (saUserCid != null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("CID " + userDto.getCid() + " already in use."));
+        }
         UserInfo saUser = new ModelMapper().map(userDto, UserInfo.class);
         saUser.setUsername(userDto.getEmail());
         saUser.setSignupUser('N');
@@ -202,6 +206,10 @@ public class SaUserService implements ISaUserService {
         String isEmailAlreadyInUse = userDao.isEmailAlreadyInUse(userDto.getEmail(), userDto.getUserId());
         if (isEmailAlreadyInUse != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
+        }
+        String isCidAlreadyInUse = userDao.isCidAlreadyInUse(userDto.getCid(), userDto.getUserId());
+        if (isCidAlreadyInUse != null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("CID " + userDto.getCid() + " already in use."));
         }
 
         UserInfo saUserDb = iUserInfoRepository.findById(userDto.getUserId()).get();
