@@ -11,6 +11,7 @@ import java.util.List;
 public class UserDto {
 
     private BigInteger userId;
+    private String cid;
     private String fullName;
     private Character gender;
     private String mobileNo;

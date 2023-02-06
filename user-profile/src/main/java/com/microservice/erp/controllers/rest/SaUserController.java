@@ -7,6 +7,10 @@ import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.wso2.client.api.ApiException;
+
+import java.io.IOException;
+import java.text.ParseException;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -16,6 +20,11 @@ public class SaUserController {
 
     public SaUserController(ISaUserService iSaUserService) {
         this.iSaUserService = iSaUserService;
+    }
+
+    @GetMapping("/getCensusDetailByCid")
+    public ResponseEntity<?> getCensusDetailByCid(@RequestParam("cid") String cid) throws ParseException, ApiException, IOException {
+        return iSaUserService.getCensusDetailByCid(cid);
     }
 
     @PostMapping("/addUser")

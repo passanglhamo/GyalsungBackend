@@ -3,35 +3,120 @@ package com.microservice.erp.services.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dao.UserDao;
 import com.microservice.erp.domain.dto.*;
+import com.microservice.erp.domain.entities.ApiAccessToken;
 import com.microservice.erp.domain.entities.UserInfo;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISaUserService;
+import com.squareup.okhttp.OkHttpClient;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.PropertySource;
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.wso2.client.api.ApiClient;
+import org.wso2.client.api.ApiException;
+import org.wso2.client.api.DCRC_CitizenDetailsAPI.DefaultApi;
+import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizenDetailsResponse;
+import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
 @Service
 @AllArgsConstructor
-public class SaUserService implements ISaUserService  {
+public class SaUserService implements ISaUserService {
+    private final CitizenDetailApiService citizenDetailApiService;
     private final IUserInfoRepository iUserInfoRepository;
     private final UserDao userDao;
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
+
+    @Override
+    public ResponseEntity<?> getCensusDetailByCid(String cid) throws IOException, ParseException, ApiException {
+        CitizenDetailDto citizenDetailDto = new CitizenDetailDto();
+
+        Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
+        Properties props = PropertiesLoaderUtils.loadProperties(resource);
+        String getCitizenDetails = props.getProperty("getCitizenDetails.endPointURL");
+
+
+        OkHttpClient httpClient = new OkHttpClient();
+        httpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
+        httpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
+
+        ApiClient apiClient = new ApiClient();
+        apiClient.setHttpClient(httpClient);
+
+        apiClient.setBasePath(getCitizenDetails);
+
+        //region off this in stagging
+        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
+        apiClient.setAccessToken(apiAccessToken.getAccess_token());
+        //endregion
+
+        DefaultApi api = new DefaultApi(apiClient);
+        CitizenDetailsResponse citizenDetailsResponse = api.citizendetailsCidGet(cid);
+        if (citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail() != null && !citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().isEmpty()) {
+            CitizendetailsObj citizendetailsObj = citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().get(0);
+
+            char genderChar = citizendetailsObj.getGender().charAt(0);
+            String genderName = "Male";
+            if (genderChar == 'F') {
+                genderName = "Female";
+            } else if (genderChar == 'O') {
+                genderName = "Other";
+            }
+
+            String censusDob = citizendetailsObj.getDob();
+            citizenDetailDto.setFullName(citizendetailsObj.getFirstName() + " " + citizendetailsObj.getMiddleName() + " " + citizendetailsObj.getLastName());
+            citizenDetailDto.setFullName(citizenDetailDto.getFullName().replaceAll("null", ""));
+            citizenDetailDto.setCid(citizendetailsObj.getCid());
+            citizenDetailDto.setDob(censusDob);
+            citizenDetailDto.setGender(genderChar);
+            citizenDetailDto.setGenderName(genderName);
+            citizenDetailDto.setFatherName(citizendetailsObj.getFatherName());
+            citizenDetailDto.setFatherCid(null);
+            citizenDetailDto.setMotherName(citizendetailsObj.getMotherName());
+            citizenDetailDto.setMotherCid(null);
+            citizenDetailDto.setVillageName(citizendetailsObj.getVillageName());
+            citizenDetailDto.setGeogName(citizendetailsObj.getGewogName());
+            citizenDetailDto.setDzongkhagName(citizendetailsObj.getDzongkhagName());
+            citizenDetailDto.setHouseNo(citizendetailsObj.getHouseNo());
+            citizenDetailDto.setThramNo(citizendetailsObj.getThramNo());
+
+        } else {
+            return ResponseEntity.badRequest().body(new MessageResponse("No information found matching CID No " + cid));
+        }
+        return ResponseEntity.ok(citizenDetailDto);
+    }
+
+    @Override
+    public ResponseEntity<?> getAllRoles() {
+      /*  List<SaRole> saRoleList = iSaRoleRepository.findAllByOrderByRoleNameAsc();
+        if (saRoleList.size() > 0) {
+            return ResponseEntity.ok(saRoleList);
+        } else {
+            return ResponseEntity.badRequest().body(new MessageResponse("Roles not found."));
+        }*/
+        return ResponseEntity.badRequest().body(new MessageResponse("Roles not found."));
+    }
 
     @Override
     public ResponseEntity<?> saveUser(UserDto userDto) throws JsonProcessingException {
@@ -57,15 +142,17 @@ public class SaUserService implements ISaUserService  {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
-            //String urlSd = properties.getAuthServiceURL();
-            //String url = "http://localhost:80/AUTH-SERVICE/api/auth/auth/v1/userByUserId?userId=" + item.getId();
+
+            //todo: need to call other ms via service discovery
             String url = "http://localhost:8083/api/auth/auth/v1/userByUserId?userId=" + item.getId();
             ResponseEntity<AuthUserDto> response = restTemplate.exchange(url, HttpMethod.GET, request, AuthUserDto.class);
             userProfileDto.setUserId(item.getId());
             userProfileDto.setFullName(item.getFullName());
+            userProfileDto.setCid(item.getCid());
             userProfileDto.setMobileNo(item.getMobileNo());
             userProfileDto.setEmail(item.getEmail());
             userProfileDto.setGender(item.getGender());
+            userProfileDto.setStatus(Objects.requireNonNull(response.getBody()).getStatus());
             userProfileDto.setRoles(Objects.requireNonNull(response.getBody()).getRoles());
             userProfileDtos.add(userProfileDto);
         });
@@ -81,6 +168,10 @@ public class SaUserService implements ISaUserService  {
         if (saUserEmail.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
+        Optional<UserInfo> saUserCid = iUserInfoRepository.findByCid(userDto.getCid());
+        if (saUserCid.isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("CID " + userDto.getCid() + " already in use."));
+        }
         UserInfo saUser = new ModelMapper().map(userDto, UserInfo.class);
         saUser.setUsername(userDto.getEmail());
         saUser.setSignupUser('N');
@@ -92,7 +183,7 @@ public class SaUserService implements ISaUserService  {
 
         saUser.setSignupUser('N');
         BigInteger userId = iUserInfoRepository.save(saUser).getId();
-        EventBusUser eventBusUser = EventBusUser.withId(userId, saUser.getCid(), saUser.getEmail()
+        EventBusUser eventBusUser = EventBusUser.withId(userId, userDto.getStatus(), saUser.getCid(), saUser.getEmail()
                 , saUser.getUsername(), password, saUser.getSignupUser(), userDto.getRoles());
         addToQueue.addToUserQueue("addUser", eventBusUser);
 
@@ -112,6 +203,10 @@ public class SaUserService implements ISaUserService  {
         if (isEmailAlreadyInUse != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
+        String isCidAlreadyInUse = userDao.isCidAlreadyInUse(userDto.getCid(), userDto.getUserId());
+        if (isCidAlreadyInUse != null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("CID " + userDto.getCid() + " already in use."));
+        }
 
         UserInfo saUserDb = iUserInfoRepository.findById(userDto.getUserId()).get();
         UserInfo saUser = new ModelMapper().map(saUserDb, UserInfo.class);
@@ -125,7 +220,7 @@ public class SaUserService implements ISaUserService  {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
         BigInteger userId = iUserInfoRepository.save(saUser).getId();
-        EventBusUser eventBusUser = EventBusUser.withId(userId, saUser.getCid(), saUser.getEmail()
+        EventBusUser eventBusUser = EventBusUser.withId(userId, userDto.getStatus(), saUser.getCid(), saUser.getEmail()
                 , saUser.getUsername(), null, saUser.getSignupUser(), userDto.getRoles());
         addToQueue.addToUserQueue("addUser", eventBusUser);
 
