@@ -1,7 +1,6 @@
 package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.infoworks.lab.jjwt.TokenValidator;
 import com.microservice.erp.domain.dao.UserDao;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.UserInfo;
@@ -9,11 +8,14 @@ import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISaUserService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,35 +23,15 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class SaUserService implements ISaUserService {
+public class SaUserService implements ISaUserService  {
     private final IUserInfoRepository iUserInfoRepository;
     private final UserDao userDao;
     private final AddToQueue addToQueue;
-    private final HeaderToken headerToken;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
-
-    private final PasswordEncoder encoder;
-
-
-//    @Value("${topic.email}")
-//    private String emailTopic;
-//
-//    @Value("${topic.sms}")
-//    private String smsTopic;
-
-    @Override
-    public ResponseEntity<?> getAllRoles() {
-      /*  List<SaRole> saRoleList = iSaRoleRepository.findAllByOrderByRoleNameAsc();
-        if (saRoleList.size() > 0) {
-            return ResponseEntity.ok(saRoleList);
-        } else {
-            return ResponseEntity.badRequest().body(new MessageResponse("Roles not found."));
-        }*/
-        return ResponseEntity.badRequest().body(new MessageResponse("Roles not found."));
-    }
 
     @Override
     public ResponseEntity<?> saveUser(UserDto userDto) throws JsonProcessingException {
@@ -64,15 +46,19 @@ public class SaUserService implements ISaUserService {
 
     @Override
     public ResponseEntity<?> getUsers(String authHeader) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
         List<UserInfo> saUsers = iUserInfoRepository.findAllBySignupUserOrderByFullNameAsc('N');
         List<UserProfileDto> userProfileDtos = new ArrayList<>();
         saUsers.forEach(item -> {
             UserProfileDto userProfileDto = new UserProfileDto();
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
-            //String token = TokenValidator.parseToken(authHeader, "Bearer ");
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
+            //String urlSd = properties.getAuthServiceURL();
+            //String url = "http://localhost:80/AUTH-SERVICE/api/auth/auth/v1/userByUserId?userId=" + item.getId();
             String url = "http://localhost:8083/api/auth/auth/v1/userByUserId?userId=" + item.getId();
             ResponseEntity<AuthUserDto> response = restTemplate.exchange(url, HttpMethod.GET, request, AuthUserDto.class);
             userProfileDto.setUserId(item.getId());
@@ -91,8 +77,8 @@ public class SaUserService implements ISaUserService {
     }
 
     private ResponseEntity<?> addNewUser(UserDto userDto) throws JsonProcessingException {
-        UserInfo saUserEmail = iUserInfoRepository.findByEmail(userDto.getEmail());
-        if (saUserEmail != null) {
+        Optional<UserInfo> saUserEmail = iUserInfoRepository.findByEmail(userDto.getEmail());
+        if (saUserEmail.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
         UserInfo saUser = new ModelMapper().map(userDto, UserInfo.class);

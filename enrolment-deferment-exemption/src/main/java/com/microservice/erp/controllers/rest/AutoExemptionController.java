@@ -3,6 +3,7 @@ package com.microservice.erp.controllers.rest;
 import com.microservice.erp.domain.dto.AutoExemptionDto;
 import com.microservice.erp.domain.entities.AutoExemption;
 import com.microservice.erp.services.iServices.IAutoExemptionService;
+import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
@@ -22,12 +23,16 @@ public class AutoExemptionController {
     private final IAutoExemptionService iAutoExemptionService;
 
     @PostMapping(value = "/readFile")
-    public ResponseEntity<?> readFile(@ModelAttribute AutoExemptionDto autoExemptionDto) throws Exception {
+    public ResponseEntity<?> readFile(@ModelAttribute AutoExemptionDto autoExemptionDto,
+                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
         return iAutoExemptionService.readFile(autoExemptionDto);
     }
 
     @PostMapping(value = "/uploadFile")
-    public ResponseEntity<?> uploadFile(HttpServletRequest request, @ModelAttribute AutoExemptionDto autoExemptionDto) throws Exception {
+    public ResponseEntity<?> uploadFile(HttpServletRequest request, @ModelAttribute AutoExemptionDto autoExemptionDto,
+                                        @RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
         return iAutoExemptionService.uploadFile(request, autoExemptionDto);
     }
 
@@ -58,12 +63,16 @@ public class AutoExemptionController {
     }
 
     @PostMapping(value = "/deleteList")
-    public ResponseEntity<?> deleteList(@RequestBody IAutoExemptionService.AutoExemptionCommand command) {
+    public ResponseEntity<?> deleteList(@RequestBody IAutoExemptionService.AutoExemptionCommand command,
+                                        @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        SpringSecurityAuditorAware.setToken(token);
         return iAutoExemptionService.deleteList(command);
     }
 
     @PostMapping(value = "/save")
-    public ResponseEntity<?> save(@RequestBody AutoExemption autoExemption) {
+    public ResponseEntity<?> save(@RequestBody AutoExemption autoExemption,
+                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        SpringSecurityAuditorAware.setToken(token);
         return iAutoExemptionService.save(autoExemption);
     }
 

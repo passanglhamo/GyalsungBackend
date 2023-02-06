@@ -53,3 +53,7 @@ eureka:
       defaultZone: http://${app.eureka.service.host}:${app.eureka.service.port}/eureka
     fetch-registry: true
 
+#Service-config
+app.eureka.api.gateway.port: 80
+app.eureka.auth.service.url: http://${app.eureka.service.host}:${app.eureka.api.gateway.port}/AUTH-SERVICE/api/auth/
+

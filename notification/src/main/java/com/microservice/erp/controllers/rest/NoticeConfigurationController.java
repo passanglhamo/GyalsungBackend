@@ -3,7 +3,9 @@ package com.microservice.erp.controllers.rest;
 import com.microservice.erp.domain.entities.NoticeConfiguration;
 import com.microservice.erp.services.iServices.ICreateNoticeConfigurationService;
 import com.microservice.erp.services.iServices.IReadNoticeConfigurationService;
+import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,7 +21,9 @@ public class NoticeConfigurationController {
     private final IReadNoticeConfigurationService readService;
 
     @PostMapping
-    public NoticeConfiguration saveNoticeConfiguration(@Valid @RequestBody NoticeConfiguration noticeConfiguration) {
+    public NoticeConfiguration saveNoticeConfiguration(@Valid @RequestBody NoticeConfiguration noticeConfiguration,
+                                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        SpringSecurityAuditorAware.setToken(token);
         return service.saveNoticeConfiguration(noticeConfiguration);
     }
 

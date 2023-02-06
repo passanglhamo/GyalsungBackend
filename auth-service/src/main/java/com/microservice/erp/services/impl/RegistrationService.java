@@ -34,7 +34,6 @@ public class RegistrationService implements iRegistration {
     private PasswordEncoder passwordEncoder;
     private UserRepository repository;
     private IRoleRepository roleRepository;
-    private RestTemplate notifyTemplate;
     private RestTemplate mailTemplate;
 
     @Value("${app.email.noreply}")
@@ -43,12 +42,10 @@ public class RegistrationService implements iRegistration {
     public RegistrationService(UserRepository repository
             , IRoleRepository roleRepository
             , PasswordEncoder passwordEncoder
-            , @Qualifier("notifyTemplate") RestTemplate notifyTemplate
             , @Qualifier("mailTemplate") RestTemplate mailTemplate) {
         this.repository = repository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
-        this.notifyTemplate = notifyTemplate;
         this.mailTemplate = mailTemplate;
     }
 
@@ -63,20 +60,20 @@ public class RegistrationService implements iRegistration {
         final Response response = new Response()
                 .setStatus(HttpStatus.BAD_REQUEST.value())
                 .setMessage("Under Construction!");
-        //
+
         Row properties = new Row()
                 .add("name", account.getUsername())
                 .add("regDate", new SimpleDateFormat("dd-MMM-yyyy").format(new Date()))
                 .add("defaultPass", account.getPassword())
                 .add("loginRef", loginRef);
-        //
+
         SendEmail emailTask = new SendEmail(mailTemplate
                 , noReply
                 , account.getEmail()
                 , String.format("Greetings %s !", account.getUsername())
                 , welcomeTemplate
                 , properties);
-        //
+
         TaskStack stack = TaskStack.createSync(true);
         stack.push(new CheckUserExist(repository, account));
         stack.push(new CreateNewUser(passwordEncoder, repository, roleRepository, account));
@@ -100,12 +97,10 @@ public class RegistrationService implements iRegistration {
         final Response response = new Response()
                 .setStatus(HttpStatus.BAD_REQUEST.value())
                 .setMessage("Under Construction!");
-        //
         TaskStack stack = TaskStack.createSync(true);
         stack.push(new CheckUserExist(repository, tenant.getEmail()));
         stack.push(new CreateNewTenant(passwordEncoder, null, tenant));
         stack.push(new CreateNewUser(passwordEncoder, repository, roleRepository));
-        //stack.push(new SendEmail(noReply, tenant.getEmail(), "Greetings Message!", "welcome-email.html"));
         stack.commit(true, (message, state) -> {
             LOG.info("Tenant Creating Status: " + state.name());
             if (message != null){

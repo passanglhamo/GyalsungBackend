@@ -86,8 +86,8 @@ public class SignupService implements ISignupService {
 
     @Override
     public ResponseEntity<?> receiveEmailVcode(NotificationRequestDto notificationRequestDto) throws Exception {
-        UserInfo userInfoDB = iUserInfoRepository.findByEmail(notificationRequestDto.getEmail());
-        if (userInfoDB != null) {
+        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByEmail(notificationRequestDto.getEmail());
+        if (userInfoDB.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
         String verificationCode = generateVerificationCode(6);
@@ -123,8 +123,8 @@ public class SignupService implements ISignupService {
     @Override
     public ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, JsonProcessingException {
         //check already registered not by CID
-        UserInfo userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
-        if (userInfoDB != null) {
+        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
+        if (userInfoDB.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + signupRequestDto.getCid() + " already exist."));
         }
         //Mobile number verification OTP received from dto must be equal to backend
@@ -145,8 +145,8 @@ public class SignupService implements ISignupService {
         }
 
         //To check if the email is already in use or not
-        UserInfo userInfoEmail = iUserInfoRepository.findByEmail(signupRequestDto.getEmail());
-        if (userInfoEmail != null) {
+        Optional<UserInfo> userInfoEmail = iUserInfoRepository.findByEmail(signupRequestDto.getEmail());
+        if (userInfoEmail.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
         //Password must be equal to confirm password

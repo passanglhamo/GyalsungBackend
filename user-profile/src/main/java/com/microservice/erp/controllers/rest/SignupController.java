@@ -27,7 +27,7 @@ public class SignupController {
     }
 
     @GetMapping("/getCitizenDetails")
-    public ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException {
+    public ResponseEntity<?> getCitizenDetails(String cid, String dob, String pass) throws ParseException, IOException, ApiException {
         return iSignupService.getCitizenDetails(cid, dob);
     }
 

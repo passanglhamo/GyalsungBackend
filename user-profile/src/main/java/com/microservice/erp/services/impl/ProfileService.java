@@ -104,8 +104,8 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> checkEmailExistOrNot(String email) {
-        UserInfo userInfoDb = iUserInfoRepository.findByEmail(email);
-        if (userInfoDb != null) {
+        Optional<UserInfo> userInfoDb = iUserInfoRepository.findByEmail(email);
+        if (!userInfoDb.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         } else {
             return ResponseEntity.ok(new MessageResponse("Email available."));
@@ -172,8 +172,8 @@ public class ProfileService implements IProfileService {
 
 
     private ResponseEntity<?> checkUsernameExistOrNot(String username) {
-        UserInfo userInfoDb = iUserInfoRepository.findByUsername(username);
-        if (userInfoDb != null) {
+        Optional<UserInfo> userInfoDb = iUserInfoRepository.findByUsername(username);
+        if (userInfoDb.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Username already in use."));
         } else {
             return ResponseEntity.ok(new MessageResponse("Username available."));
@@ -297,8 +297,8 @@ public class ProfileService implements IProfileService {
     @Override
     public ResponseEntity<?> syncCensusRecord(UserProfileDto userProfileDto) throws ParseException {
 
-        UserInfo userInfoCheck = iUserInfoRepository.findByCid(userProfileDto.getCid());
-        if (userInfoCheck != null) {
+        Optional<UserInfo> userInfoCheck = iUserInfoRepository.findByCid(userProfileDto.getCid());
+        if (!userInfoCheck.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("User already exist having CID " + userProfileDto.getCid()));
         }
         UserInfo userInfo = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
@@ -320,15 +320,15 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> searchUser(String searchKey) {
-        UserInfo userInfo;
+        Optional<UserInfo> userInfo;
         userInfo = iUserInfoRepository.findByCid(searchKey);
-        if (userInfo == null) {
+        if (!userInfo.isPresent()) {
             userInfo = iUserInfoRepository.findByEmail(searchKey);
         }
-        if (userInfo == null) {
+        if (!userInfo.isPresent()) {
             userInfo = iUserInfoRepository.findByUsername(searchKey);
         }
-        if (userInfo != null) {
+        if (userInfo.isPresent()) {
             return ResponseEntity.ok(userInfo);
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("User not found matching " + searchKey));

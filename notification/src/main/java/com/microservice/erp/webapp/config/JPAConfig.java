@@ -92,10 +92,10 @@ public class JPAConfig {
         return new JpaTransactionManager(entityManagerFactory);
     }
 
-    @Bean
-    public AuditorAware<Username> auditor() {
-        return () -> Optional.ofNullable(new Username("GOD-ADMIN-USERNAME"));
-    }
+//    @Bean
+//    public AuditorAware<Username> auditor() {
+//        return () -> Optional.ofNullable(new Username("GOD-ADMIN-USERNAME"));
+//    }
 
     private Properties additionalProperties() {
         Properties properties = new Properties();

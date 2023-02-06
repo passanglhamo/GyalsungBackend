@@ -1,7 +1,6 @@
 package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.DefermentDto;
-import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import com.microservice.erp.services.iServices.IReadDefermentService;
 import com.microservice.erp.services.iServices.IUpdateDefermentService;

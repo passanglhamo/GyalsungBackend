@@ -1,23 +1,21 @@
 package com.microservice.erp.domain.entities;
 
-import io.swagger.models.parameters.SerializableParameter;
-
-/**
- * @author Rajib Kumer Ghosh
- *
- */
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.infoworks.lab.rest.models.events.Event;
+import com.infoworks.lab.rest.models.events.EventType;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @MappedSuperclass
-public class Persistable<ID,VERSION> implements Serializable {
+public class Persistable<ID, VERSION> extends Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    //@JsonIgnore
     private ID id;
 
     @Version
+    //@JsonIgnore
     private VERSION version;
 
     public ID getId() {
@@ -35,4 +33,20 @@ public class Persistable<ID,VERSION> implements Serializable {
     public void setVersion(VERSION version) {
         this.version = version;
     }
+
+    @JsonIgnore
+    public String getPrimaryKeyName() {
+        if (getClass().isAnnotationPresent(AttributeOverride.class)) {
+            AttributeOverride attr = getClass().getAnnotation(AttributeOverride.class);
+            return attr.column().name();
+        }
+        return "id";
+    }
+
+    @JsonIgnore
+    private String uuid;
+    @JsonIgnore
+    private String timestamp;
+    @JsonIgnore
+    private EventType eventType;
 }
