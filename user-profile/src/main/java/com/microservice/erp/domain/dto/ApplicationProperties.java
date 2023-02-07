@@ -15,4 +15,10 @@ public class ApplicationProperties {
     @Value("${auth.service.user.by.userId}")
     private String authServiceToGetUserById;
 
+    @Value("${training.management.geog.by.geogId}")
+    private String trainingManGeogByGeogId;
+
+    @Value("${training.management.dzongkhag.by.dzongkhayId}")
+    private String trainingManDzongkhagByDzongkhagId;
+
 }

@@ -60,3 +60,9 @@ app.eureka.api.gateway.port: 80
 auth.service.url: http://${app.eureka.service.host}:${app.eureka.api.gateway.port}/AUTH-SERVICE/api/auth
 auth.service.user.by.userId: ${auth.service.url}/auth/v1/userByUserId?userId=
 
+#Training-Management-Service
+training.management.service.url: http://${app.eureka.service.host}:${app.eureka.api.gateway.port}/TRAINING-MANAGEMENT/api/training/management
+training.management.geog.by.geogId: ${training.management.service.url}/common/getGeogByGeogId?geogId=
+training.management.dzongkhag.by.dzongkhayId: ${training.management.service.url}/common/getDzongkhagByDzongkhagId?dzongkhagId=
+
+

@@ -8,13 +8,14 @@ import com.microservice.erp.domain.entities.ChangeMobileNoSmsOtp;
 import com.microservice.erp.domain.entities.UserInfo;
 import com.microservice.erp.domain.helper.FileUploadDTO;
 import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
-import com.microservice.erp.domain.helper.ResponseMessage;
 import com.microservice.erp.domain.repositories.IChangeEmailVerificationCodeRepository;
 import com.microservice.erp.domain.repositories.IChangeMobileNoSmsOtpRepository;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.IProfileService;
 import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-//@AllArgsConstructor
 public class ProfileService implements IProfileService {
     private final UserDao userDao;
     private final IUserInfoRepository iUserInfoRepository;
@@ -57,6 +57,9 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> getProfileInfo(String authHeader, BigInteger userId) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
         UserInfo userInfo = iUserInfoRepository.findById(userId).get();
         UserProfileDto userProfileDto = new ModelMapper().map(userInfo, UserProfileDto.class);
         userProfileDto.setPassword(null);
@@ -65,12 +68,12 @@ public class ProfileService implements IProfileService {
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
         if (userInfo.getPresentGeogId() != null) {
-            String geogUrl = "http://localhost:80/api/training/management/common/getGeogByGeogId?geogId=" + userInfo.getPresentGeogId();
+            String geogUrl = properties.getTrainingManGeogByGeogId() + userInfo.getPresentGeogId();
             ResponseEntity<GeogDto> geogResponse = restTemplate.exchange(geogUrl, HttpMethod.GET, request, GeogDto.class);
             userProfileDto.setPresentGeogName(Objects.requireNonNull(geogResponse.getBody()).getGeogName());
         }
         if (userInfo.getPresentDzongkhagId() != null) {
-            String dzongkhagUrl = "http://localhost:80/api/training/management/common/getDzongkhagByDzongkhagId?dzongkhagId=" + userInfo.getPresentDzongkhagId();
+            String dzongkhagUrl = properties.getTrainingManDzongkhagByDzongkhagId() + userInfo.getPresentDzongkhagId();
             ResponseEntity<DzongkhagDto> dzongkhagResponse = restTemplate.exchange(dzongkhagUrl, HttpMethod.GET, request, DzongkhagDto.class);
             userProfileDto.setPresentDzongkhagName(Objects.requireNonNull(dzongkhagResponse.getBody()).getDzongkhagName());
         }
@@ -98,6 +101,7 @@ public class ProfileService implements IProfileService {
 
         String message = "Your OTP for Gyalsung System is " + otp;
         EventBus eventBusSms = EventBus.withId(null, null, null, message, null, userProfileDto.getMobileNo());
+
         addToQueue.addToQueue("sms", eventBusSms);
         ChangeMobileNoSmsOtp changeMobileNoSmsOtp = new ChangeMobileNoSmsOtp();
         changeMobileNoSmsOtp.setUserId(userProfileDto.getUserId());
@@ -284,7 +288,6 @@ public class ProfileService implements IProfileService {
         userInfo.setDob(dob);
         userInfo.setFullName(userProfileDto.getFullName());
         userInfo.setGender(userProfileDto.getGender());
-//        userInfo.setSex(userProfileDto.getSex().toUpperCase());
         userInfo.setFatherName(userProfileDto.getFatherName());
         userInfo.setMotherName(userProfileDto.getMotherName());
         userInfo.setPermanentPlaceName(userProfileDto.getPermanentPlaceName());
