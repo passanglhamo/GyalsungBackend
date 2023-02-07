@@ -324,6 +324,7 @@ public class ProfileService implements IProfileService {
         FileUploadDTO fileUploadDTO = FileUploadToExternalLocation.fileUploadPathRetriever(request);
         String fileUrl = fileUploadDTO.getUploadFilePath().concat(filename);
         if (!filename.equals("")) {
+            ResponseMessage responseMessage = FileUploadToExternalLocation.fileUploader(profilePicture, filename, "attachFile.properties", request);
             UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
             UserInfo userInfo = new ModelMapper().map(userInfoDb, UserInfo.class);
             userInfo.setProfilePictureName(filename);
