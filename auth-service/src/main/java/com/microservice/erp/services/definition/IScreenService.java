@@ -7,6 +7,8 @@ import java.math.BigInteger;
 import java.util.List;
 
 public interface IScreenService {
+    ResponseEntity<?> getLastScreenId();
+
     ResponseEntity<?> saveScreen(Screen saScreen);
 
     ResponseEntity<?> getAllScreens();
@@ -14,4 +16,5 @@ public interface IScreenService {
     ResponseEntity<?> getScreenById(BigInteger id);
 
     ResponseEntity<?> updateScreen(Screen saScreen);
+
 }
