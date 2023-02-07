@@ -3,9 +3,15 @@ package com.microservice.erp.services.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dao.UserDao;
 import com.microservice.erp.domain.dto.*;
-import com.microservice.erp.domain.entities.*;
-import com.microservice.erp.domain.helper.*;
-import com.microservice.erp.domain.repositories.*;
+import com.microservice.erp.domain.entities.ChangeEmailVerificationCode;
+import com.microservice.erp.domain.entities.ChangeMobileNoSmsOtp;
+import com.microservice.erp.domain.entities.UserInfo;
+import com.microservice.erp.domain.helper.FileUploadDTO;
+import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
+import com.microservice.erp.domain.helper.ResponseMessage;
+import com.microservice.erp.domain.repositories.IChangeEmailVerificationCodeRepository;
+import com.microservice.erp.domain.repositories.IChangeMobileNoSmsOtpRepository;
+import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.IProfileService;
 import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
@@ -59,12 +65,12 @@ public class ProfileService implements IProfileService {
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
         if (userInfo.getPresentGeogId() != null) {
-            String geogUrl = "http://localhost:81/api/training/management/common/getGeogByGeogId?geogId=" + userInfo.getPresentGeogId();
+            String geogUrl = "http://localhost:80/api/training/management/common/getGeogByGeogId?geogId=" + userInfo.getPresentGeogId();
             ResponseEntity<GeogDto> geogResponse = restTemplate.exchange(geogUrl, HttpMethod.GET, request, GeogDto.class);
             userProfileDto.setPresentGeogName(Objects.requireNonNull(geogResponse.getBody()).getGeogName());
         }
         if (userInfo.getPresentDzongkhagId() != null) {
-            String dzongkhagUrl = "http://localhost:81/api/training/management/common/getDzongkhagByDzongkhagId?dzongkhagId=" + userInfo.getPresentDzongkhagId();
+            String dzongkhagUrl = "http://localhost:80/api/training/management/common/getDzongkhagByDzongkhagId?dzongkhagId=" + userInfo.getPresentDzongkhagId();
             ResponseEntity<DzongkhagDto> dzongkhagResponse = restTemplate.exchange(dzongkhagUrl, HttpMethod.GET, request, DzongkhagDto.class);
             userProfileDto.setPresentDzongkhagName(Objects.requireNonNull(dzongkhagResponse.getBody()).getDzongkhagName());
         }
@@ -147,7 +153,7 @@ public class ProfileService implements IProfileService {
         userInfoDb.setEmail(userProfileDto.getEmail());
         iUserInfoRepository.save(userInfoDb);
         //add to queue to update email in auth microservices
-        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null,null, userInfo.getEmail()
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, null, userInfo.getEmail()
                 , null, null, null, null);
         addToQueue.addToUserQueue("changeEmail", eventBusUser);
         return ResponseEntity.ok(new MessageResponse("Email changed successfully."));
@@ -164,7 +170,7 @@ public class ProfileService implements IProfileService {
         userInfo.setUsername(userProfileDto.getUsername());
         iUserInfoRepository.save(userInfo);
         //add to queue to update username in auth microservices
-        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null,null, null
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, null, null
                 , userInfo.getUsername(), null, null, null);
         addToQueue.addToUserQueue("changeUsername", eventBusUser);
         return ResponseEntity.ok(new MessageResponse("Username updated successfully."));
@@ -253,35 +259,6 @@ public class ProfileService implements IProfileService {
         }
     }
 
-    @Override
-    public ResponseEntity<?> getAllDzongkhags(String authHeader) {
-        List<DzongkhagDto> dzongkhagDtos = new ArrayList<>();
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", authHeader);
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        String url = "http://localhost:81/api/training/management/common/getAllDzongkhags";
-        ResponseEntity<DzongkhagDto[]> response = restTemplate.exchange(url, HttpMethod.GET, request, DzongkhagDto[].class);
-        for (DzongkhagDto dzongkhagDto : response.getBody()) {
-            dzongkhagDtos.add(dzongkhagDto);
-        }
-        return ResponseEntity.ok(dzongkhagDtos);
-    }
-
-    @Override
-    public ResponseEntity<?> getGeogByDzongkhagId(String authHeader, Integer dzongkhagId) {
-        List<GeogDto> geogDtos = new ArrayList<>();
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", authHeader);
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        String url = "http://localhost:81/api/training/management/common/getGeogByDzongkhagId?dzongkhagId=" + dzongkhagId;
-        ResponseEntity<GeogDto[]> response = restTemplate.exchange(url, HttpMethod.GET, request, GeogDto[].class);
-        for (GeogDto geogDto : response.getBody()) {
-            geogDtos.add(geogDto);
-        }
-        return ResponseEntity.ok(geogDtos);
-    }
 
     @Override
     public ResponseEntity<?> changeCurrentAddress(UserProfileDto userProfileDto) {
@@ -347,8 +324,6 @@ public class ProfileService implements IProfileService {
         FileUploadDTO fileUploadDTO = FileUploadToExternalLocation.fileUploadPathRetriever(request);
         String fileUrl = fileUploadDTO.getUploadFilePath().concat(filename);
         if (!filename.equals("")) {
-            ResponseMessage responseMessage = FileUploadToExternalLocation.fileUploader(profilePicture, filename, "attachFile.properties", request);
-
             UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
             UserInfo userInfo = new ModelMapper().map(userInfoDb, UserInfo.class);
             userInfo.setProfilePictureName(filename);

@@ -16,6 +16,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.wso2.client.api.ApiClient;
@@ -121,6 +122,7 @@ public class SignupService implements ISignupService {
 
     @Override
     public ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, JsonProcessingException {
+
         //check already registered not by CID
         Optional<UserInfo> userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
         if (userInfoDB.isPresent()) {
@@ -158,6 +160,7 @@ public class SignupService implements ISignupService {
         UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
         userInfo.setSignupUser('Y');
         userInfo.setUsername(signupRequestDto.getCid());
+
         BigInteger userId = iUserInfoRepository.save(userInfo).getId();
 //        todo: add to queue following data: password, roles, email, username, userId
 

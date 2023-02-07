@@ -1,9 +1,6 @@
 package com.microservice.erp.domain.entities;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigInteger;
 
 
@@ -12,6 +9,7 @@ public class ApiAccessToken {
     //region private variables
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", columnDefinition = "bigint")
     private BigInteger id;
 

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Setter
 public class ApplicationProperties {
 
-    @Value("${app.eureka.auth.service.url}")
-    private String authServiceURL;
-    
+    @Value("${auth.service.user.by.userId}")
+    private String authServiceToGetUserById;
+
 }

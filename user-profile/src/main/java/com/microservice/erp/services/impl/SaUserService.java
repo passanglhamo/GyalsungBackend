@@ -143,8 +143,7 @@ public class SaUserService implements ISaUserService {
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
 
-            //todo: need to call other ms via service discovery
-            String url = "http://localhost:8083/api/auth/auth/v1/userByUserId?userId=" + item.getId();
+            String url = properties.getAuthServiceToGetUserById() + item.getId();
             ResponseEntity<AuthUserDto> response = restTemplate.exchange(url, HttpMethod.GET, request, AuthUserDto.class);
             userProfileDto.setUserId(item.getId());
             userProfileDto.setFullName(item.getFullName());

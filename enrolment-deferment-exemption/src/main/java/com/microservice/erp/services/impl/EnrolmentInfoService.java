@@ -1,6 +1,5 @@
 package com.microservice.erp.services.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservice.erp.domain.dao.EnrolmentDao;
 import com.microservice.erp.domain.dto.EnrolmentListDto;
 import com.microservice.erp.domain.dto.EventBus;
@@ -11,14 +10,15 @@ import com.microservice.erp.domain.entities.EnrolmentInfo;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.helper.StatusResponse;
 import com.microservice.erp.domain.mapper.EnrolmentMapper;
-import com.microservice.erp.domain.repositories.IEnrolmentCoursePreferenceRepository;
 import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,7 +34,6 @@ import java.util.Objects;
 public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     private final IEnrolmentInfoRepository iEnrolmentInfoRepository;
-    private final IEnrolmentCoursePreferenceRepository iEnrolmentCoursePreferenceRepository;
     private final EnrolmentMapper enrolmentMapper;
     private final IRegistrationDateInfoRepository iRegistrationDateInfoRepository;
     private final EnrolmentDao enrolmentDao;
@@ -62,7 +61,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> saveEnrolment(String authHeader, EnrolmentDto enrolmentDto) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
+        //todo need to remove static code
         RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus('A');
         if (registrationDateInfo == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Registration date information not found."));
@@ -75,20 +74,12 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             return ResponseEntity.badRequest().body(new MessageResponse("You have already enrolled."));
         }
 
-//        StatusResponse responseMessage = (StatusResponse) defermentExemptionValidation
-//                .getDefermentAndExemptValidation(new BigInteger(String.valueOf(enrolmentDto.getUserId())), 'N').getBody();
-//
-//        if (!Objects.isNull(responseMessage)) {
-//            if (responseMessage.getSavingStatus().equals("EA")) {
-//                return new ResponseEntity<>("User is exempted from the gyalsung program.", HttpStatus.ALREADY_REPORTED);
-//
-//            }
-//        }
 
         enrolmentDto.setYear(registrationYear);
-        enrolmentDto.setStatus('P');//P=Pending, D=Deferred, E=Exempted, A=Approved, which means training academy allocated
+        enrolmentDto.setStatus(ApprovalStatus.PENDING.value());//P=Pending, D=Deferred, E=Exempted, A=Approved, which means training academy allocated
         enrolmentDto.setEnrolledOn(new Date());
 
+        //todo need to remove static code
         String paramDate = registrationYear + "/12/31";// as on 31st December in the registration date
         BigInteger userId = new BigInteger(String.valueOf(enrolmentDto.getUserId()));
         //check if user is below 18 or not, need to call user service
@@ -96,6 +87,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
+
         String url = "http://localhost:81/api/user/profile/userProfile/checkUnderAge?userId=" + userId + "&paramDate=" + paramDate;
         ResponseEntity<UserProfileDto> userDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserProfileDto.class);
         Integer age = Objects.requireNonNull(userDtoResponse.getBody()).getAge();

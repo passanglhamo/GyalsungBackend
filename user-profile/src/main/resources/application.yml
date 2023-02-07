@@ -55,5 +55,8 @@ eureka:
 
 #Service-config
 app.eureka.api.gateway.port: 80
-app.eureka.auth.service.url: http://${app.eureka.service.host}:${app.eureka.api.gateway.port}/AUTH-SERVICE/api/auth/
+
+#Auth-service
+auth.service.url: http://${app.eureka.service.host}:${app.eureka.api.gateway.port}/AUTH-SERVICE/api/auth
+auth.service.user.by.userId: ${auth.service.url}/auth/v1/userByUserId?userId=
 
