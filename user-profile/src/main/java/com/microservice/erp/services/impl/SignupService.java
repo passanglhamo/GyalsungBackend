@@ -16,6 +16,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.wso2.client.api.ApiClient;
@@ -47,7 +48,6 @@ public class SignupService implements ISignupService {
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
     private final HeaderToken headerToken;
-
 
 
     @Override
@@ -86,8 +86,8 @@ public class SignupService implements ISignupService {
 
     @Override
     public ResponseEntity<?> receiveEmailVcode(NotificationRequestDto notificationRequestDto) throws Exception {
-        UserInfo userInfoDB = iUserInfoRepository.findByEmail(notificationRequestDto.getEmail());
-        if (userInfoDB != null) {
+        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByEmail(notificationRequestDto.getEmail());
+        if (userInfoDB.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
         String verificationCode = generateVerificationCode(6);
@@ -122,9 +122,10 @@ public class SignupService implements ISignupService {
 
     @Override
     public ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, JsonProcessingException {
+
         //check already registered not by CID
-        UserInfo userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
-        if (userInfoDB != null) {
+        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
+        if (userInfoDB.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + signupRequestDto.getCid() + " already exist."));
         }
         //Mobile number verification OTP received from dto must be equal to backend
@@ -145,8 +146,8 @@ public class SignupService implements ISignupService {
         }
 
         //To check if the email is already in use or not
-        UserInfo userInfoEmail = iUserInfoRepository.findByEmail(signupRequestDto.getEmail());
-        if (userInfoEmail != null) {
+        Optional<UserInfo> userInfoEmail = iUserInfoRepository.findByEmail(signupRequestDto.getEmail());
+        if (userInfoEmail.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
         //Password must be equal to confirm password
@@ -159,10 +160,11 @@ public class SignupService implements ISignupService {
         UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
         userInfo.setSignupUser('Y');
         userInfo.setUsername(signupRequestDto.getCid());
+
         BigInteger userId = iUserInfoRepository.save(userInfo).getId();
 //        todo: add to queue following data: password, roles, email, username, userId
 
-        EventBusUser eventBusSms = EventBusUser.withId(userId, userInfo.getCid(), userInfo.getEmail()
+        EventBusUser eventBusSms = EventBusUser.withId(userId, 'A', userInfo.getCid(), userInfo.getEmail()
                 , userInfo.getUsername(), signupRequestDto.getPassword(), userInfo.getSignupUser(), null);
         addToQueue.addToUserQueue("addUser", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));
@@ -174,7 +176,7 @@ public class SignupService implements ISignupService {
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
         String getExpectedUserDetails = props.getProperty("getExpectedUserDetails.endPointURL");
-        String userUrl = getExpectedUserDetails+"/"+dateString+"/18";
+        String userUrl = getExpectedUserDetails + "/" + dateString + "/18";
         URL url = new URL(userUrl);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -185,7 +187,7 @@ public class SignupService implements ISignupService {
 
         con.setRequestMethod("GET");
         con.setRequestProperty("Content-Type", "application/json");
-        con.setRequestProperty("Authorization", "Bearer "+apiAccessToken.getAccess_token());
+        con.setRequestProperty("Authorization", "Bearer " + apiAccessToken.getAccess_token());
 
 
         int responseCode = con.getResponseCode();
@@ -221,7 +223,6 @@ public class SignupService implements ISignupService {
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
         String getCitizenDetails = props.getProperty("getCitizenDetails.endPointURL");
-
 
 
         OkHttpClient httpClient = new OkHttpClient();

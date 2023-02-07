@@ -3,12 +3,20 @@ package com.microservice.erp.services.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dao.UserDao;
 import com.microservice.erp.domain.dto.*;
-import com.microservice.erp.domain.entities.*;
-import com.microservice.erp.domain.helper.*;
-import com.microservice.erp.domain.repositories.*;
+import com.microservice.erp.domain.entities.ChangeEmailVerificationCode;
+import com.microservice.erp.domain.entities.ChangeMobileNoSmsOtp;
+import com.microservice.erp.domain.entities.UserInfo;
+import com.microservice.erp.domain.helper.FileUploadDTO;
+import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
+import com.microservice.erp.domain.helper.ResponseMessage;
+import com.microservice.erp.domain.repositories.IChangeEmailVerificationCodeRepository;
+import com.microservice.erp.domain.repositories.IChangeMobileNoSmsOtpRepository;
+import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.IProfileService;
 import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,7 +33,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-//@AllArgsConstructor
 public class ProfileService implements IProfileService {
     private final UserDao userDao;
     private final IUserInfoRepository iUserInfoRepository;
@@ -51,6 +58,9 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> getProfileInfo(String authHeader, BigInteger userId) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
         UserInfo userInfo = iUserInfoRepository.findById(userId).get();
         UserProfileDto userProfileDto = new ModelMapper().map(userInfo, UserProfileDto.class);
         userProfileDto.setPassword(null);
@@ -59,12 +69,12 @@ public class ProfileService implements IProfileService {
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
         if (userInfo.getPresentGeogId() != null) {
-            String geogUrl = "http://localhost:81/api/training/management/common/getGeogByGeogId?geogId=" + userInfo.getPresentGeogId();
+            String geogUrl = properties.getTrainingManGeogByGeogId() + userInfo.getPresentGeogId();
             ResponseEntity<GeogDto> geogResponse = restTemplate.exchange(geogUrl, HttpMethod.GET, request, GeogDto.class);
             userProfileDto.setPresentGeogName(Objects.requireNonNull(geogResponse.getBody()).getGeogName());
         }
         if (userInfo.getPresentDzongkhagId() != null) {
-            String dzongkhagUrl = "http://localhost:81/api/training/management/common/getDzongkhagByDzongkhagId?dzongkhagId=" + userInfo.getPresentDzongkhagId();
+            String dzongkhagUrl = properties.getTrainingManDzongkhagByDzongkhagId() + userInfo.getPresentDzongkhagId();
             ResponseEntity<DzongkhagDto> dzongkhagResponse = restTemplate.exchange(dzongkhagUrl, HttpMethod.GET, request, DzongkhagDto.class);
             userProfileDto.setPresentDzongkhagName(Objects.requireNonNull(dzongkhagResponse.getBody()).getDzongkhagName());
         }
@@ -92,6 +102,7 @@ public class ProfileService implements IProfileService {
 
         String message = "Your OTP for Gyalsung System is " + otp;
         EventBus eventBusSms = EventBus.withId(null, null, null, message, null, userProfileDto.getMobileNo());
+
         addToQueue.addToQueue("sms", eventBusSms);
         ChangeMobileNoSmsOtp changeMobileNoSmsOtp = new ChangeMobileNoSmsOtp();
         changeMobileNoSmsOtp.setUserId(userProfileDto.getUserId());
@@ -104,8 +115,8 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> checkEmailExistOrNot(String email) {
-        UserInfo userInfoDb = iUserInfoRepository.findByEmail(email);
-        if (userInfoDb != null) {
+        Optional<UserInfo> userInfoDb = iUserInfoRepository.findByEmail(email);
+        if (!userInfoDb.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         } else {
             return ResponseEntity.ok(new MessageResponse("Email available."));
@@ -147,7 +158,7 @@ public class ProfileService implements IProfileService {
         userInfoDb.setEmail(userProfileDto.getEmail());
         iUserInfoRepository.save(userInfoDb);
         //add to queue to update email in auth microservices
-        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, userInfo.getEmail()
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, null, userInfo.getEmail()
                 , null, null, null, null);
         addToQueue.addToUserQueue("changeEmail", eventBusUser);
         return ResponseEntity.ok(new MessageResponse("Email changed successfully."));
@@ -164,7 +175,7 @@ public class ProfileService implements IProfileService {
         userInfo.setUsername(userProfileDto.getUsername());
         iUserInfoRepository.save(userInfo);
         //add to queue to update username in auth microservices
-        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, null
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, null, null
                 , userInfo.getUsername(), null, null, null);
         addToQueue.addToUserQueue("changeUsername", eventBusUser);
         return ResponseEntity.ok(new MessageResponse("Username updated successfully."));
@@ -172,8 +183,8 @@ public class ProfileService implements IProfileService {
 
 
     private ResponseEntity<?> checkUsernameExistOrNot(String username) {
-        UserInfo userInfoDb = iUserInfoRepository.findByUsername(username);
-        if (userInfoDb != null) {
+        Optional<UserInfo> userInfoDb = iUserInfoRepository.findByUsername(username);
+        if (userInfoDb.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Username already in use."));
         } else {
             return ResponseEntity.ok(new MessageResponse("Username available."));
@@ -253,35 +264,6 @@ public class ProfileService implements IProfileService {
         }
     }
 
-    @Override
-    public ResponseEntity<?> getAllDzongkhags(String authHeader) {
-        List<DzongkhagDto> dzongkhagDtos = new ArrayList<>();
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", authHeader);
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        String url = "http://localhost:81/api/training/management/common/getAllDzongkhags";
-        ResponseEntity<DzongkhagDto[]> response = restTemplate.exchange(url, HttpMethod.GET, request, DzongkhagDto[].class);
-        for (DzongkhagDto dzongkhagDto : response.getBody()) {
-            dzongkhagDtos.add(dzongkhagDto);
-        }
-        return ResponseEntity.ok(dzongkhagDtos);
-    }
-
-    @Override
-    public ResponseEntity<?> getGeogByDzongkhagId(String authHeader, Integer dzongkhagId) {
-        List<GeogDto> geogDtos = new ArrayList<>();
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", authHeader);
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        String url = "http://localhost:81/api/training/management/common/getGeogByDzongkhagId?dzongkhagId=" + dzongkhagId;
-        ResponseEntity<GeogDto[]> response = restTemplate.exchange(url, HttpMethod.GET, request, GeogDto[].class);
-        for (GeogDto geogDto : response.getBody()) {
-            geogDtos.add(geogDto);
-        }
-        return ResponseEntity.ok(geogDtos);
-    }
 
     @Override
     public ResponseEntity<?> changeCurrentAddress(UserProfileDto userProfileDto) {
@@ -297,8 +279,8 @@ public class ProfileService implements IProfileService {
     @Override
     public ResponseEntity<?> syncCensusRecord(UserProfileDto userProfileDto) throws ParseException {
 
-        UserInfo userInfoCheck = iUserInfoRepository.findByCid(userProfileDto.getCid());
-        if (userInfoCheck != null) {
+        Optional<UserInfo> userInfoCheck = iUserInfoRepository.findByCid(userProfileDto.getCid());
+        if (!userInfoCheck.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("User already exist having CID " + userProfileDto.getCid()));
         }
         UserInfo userInfo = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
@@ -307,7 +289,6 @@ public class ProfileService implements IProfileService {
         userInfo.setDob(dob);
         userInfo.setFullName(userProfileDto.getFullName());
         userInfo.setGender(userProfileDto.getGender());
-//        userInfo.setSex(userProfileDto.getSex().toUpperCase());
         userInfo.setFatherName(userProfileDto.getFatherName());
         userInfo.setMotherName(userProfileDto.getMotherName());
         userInfo.setPermanentPlaceName(userProfileDto.getPermanentPlaceName());
@@ -320,15 +301,15 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> searchUser(String searchKey) {
-        UserInfo userInfo;
+        Optional<UserInfo> userInfo;
         userInfo = iUserInfoRepository.findByCid(searchKey);
-        if (userInfo == null) {
+        if (!userInfo.isPresent()) {
             userInfo = iUserInfoRepository.findByEmail(searchKey);
         }
-        if (userInfo == null) {
+        if (!userInfo.isPresent()) {
             userInfo = iUserInfoRepository.findByUsername(searchKey);
         }
-        if (userInfo != null) {
+        if (userInfo.isPresent()) {
             return ResponseEntity.ok(userInfo);
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("User not found matching " + searchKey));
@@ -348,7 +329,6 @@ public class ProfileService implements IProfileService {
         String fileUrl = fileUploadDTO.getUploadFilePath().concat(filename);
         if (!filename.equals("")) {
             ResponseMessage responseMessage = FileUploadToExternalLocation.fileUploader(profilePicture, filename, "attachFile.properties", request);
-
             UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
             UserInfo userInfo = new ModelMapper().map(userInfoDb, UserInfo.class);
             userInfo.setProfilePictureName(filename);

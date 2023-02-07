@@ -8,8 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
-
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/parentConsent")
@@ -21,7 +19,6 @@ public class ParentConsentController {
     public ResponseEntity<?> receiveOtp(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                         @RequestBody ParentConsentDto parentConsentDto) throws Exception {
         SpringSecurityAuditorAware.setToken(token);
-
         return parentConsentService.receiveOtp(parentConsentDto);
     }
 

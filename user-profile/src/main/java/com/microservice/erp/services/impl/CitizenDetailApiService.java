@@ -61,16 +61,6 @@ public class CitizenDetailApiService {
         String consumerKey = props.getProperty("CONSUMER.KEY");
         String consumerSecret = props.getProperty("CONSUMER.SECRET");
 
-
-        /*ResourceBundle resourceBundle1 = ResourceBundle.getBundle("wsEndPointURL_en_US");
-        String dataHubEndPointUrl = resourceBundle1.getString("getDatahubToken.endPointURL");
-        String consumerKey = resourceBundle1.getString("CONSUMER.KEY");
-        String consumerSecret = resourceBundle1.getString("CONSUMER.SECRET");
-        */
-
-//        String consumerKey = "8TSm4oRLfIWOCIAfTrPCb7rCd3ga";
-//        String consumerSecret = "zXDkGmn1yFp6jfsw6R4XkigJl0ga";
-
         ApiAccessToken apiAccessToken = new ApiAccessToken();
         String authStringEnc = Base64.getEncoder().encodeToString((consumerKey + ":" + consumerSecret).getBytes());
         HttpHeaders headers = new HttpHeaders();

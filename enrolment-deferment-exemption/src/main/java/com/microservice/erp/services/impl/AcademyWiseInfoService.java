@@ -30,7 +30,8 @@ public class AcademyWiseInfoService implements IAcademyWiseInfoService {
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
         List<TrainingAcademyDto> trainingAcademyDtos = new ArrayList<>();
-        String url = "http://localhost:81/api/training/management/common/getAllTrainingAcademies";
+        //Todo Need to add discovery url name
+        String url = "http://localhost:8086/api/training/management/common/getAllTrainingAcademies";
         ResponseEntity<TrainingAcademyDto[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, request, TrainingAcademyDto[].class);
         for (TrainingAcademyDto trainingAcademyDto : Objects.requireNonNull(responseEntity.getBody())) {
             BigInteger noOfMaleEnrolled = academyWiseInfoDao.getEnrolmentFigureByYear(year, 'M', trainingAcademyDto.getTrainingAcaId());

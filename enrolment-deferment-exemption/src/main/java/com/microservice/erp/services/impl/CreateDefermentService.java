@@ -9,7 +9,6 @@ import com.microservice.erp.domain.mapper.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -32,7 +31,6 @@ public class CreateDefermentService implements ICreateDefermentService {
     private final AddToQueue addToQueue;
     private final DefermentExemptionValidation defermentExemptionValidation;
     Integer fileLength = 5;
-    Environment environment;
 
 
     @Transactional

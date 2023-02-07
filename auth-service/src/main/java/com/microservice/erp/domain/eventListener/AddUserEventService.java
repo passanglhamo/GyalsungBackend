@@ -36,9 +36,10 @@ public class AddUserEventService {
 
         if (!userDb.isPresent()) {
             userInfo.setUserId(userEventInfo.getUserId());
-            userInfo.setUsername(Objects.isNull(userEventInfo.getCid())?userEventInfo.getEmail():
+            userInfo.setUsername(Objects.isNull(userEventInfo.getCid()) ? userEventInfo.getEmail() :
                     userEventInfo.getCid());
             userInfo.setEmail(userEventInfo.getEmail());
+            userInfo.setStatus(userEventInfo.getStatus());
             userInfo.setCid(userEventInfo.getCid());
             userInfo.setPassword(encoder.encode(userEventInfo.getPassword()));
             userInfo.setSecrets(User.createRandomMapOfSecret());
@@ -58,9 +59,10 @@ public class AddUserEventService {
 
         } else {
             repository.findByUserId(userEventInfo.userId).ifPresent(user -> {
+                user.setStatus(userEventInfo.getStatus());
                 user.setUserId(userEventInfo.userId);
                 Set<Role> saRoles = new HashSet<>();
-                Set<Role> roleDb=user.getRoles();
+                Set<Role> roleDb = user.getRoles();
                 user.getRoles().removeAll(roleDb);
                 if (userEventInfo.getIsOpenUser().equals('Y')) {
                     Role saRoleDb = roleRepository.findByIsOpenUser('Y');// to get student user role information

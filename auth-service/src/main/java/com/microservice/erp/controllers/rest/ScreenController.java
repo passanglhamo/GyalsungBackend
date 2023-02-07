@@ -18,6 +18,11 @@ public class ScreenController {
         this.iSaScreenService = iSaScreenService;
     }
 
+    @GetMapping("/getLastScreenId")
+    public ResponseEntity<?> getLastScreenId() {
+        return iSaScreenService.getLastScreenId();
+    }
+
     @PostMapping
     public ResponseEntity<?> saveScreen(@Valid @RequestBody Screen saScreen) {
             return iSaScreenService.saveScreen(saScreen);

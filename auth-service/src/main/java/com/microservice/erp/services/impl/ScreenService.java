@@ -22,6 +22,16 @@ public class ScreenService implements IScreenService {
     }
 
     @Override
+    public ResponseEntity<?> getLastScreenId() {
+        Screen screen = saScreenRepository.findTop1ByOrderByScreenIdDesc();
+        Integer lastScreenId = 1;
+        if (screen != null) {
+            lastScreenId = screen.getScreenId() + 1;
+        }
+        return ResponseEntity.ok(lastScreenId);
+    }
+
+    @Override
     public ResponseEntity<?> saveScreen(Screen saScreen) {
         Screen saScreenDb = saScreenRepository.findByScreenId(saScreen.getScreenId());
         if (saScreenDb != null) {

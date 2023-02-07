@@ -30,6 +30,8 @@ public interface IAutoExemptionService {
 
     ResponseEntity<?> save(AutoExemption autoExemption);
 
+    ResponseEntity<?> searchByNoOfRecords(Integer page, Integer noOfRecords);
+
     @Getter
     @Setter
     @AllArgsConstructor

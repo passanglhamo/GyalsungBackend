@@ -1,14 +1,18 @@
 package com.microservice.erp.domain.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.math.BigInteger;
 
 
 @Entity(name = "api_access_token")
-//@AttributeOverride(name = "id", column = @Column(name = "USERID"))
-public class ApiAccessToken extends Auditable<BigInteger, Long> {
+public class ApiAccessToken {
     //region private variables
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", columnDefinition = "bigint")
+    private BigInteger id;
+
     @Column(name = "access_token", columnDefinition = "varchar(255)")
     private String access_token;
 
@@ -26,6 +30,16 @@ public class ApiAccessToken extends Auditable<BigInteger, Long> {
     //endregion
 
     //region setters and getters
+
+
+    public BigInteger getId() {
+        return id;
+    }
+
+    public void setId(BigInteger id) {
+        this.id = id;
+    }
+
     public String getAccess_token() {
         return access_token;
     }

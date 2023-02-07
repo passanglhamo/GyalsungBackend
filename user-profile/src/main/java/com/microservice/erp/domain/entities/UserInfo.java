@@ -1,32 +1,27 @@
 package com.microservice.erp.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 
-//@Setter
-//@Getter
+
 @AllArgsConstructor
 @Entity(name = "user_info")
 @AttributeOverride(name = "id", column = @Column(name = "user_id", columnDefinition = "bigint"))
-public class UserInfo extends Auditable<BigInteger, Long> {
+public class UserInfo extends Auditable<BigInteger, Long> implements UserDetails {
 
     @NotNull(message = "Username must not be null.")
     @Basic(optional = false)
     @Column(name = "username", columnDefinition = "varchar(255)")
     private String username;
-
-//    @NotNull(message = "Password cannot be null")
-//    @Size(max = 250)
-//    @Basic(optional = false)
-//    @Column(name = "password", columnDefinition = "varchar(255)")
-//    private String password;
 
     @Basic(optional = false)
     @NotNull(message = "Full name cannot be null")
@@ -153,18 +148,59 @@ public class UserInfo extends Auditable<BigInteger, Long> {
     @NotNull
     @Column(name = "signup_user", columnDefinition = "char(1)")
     private Character signupUser;
-//
-//    @NotNull
-//    @Column(name = "status", columnDefinition = "char(1)")
-//    private Character status;
+
+    @JsonIgnore
+    private boolean enabled;
 
 
     public UserInfo() {
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
+    }
+
+    @Override
     public String getUsername() {
         return username;
     }
+
+    @Override
+    @JsonIgnore
+    @Transient
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    @JsonIgnore
+    @Transient
+    public boolean isAccountNonLocked() {
+        return enabled;
+    }
+
+    @Override
+    @JsonIgnore
+    @Transient
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
 
     public void setUsername(String username) {
         this.username = username;
@@ -488,6 +524,20 @@ public class UserInfo extends Auditable<BigInteger, Long> {
 
     public void setSignupUser(Character signupUser) {
         this.signupUser = signupUser;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserInfo user = (UserInfo) o;
+        return getId().equals(user.getId()) && username.equals(user.username);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), username);
     }
 
 }

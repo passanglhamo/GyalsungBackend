@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IUserInfoRepository extends JpaRepository<UserInfo, BigInteger> {
@@ -15,11 +16,11 @@ public interface IUserInfoRepository extends JpaRepository<UserInfo, BigInteger>
     @Override
     long count();
 
-    UserInfo findByCid(String cid);
+    Optional<UserInfo> findByCid(String cid);
 
-    UserInfo findByEmail(String searchKey);
+    Optional<UserInfo> findByEmail(String searchKey);
 
-    UserInfo findByUsername(String searchKey);
+    Optional<UserInfo> findByUsername(String searchKey);
 
     @Query(value = "select * from user_info u where date_part('year',age(:paramDate, u.dob)) >=:paramAge", nativeQuery = true)
     List<UserInfo> getAllUsersEligibleForTraining(Date paramDate, Integer paramAge);

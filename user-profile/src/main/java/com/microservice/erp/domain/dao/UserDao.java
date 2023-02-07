@@ -43,4 +43,13 @@ public class UserDao extends BaseDao {
                 .setParameter("userId", userId);
         return hQuery.list().isEmpty() ? null : (String) hQuery.list().get(0);
     }
+
+    @Transactional
+    public String isCidAlreadyInUse(String cid, BigInteger userId) {
+        String sqlQuery = environment.getProperty("CommonDao.isCidAlreadyInUse");
+        NativeQuery hQuery = (NativeQuery) hibernateQuery(sqlQuery)
+                .setParameter("cid", cid)
+                .setParameter("userId", userId);
+        return hQuery.list().isEmpty() ? null : (String) hQuery.list().get(0);
+    }
 }

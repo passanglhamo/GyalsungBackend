@@ -37,10 +37,6 @@ public interface IProfileService {
 
     ResponseEntity<?> changeSocialMediaLink(UserProfileDto userProfileDto);
 
-    ResponseEntity<?> getAllDzongkhags(String authHeader);
-
-    ResponseEntity<?> getGeogByDzongkhagId(String authHeader, Integer dzongkhagId);
-
     ResponseEntity<?> changeCurrentAddress(UserProfileDto userProfileDto);
 
     ResponseEntity<?> syncCensusRecord(UserProfileDto userProfileDto) throws ParseException;

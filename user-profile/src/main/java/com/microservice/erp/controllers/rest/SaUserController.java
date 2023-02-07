@@ -3,8 +3,14 @@ package com.microservice.erp.controllers.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.UserDto;
 import com.microservice.erp.services.iServices.ISaUserService;
+import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.wso2.client.api.ApiException;
+
+import java.io.IOException;
+import java.text.ParseException;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -16,13 +22,22 @@ public class SaUserController {
         this.iSaUserService = iSaUserService;
     }
 
+    @GetMapping("/getCensusDetailByCid")
+    public ResponseEntity<?> getCensusDetailByCid(@RequestParam("cid") String cid) throws ParseException, ApiException, IOException {
+        return iSaUserService.getCensusDetailByCid(cid);
+    }
+
     @PostMapping("/addUser")
-    public ResponseEntity<?> addUser(@RequestBody UserDto userDto) throws JsonProcessingException {
+    public ResponseEntity<?> addUser(@RequestBody UserDto userDto,
+                                     @RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws JsonProcessingException {
+        SpringSecurityAuditorAware.setToken(token);
         return iSaUserService.saveUser(userDto);
     }
 
     @PostMapping("/editUser")
-    public ResponseEntity<?> editUser(@RequestBody UserDto userDto) throws JsonProcessingException {
+    public ResponseEntity<?> editUser(@RequestBody UserDto userDto,
+                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws JsonProcessingException {
+        SpringSecurityAuditorAware.setToken(token);
         return iSaUserService.saveUser(userDto);
     }
 
@@ -31,9 +46,5 @@ public class SaUserController {
         return iSaUserService.getUsers(authHeader);
     }
 
-    @GetMapping("/getAllRoles")
-    public ResponseEntity<?> getAllRoles() {
-        return iSaUserService.getAllRoles();
-    }
 
 }

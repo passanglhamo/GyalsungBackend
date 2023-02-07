@@ -94,15 +94,16 @@ public class NdiService implements INdiService {
             String proofValueFromVerifier = new String(message.getData(), StandardCharsets.UTF_8);
 
             JSONObject obj = new JSONObject(proofValueFromVerifier);
-            String cid = obj.getJSONObject("data").getJSONObject("requested_presentation").getJSONObject("self_attested_attrs").getString("ID Number");
+            String cid = obj.getJSONObject("data").getJSONObject("requested_presentation")
+                    .getJSONObject("revealed_attrs").getJSONObject("ID Number")
+                    .getString("value");
+            //String cid = obj.getJSONObject("data").getJSONObject("requested_presentation").getJSONObject("self_attested_attrs").getString("ID Number");
 
             Optional<User> user = userRepository.findByCid(cid);
 
             if (user.isPresent()) {
                 LoginRequest loginRequest = new LoginRequest();
                 loginRequest.setUsername(user.get().getUsername());
-                //todo need to decode password
-                loginRequest.setPassword("12345678");
                 try {
                     ResponseEntity<?> response = login.doLogin(loginRequest,true);
 

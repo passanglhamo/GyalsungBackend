@@ -1,32 +1,20 @@
 package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
-import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
-import com.microservice.erp.services.iServices.IUpdateDefermentService;
 import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.math.BigInteger;
-import java.util.Objects;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/enrolment")
 @AllArgsConstructor
 public class EnrolmentController {
-//    private static Logger LOG = LoggerFactory.getLogger(EnrolmentController.class.getSimpleName());
 
     private final IEnrolmentInfoService iEnrolmentInfoService;
 
@@ -39,12 +27,6 @@ public class EnrolmentController {
     public ResponseEntity<?> getMyEnrolmentInfo(@RequestParam("userId") BigInteger userId) {
         return iEnrolmentInfoService.getMyEnrolmentInfo(userId);
     }
-
-//    @RequestMapping(value = "/downloadParentConsentForm", method = RequestMethod.GET)
-//    public ResponseEntity<?> downloadFile(@RequestParam("url") String url) {
-//        FileSystemResource file = new FileSystemResource(new File(url));
-//        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
-//    }
 
     @PostMapping(value = "/saveEnrolment")
     public ResponseEntity<?> saveEnrolment(@RequestHeader("Authorization") String authHeader,

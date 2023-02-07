@@ -2,15 +2,12 @@ package com.microservice.erp.controllers.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.UserProfileDto;
-import com.microservice.erp.domain.helper.ResponseMessage;
 import com.microservice.erp.services.iServices.IProfileService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
@@ -99,16 +96,6 @@ public class UserProfileController {
     @PostMapping("/changeCurrentAddress")
     public ResponseEntity<?> changeCurrentAddress(@RequestBody UserProfileDto userProfileDto) {
         return iProfileService.changeCurrentAddress(userProfileDto);
-    }
-
-    @GetMapping("/getAllDzongkhags")
-    public ResponseEntity<?> allDzongkhags(@RequestHeader("Authorization") String authHeader) {
-        return iProfileService.getAllDzongkhags(authHeader);
-    }
-
-    @GetMapping("/getGeogByDzongkhagId")
-    public ResponseEntity<?> getGeogByDzongkhagId(@RequestHeader("Authorization") String authHeader, @RequestParam("dzongkhagId") Integer dzongkhagId) {
-        return iProfileService.getGeogByDzongkhagId(authHeader, dzongkhagId);
     }
 
     @PostMapping("/syncCensusRecord")

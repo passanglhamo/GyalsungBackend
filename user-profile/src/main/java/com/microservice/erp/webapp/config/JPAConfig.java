@@ -3,7 +3,6 @@ package com.microservice.erp.webapp.config;
 import com.microservice.erp.domain.entities.Username;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
@@ -15,13 +14,22 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.math.BigInteger;
+import java.security.Principal;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
+
+import static java.util.Optional.*;
 
 @Configuration
 @EnableJpaAuditing
@@ -93,10 +101,44 @@ public class JPAConfig {
         return new JpaTransactionManager(entityManagerFactory);
     }
 
-    @Bean
-    public AuditorAware<Username> auditor() {
-        return () -> Optional.ofNullable(new Username("GOD-ADMIN-USERNAME"));
-    }
+
+//    @Bean
+//    public AuditorAware<Username> auditor() {
+////
+////        Supplier<Boolean> isAnonymous = () -> Optional.ofNullable(SecurityContextHolder.getContext())
+////                .map(SecurityContext::getAuthentication)
+////                .filter(Authentication::isAuthenticated)
+////                .map(Authentication::getPrincipal)
+////                .map(isStudent -> isStudent.toString().equals("anonymousUser"))
+////                .orElse(false);
+//////        Boolean isStudentVal = ()-> ofNullable(SecurityContextHolder.getContext())
+//////                        .map(SecurityContext::getAuthentication)
+//////                        .filter(Authentication::isAuthenticated)
+//////                        .map(Authentication::getPrincipal)
+//////                .map(isStudent-> {
+//////                    if(isStudent.toString().equals("anonymousUser")){
+//////                        return true;
+//////                    }
+//////                    return false;
+//////                });
+////
+////        if(isAnonymous.get()){
+////            return  () -> ofNullable(SecurityContextHolder.getContext())
+////                    .map(SecurityContext::getAuthentication)
+////                    .filter(Authentication::isAuthenticated)
+////                    .map(Authentication::getPrincipal)
+////                    .map(UserDetails.class::cast)
+////                    .map(u -> new Username(u.getUsername()));
+////        }
+//
+//        return () -> Optional.ofNullable(SecurityContextHolder.getContext())
+//                .map(u -> new Username(BigInteger.ZERO));
+//
+//
+//
+//    }
+
+
 
     private Properties additionalProperties() {
         Properties properties = new Properties();
