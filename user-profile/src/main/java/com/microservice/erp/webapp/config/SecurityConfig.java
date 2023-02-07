@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import java.util.Collection;
 
@@ -33,7 +34,7 @@ import java.util.Collection;
 //        // jsr250Enabled = true,
 //        prePostEnabled = true)
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled=true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private IUserInfoRepository userInfoRepository;
@@ -53,13 +54,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                return  users
+                return users
                         .findByUsername(username)
                         .orElseThrow(() -> new UsernameNotFoundException("Username: " + username + " not found"));
             }
         };
     }
-
 
 
     public static final String[] URL_WHITELIST = {
@@ -104,12 +104,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService(userInfoRepository)).passwordEncoder(encoder());
     }
 
-    public static boolean matchAnyAdminRole(String...args) {
+    public static boolean matchAnyAdminRole(String... args) {
         return String.join(" ", args).toUpperCase().contains("ADMIN");
     }
 
     public static boolean matchAnyAdminRole(Collection<? extends GrantedAuthority> authority) {
         String[] args = AuthorityUtils.authorityListToSet(authority).toArray(new String[0]);
         return matchAnyAdminRole(args);
+    }
+
+    @Bean(name = "multipartResolver")
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setMaxUploadSize(-1);//-1 means no file size restriction
+        return multipartResolver;
     }
 }
