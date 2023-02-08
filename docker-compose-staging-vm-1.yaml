@@ -159,7 +159,7 @@ services:
       app.eureka.service.port: 801
       app.redis.host: redis
       app.redis.port: 6379
-      app.mail.host: 192.168.221.144
+      app.mail.host: 172.30.3.137
       app.mail.port: 587
       app.activemq.host: activemq
       app.activemq.port: 61616
