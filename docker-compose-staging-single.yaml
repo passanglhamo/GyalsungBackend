@@ -215,8 +215,6 @@ services:
     depends_on:
       - eureka-service-discovery
       - auth-service
-      - first-service
-      - second-service
       - user-profile
       - training-management
       - enrolment-deferment-exemption
