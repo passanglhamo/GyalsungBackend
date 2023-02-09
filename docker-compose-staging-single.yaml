@@ -193,7 +193,7 @@ services:
       - pg-notifyDB-storage:/var/lib/postgresql/data
 
   eureka-service-discovery:
-    image: engrajibkumerghosh/ms-training-repo-v1:eureka-service-discovery-v1.0
+    image: engrajibkumerghosh/ms-training-repo-v1:eureka-service-discovery-v1.0.3
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
     ports:
@@ -203,7 +203,7 @@ services:
       - web-app-net
 
   api-gateway:
-    image: engrajibkumerghosh/ms-training-repo-v1:cloud-gateway-service-v1.0
+    image: engrajibkumerghosh/ms-training-repo-v1:cloud-gateway-service-v1.0.3
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus,gateway
       app.eureka.service.host: eureka-service-discovery
@@ -228,7 +228,7 @@ services:
       - web-app-net
 
   auth-service:
-    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0
+    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.3
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -244,6 +244,10 @@ services:
       app.db.name: authDB
       app.db.username: root
       app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
     ports:
       - 8083:8083
     depends_on:
@@ -253,7 +257,7 @@ services:
       - web-app-net
 
   user-profile:
-    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0
+    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0.3
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -263,6 +267,10 @@ services:
       app.db.name: userProfileDB
       app.db.username: root
       app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
     ports:
       - 8084:8084
     depends_on:
@@ -272,7 +280,7 @@ services:
       - web-app-net
 
   training-management:
-    image: engrajibkumerghosh/ms-training-repo-v1:training-management-v1.0
+    image: engrajibkumerghosh/ms-training-repo-v1:training-management-v1.0.3
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -282,6 +290,10 @@ services:
       app.db.name: trainingDB
       app.db.username: root
       app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
     ports:
       - 8086:8086
     depends_on:
@@ -291,7 +303,7 @@ services:
       - web-app-net
 
   enrolment-deferment-exemption:
-    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0
+    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.3
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -301,6 +313,10 @@ services:
       app.db.name: enrolmentDB
       app.db.username: root
       app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
     ports:
       - 8087:8087
     depends_on:
@@ -310,7 +326,7 @@ services:
       - web-app-net
 
   medical-screening:
-    image: engrajibkumerghosh/ms-training-repo-v1:medical-screening-v1.0
+    image: engrajibkumerghosh/ms-training-repo-v1:medical-screening-v1.0.3
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -320,6 +336,10 @@ services:
       app.db.name: medicalDB
       app.db.username: root
       app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
     ports:
       - 8088:8088
     depends_on:
@@ -329,7 +349,7 @@ services:
       - web-app-net
 
   notification:
-    image: engrajibkumerghosh/ms-training-repo-v1:notification-v1.0
+    image: engrajibkumerghosh/ms-training-repo-v1:notification-v1.0.3
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -339,6 +359,10 @@ services:
       app.db.name: notifyDB
       app.db.username: root
       app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
     ports:
       - 8085:8085
     depends_on:
@@ -350,7 +374,7 @@ services:
   # Second Instances
 
   auth-service2:
-    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0
+    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.3
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -366,6 +390,10 @@ services:
       app.db.name: authDB
       app.db.username: root
       app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
     ports:
       - 8093:8083
     depends_on:
@@ -375,7 +403,7 @@ services:
       - web-app-net
 
   user-profile2:
-    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0
+    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0.3
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -385,6 +413,10 @@ services:
       app.db.name: userProfileDB
       app.db.username: root
       app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
     ports:
       - 8094:8084
     depends_on:
@@ -394,7 +426,7 @@ services:
       - web-app-net
 
   enrolment-deferment-exemption2:
-    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0
+    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.3
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -404,6 +436,10 @@ services:
       app.db.name: enrolmentDB
       app.db.username: root
       app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
     ports:
       - 8097:8087
     depends_on:

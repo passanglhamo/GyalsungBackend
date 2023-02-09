@@ -1,29 +1,30 @@
 #!/bin/bash
 
-AppVersion="v1.0"
+AppVersion="v1.0.3"
 DockerHubUser="engrajibkumerghosh"
 DockerHubRepoName="ms-training-repo-v1"
 DockerHubRepository="${DockerHubUser}/${DockerHubRepoName}"
 #
 docker login --password "Hema@2020" --username ${DockerHubUser}
-###
-FirstServiceDir="first-service"
-FirstServiceName="first-service"
-echo "Creating ${FirstServiceName} Image"
-mvn -pl ${FirstServiceDir} -am clean package -DskipTests
-docker image build -f ${FirstServiceDir}/Dockerfile -t ${FirstServiceName}:${AppVersion} ./${FirstServiceDir}
-docker image tag ${FirstServiceName}:${AppVersion} ${DockerHubRepository}:${FirstServiceName}-${AppVersion}
-docker push ${DockerHubRepository}:${FirstServiceName}-${AppVersion}
+####
+#FirstServiceDir="first-service"
+#FirstServiceName="first-service"
+#echo "Creating ${FirstServiceName} Image"
+#mvn -pl ${FirstServiceDir} -am clean package -DskipTests
+#docker image build -f ${FirstServiceDir}/Dockerfile -t ${FirstServiceName}:${AppVersion} ./${FirstServiceDir}
+#docker image tag ${FirstServiceName}:${AppVersion} ${DockerHubRepository}:${FirstServiceName}-${AppVersion}
+#docker push ${DockerHubRepository}:${FirstServiceName}-${AppVersion}
+##
+####
+#SecondServiceDir="second-service"
+#SecondServiceName="second-service"
+#echo "Creating ${SecondServiceName} Image"
+#mvn -pl ${SecondServiceDir} -am clean package -DskipTests
+#docker image build -f ${SecondServiceName}/Dockerfile -t ${SecondServiceName}:${AppVersion} ./${SecondServiceDir}
+#docker image tag ${SecondServiceName}:${AppVersion} ${DockerHubRepository}:${SecondServiceName}-${AppVersion}
+#docker push ${DockerHubRepository}:${SecondServiceName}-${AppVersion}
 #
-###
-SecondServiceDir="second-service"
-SecondServiceName="second-service"
-echo "Creating ${SecondServiceName} Image"
-mvn -pl ${SecondServiceDir} -am clean package -DskipTests
-docker image build -f ${SecondServiceName}/Dockerfile -t ${SecondServiceName}:${AppVersion} ./${SecondServiceDir}
-docker image tag ${SecondServiceName}:${AppVersion} ${DockerHubRepository}:${SecondServiceName}-${AppVersion}
-docker push ${DockerHubRepository}:${SecondServiceName}-${AppVersion}
-#
+
 ###
 AuthServiceDir="auth-service"
 AuthServiceName="auth-service"
@@ -33,6 +34,7 @@ docker image build -f ${AuthServiceName}/Dockerfile -t ${AuthServiceName}:${AppV
 docker image tag ${AuthServiceName}:${AppVersion} ${DockerHubRepository}:${AuthServiceName}-${AppVersion}
 docker push ${DockerHubRepository}:${AuthServiceName}-${AppVersion}
 #
+
 ###
 UserProfileDir="user-profile"
 UserProfileName="user-profile"
@@ -42,6 +44,7 @@ docker image build -f ${UserProfileDir}/Dockerfile -t ${UserProfileName}:${AppVe
 docker image tag ${UserProfileName}:${AppVersion} ${DockerHubRepository}:${UserProfileName}-${AppVersion}
 docker push ${DockerHubRepository}:${UserProfileName}-${AppVersion}
 #
+
 ###
 TrainingManagementDir="training-management"
 TrainingManagementName="training-management"
@@ -50,6 +53,7 @@ mvn -pl ${TrainingManagementDir} -am clean package -DskipTests
 docker image build -f ${TrainingManagementName}/Dockerfile -t ${TrainingManagementName}:${AppVersion} ./${TrainingManagementDir}
 docker image tag ${TrainingManagementName}:${AppVersion} ${DockerHubRepository}:${TrainingManagementName}-${AppVersion}
 docker push ${DockerHubRepository}:${TrainingManagementName}-${AppVersion}
+#
 
 ###
 EnrolmentDefermentExemptionDir="enrolment-deferment-exemption"
@@ -60,6 +64,7 @@ docker image build -f ${EnrolmentDefermentExemptionName}/Dockerfile -t ${Enrolme
 docker image tag ${EnrolmentDefermentExemptionName}:${AppVersion} ${DockerHubRepository}:${EnrolmentDefermentExemptionName}-${AppVersion}
 docker push ${DockerHubRepository}:${EnrolmentDefermentExemptionName}-${AppVersion}
 #
+
 ###
 MedicalScreeningDir="medical-screening"
 MedicalScreeningName="medical-screening"
@@ -68,6 +73,7 @@ mvn -pl ${MedicalScreeningDir} -am clean package -DskipTests
 docker image build -f ${MedicalScreeningName}/Dockerfile -t ${MedicalScreeningName}:${AppVersion} ./${MedicalScreeningDir}
 docker image tag ${MedicalScreeningName}:${AppVersion} ${DockerHubRepository}:${MedicalScreeningName}-${AppVersion}
 docker push ${DockerHubRepository}:${MedicalScreeningName}-${AppVersion}
+#
 
 ###
 NotificationDir="notification"
@@ -78,6 +84,7 @@ docker image build -f ${NotificationName}/Dockerfile -t ${NotificationName}:${Ap
 docker image tag ${NotificationName}:${AppVersion} ${DockerHubRepository}:${NotificationName}-${AppVersion}
 docker push ${DockerHubRepository}:${NotificationName}-${AppVersion}
 #
+
 ###
 GatewayServiceDir="gateway-service-config"
 GatewayServiceName="cloud-gateway-service"
@@ -87,6 +94,7 @@ docker image build -f ${GatewayServiceDir}/Dockerfile -t ${GatewayServiceName}:$
 docker image tag ${GatewayServiceName}:${AppVersion} ${DockerHubRepository}:${GatewayServiceName}-${AppVersion}
 docker push ${DockerHubRepository}:${GatewayServiceName}-${AppVersion}
 #
+
 ###
 EurekaServiceDir="eureka-service-discovery"
 EurekaServiceName="eureka-service-discovery"
@@ -96,6 +104,7 @@ docker image build -f ${EurekaServiceDir}/Dockerfile -t ${EurekaServiceName}:${A
 docker image tag ${EurekaServiceName}:${AppVersion} ${DockerHubRepository}:${EurekaServiceName}-${AppVersion}
 docker push ${DockerHubRepository}:${EurekaServiceName}-${AppVersion}
 #
+
 ###
 #MonitoringServiceDir="monitoring"
 #MonitoringServiceName="prometheus-db"
