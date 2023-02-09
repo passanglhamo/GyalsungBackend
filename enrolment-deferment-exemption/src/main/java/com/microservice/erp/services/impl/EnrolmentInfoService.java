@@ -1,10 +1,7 @@
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dao.EnrolmentDao;
-import com.microservice.erp.domain.dto.EnrolmentListDto;
-import com.microservice.erp.domain.dto.EventBus;
-import com.microservice.erp.domain.dto.TrainingAcademyDto;
-import com.microservice.erp.domain.dto.UserProfileDto;
+import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
@@ -15,6 +12,8 @@ import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -41,8 +40,10 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     private final DefermentExemptionValidation defermentExemptionValidation;
 
 
+
     @Override
     public ResponseEntity<?> getRegistrationDateInfo() {
+        //todo remove static code
         RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus('A');
         return ResponseEntity.ok(registrationDateInfo);
     }
@@ -61,6 +62,9 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<?> saveEnrolment(String authHeader, EnrolmentDto enrolmentDto) throws Exception {
+
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
         //todo need to remove static code
         RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus('A');
         if (registrationDateInfo == null) {
@@ -88,7 +92,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String url = "http://localhost:81/api/user/profile/userProfile/checkUnderAge?userId=" + userId + "&paramDate=" + paramDate;
+        String url = properties.getUserCheckUnderAge() + userId + "&paramDate=" + paramDate;
         ResponseEntity<UserProfileDto> userDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserProfileDto.class);
         Integer age = Objects.requireNonNull(userDtoResponse.getBody()).getAge();
         if (age < 18) {//todo: need to set Enum class for minimum age requirement
@@ -118,6 +122,9 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     @Override
     public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId, Integer coursePreferenceNumber) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
         List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, courseId, coursePreferenceNumber);
         if (enrolmentListDtos == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("No information found."));
@@ -129,7 +136,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
-            String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUser_id();
+            String url = properties.getUserProfileById() + item.getUser_id();
             ResponseEntity<EnrolmentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, EnrolmentListDto.class);
             EnrolmentListDto enrolmentListDto = new EnrolmentListDto();
             enrolmentListDto.setUser_id(item.getUser_id());
@@ -148,13 +155,13 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
             Integer trainingAcademyId = item.getTraining_academy_id();
             if (trainingAcademyId != null) {
-                String urlTraining = "http://localhost:8086/api/training/management/common/getTrainingAcademyById?academyId=" + trainingAcademyId;
+                String urlTraining = properties.getTrainingManAcademyByAcademyId() + trainingAcademyId;
                 ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
                 enrolmentListDto.setAcademy_name(Objects.requireNonNull(responseTraining.getBody()).getName());
             }
             BigInteger allocatedCourseId = item.getAllocated_course_id();
             if (allocatedCourseId != null) {
-                String urlCourse = "http://localhost:8086/api/training/management/fieldSpecializations/getCourseByCourseId?courseId=" + allocatedCourseId;
+                String urlCourse = properties.getTrainingManCourseByCourceId() + allocatedCourseId;
                 ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
                 enrolmentListDto.setCourseName(Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName());
             }
@@ -167,8 +174,12 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     @Override
     @Transactional()
     public ResponseEntity<?> allocateEnrolments(String authHeader, EnrolmentInfoCommand command) throws Exception {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
         // to check already allocated or not
         for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
+            //todo remove static code
             if (enrolmentInfo.getStatus() == 'A') {
                 return ResponseEntity.badRequest().body(new MessageResponse("Already allocated training institute."));
             }
@@ -192,7 +203,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             String academyName = "";
             String courseName = "";
 
-            String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + enrolmentInfo.getUserId();
+            String userUrl = properties.getUserProfileById() + enrolmentInfo.getUserId();
             ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
             String fullName = Objects.requireNonNull(userResponse.getBody()).getFullName();
             String mobileNo = Objects.requireNonNull(userResponse.getBody()).getMobileNo();
@@ -200,13 +211,13 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
             Integer trainingAcademyId = enrolmentInfo.getTrainingAcademyId();
             if (trainingAcademyId != null) {
-                String urlTraining = "http://localhost:8086/api/training/management/common/getTrainingAcademyById?academyId=" + trainingAcademyId;
+                String urlTraining = properties.getTrainingManAcademyByAcademyId() + trainingAcademyId;
                 ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
                 academyName = Objects.requireNonNull(responseTraining.getBody()).getName();
             }
             BigInteger allocatedCourseId = enrolmentInfo.getAllocatedCourseId();
             if (allocatedCourseId != null) {
-                String urlCourse = "http://localhost:8086/api/training/management/fieldSpecializations/getCourseByCourseId?courseId=" + allocatedCourseId;
+                String urlCourse = properties.getTrainingManCourseByCourceId() + allocatedCourseId;
                 ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
                 courseName = Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName();
             }
@@ -224,6 +235,10 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     @Override
     public ResponseEntity<?> getEnrolmentListByYearCourseAndAcademy(String authHeader, String year, Integer trainingAcademyId, BigInteger courseId) {
+
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
         List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearCourseAndAcademy(year, trainingAcademyId, courseId);
         if (enrolmentListDtos == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("No information found."));
@@ -235,7 +250,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
-            String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUser_id();
+            String url = properties.getUserProfileById() + item.getUser_id();
             ResponseEntity<EnrolmentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, EnrolmentListDto.class);
             EnrolmentListDto enrolmentListDto = new EnrolmentListDto();
             enrolmentListDto.setUser_id(item.getUser_id());
@@ -254,13 +269,13 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
             Integer trainingAcaId = item.getTraining_academy_id();
             if (trainingAcademyId != null) {
-                String urlTraining = "http://localhost:8086/api/training/management/common/getTrainingAcademyById?academyId=" + trainingAcaId;
+                String urlTraining = properties.getTrainingManAcademyByAcademyId() + trainingAcaId;
                 ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
                 enrolmentListDto.setAcademy_name(Objects.requireNonNull(responseTraining.getBody()).getName());
             }
             BigInteger allocatedCourseId = item.getAllocated_course_id();
             if (allocatedCourseId != null) {
-                String urlCourse = "http://localhost:8086/api/training/management/fieldSpecializations/getCourseByCourseId?courseId=" + allocatedCourseId;
+                String urlCourse = properties.getTrainingManCourseByCourceId() + allocatedCourseId;
                 ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
                 enrolmentListDto.setCourseName(Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName());
             }
@@ -272,6 +287,9 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     @Override
     public ResponseEntity<?> changeTrainingAcademy(String authHeader, EnrolmentInfoCommand command) throws Exception {
+
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
         //to save update enrolment info
         iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
@@ -289,7 +307,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             String academyName = "";
             String courseName = "";
 
-            String userUrl = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + enrolmentInfo.getUserId();
+            String userUrl = properties.getUserProfileById() + enrolmentInfo.getUserId();
             ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
             String fullName = Objects.requireNonNull(userResponse.getBody()).getFullName();
             String mobileNo = Objects.requireNonNull(userResponse.getBody()).getMobileNo();
@@ -297,13 +315,13 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
             Integer trainingAcademyId = enrolmentInfo.getTrainingAcademyId();
             if (trainingAcademyId != null) {
-                String urlTraining = "http://localhost:8086/api/training/management/common/getTrainingAcademyById?academyId=" + trainingAcademyId;
+                String urlTraining = properties.getTrainingManAcademyByAcademyId() + trainingAcademyId;
                 ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
                 academyName = Objects.requireNonNull(responseTraining.getBody()).getName();
             }
             BigInteger allocatedCourseId = enrolmentInfo.getAllocatedCourseId();
             if (allocatedCourseId != null) {
-                String urlCourse = "http://localhost:8086/api/training/management/fieldSpecializations/getCourseByCourseId?courseId=" + allocatedCourseId;
+                String urlCourse = properties.getTrainingManCourseByCourceId() + allocatedCourseId;
                 ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
                 courseName = Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName();
             }
@@ -312,7 +330,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
 
             EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo);
-
+            // Todo get from properties
             addToQueue.addToQueue("email", eventBus);
             addToQueue.addToQueue("sms", eventBus);
         }

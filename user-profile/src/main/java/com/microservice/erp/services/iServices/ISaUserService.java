@@ -12,8 +12,6 @@ public interface ISaUserService {
 
     ResponseEntity<?> getCensusDetailByCid(String cid) throws IOException, ParseException, ApiException;
 
-    ResponseEntity<?> getAllRoles();
-
     ResponseEntity<?> saveUser(UserDto userDto) throws JsonProcessingException;
 
     ResponseEntity<?> getUsers(String authHeader);

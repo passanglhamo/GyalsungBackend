@@ -1,7 +1,8 @@
 package com.microservice.erp.services.impl;
 
 import com.infoworks.lab.beans.tasks.definition.TaskStack;
-import com.microservice.erp.domain.entities.User;
+import com.infoworks.lab.rest.models.Response;
+import com.it.soul.lab.sql.query.models.Row;
 import com.microservice.erp.domain.models.NewAccountRequest;
 import com.microservice.erp.domain.models.NewTenantRequest;
 import com.microservice.erp.domain.repositories.IRoleRepository;
@@ -10,9 +11,7 @@ import com.microservice.erp.domain.tasks.iam.CheckUserExist;
 import com.microservice.erp.domain.tasks.iam.CreateNewTenant;
 import com.microservice.erp.domain.tasks.iam.CreateNewUser;
 import com.microservice.erp.domain.tasks.sender.SendEmail;
-import com.infoworks.lab.rest.models.Response;
 import com.microservice.erp.services.definition.iRegistration;
-import com.it.soul.lab.sql.query.models.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;

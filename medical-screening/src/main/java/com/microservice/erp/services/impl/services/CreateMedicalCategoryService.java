@@ -1,7 +1,7 @@
 package com.microservice.erp.services.impl.services;
 
 import com.microservice.erp.domain.entities.MedicalQuestionCategory;
-import com.microservice.erp.domain.repository.IMedicalQuestionCategoryRepository;
+import com.microservice.erp.domain.repositories.IMedicalQuestionCategoryRepository;
 import com.microservice.erp.services.iServices.ICreateMedicalCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

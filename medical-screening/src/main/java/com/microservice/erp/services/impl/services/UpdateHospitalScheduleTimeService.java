@@ -19,6 +19,7 @@ public class UpdateHospitalScheduleTimeService implements IUpdateHospitalSchedul
     public ResponseEntity<?> updateScheduleTimes(HospitalScheduleTimeDto hospitalScheduleTimeListDto) throws IOException {
 
         repository.findById(hospitalScheduleTimeListDto.getId()).map(d -> {
+            //todo remove static code
             if(d.getBookStatus().equals('B')){
                 return new ResponseEntity<>("Booked schedule can not be updated or deleted.", HttpStatus.ALREADY_REPORTED);
             }

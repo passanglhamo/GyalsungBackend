@@ -3,13 +3,10 @@ package com.microservice.erp.services.impl.services;
 import com.microservice.erp.domain.dto.EnlistmentScheduleDto;
 import com.microservice.erp.domain.repository.IEnlistmentScheduleRepository;
 import com.microservice.erp.services.iServices.IUpdateEnlistmentScheduleService;
-import com.microservice.erp.services.impl.mapper.EnlistmentScheduleMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

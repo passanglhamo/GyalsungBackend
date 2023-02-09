@@ -1,8 +1,7 @@
 package com.microservice.erp.services.impl.services;
 
 import com.microservice.erp.domain.entities.MedicalQuestionCategory;
-import com.microservice.erp.domain.helper.Status;
-import com.microservice.erp.domain.repository.IMedicalQuestionCategoryRepository;
+import com.microservice.erp.domain.repositories.IMedicalQuestionCategoryRepository;
 import com.microservice.erp.services.iServices.IReadMedicalCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +27,7 @@ public class ReadMedicalCategoryService implements IReadMedicalCategoryService {
 
     @Override
     public List<MedicalQuestionCategory> getAllActiveMedicalCatList() {
-        return repository.findAllByStatusOrderByCategoryNameAsc(Status.Active.value().toString());
+        //todo remove static code
+        return repository.findAllByStatusOrderByCategoryNameAsc("A");
     }
 }

@@ -77,6 +77,8 @@ public class SaUserService implements ISaUserService {
             CitizendetailsObj citizendetailsObj = citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().get(0);
 
             char genderChar = citizendetailsObj.getGender().charAt(0);
+
+            //todo need to change static code
             String genderName = "Male";
             if (genderChar == 'F') {
                 genderName = "Female";
@@ -107,16 +109,6 @@ public class SaUserService implements ISaUserService {
         return ResponseEntity.ok(citizenDetailDto);
     }
 
-    @Override
-    public ResponseEntity<?> getAllRoles() {
-      /*  List<SaRole> saRoleList = iSaRoleRepository.findAllByOrderByRoleNameAsc();
-        if (saRoleList.size() > 0) {
-            return ResponseEntity.ok(saRoleList);
-        } else {
-            return ResponseEntity.badRequest().body(new MessageResponse("Roles not found."));
-        }*/
-        return ResponseEntity.badRequest().body(new MessageResponse("Roles not found."));
-    }
 
     @Override
     public ResponseEntity<?> saveUser(UserDto userDto) throws JsonProcessingException {
@@ -191,7 +183,8 @@ public class SaUserService implements ISaUserService {
         EventBus eventBusEmail = EventBus.withId(userDto.getEmail(), null, null, emailBody, subject, null);
         String smsBody = "Dear " + userDto.getFullName() + ", " + " Your information has been added to Gyalsung MIS against this your email. " + "Please check your email " + userDto.getEmail() + " to see login credentials.";
         EventBus eventBusSms = EventBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
-//todo:need to get topic name from properties file
+
+        //todo:need to get topic name from properties file
         addToQueue.addToQueue("email", eventBusEmail);
         addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("User added successfully!"));

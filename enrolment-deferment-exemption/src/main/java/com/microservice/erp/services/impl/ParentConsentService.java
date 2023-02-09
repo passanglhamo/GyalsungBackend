@@ -2,6 +2,7 @@ package com.microservice.erp.services.impl;
 
 
 import com.microservice.erp.domain.dao.ParentConsentDao;
+import com.microservice.erp.domain.dto.ApplicationProperties;
 import com.microservice.erp.domain.dto.EventBus;
 import com.microservice.erp.domain.dto.ParentConsentListDto;
 import com.microservice.erp.domain.dto.ParentConsentDto;
@@ -15,6 +16,8 @@ import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.services.iServices.IParentConsentService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -54,6 +57,8 @@ public class ParentConsentService implements IParentConsentService {
         String subject = "Parent/Guardian Consent for Gyalsung Registration";
 
         EventBus eventBusMail = EventBus.withId(parentConsentDto.getGuardianEmail(), null, null, message, subject, null);
+
+        //todo need to get from properties
         addToQueue.addToQueue("email", eventBusMail);
 
         return ResponseEntity.ok(parentConsentOtp);
@@ -72,6 +77,7 @@ public class ParentConsentService implements IParentConsentService {
         }
         ParentConsent parentConsent = new ModelMapper().map(parentConsentDto, ParentConsent.class);
 
+        //todo remove static code
         RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus('A');
         parentConsent.setYear(registrationDateInfo.getRegistrationYear());
         parentConsent.setSubmittedOn(new Date());
@@ -88,6 +94,7 @@ public class ParentConsentService implements IParentConsentService {
                 subject,
                 parentConsentDto.getMobileNo());
 
+        //todo need to get from properties
         addToQueue.addToQueue("email",eventBusMail);
         addToQueue.addToQueue("sms",eventBusMail);
 
@@ -102,6 +109,7 @@ public class ParentConsentService implements IParentConsentService {
                 subject,
                 parentConsentDto.getGuardianMobileNo());
 
+//todo need to get from properties
         addToQueue.addToQueue("email",mailSenderGuardianDto);
         addToQueue.addToQueue("sms",mailSenderGuardianDto);
         return ResponseEntity.ok(new MessageResponse("Data saved successfully."));
@@ -109,9 +117,11 @@ public class ParentConsentService implements IParentConsentService {
 
     @Override
     public ResponseEntity<?> getParentConsentList(String authHeader, String year, Character status) {
-
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
         List<ParentConsentListDto> parentConsentListDtos = new ArrayList<>();
+        //todo remove static code
         if (status == 'S') {
             List<ParentConsent> parentConsentLists = parentConsentRepository.findByYearOrderBySubmittedOnAsc(year);
             parentConsentLists.forEach(item -> {
@@ -119,7 +129,7 @@ public class ParentConsentService implements IParentConsentService {
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Authorization", authHeader);
                 HttpEntity<String> request = new HttpEntity<>(headers);
-                String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUserId();
+                String url = properties.getUserProfileById() + item.getUserId();
                 ResponseEntity<ParentConsentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, ParentConsentListDto.class);
                 ParentConsentListDto parentConsentListDto = new ParentConsentListDto();
                 parentConsentListDto.setUserId(item.getUserId());
@@ -137,10 +147,10 @@ public class ParentConsentService implements IParentConsentService {
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Authorization", authHeader);
                 HttpEntity<String> request = new HttpEntity<>(headers);
-                String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + item.getUser_id();
+                String url = properties.getUserProfileById() + item.getUserId();
                 ResponseEntity<ParentConsentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, ParentConsentListDto.class);
                 ParentConsentListDto parentConsentListDto = new ParentConsentListDto();
-                parentConsentListDto.setUserId(item.getUser_id());
+                parentConsentListDto.setUserId(item.getUserId());
                 parentConsentListDto.setFullName(Objects.requireNonNull(response.getBody()).getFullName());
                 parentConsentListDto.setCid(response.getBody().getCid());
                 parentConsentListDto.setDob(response.getBody().getDob());
@@ -149,7 +159,6 @@ public class ParentConsentService implements IParentConsentService {
                 parentConsentListDtos.add(parentConsentListDto);
             });
         }
-
 
         return ResponseEntity.ok(parentConsentListDtos);
     }
