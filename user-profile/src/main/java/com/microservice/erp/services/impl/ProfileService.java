@@ -18,7 +18,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,20 +38,17 @@ public class ProfileService implements IProfileService {
     private final IChangeMobileNoSmsOtpRepository iChangeMobileNoSmsOtpRepository;
     private final IChangeEmailVerificationCodeRepository iChangeEmailVerificationCodeRepository;
 
-    private final PasswordEncoder encoder;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
     private final AddToQueue addToQueue;
 
     public ProfileService(UserDao userDao, IUserInfoRepository iUserInfoRepository
             , IChangeMobileNoSmsOtpRepository iChangeMobileNoSmsOtpRepository
             , IChangeEmailVerificationCodeRepository iChangeEmailVerificationCodeRepository
-            , PasswordEncoder encoder
             , AddToQueue addToQueue) {
         this.userDao = userDao;
         this.iUserInfoRepository = iUserInfoRepository;
         this.iChangeMobileNoSmsOtpRepository = iChangeMobileNoSmsOtpRepository;
         this.iChangeEmailVerificationCodeRepository = iChangeEmailVerificationCodeRepository;
-        this.encoder = encoder;
         this.addToQueue = addToQueue;
     }
 
@@ -103,6 +99,7 @@ public class ProfileService implements IProfileService {
         String message = "Your OTP for Gyalsung System is " + otp;
         EventBus eventBusSms = EventBus.withId(null, null, null, message, null, userProfileDto.getMobileNo());
 
+        //todo Get from properties file
         addToQueue.addToQueue("sms", eventBusSms);
         ChangeMobileNoSmsOtp changeMobileNoSmsOtp = new ChangeMobileNoSmsOtp();
         changeMobileNoSmsOtp.setUserId(userProfileDto.getUserId());
@@ -160,6 +157,8 @@ public class ProfileService implements IProfileService {
         //add to queue to update email in auth microservices
         EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, null, userInfo.getEmail()
                 , null, null, null, null);
+
+        //todo Get from properties file
         addToQueue.addToUserQueue("changeEmail", eventBusUser);
         return ResponseEntity.ok(new MessageResponse("Email changed successfully."));
     }
@@ -198,6 +197,8 @@ public class ProfileService implements IProfileService {
         String subject = "Email verification";
         String message = "Dear, The verification code to change email for Gyalsung system is " + verificationCode;
         EventBus eventBusEmail = EventBus.withId(userProfileDto.getEmail(), null, null, message, subject, null);
+
+        //todo Get from properties file
         addToQueue.addToQueue("email", eventBusEmail);
         ChangeEmailVerificationCode changeEmailVerificationCode = new ChangeEmailVerificationCode();
         changeEmailVerificationCode.setUserId(userProfileDto.getUserId());

@@ -1,19 +1,17 @@
 package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dto.ApplicationProperties;
 import com.microservice.erp.domain.dto.EventBus;
 import com.microservice.erp.domain.dto.UserProfileDto;
-import com.microservice.erp.domain.entities.DefermentInfo;
-import com.microservice.erp.domain.entities.EnrolmentInfo;
-import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.helper.StatusResponse;
 import com.microservice.erp.domain.mapper.ExemptionMapper;
-import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
-import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
 import com.microservice.erp.services.iServices.ICreateExemptionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -72,10 +70,13 @@ public class CreateExemptionService implements ICreateExemptionService {
     }
 
     private void sendEmailAndSms(String authTokenHeader, BigInteger userId) throws Exception {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authTokenHeader);
 
-        String userUrl = "http://localhost:80/api/user/profile/userProfile/getProfileInfo?userId=" + userId;
+        String userUrl = properties.getUserProfileById() + userId;
         ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
 
         String subject = "Acknowledged for Exemption";
@@ -91,6 +92,7 @@ public class CreateExemptionService implements ICreateExemptionService {
                 subject,
                 Objects.requireNonNull(userResponse.getBody()).getMobileNo());
 
+        //todo Need to get from properties
         addToQueue.addToQueue("email", eventBus);
         addToQueue.addToQueue("sms", eventBus);
     }

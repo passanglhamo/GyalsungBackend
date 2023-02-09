@@ -3,10 +3,13 @@ package com.microservice.erp.services.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservice.erp.domain.dto.*;
-import com.microservice.erp.domain.entities.*;
-import com.microservice.erp.domain.repositories.IUserInfoRepository;
+import com.microservice.erp.domain.entities.ApiAccessToken;
+import com.microservice.erp.domain.entities.SignupEmailVerificationCode;
+import com.microservice.erp.domain.entities.SignupSmsOtp;
+import com.microservice.erp.domain.entities.UserInfo;
 import com.microservice.erp.domain.repositories.ISignupEmailVerificationCodeRepository;
 import com.microservice.erp.domain.repositories.ISignupSmsOtpRepository;
+import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISignupService;
 import com.squareup.okhttp.OkHttpClient;
 import lombok.AllArgsConstructor;
@@ -16,8 +19,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.wso2.client.api.ApiClient;
 import org.wso2.client.api.ApiException;
@@ -44,10 +45,8 @@ public class SignupService implements ISignupService {
     private final ISignupEmailVerificationCodeRepository iSignupEmailVerificationCodeRepository;
     private final IUserInfoRepository iUserInfoRepository;
 
-    private final PasswordEncoder encoder;
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
-    private final HeaderToken headerToken;
 
 
     @Override
@@ -67,6 +66,8 @@ public class SignupService implements ISignupService {
         iSignupSmsOtpRepository.save(signupSmsOtp);
 
         EventBus eventBusSms = EventBus.withId(null, null, null, message, null, notificationRequestDto.getMobileNo());
+
+        //todo get value from properties
         addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(signupSmsOtp);
     }
@@ -96,6 +97,7 @@ public class SignupService implements ISignupService {
         String message = "Dear, Your verification code for Gyalsung system is " + verificationCode;
 
         EventBus eventBusEmail = EventBus.withId(notificationRequestDto.getEmail(), null, null, message, subject, null);
+        //todo get value from properties
         addToQueue.addToQueue("email", eventBusEmail);
 
         SignupEmailVerificationCode signupEmailVerificationCode = new SignupEmailVerificationCode();
@@ -176,6 +178,7 @@ public class SignupService implements ISignupService {
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
         String getExpectedUserDetails = props.getProperty("getExpectedUserDetails.endPointURL");
+        //todo need to get age from properties file
         String userUrl = getExpectedUserDetails + "/" + dateString + "/18";
         URL url = new URL(userUrl);
 
@@ -245,6 +248,7 @@ public class SignupService implements ISignupService {
             CitizendetailsObj citizendetailsObj = citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().get(0);
 
             char genderChar = citizendetailsObj.getGender().charAt(0);
+            //todo need to remove static code
             String genderName = "Male";
             if (genderChar == 'F') {
                 genderName = "Female";

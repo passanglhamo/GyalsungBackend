@@ -1,6 +1,5 @@
 package com.microservice.erp.services.impl;
 
-import com.microservice.erp.domain.dao.MedicalBookingListDao;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.HospitalScheduleDate;
 import com.microservice.erp.domain.entities.HospitalScheduleTime;
@@ -12,6 +11,8 @@ import com.microservice.erp.domain.repositories.IMedicalSelfDeclarationRepositor
 import com.microservice.erp.services.iServices.IMedicalBookingService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -33,11 +34,14 @@ public class MedicalBookingService implements IMedicalBookingService {
     private final IHospitalScheduleDateRepository iHospitalScheduleDateRepository;
     private final IHospitalScheduleTimeRepository iHospitalScheduleTimeRepository;
     private final IMedicalSelfDeclarationRepository iMedicalSelfDeclarationRepository;
-    private final MedicalBookingListDao medicalBookingListDao;
     private final AddToQueue addToQueue;
 
     @Override
     public ResponseEntity<?> bookMedicalAppointment(String authHeader, MedicalBookingDto medicalBookingDto) throws Exception {
+
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
         HospitalScheduleTime hospitalScheduleTimeByUserId = iHospitalScheduleTimeRepository.findByBookedBy(medicalBookingDto.getUserId());
         if (hospitalScheduleTimeByUserId != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("You have already booked an appointment. " +
@@ -47,6 +51,7 @@ public class MedicalBookingService implements IMedicalBookingService {
         HospitalScheduleTime hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDb, HospitalScheduleTime.class);
         hospitalScheduleTime.setBookedBy(medicalBookingDto.getUserId());//todo:need to get userId from CurrentUser Object after completing authorization
         hospitalScheduleTime.setBookedDate(LocalDate.now());
+        //todo remove static
         hospitalScheduleTime.setBookStatus('B');
         iHospitalScheduleTimeRepository.save(hospitalScheduleTime);
 
@@ -63,14 +68,14 @@ public class MedicalBookingService implements IMedicalBookingService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
-        String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + medicalBookingDto.getUserId();
+        String url = properties.getUserProfileById() + medicalBookingDto.getUserId();
         ResponseEntity<UserInfoDto> userInfoDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserInfoDto.class);
 
-        String hospitalUrl = "http://localhost:81/api/training/management/common/getHospitalById?hospitalId=" + hospitalScheduleTimeDb.getHospitalScheduleDate().getHospitalId();
+        String hospitalUrl = properties.getTrainingHospitalById() + hospitalScheduleTimeDb.getHospitalScheduleDate().getHospitalId();
         ResponseEntity<HospitalDto> hospitalDtoResponse = restTemplate.exchange(hospitalUrl, HttpMethod.GET, request, HospitalDto.class);
         String hospitalName = Objects.requireNonNull(hospitalDtoResponse.getBody()).getHospitalName();
 
-        String dzongkhagUrl = "http://localhost:81/api/training/management/common/getHospitalMappingByHospitalId?hospitalId=" + hospitalScheduleTimeDb.getHospitalScheduleDate().getHospitalId();
+        String dzongkhagUrl = properties.getTrainingMappedHospitalById() + hospitalScheduleTimeDb.getHospitalScheduleDate().getHospitalId();
         ResponseEntity<DzongkhagDto> dzongkhagDtoResponse = restTemplate.exchange(dzongkhagUrl, HttpMethod.GET, request, DzongkhagDto.class);
         String dzongkhagName = Objects.requireNonNull(dzongkhagDtoResponse.getBody()).getDzongkhagName();
 
@@ -103,6 +108,9 @@ public class MedicalBookingService implements IMedicalBookingService {
 
     @Override
     public ResponseEntity<?> getMedicalAppointmentDetail(String authHeader, BigInteger userId) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
         ResponseDto responseDto = new ResponseDto();
         HospitalScheduleTime hospitalScheduleTime = iHospitalScheduleTimeRepository.findByBookedBy(userId);
         responseDto.setStartTime(hospitalScheduleTime.getStartTime());
@@ -116,11 +124,11 @@ public class MedicalBookingService implements IMedicalBookingService {
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        String hospitalUrl = "http://localhost:81/api/training/management/common/getHospitalById?hospitalId=" + hospitalScheduleDate.getHospitalId();
+        String hospitalUrl = properties.getTrainingHospitalById() + hospitalScheduleDate.getHospitalId();
         ResponseEntity<HospitalDto> hospitalDtoResponse = restTemplate.exchange(hospitalUrl, HttpMethod.GET, request, HospitalDto.class);
         responseDto.setHospitalName(Objects.requireNonNull(hospitalDtoResponse.getBody()).getHospitalName());
 
-        String dzongkhagUrl = "http://localhost:81/api/training/management/common/getHospitalMappingByHospitalId?hospitalId=" + hospitalScheduleDate.getHospitalId();
+        String dzongkhagUrl = properties.getTrainingMappedHospitalById() + hospitalScheduleDate.getHospitalId();
         ResponseEntity<DzongkhagDto> dzongkhagDtoResponse = restTemplate.exchange(dzongkhagUrl, HttpMethod.GET, request, DzongkhagDto.class);
         responseDto.setDzongkhagName(Objects.requireNonNull(dzongkhagDtoResponse.getBody()).getDzongkhagName());
 
@@ -129,6 +137,9 @@ public class MedicalBookingService implements IMedicalBookingService {
 
     @Override
     public ResponseEntity<?> changeMedicalAppointment(String authHeader, MedicalBookingDto medicalBookingDto) throws Exception {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
         HospitalScheduleTime hospitalScheduleTimeDbByUserId = iHospitalScheduleTimeRepository.findByBookedBy(medicalBookingDto.getUserId());
         HospitalScheduleTime hospitalScheduleTimeDb = iHospitalScheduleTimeRepository.findById(medicalBookingDto.getScheduleTimeId()).get();
 
@@ -136,6 +147,7 @@ public class MedicalBookingService implements IMedicalBookingService {
         HospitalScheduleTime hospitalScheduleTimeReset = new ModelMapper().map(hospitalScheduleTimeDbByUserId, HospitalScheduleTime.class);
         hospitalScheduleTimeReset.setBookedBy(null);
         hospitalScheduleTimeReset.setBookedDate(null);
+        //todo remove static
         hospitalScheduleTimeReset.setBookStatus('A');
         iHospitalScheduleTimeRepository.save(hospitalScheduleTimeReset);
 
@@ -150,14 +162,14 @@ public class MedicalBookingService implements IMedicalBookingService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
-        String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + medicalBookingDto.getUserId();
+        String url = properties.getUserProfileById() + medicalBookingDto.getUserId();
         ResponseEntity<UserInfoDto> userInfoDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserInfoDto.class);
 
-        String hospitalUrl = "http://localhost:81/api/training/management/common/getHospitalById?hospitalId=" + hospitalScheduleTimeDb.getHospitalScheduleDate().getHospitalId();
+        String hospitalUrl = properties.getTrainingHospitalById() + hospitalScheduleTimeDb.getHospitalScheduleDate().getHospitalId();
         ResponseEntity<HospitalDto> hospitalDtoResponse = restTemplate.exchange(hospitalUrl, HttpMethod.GET, request, HospitalDto.class);
         String hospitalName = Objects.requireNonNull(hospitalDtoResponse.getBody()).getHospitalName();
 
-        String dzongkhagUrl = "http://localhost:81/api/training/management/common/getHospitalMappingByHospitalId?hospitalId=" + hospitalScheduleTimeDb.getHospitalScheduleDate().getHospitalId();
+        String dzongkhagUrl = properties.getTrainingMappedHospitalById() + hospitalScheduleTimeDb.getHospitalScheduleDate().getHospitalId();
         ResponseEntity<DzongkhagDto> dzongkhagDtoResponse = restTemplate.exchange(dzongkhagUrl, HttpMethod.GET, request, DzongkhagDto.class);
         String dzongkhagName = Objects.requireNonNull(dzongkhagDtoResponse.getBody()).getDzongkhagName();
 
@@ -183,6 +195,7 @@ public class MedicalBookingService implements IMedicalBookingService {
                 subject,
                 Objects.requireNonNull(userInfoDtoResponse.getBody()).getMobileNo());
 
+        //todo  get from properties
         addToQueue.addToQueue("email", mailSenderDto);
         addToQueue.addToQueue("sms", mailSenderDto);
         return ResponseEntity.ok("Appointment edited successfully.");

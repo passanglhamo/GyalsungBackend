@@ -1,17 +1,16 @@
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dao.MedicalBookingListDao;
+import com.microservice.erp.domain.dto.ApplicationProperties;
 import com.microservice.erp.domain.dto.MedicalBookingListDto;
-import com.microservice.erp.domain.dto.MedicalQuestionDto;
 import com.microservice.erp.domain.dto.UserInfoDto;
-import com.microservice.erp.domain.entities.HospitalScheduleDate;
 import com.microservice.erp.domain.entities.MedicalSelfDeclaration;
 import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.repositories.IHospitalScheduleDateRepository;
-import com.microservice.erp.domain.repositories.IHospitalScheduleTimeRepository;
 import com.microservice.erp.domain.repositories.IMedicalSelfDeclarationRepository;
 import com.microservice.erp.services.iServices.IMedicalBookingListService;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,8 +26,6 @@ import java.util.Objects;
 @Service
 @AllArgsConstructor
 public class MedicalBookingListService implements IMedicalBookingListService {
-    private final IHospitalScheduleDateRepository iHospitalScheduleDateRepository;
-    private final IHospitalScheduleTimeRepository iHospitalScheduleTimeRepository;
     private final IMedicalSelfDeclarationRepository iMedicalSelfDeclarationRepository;
     private final MedicalBookingListDao medicalBookingListDao;
 
@@ -44,6 +41,10 @@ public class MedicalBookingListService implements IMedicalBookingListService {
 
     @Override
     public ResponseEntity<?> getTimeSlotsByScheduleDateId(String authHeader, BigInteger hospitalScheduleDateId) {
+
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
         List<MedicalBookingListDto> medicalBookingListDtos = medicalBookingListDao.getTimeSlotsByScheduleDateId(hospitalScheduleDateId);
         List<MedicalBookingListDto> bookingListDos = new ArrayList<>();
         if (medicalBookingListDtos.size() > 0) {
@@ -53,7 +54,7 @@ public class MedicalBookingListService implements IMedicalBookingListService {
                 headers.add("Authorization", authHeader);
                 HttpEntity<String> request = new HttpEntity<>(headers);
                 if (medicalBookingListDto.getBooked_by() != null) {
-                    String url = "http://localhost:81/api/user/profile/userProfile/getProfileInfo?userId=" + medicalBookingListDto.getBooked_by();
+                    String url = properties.getUserProfileById() + medicalBookingListDto.getBooked_by();
                     ResponseEntity<UserInfoDto> userInfoDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserInfoDto.class);
                     medicalBookingListDto.setFullName(Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName());
                     bookingListDos.add(medicalBookingListDto);

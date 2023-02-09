@@ -70,10 +70,6 @@ public class RoleWiseAccessPermissionService implements IRoleWiseAccessPermissio
             if (permissionListDto.getPermission_id() != null) {
                 roleWiseAccessPermissionRepository.save(permission);
             }
-//            else {
-////                permission.setPermissionId(permissionId);
-//                roleWiseAccessPermissionRepository.save(permission);
-//            }
         }
         return ResponseEntity.ok("Data saved successfully.");
     }

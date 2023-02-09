@@ -1,7 +1,7 @@
 package com.microservice.erp.services.impl.services;
 
 import com.microservice.erp.domain.entities.MedicalQuestionnaire;
-import com.microservice.erp.domain.repository.IMedicalQuestionnaireRepository;
+import com.microservice.erp.domain.repositories.IMedicalQuestionnaireRepository;
 import com.microservice.erp.services.iServices.IUpdateMedicalQuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

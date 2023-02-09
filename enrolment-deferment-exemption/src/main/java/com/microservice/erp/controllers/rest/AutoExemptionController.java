@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
 import java.math.BigInteger;
-import java.util.List;
 
 @RestController
 @RequestMapping("/autoExemption")

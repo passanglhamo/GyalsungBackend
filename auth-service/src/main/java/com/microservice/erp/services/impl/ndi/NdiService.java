@@ -94,6 +94,8 @@ public class NdiService implements INdiService {
             String proofValueFromVerifier = new String(message.getData(), StandardCharsets.UTF_8);
 
             JSONObject obj = new JSONObject(proofValueFromVerifier);
+
+            //todo need to add self attr
             String cid = obj.getJSONObject("data").getJSONObject("requested_presentation")
                     .getJSONObject("revealed_attrs").getJSONObject("ID Number")
                     .getString("value");

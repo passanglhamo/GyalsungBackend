@@ -1,4 +1,4 @@
-package com.microservice.erp.domain.repository;
+package com.microservice.erp.domain.repositories;
 
 import com.microservice.erp.domain.entities.MedicalQuestionCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
