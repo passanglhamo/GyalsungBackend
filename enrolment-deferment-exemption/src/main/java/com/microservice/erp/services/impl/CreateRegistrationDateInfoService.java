@@ -16,9 +16,11 @@ public class CreateRegistrationDateInfoService implements ICreateRegistrationDat
 
     @Override
     public ResponseEntity<?> saveRegistrationDateInfo(RegistrationDateInfo registrationDateInfo) {
-        if (repository.existsByRegistrationYear(registrationDateInfo.getRegistrationYear())) {
-            return new ResponseEntity<>("Registration date is already added for given year.", HttpStatus.ALREADY_REPORTED);
+        //todo remove static code
+        if (repository.existsByStatus('A')) {
+            return new ResponseEntity<>("There should be only one active registration year.", HttpStatus.ALREADY_REPORTED);
         }
+
         repository.save(registrationDateInfo);
 
         return ResponseEntity.ok("Registration Date saved successfully.");

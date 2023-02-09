@@ -14,7 +14,7 @@ public class EnrolmentListDto {
     private String fullName;
     private String full_name;
     private String cid;
-    private String dob;
+    private Date dob;
     private BigInteger enrolment_id;
     private BigInteger user_id;
     private Date enrolled_on;

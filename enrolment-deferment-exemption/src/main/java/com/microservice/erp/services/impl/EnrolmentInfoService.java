@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -38,8 +39,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     private final EnrolmentDao enrolmentDao;
     private final AddToQueue addToQueue;
     private final DefermentExemptionValidation defermentExemptionValidation;
-
-
+    private final UserInformationService userInformationService;
 
     @Override
     public ResponseEntity<?> getRegistrationDateInfo() {
@@ -95,6 +95,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         String url = properties.getUserCheckUnderAge() + userId + "&paramDate=" + paramDate;
         ResponseEntity<UserProfileDto> userDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserProfileDto.class);
         Integer age = Objects.requireNonNull(userDtoResponse.getBody()).getAge();
+        //todo remove static code
         if (age < 18) {//todo: need to set Enum class for minimum age requirement
             enrolmentDto.setUnderAge('Y');
         } else {
@@ -114,6 +115,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
         EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo);
 
+        //todo get from properties
         addToQueue.addToQueue("email", eventBus);
         addToQueue.addToQueue("sms", eventBus);
 
@@ -130,19 +132,32 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             return ResponseEntity.badRequest().body(new MessageResponse("No information found."));
         }
         List<EnrolmentListDto> enrolmentList = new ArrayList<>();
+
+        List<BigInteger> userIdsVal = enrolmentListDtos
+                .stream()
+                .map(EnrolmentListDto::getUser_id)
+                .collect(Collectors.toList());
+
+        List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsVal, authHeader);
+
         //to get user detail from m-user-service
         enrolmentListDtos.forEach(item -> {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
-            String url = properties.getUserProfileById() + item.getUser_id();
-            ResponseEntity<EnrolmentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, EnrolmentListDto.class);
+
+            UserProfileDto userProfileDto = userProfileDtos
+                    .stream()
+                    .filter(user -> item.getUser_id().equals(user.getId()))
+                    .findAny()
+                    .orElse(null);
+
             EnrolmentListDto enrolmentListDto = new EnrolmentListDto();
             enrolmentListDto.setUser_id(item.getUser_id());
-            enrolmentListDto.setFull_name(Objects.requireNonNull(response.getBody()).getFullName());
-            enrolmentListDto.setCid(response.getBody().getCid());
-            enrolmentListDto.setDob(response.getBody().getDob());
+            enrolmentListDto.setFull_name(userProfileDto.getFullName());
+            enrolmentListDto.setCid(userProfileDto.getCid());
+            enrolmentListDto.setDob(userProfileDto.getDob());
 
             enrolmentListDto.setEnrolment_id(item.getEnrolment_id());
             enrolmentListDto.setEnrolled_on(item.getEnrolled_on());
@@ -244,19 +259,31 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             return ResponseEntity.badRequest().body(new MessageResponse("No information found."));
         }
         List<EnrolmentListDto> enrolmentList = new ArrayList<>();
+        List<BigInteger> userIdsVal = enrolmentListDtos
+                .stream()
+                .map(EnrolmentListDto::getUser_id)
+                .collect(Collectors.toList());
+
+        List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsVal, authHeader);
+
         //to get user detail from m-user-service
         enrolmentListDtos.forEach(item -> {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
-            String url = properties.getUserProfileById() + item.getUser_id();
-            ResponseEntity<EnrolmentListDto> response = restTemplate.exchange(url, HttpMethod.GET, request, EnrolmentListDto.class);
+
+            UserProfileDto userProfileDto = userProfileDtos
+                    .stream()
+                    .filter(user -> item.getUser_id().equals(user.getId()))
+                    .findAny()
+                    .orElse(null);
+
             EnrolmentListDto enrolmentListDto = new EnrolmentListDto();
             enrolmentListDto.setUser_id(item.getUser_id());
-            enrolmentListDto.setFull_name(Objects.requireNonNull(response.getBody()).getFullName());
-            enrolmentListDto.setCid(response.getBody().getCid());
-            enrolmentListDto.setDob(response.getBody().getDob());
+            enrolmentListDto.setFull_name(userProfileDto.getFullName());
+            enrolmentListDto.setCid(userProfileDto.getCid());
+            enrolmentListDto.setDob(userProfileDto.getDob());
 
             enrolmentListDto.setEnrolment_id(item.getEnrolment_id());
             enrolmentListDto.setEnrolled_on(item.getEnrolled_on());
@@ -293,11 +320,13 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
         //to save update enrolment info
         iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
+            //todo remove static
             item.setStatus('A');
             item.setTrainingAcademyId(command.getTrainingAcademyId());
             item.setAllocatedCourseId(command.getAllocatedCourseId());
             iEnrolmentInfoRepository.save(item);
         });
+
         // to send email and sms
         for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
             RestTemplate restTemplate = new RestTemplate();

@@ -17,6 +17,10 @@ public class UpdateRegistrationDateInfoService implements IUpdateRegistrationDat
     @Override
     public ResponseEntity<?> updateRegistrationDateInfo(RegistrationDateInfo registrationDateInfo) {
 
+        //todo remove static code
+        if (repository.existsByStatusAndIdNot('A', registrationDateInfo.getId())) {
+            return new ResponseEntity<>("There should be only one active registration year.", HttpStatus.ALREADY_REPORTED);
+        }
         if (repository.existsByRegistrationYearAndIdNot(registrationDateInfo.getRegistrationYear(), registrationDateInfo.getId())) {
             return new ResponseEntity<>("Registration date is already added for given year.", HttpStatus.ALREADY_REPORTED);
         }

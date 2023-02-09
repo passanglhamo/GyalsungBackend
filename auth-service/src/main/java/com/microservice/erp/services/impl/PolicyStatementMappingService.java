@@ -30,12 +30,15 @@ public class PolicyStatementMappingService implements IPolicyStatementMappingSer
         Policy policy = new Policy();
         policy.setId(command.getPolicyId());
         Statement statement = new Statement();
-        Optional<Statement> exist = Objects.isNull(command.getId()) ? Optional.empty() : statementRepository.findById(command.getId());
         statement.setId(command.getId());
         statement.setResource(command.getResource());
         statement.setAction(Action.valueOf(command.getAction()));
+        Optional<Statement> exist = Objects.isNull(command.getId()) ? Optional.empty() : statementRepository.findById(command.getId());
         if (exist.isPresent()) {
-            statement.setVersion(exist.get().getVersion());
+            statement = exist.get();
+            statement.setId(command.getId());
+            statement.setResource(command.getResource());
+            statement.setAction(Action.valueOf(command.getAction()));
         }
 
         AddStatementToPolicy addStmt = new AddStatementToPolicy(repository, policy, statement);

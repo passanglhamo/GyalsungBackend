@@ -3,6 +3,7 @@ package com.microservice.erp.controllers.rest;
 import com.infoworks.lab.jjwt.TokenValidator;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.data.base.DataSource;
+import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.models.*;
 import com.microservice.erp.services.definition.INdiService;
@@ -114,11 +115,11 @@ public class AuthController {
 //        } else {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
 //        }
-        return login.doLogin(request,false);
+        return login.doLogin(request, false);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) throws IOException {
         //Check login-retry-count: if exceed then refuse login action:
         LoginRetryCount count = cache.read(request.getUsername());
         if (count != null) {
@@ -130,21 +131,22 @@ public class AuthController {
                     Response response = new Response()
                             .setStatus(HttpStatus.FORBIDDEN.value())
                             .setMessage("Please wait and try again " + timeRemain + " seconds later.");
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response.toString());
+//                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response.toString());
+                    return ResponseEntity.badRequest().body(new MessageResponse("You have exceeded maximum attempts. Please wait and try again after " + timeRemain + " seconds."));
                 }
             }
         }
 
-        Response response = null;
+        ResponseEntity<?> response = login.doLogin(request, false);
         //If-Login Failed: then track-login-failed-count:
-        if (response.getStatus() == HttpStatus.OK.value()) {
+        if (response.getStatusCodeValue() == HttpStatus.OK.value()) {
             if (count != null) cache.remove(request.getUsername());
-            return ResponseEntity.ok(response.toString());
+            return response;
         } else {
             if (count == null) count = new LoginRetryCount(loginMaxRetryCount);
             count.incrementFailedCount();
             cache.put(request.getUsername(), count);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
+            return response;
         }
     }
 

@@ -125,9 +125,9 @@ public class AuthControllerIntegrationTest extends BaseServiceTest {
         LoginRequest request = new LoginRequest();
         request.setUsername("01712645571");
         request.setPassword("112233");
-        ResponseEntity<String> rep = controller.login(request);
+        ResponseEntity<?> rep = controller.login(request);
         System.out.println(rep.toString());
-        Response response = Message.unmarshal(Response.class, rep.getBody());
+        Response response = Message.unmarshal(Response.class, (String) rep.getBody());
         Assert.assertTrue("loginTest Not Success", response.getStatus() == 200);
     }
 
@@ -136,9 +136,9 @@ public class AuthControllerIntegrationTest extends BaseServiceTest {
         LoginRequest request = new LoginRequest();
         request.setUsername("Test_TMR2");
         request.setPassword("4321091");
-        ResponseEntity<String> rep = controller.login(request);
+        ResponseEntity<?> rep = controller.login(request);
         System.out.println(rep.toString());
-        Response response = Message.unmarshal(Response.class, rep.getBody());
+        Response response = Message.unmarshal(Response.class, (String) rep.getBody());
         Assert.assertTrue("loginFailedTest Not Success", response.getStatus() == 500);
     }
 
@@ -147,9 +147,9 @@ public class AuthControllerIntegrationTest extends BaseServiceTest {
         LoginRequest request = new LoginRequest();
         request.setUsername("Test_TMR3");
         request.setPassword("4321");
-        ResponseEntity<String> rep = controller.login(request);
+        ResponseEntity<?> rep = controller.login(request);
         System.out.println(rep.toString());
-        Response response = Message.unmarshal(Response.class, rep.getBody());
+        Response response = Message.unmarshal(Response.class, (String) rep.getBody());
         Assert.assertTrue("loginUsernameFailedTest Not Success", response.getStatus() == 500);
     }
 
