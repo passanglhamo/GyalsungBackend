@@ -10,9 +10,12 @@ import java.util.Optional;
 
 @Repository
 public interface ScreenRepository extends JpaRepository<Screen, BigInteger> {
+    Screen findTop1ByOrderByScreenIdDesc();
+
     List<Screen> findAllByOrderByScreenNameAsc();
 
     Optional<Screen> findByScreenName(String screenName);
 
     Screen findByScreenId(Integer screenId);
+
 }

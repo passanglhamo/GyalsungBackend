@@ -28,6 +28,23 @@ services:
     volumes:
       - redis-inmemory-storage:/data
 
+  activemq:
+    image: webcenter/activemq
+    ports:
+      - 8161:8161
+      - 61616:61616
+      - 61613:61613
+    environment:
+      - ACTIVEMQ_MIN_MEMORY=512
+      - ACTIVEMQ_MAX_MEMORY=2048
+      - ACTIVEMQ_ADMIN_LOGIN=admin
+      - ACTIVEMQ_ADMIN_PASSWORD=admin
+    restart: on-failure
+    networks:
+      - web-app-net
+    volumes:
+      - activemq-storage:/var/log/activemq
+
   zookeeper:
     image: bitnami/zookeeper:latest
     ports:
@@ -74,23 +91,6 @@ services:
     networks:
       - web-app-net
 
-  activemq:
-    image: webcenter/activemq
-    ports:
-      - 8161:8161
-      - 61616:61616
-      - 61613:61613
-    environment:
-      - ACTIVEMQ_MIN_MEMORY=512
-      - ACTIVEMQ_MAX_MEMORY=2048
-      - ACTIVEMQ_ADMIN_LOGIN=admin
-      - ACTIVEMQ_ADMIN_PASSWORD=admin
-    restart: on-failure
-    networks:
-      - web-app-net
-    volumes:
-      - activemq-storage:/var/log/activemq
-
   fake-smtp:
     image: rnwood/smtp4dev
     ports:
@@ -98,33 +98,6 @@ services:
       - 3000:80
     networks:
       - web-app-net
-
-  mysql-db:
-    image: mysql:8.0.13
-    environment:
-      MYSQL_DATABASE: testDB
-      MYSQL_ROOT_PASSWORD: root@123
-    ports:
-      - 3306:3306
-    networks:
-      - web-app-net
-    volumes:
-      - mysql-db-storage:/var/lib/mysql
-
-  phpadmin-auth:
-    image: phpmyadmin/phpmyadmin
-    environment:
-      PMA_HOST: mysql-db
-      PMA_PORT: 3306
-      PMA_PMADB: testDB
-      MYSQL_ROOT_PASSWORD: root@123
-    ports:
-      - 8092:80
-    networks:
-      - web-app-net
-    depends_on:
-      - mysql-db
-    restart: on-failure
 
   pg-authDB:
     image: postgres
@@ -219,11 +192,8 @@ services:
     volumes:
       - pg-notifyDB-storage:/var/lib/postgresql/data
 
-  discovery-service:
-    image: discovery-service:1.0
-    build:
-      context: ./eureka-service-discovery
-      dockerfile: Dockerfile
+  eureka-service-discovery:
+    image: engrajibkumerghosh/ms-training-repo-v1:eureka-service-discovery-v1.0
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
     ports:
@@ -233,44 +203,39 @@ services:
       - web-app-net
 
   api-gateway:
-    image: api-gateway:1.0
-    build:
-      context: ./gateway-service-config
-      dockerfile: Dockerfile
+    image: engrajibkumerghosh/ms-training-repo-v1:cloud-gateway-service-v1.0
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus,gateway
-      app.eureka.service.host: discovery-service
+      app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
       redis.host: redis
       redis.port: 6379
     ports:
       - 80:80
     depends_on:
-      - discovery-service
-      - auth-webapp
-      - first-webapp
-      - second-webapp
-      - user-profile-webapp
-      - training-management-webapp
-      - enrolment-deferment-exemption-webapp
-      - medical-screening-webapp
-      - notification-webapp
+      - eureka-service-discovery
+      - auth-service
+      - user-profile
+      - training-management
+      - enrolment-deferment-exemption
+      - medical-screening
+      - notification
+      - auth-service2
+      - user-profile2
+      - enrolment-deferment-exemption2
     restart: on-failure
     networks:
       - web-app-net
 
-  auth-webapp:
-    image: auth-web-service:1.0
-    build:
-      context: ./auth-service
-      dockerfile: Dockerfile
+  auth-service:
+    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
-      app.eureka.service.host: discovery-service
+      app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
       app.redis.host: redis
       app.redis.port: 6379
-      app.mail.host: 192.168.221.144
+      app.mail.host: 172.30.3.140
       app.mail.port: 587
       app.activemq.host: activemq
       app.activemq.port: 61616
@@ -279,129 +244,132 @@ services:
     ports:
       - 8083:8083
     depends_on:
-      - discovery-service
+      - eureka-service-discovery
     restart: on-failure
     networks:
       - web-app-net
 
-  first-webapp:
-    image: first-web-service:1.0
-    build:
-      context: ./first-service
-      dockerfile: Dockerfile
+  user-profile:
+    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
-      app.home.logs: /home/logs
-      app.eureka.service.host: discovery-service
-      app.eureka.service.port: 801
-    ports:
-      - 8081:8081
-    depends_on:
-      - discovery-service
-    restart: on-failure
-    networks:
-      - web-app-net
-
-  second-webapp:
-    image: second-web-service:1.0
-    build:
-      context: ./second-service
-      dockerfile: Dockerfile
-    environment:
-      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
-      app.eureka.service.host: discovery-service
-      app.eureka.service.port: 801
-    ports:
-      - 8082:8082
-    depends_on:
-      - discovery-service
-    restart: on-failure
-    networks:
-      - web-app-net
-
-  user-profile-webapp:
-    image: user-profile-web-service:1.0
-    build:
-      context: ./user-profile
-      dockerfile: Dockerfile
-    environment:
-      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
-      app.eureka.service.host: discovery-service
+      app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
     ports:
       - 8084:8084
     depends_on:
-      - discovery-service
+      - eureka-service-discovery
     restart: on-failure
     networks:
       - web-app-net
 
-  training-management-webapp:
-    image: training-management-web-service:1.0
-    build:
-      context: ./training-management
-      dockerfile: Dockerfile
+  training-management:
+    image: engrajibkumerghosh/ms-training-repo-v1:training-management-v1.0
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
-      app.eureka.service.host: discovery-service
+      app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
     ports:
       - 8086:8086
     depends_on:
-      - discovery-service
+      - eureka-service-discovery
     restart: on-failure
     networks:
       - web-app-net
 
-  enrolment-deferment-exemption-webapp:
-    image: enrolment-deferment-exemption-web-service:1.0
-    build:
-      context: ./enrolment-deferment-exemption
-      dockerfile: Dockerfile
+  enrolment-deferment-exemption:
+    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
-      app.eureka.service.host: discovery-service
+      app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
     ports:
       - 8087:8087
     depends_on:
-      - discovery-service
+      - eureka-service-discovery
     restart: on-failure
     networks:
       - web-app-net
 
-  medical-screening-webapp:
-    image: medical-screening-web-service:1.0
-    build:
-      context: ./medical-screening
-      dockerfile: Dockerfile
+  medical-screening:
+    image: engrajibkumerghosh/ms-training-repo-v1:medical-screening-v1.0
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
-      app.eureka.service.host: discovery-service
+      app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
     ports:
       - 8088:8088
     depends_on:
-      - discovery-service
+      - eureka-service-discovery
     restart: on-failure
     networks:
       - web-app-net
 
-  notification-webapp:
-    image: notification-web-service:1.0
-    build:
-      context: ./notification
-      dockerfile: Dockerfile
+  notification:
+    image: engrajibkumerghosh/ms-training-repo-v1:notification-v1.0
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
-      app.eureka.service.host: discovery-service
+      app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
     ports:
       - 8085:8085
     depends_on:
-      - discovery-service
+      - eureka-service-discovery
     restart: on-failure
     networks:
       - web-app-net
+
+  # Second Instances
+
+  auth-service2:
+    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: eureka-service-discovery
+      app.eureka.service.port: 801
+      app.redis.host: redis
+      app.redis.port: 6379
+      app.mail.host: 172.30.3.140
+      app.mail.port: 587
+      app.activemq.host: activemq
+      app.activemq.port: 61616
+      app.db.host: pg-authDB
+      app.db.port: 5432
+    ports:
+      - 8093:8083
+    depends_on:
+      - eureka-service-discovery
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  user-profile2:
+    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: eureka-service-discovery
+      app.eureka.service.port: 801
+    ports:
+      - 8094:8084
+    depends_on:
+      - eureka-service-discovery
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  enrolment-deferment-exemption2:
+    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: eureka-service-discovery
+      app.eureka.service.port: 801
+    ports:
+      - 8097:8087
+    depends_on:
+      - eureka-service-discovery
+    restart: on-failure
+    networks:
+      - web-app-net
+
 
 #end of scripts
