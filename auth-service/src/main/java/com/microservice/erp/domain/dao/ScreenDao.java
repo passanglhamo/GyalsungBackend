@@ -17,6 +17,15 @@ public class ScreenDao extends BaseDao {
     }
 
     @Transactional
+    public String isScreenUrlAlreadyExist(String screenUrl, BigInteger id) {
+        String sqlQuery = environment.getProperty("CommonDao.isScreenUrlAlreadyExist");
+        NativeQuery hQuery = (NativeQuery) hibernateQuery(sqlQuery)
+                .setParameter("screenUrl", screenUrl)
+                .setParameter("id", id);
+        return hQuery.list().isEmpty() ? null : (String) hQuery.list().get(0);
+    }
+
+    @Transactional
     public String isScreenIdAlreadyExist(Integer screenId, BigInteger id) {
         String sqlQuery = environment.getProperty("CommonDao.isScreenIdAlreadyExist");
         NativeQuery hQuery = (NativeQuery) hibernateQuery(sqlQuery)

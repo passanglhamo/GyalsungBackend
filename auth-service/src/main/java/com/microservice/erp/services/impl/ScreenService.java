@@ -33,6 +33,10 @@ public class ScreenService implements IScreenService {
 
     @Override
     public ResponseEntity<?> saveScreen(Screen saScreen) {
+        Screen saScreenUrlDb = saScreenRepository.findByScreenUrl(saScreen.getScreenUrl());
+        if (saScreenUrlDb != null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Screen URL " + saScreen.getScreenUrl() + " already exist. Please try different one."));
+        }
         Screen saScreenDb = saScreenRepository.findByScreenId(saScreen.getScreenId());
         if (saScreenDb != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Screen ID " + saScreen.getScreenId() + " already exist. Please try different one."));
@@ -57,6 +61,10 @@ public class ScreenService implements IScreenService {
     @Override
     public ResponseEntity<?> updateScreen(Screen saScreen) {
         saScreenRepository.findById(saScreen.getId()).ifPresent(d -> {
+            String isScreenUrlAlreadyExist = screenDao.isScreenUrlAlreadyExist(saScreen.getScreenUrl(), saScreen.getId());
+            if (isScreenUrlAlreadyExist != null) {
+                return;
+            }
             String isScreenIdAlreadyExist = screenDao.isScreenIdAlreadyExist(saScreen.getScreenId(), saScreen.getId());
             if (isScreenIdAlreadyExist != null) {
                 return;

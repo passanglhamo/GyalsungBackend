@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface ScreenRepository extends JpaRepository<Screen, BigInteger> {
     Screen findTop1ByOrderByScreenIdDesc();
 
+    Screen findByScreenUrl(String screenUrl);
+
     List<Screen> findAllByOrderByScreenNameAsc();
 
     Optional<Screen> findByScreenName(String screenName);
