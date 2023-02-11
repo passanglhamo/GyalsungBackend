@@ -248,6 +248,8 @@ services:
       app.zookeeper.port: 2181
       app.kafka.host: kafka
       app.kafka.port: 9092
+      app.notify.host: 172.30.3.140
+      app.notify.port: 8083
     ports:
       - 8083:8083
     depends_on:
