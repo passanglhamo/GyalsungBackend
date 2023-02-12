@@ -15,6 +15,8 @@ import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.IProfileService;
 import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.*;
@@ -41,15 +43,21 @@ public class ProfileService implements IProfileService {
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
     private final AddToQueue addToQueue;
 
+    //@Autowired
+    //@Qualifier("trainingManagementTemplate")
+    private RestTemplate restTemplate;
+
     public ProfileService(UserDao userDao, IUserInfoRepository iUserInfoRepository
             , IChangeMobileNoSmsOtpRepository iChangeMobileNoSmsOtpRepository
             , IChangeEmailVerificationCodeRepository iChangeEmailVerificationCodeRepository
-            , AddToQueue addToQueue) {
+            , AddToQueue addToQueue
+            , @Qualifier("trainingManagementTemplate") RestTemplate restTemplate) {
         this.userDao = userDao;
         this.iUserInfoRepository = iUserInfoRepository;
         this.iChangeMobileNoSmsOtpRepository = iChangeMobileNoSmsOtpRepository;
         this.iChangeEmailVerificationCodeRepository = iChangeEmailVerificationCodeRepository;
         this.addToQueue = addToQueue;
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -60,7 +68,6 @@ public class ProfileService implements IProfileService {
         UserInfo userInfo = iUserInfoRepository.findById(userId).get();
         UserProfileDto userProfileDto = new ModelMapper().map(userInfo, UserProfileDto.class);
         userProfileDto.setPassword(null);
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);

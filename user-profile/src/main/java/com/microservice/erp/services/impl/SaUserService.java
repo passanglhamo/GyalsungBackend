@@ -10,6 +10,8 @@ import com.microservice.erp.services.iServices.ISaUserService;
 import com.squareup.okhttp.OkHttpClient;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -47,6 +49,9 @@ public class SaUserService implements ISaUserService {
     private final UserDao userDao;
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
+
+    @Autowired @Qualifier("authTemplate")
+    RestTemplate restTemplate;
 
     @Override
     public ResponseEntity<?> getCensusDetailByCid(String cid) throws IOException, ParseException, ApiException {
@@ -130,7 +135,7 @@ public class SaUserService implements ISaUserService {
         List<UserProfileDto> userProfileDtos = new ArrayList<>();
         saUsers.forEach(item -> {
             UserProfileDto userProfileDto = new UserProfileDto();
-            RestTemplate restTemplate = new RestTemplate();
+
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
