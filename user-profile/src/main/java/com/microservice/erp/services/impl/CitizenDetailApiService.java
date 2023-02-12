@@ -3,6 +3,7 @@ package com.microservice.erp.services.impl;
 import com.microservice.erp.domain.entities.ApiAccessToken;
 import com.microservice.erp.domain.repositories.IApiAccessTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -32,7 +33,7 @@ public class CitizenDetailApiService {
         return new RestTemplate();
     }
 
-    @Autowired
+    @Autowired @Qualifier("datahubTokenTemplate")
     private RestTemplate restTemplate;
 
 
@@ -66,7 +67,7 @@ public class CitizenDetailApiService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Basic " + authStringEnc);
         HttpEntity<String> request = new HttpEntity<String>(headers);
-        ResponseEntity<ApiAccessToken> response = restTemplate.exchange(dataHubEndPointUrl, HttpMethod.POST, request, ApiAccessToken.class);
+        ResponseEntity<ApiAccessToken> response = restTemplate.exchange("", HttpMethod.POST, request, ApiAccessToken.class);
         apiAccessToken.setAccess_token(response.getBody().getAccess_token());
         apiAccessToken.setExpires_in(response.getBody().getExpires_in());
         apiAccessToken.setScope(response.getBody().getScope());
