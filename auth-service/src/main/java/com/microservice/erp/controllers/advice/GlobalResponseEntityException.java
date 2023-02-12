@@ -51,8 +51,8 @@ public class GlobalResponseEntityException extends ResponseEntityExceptionHandle
     public final ResponseEntity<Object> handleAllKindOfExceptions(
             Exception ex, WebRequest request) {
         //
-        Response response = Response.CreateErrorResponse(ex);
-        LOG.error(response.toString());
-        return new ResponseEntity(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        //Response response = Response.CreateErrorResponse(ex);
+        LOG.error(ex.getMessage(), ex);
+        return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

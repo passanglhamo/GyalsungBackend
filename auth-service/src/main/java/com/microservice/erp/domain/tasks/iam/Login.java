@@ -108,6 +108,8 @@ public class Login extends TokenizerTask {
                 String tokenKey = getToken(exist.get(), timeToLive);
                 Map<String, Object> data = new HashMap<>();
                 data.put("accessToken", tokenKey);
+                data.put("X-Auth-Token", tokenKey);
+
 //                data.put("userId", exist.get().getId());
                 data.put("userId", exist.get().getUserId());
                 data.put("roles", exist.get().getAuthorities());
