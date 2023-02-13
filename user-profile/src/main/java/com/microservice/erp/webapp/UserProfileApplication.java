@@ -15,7 +15,6 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {"com.microservice.erp.controllers"
         , "com.microservice.erp.services"
         , "com.microservice.erp.webapp.config"
-        , "com.microservice.erp.task.iam"
         , "com.microservice.erp.domain"})
 public class UserProfileApplication extends SpringBootServletInitializer {
 

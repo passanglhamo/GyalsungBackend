@@ -53,7 +53,7 @@ public class GlobalResponseEntityException extends ResponseEntityExceptionHandle
     public final ResponseEntity<String> handleAllKindOfExceptions(
             Exception ex, WebRequest request) {
 
-        LOG.error(ex.getMessage());
+        LOG.error(ex.getMessage(), ex);
         return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
