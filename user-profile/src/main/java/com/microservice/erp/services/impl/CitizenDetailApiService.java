@@ -33,10 +33,6 @@ public class CitizenDetailApiService {
         return new RestTemplate();
     }
 
-    @Autowired @Qualifier("datahubTokenTemplate")
-    private RestTemplate restTemplate;
-
-
     public ApiAccessToken getApplicationToken() throws ParseException, IOException {
         ApiAccessToken token = iApiAccessTokenRepository.findTop1ByOrderByIdDesc();
 
@@ -67,7 +63,8 @@ public class CitizenDetailApiService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Basic " + authStringEnc);
         HttpEntity<String> request = new HttpEntity<String>(headers);
-        ResponseEntity<ApiAccessToken> response = restTemplate.exchange("", HttpMethod.POST, request, ApiAccessToken.class);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<ApiAccessToken> response = restTemplate.exchange(dataHubEndPointUrl, HttpMethod.POST, request, ApiAccessToken.class);
         apiAccessToken.setAccess_token(response.getBody().getAccess_token());
         apiAccessToken.setExpires_in(response.getBody().getExpires_in());
         apiAccessToken.setScope(response.getBody().getScope());

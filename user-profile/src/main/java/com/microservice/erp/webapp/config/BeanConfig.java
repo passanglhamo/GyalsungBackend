@@ -37,11 +37,4 @@ public class BeanConfig {
                 .build();
     }
 
-    @Bean("datahubTokenTemplate")
-    public RestTemplate getDatahubTokenTemplate(@Value("${getDatahubToken.endPointURL}") String url) {
-        return new RestTemplateBuilder()
-                .rootUri(url)
-                .build();
-    }
-
 }
