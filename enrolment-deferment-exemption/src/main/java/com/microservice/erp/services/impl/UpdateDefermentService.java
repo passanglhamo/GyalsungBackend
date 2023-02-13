@@ -9,6 +9,8 @@ import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.IUpdateDefermentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
@@ -28,6 +30,10 @@ public class UpdateDefermentService implements IUpdateDefermentService {
     private final IDefermentInfoRepository repository;
     private final HeaderToken headerToken;
     private final AddToQueue addToQueue;
+
+    @Autowired
+    @Qualifier("userProfileTemplate")
+    RestTemplate restTemplate;
 
 
     @Override
@@ -85,7 +91,6 @@ public class UpdateDefermentService implements IUpdateDefermentService {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
-        RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authHeader);
 
         String userUrl = properties.getUserProfileById() + userId;

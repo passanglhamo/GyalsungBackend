@@ -9,6 +9,8 @@ import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.repositories.IMedicalSelfDeclarationRepository;
 import com.microservice.erp.services.iServices.IMedicalBookingListService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
@@ -26,6 +28,11 @@ import java.util.Objects;
 @Service
 @AllArgsConstructor
 public class MedicalBookingListService implements IMedicalBookingListService {
+
+    @Autowired
+    @Qualifier("userProfileTemplate")
+    RestTemplate restTemplate;
+
     private final IMedicalSelfDeclarationRepository iMedicalSelfDeclarationRepository;
     private final MedicalBookingListDao medicalBookingListDao;
 
@@ -49,7 +56,6 @@ public class MedicalBookingListService implements IMedicalBookingListService {
         List<MedicalBookingListDto> bookingListDos = new ArrayList<>();
         if (medicalBookingListDtos.size() > 0) {
             for (MedicalBookingListDto medicalBookingListDto : medicalBookingListDtos) {
-                RestTemplate restTemplate = new RestTemplate();
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Authorization", authHeader);
                 HttpEntity<String> request = new HttpEntity<>(headers);

@@ -131,6 +131,7 @@ public class SaUserService implements ISaUserService {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
+        //todo remove static code
         List<UserInfo> saUsers = iUserInfoRepository.findAllBySignupUserOrderByFullNameAsc('N');
         List<UserProfileDto> userProfileDtos = new ArrayList<>();
         saUsers.forEach(item -> {
@@ -170,6 +171,8 @@ public class SaUserService implements ISaUserService {
         }
         UserInfo saUser = new ModelMapper().map(userDto, UserInfo.class);
         saUser.setUsername(userDto.getEmail());
+
+        //todo remove static code
         saUser.setSignupUser('N');
         String password = generatePassword(8); //to generate password and send email
         List<BigInteger> saRoleDtos = userDto.getRoles();
@@ -177,6 +180,7 @@ public class SaUserService implements ISaUserService {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
 
+//todo remove static code
         saUser.setSignupUser('N');
         BigInteger userId = iUserInfoRepository.save(saUser).getId();
         EventBusUser eventBusUser = EventBusUser.withId(userId, userDto.getStatus(), saUser.getCid(), saUser.getEmail()

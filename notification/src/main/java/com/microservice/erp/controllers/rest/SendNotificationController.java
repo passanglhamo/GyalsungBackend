@@ -8,6 +8,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
+
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -18,7 +20,7 @@ public class SendNotificationController {
 
     @GetMapping(value = "/checkNoticeAlreadySentOrNot")
     public ResponseEntity<?> checkNoticeAlreadySentOrNot(@RequestParam("year") String year,
-                                                         @RequestParam("noticeConfigurationId") Long noticeConfigurationId) {
+                                                         @RequestParam("noticeConfigurationId") BigInteger noticeConfigurationId) {
         return iSendNotificationService.checkNoticeAlreadySentOrNot(year, noticeConfigurationId);
     }
 

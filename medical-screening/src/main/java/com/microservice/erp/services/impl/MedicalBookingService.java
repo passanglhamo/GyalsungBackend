@@ -11,6 +11,8 @@ import com.microservice.erp.domain.repositories.IMedicalSelfDeclarationRepositor
 import com.microservice.erp.services.iServices.IMedicalBookingService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
@@ -35,6 +37,14 @@ public class MedicalBookingService implements IMedicalBookingService {
     private final IHospitalScheduleTimeRepository iHospitalScheduleTimeRepository;
     private final IMedicalSelfDeclarationRepository iMedicalSelfDeclarationRepository;
     private final AddToQueue addToQueue;
+
+    @Autowired
+    @Qualifier("userProfileTemplate")
+    RestTemplate userRestTemplate;
+
+    @Autowired
+    @Qualifier("trainingManagementTemplate")
+    RestTemplate restTemplate;
 
     @Override
     public ResponseEntity<?> bookMedicalAppointment(String authHeader, MedicalBookingDto medicalBookingDto) throws Exception {
@@ -64,12 +74,11 @@ public class MedicalBookingService implements IMedicalBookingService {
             iMedicalSelfDeclarationRepository.save(medicalSelfDeclaration);
         }
         //to send sms/email
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
         String url = properties.getUserProfileById() + medicalBookingDto.getUserId();
-        ResponseEntity<UserInfoDto> userInfoDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserInfoDto.class);
+        ResponseEntity<UserInfoDto> userInfoDtoResponse = userRestTemplate.exchange(url, HttpMethod.GET, request, UserInfoDto.class);
 
         String hospitalUrl = properties.getTrainingHospitalById() + hospitalScheduleTimeDb.getHospitalScheduleDate().getHospitalId();
         ResponseEntity<HospitalDto> hospitalDtoResponse = restTemplate.exchange(hospitalUrl, HttpMethod.GET, request, HospitalDto.class);
@@ -119,7 +128,6 @@ public class MedicalBookingService implements IMedicalBookingService {
         HospitalScheduleDate hospitalScheduleDate = iHospitalScheduleDateRepository.getMyBookingDate(userId);
         responseDto.setAppointmentDate(hospitalScheduleDate.getAppointmentDate());
 
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
@@ -158,12 +166,11 @@ public class MedicalBookingService implements IMedicalBookingService {
         iHospitalScheduleTimeRepository.save(hospitalScheduleTime);
 
         //to send sms/email
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
         String url = properties.getUserProfileById() + medicalBookingDto.getUserId();
-        ResponseEntity<UserInfoDto> userInfoDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserInfoDto.class);
+        ResponseEntity<UserInfoDto> userInfoDtoResponse = userRestTemplate.exchange(url, HttpMethod.GET, request, UserInfoDto.class);
 
         String hospitalUrl = properties.getTrainingHospitalById() + hospitalScheduleTimeDb.getHospitalScheduleDate().getHospitalId();
         ResponseEntity<HospitalDto> hospitalDtoResponse = restTemplate.exchange(hospitalUrl, HttpMethod.GET, request, HospitalDto.class);

@@ -3,6 +3,8 @@ package com.microservice.erp.services.impl;
 import com.microservice.erp.domain.dto.ApplicationProperties;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,13 +21,18 @@ import java.util.stream.Collectors;
 @Component
 @AllArgsConstructor
 public class UserInformationService {
+
+    @Autowired
+    @Qualifier("userProfileTemplate")
+    RestTemplate restTemplate;
+
     private final HeaderToken headerToken;
+
 
     public List<UserProfileDto> getUserInformationByListOfIds(List<BigInteger> userIdsVal,String authHeader){
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
-        RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> request = headerToken.tokenHeader(authHeader);
         String userIds = userIdsVal.stream().map(String::valueOf).collect(Collectors.joining());
 

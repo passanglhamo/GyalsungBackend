@@ -45,3 +45,10 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://${app.eureka.service.host}:${app.eureka.service.port}/eureka
+
+#Service-config
+app.eureka.api.gateway.port: 80
+
+#User-service
+user.service.url: http://USER-PROFILE/api/user/profile
+user.service.getAllUsersEligibleForTraining: ${user.service.url}/userProfile/getAllUsersEligibleForTraining?paramDate=

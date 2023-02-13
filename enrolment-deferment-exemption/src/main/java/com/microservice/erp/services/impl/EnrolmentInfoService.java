@@ -12,8 +12,11 @@ import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -40,6 +43,14 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     private final AddToQueue addToQueue;
     private final DefermentExemptionValidation defermentExemptionValidation;
     private final UserInformationService userInformationService;
+
+    @Autowired
+    @Qualifier("userProfileTemplate")
+    RestTemplate userRestTemplate;
+
+    @Autowired
+    @Qualifier("trainingManagementTemplate")
+    RestTemplate restTemplate;
 
     @Override
     public ResponseEntity<?> getRegistrationDateInfo() {
@@ -87,13 +98,12 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         String paramDate = registrationYear + "/12/31";// as on 31st December in the registration date
         BigInteger userId = new BigInteger(String.valueOf(enrolmentDto.getUserId()));
         //check if user is below 18 or not, need to call user service
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
 
         String url = properties.getUserCheckUnderAge() + userId + "&paramDate=" + paramDate;
-        ResponseEntity<UserProfileDto> userDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserProfileDto.class);
+        ResponseEntity<UserProfileDto> userDtoResponse = userRestTemplate.exchange(url, HttpMethod.GET, request, UserProfileDto.class);
         Integer age = Objects.requireNonNull(userDtoResponse.getBody()).getAge();
         //todo remove static code
         if (age < 18) {//todo: need to set Enum class for minimum age requirement
@@ -142,7 +152,6 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
         //to get user detail from m-user-service
         enrolmentListDtos.forEach(item -> {
-            RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
@@ -211,7 +220,6 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         });
         // to send email and sms
         for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
-            RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
@@ -219,7 +227,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             String courseName = "";
 
             String userUrl = properties.getUserProfileById() + enrolmentInfo.getUserId();
-            ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
+            ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
             String fullName = Objects.requireNonNull(userResponse.getBody()).getFullName();
             String mobileNo = Objects.requireNonNull(userResponse.getBody()).getMobileNo();
             String email = Objects.requireNonNull(userResponse.getBody()).getEmail();
@@ -268,7 +276,6 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
         //to get user detail from m-user-service
         enrolmentListDtos.forEach(item -> {
-            RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
@@ -329,7 +336,6 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
         // to send email and sms
         for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
-            RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
@@ -337,7 +343,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             String courseName = "";
 
             String userUrl = properties.getUserProfileById() + enrolmentInfo.getUserId();
-            ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
+            ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
             String fullName = Objects.requireNonNull(userResponse.getBody()).getFullName();
             String mobileNo = Objects.requireNonNull(userResponse.getBody()).getMobileNo();
             String email = Objects.requireNonNull(userResponse.getBody()).getEmail();

@@ -4,18 +4,20 @@ package com.microservice.erp.services.impl;
 import com.microservice.erp.domain.dao.ParentConsentDao;
 import com.microservice.erp.domain.dto.ApplicationProperties;
 import com.microservice.erp.domain.dto.EventBus;
-import com.microservice.erp.domain.dto.ParentConsentListDto;
 import com.microservice.erp.domain.dto.ParentConsentDto;
+import com.microservice.erp.domain.dto.ParentConsentListDto;
 import com.microservice.erp.domain.entities.ParentConsent;
 import com.microservice.erp.domain.entities.ParentConsentOtp;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
+import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.domain.repositories.ParentConsentOtpRepository;
 import com.microservice.erp.domain.repositories.ParentConsentRepository;
-import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.services.iServices.IParentConsentService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.*;
@@ -32,6 +34,10 @@ public class ParentConsentService implements IParentConsentService {
     private ParentConsentOtpRepository parentConsentOtpRepository;
     private IRegistrationDateInfoRepository iRegistrationDateInfoRepository;
     private AddToQueue addToQueue;
+
+    @Autowired
+    @Qualifier("userProfileTemplate")
+    RestTemplate restTemplate;
 
 
     @Override
@@ -125,7 +131,6 @@ public class ParentConsentService implements IParentConsentService {
         if (status == 'S') {
             List<ParentConsent> parentConsentLists = parentConsentRepository.findByYearOrderBySubmittedOnAsc(year);
             parentConsentLists.forEach(item -> {
-                RestTemplate restTemplate = new RestTemplate();
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Authorization", authHeader);
                 HttpEntity<String> request = new HttpEntity<>(headers);
@@ -142,8 +147,11 @@ public class ParentConsentService implements IParentConsentService {
             });
         } else {
             List<ParentConsentDto> eligibleParentConsentList = parentConsentDao.getEligibleParentConsentList(year);
+            if(Objects.isNull(eligibleParentConsentList)){
+                return ResponseEntity.badRequest().body(new MessageResponse("There is no eligible parent consent."));
+            }
+            
             eligibleParentConsentList.forEach(item -> {
-                RestTemplate restTemplate = new RestTemplate();
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Authorization", authHeader);
                 HttpEntity<String> request = new HttpEntity<>(headers);

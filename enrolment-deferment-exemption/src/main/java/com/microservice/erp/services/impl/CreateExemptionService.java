@@ -10,6 +10,8 @@ import com.microservice.erp.domain.mapper.ExemptionMapper;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
 import com.microservice.erp.services.iServices.ICreateExemptionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
@@ -33,6 +35,10 @@ public class CreateExemptionService implements ICreateExemptionService {
     private final HeaderToken headerToken;
     private final DefermentExemptionValidation defermentExemptionValidation;
     Integer fileLength = 5;
+
+    @Autowired
+    @Qualifier("userProfileTemplate")
+    RestTemplate restTemplate;
 
 
     @Transactional(rollbackOn = Exception.class)
@@ -73,7 +79,6 @@ public class CreateExemptionService implements ICreateExemptionService {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
-        RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authTokenHeader);
 
         String userUrl = properties.getUserProfileById() + userId;

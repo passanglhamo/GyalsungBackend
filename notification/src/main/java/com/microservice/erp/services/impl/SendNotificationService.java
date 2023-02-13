@@ -1,31 +1,29 @@
 package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microservice.erp.domain.dto.ApplicationProperties;
 import com.microservice.erp.domain.dto.MailSenderDto;
 import com.microservice.erp.domain.dto.NoticeDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.NoticeConfiguration;
 import com.microservice.erp.domain.entities.SendNoticeInfo;
-import com.microservice.erp.domain.helper.MailSender;
 import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.helper.SmsSender;
 import com.microservice.erp.domain.repositories.INoticeConfigurationRepository;
 import com.microservice.erp.domain.repositories.SendNoticeInfoRepository;
 import com.microservice.erp.services.iServices.ISendNotificationService;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigInteger;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,8 +34,12 @@ public class SendNotificationService implements ISendNotificationService {
     private SendNoticeInfoRepository sendNoticeInfoRepository;
     private MailSenderService mailSenderService;
 
+    @Autowired
+    @Qualifier("userProfileTemplate")
+    RestTemplate restTemplate;
+
     @Override
-    public ResponseEntity<?> checkNoticeAlreadySentOrNot(String year, Long noticeConfigurationId) {
+    public ResponseEntity<?> checkNoticeAlreadySentOrNot(String year, BigInteger noticeConfigurationId) {
         List<SendNoticeInfo> sendNoticeInfoDb = sendNoticeInfoRepository.findByNoticeConfigurationIdAndYear(noticeConfigurationId, year);
         if (sendNoticeInfoDb.size() > 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Notification for the year " + year + " was already sent."));
@@ -46,6 +48,9 @@ public class SendNotificationService implements ISendNotificationService {
     }
 
     public ResponseEntity<?> sendNotification(String authHeader, NoticeDto noticeDto) throws Exception {
+
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
         //get all eligible users by date and age
         NoticeConfiguration noticeConfigurationDb = iNoticeConfigurationRepository.findById(noticeDto.getNoticeConfigurationId()).get();
@@ -62,11 +67,10 @@ public class SendNotificationService implements ISendNotificationService {
 
         String paramDate = noticeDto.getYear() + "/12/31"; //converted to date 31st december and append selected year from UI
         Integer paramAge = noticeConfigurationDb.getAge();
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
-        String url = "http://localhost:81/api/user/profile/userProfile/getAllUsersEligibleForTraining?paramDate=" + paramDate + "&paramAge=" + paramAge;
+        String url = properties.getUserGetAllUsersEligibleForTraining() + paramDate + "&paramAge=" + paramAge;
         ResponseEntity<UserProfileDto[]> userDtoResponse = restTemplate.exchange(url, HttpMethod.GET, request, UserProfileDto[].class);
         ObjectMapper mapper = new ObjectMapper();
 
@@ -85,13 +89,13 @@ public class SendNotificationService implements ISendNotificationService {
 
             mailSenderService.sendSms(mapper.writeValueAsString(
                     mailSenderDto
-            ),null);
+            ), null);
 
             mailSenderDto.setMessageBody(emailBody);
 
             mailSenderService.sendEmail(mapper.writeValueAsString(
                     mailSenderDto
-            ),null);
+            ), null);
         }
         return ResponseEntity.ok("Notification sent successfully.");
     }
