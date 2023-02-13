@@ -38,12 +38,12 @@ app.eureka.api.gateway.port: 80
 
 #User-service
 user.service.url: http://USER-PROFILE/api/user/profile
-user.service.check.under.age: ${user.service.url}/userProfile/checkUnderAge?userId=
-user.service.profile.by.userId: ${user.service.url}/userProfile/getProfileInfo?userId=
-user.service.profile.by.userIds: ${user.service.url}/userProfile/getProfileInfoByIds?userIds=
+user.service.check.under.age: /userProfile/checkUnderAge?userId=
+user.service.profile.by.userId: /userProfile/getProfileInfo?userId=
+user.service.profile.by.userIds: /userProfile/getProfileInfoByIds?userIds=
 
 
 #Training-Management-Service
 training.management.service.url: http://TRAINING-MANAGEMENT/api/training/management
-training.management.academy.by.academyId: ${training.management.service.url}/common/getTrainingAcademyById?academyId=
-training.management.course.by.courseId: ${training.management.service.url}/fieldSpecializations/getCourseByCourseId?courseId=
+training.management.academy.by.academyId: /common/getTrainingAcademyById?academyId=
+training.management.course.by.courseId: /fieldSpecializations/getCourseByCourseId?courseId=

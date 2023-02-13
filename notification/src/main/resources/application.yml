@@ -51,4 +51,4 @@ app.eureka.api.gateway.port: 80
 
 #User-service
 user.service.url: http://USER-PROFILE/api/user/profile
-user.service.getAllUsersEligibleForTraining: ${user.service.url}/userProfile/getAllUsersEligibleForTraining?paramDate=
+user.service.getAllUsersEligibleForTraining: /userProfile/getAllUsersEligibleForTraining?paramDate=

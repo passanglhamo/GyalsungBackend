@@ -29,9 +29,9 @@ app.eureka.api.gateway.port: 80
 
 #User-service
 user.service.url: http://USER-PROFILE/api/user/profile
-user.service.profile.by.userId: ${user.service.url}/userProfile/getProfileInfo?userId=
+user.service.profile.by.userId: /userProfile/getProfileInfo?userId=
 
 #Training-Management-Service
 training.management.service.url: http://TRAINING-MANAGEMENT/api/training/management
-training.management.hospital.by.hospitalId: ${training.management.service.url}/common/getHospitalById?hospitalId=
-training.management.mappedHospital.by.hospitalId: ${training.management.service.url}/common/getHospitalMappingByHospitalId?hospitalId=
+training.management.hospital.by.hospitalId: /common/getHospitalById?hospitalId=
+training.management.mappedHospital.by.hospitalId: /common/getHospitalMappingByHospitalId?hospitalId=
