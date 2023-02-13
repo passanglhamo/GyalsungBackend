@@ -67,7 +67,7 @@ public class CitizenDetailApiService {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Basic " + authStringEnc);
         HttpEntity<String> request = new HttpEntity<String>(headers);
-        ResponseEntity<ApiAccessToken> response = restTemplate.exchange(dataHubEndPointUrl, HttpMethod.POST, request, ApiAccessToken.class);
+        ResponseEntity<ApiAccessToken> response = restTemplate.exchange("", HttpMethod.POST, request, ApiAccessToken.class);
         apiAccessToken.setAccess_token(response.getBody().getAccess_token());
         apiAccessToken.setExpires_in(response.getBody().getExpires_in());
         apiAccessToken.setScope(response.getBody().getScope());
