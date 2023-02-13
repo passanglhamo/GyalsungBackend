@@ -281,7 +281,7 @@ public class ProfileService implements IProfileService {
         userInfo.setPresentDzongkhagId(userProfileDto.getPresentDzongkhagId());
         userInfo.setPresentGeogId(userProfileDto.getPresentGeogId());
         iUserInfoRepository.save(userInfo);
-        return ResponseEntity.ok(new MessageResponse("Guardian information updated successfully."));
+        return ResponseEntity.ok(new MessageResponse("Current address information updated successfully."));
     }
 
     @Override
@@ -329,6 +329,9 @@ public class ProfileService implements IProfileService {
 
         MultipartFile profilePicture = userProfileDto.getProfilePicture();
 
+        if(Objects.isNull(profilePicture)){
+            return ResponseEntity.badRequest().body(new MessageResponse("User does not have profile picture."));
+        }
         String filename = profilePicture.getOriginalFilename();
         Long fileSize = profilePicture.getSize();
         String fileExtension = Objects.requireNonNull(filename).substring(filename.lastIndexOf(".") + 1, filename.length()).toUpperCase();
