@@ -29,7 +29,13 @@ public class CitizenDetailApiService {
     @Autowired
     private IApiAccessTokenRepository iApiAccessTokenRepository;
 
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
     @Autowired
+    @Qualifier("datahubTokenTemplate")
     private RestTemplate restTemplate;
 
 

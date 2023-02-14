@@ -37,6 +37,9 @@ public class SecuritySettingService implements ISecuritySettingService {
 
     @Override
     public ResponseEntity<?> changePassword(UserProfileDto userProfileDto) {
+        if(Objects.isNull(userProfileDto.getUserId())){
+            return ResponseEntity.badRequest().body(new MessageResponse("User does not exist."));
+        }
 
         Optional<User> userDb = userRepository.findByUserId(userProfileDto.getUserId());
         User user = new ModelMapper().map(userDb, User.class);
@@ -62,6 +65,9 @@ public class SecuritySettingService implements ISecuritySettingService {
 
     @Override
     public ResponseEntity<?> resetUserPassword(UserProfileDto userProfileDto) {
+        if(Objects.isNull(userProfileDto.getUserId())){
+            return ResponseEntity.badRequest().body(new MessageResponse("User does not exist."));
+        }
         User userDb = userRepository.findByUserId(userProfileDto.getUserId()).get();
         User user = new ModelMapper().map(userDb, User.class);
         //confirm current pw must be equal to new pw

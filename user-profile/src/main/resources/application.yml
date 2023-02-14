@@ -67,6 +67,3 @@ training.management.service.url: http://TRAINING-MANAGEMENT/api/training/managem
 #training.management.dzongkhag.by.dzongkhayId: ${training.management.service.url}/common/getDzongkhagByDzongkhagId?dzongkhagId=
 training.management.geog.by.geogId: /common/getGeogByGeogId?geogId=
 training.management.dzongkhag.by.dzongkhayId: /common/getDzongkhagByDzongkhagId?dzongkhagId=
-
-#External-API-Call
-getDatahubToken.endPointURL: https://stg-sso.dit.gov.bt/oauth2/token?grant_type=client_credentials
