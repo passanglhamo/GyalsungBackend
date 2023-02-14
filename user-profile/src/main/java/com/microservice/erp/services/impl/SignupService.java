@@ -164,7 +164,7 @@ public class SignupService implements ISignupService {
         userInfo.setUsername(signupRequestDto.getCid());
 
         //Adding data whethere person is monk/nun/student/dropout
-       // userInfo.setPersonStatusId(signupRequestDto.getPersonStatusId());
+        userInfo.setPersonStaId(signupRequestDto.getPersonStaId());
 
         //Adding present address (Country)
         userInfo.setPresentCountry(signupRequestDto.getPresentCountry());
@@ -179,21 +179,16 @@ public class SignupService implements ISignupService {
     }
 
     @Override
-    public ResponseEntity<?> getExpectedUserDetails(String authHeader, String dateString) throws IOException, ParseException {
-
+    public ResponseEntity<?> getExpectedPopulationByYear(String dateString) throws IOException, ParseException {
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
         String getExpectedUserDetails = props.getProperty("getExpectedUserDetails.endPointURL");
         //todo need to get age from properties file
         String userUrl = getExpectedUserDetails + "/" + dateString + "/18";
         URL url = new URL(userUrl);
-
         ObjectMapper mapper = new ObjectMapper();
-
-
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
-
         con.setRequestMethod("GET");
         con.setRequestProperty("Content-Type", "application/json");
         con.setRequestProperty("Authorization", "Bearer " + apiAccessToken.getAccess_token());

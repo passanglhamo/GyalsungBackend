@@ -11,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * @author Rajib Kumer Ghosh
- *
  */
 
 @Configuration
@@ -19,18 +18,20 @@ import org.springframework.web.client.RestTemplate;
 public class BeanConfig {
 
     @Bean
-    ObjectMapper getMapper(){
+    ObjectMapper getMapper() {
         return new ObjectMapper();
     }
 
-    @Bean("authTemplate") @LoadBalanced
+    @Bean("authTemplate")
+    @LoadBalanced
     public RestTemplate getTemplate(@Value("${auth.service.url}") String url) {
         return new RestTemplateBuilder()
                 .rootUri(url)
                 .build();
     }
 
-    @Bean("trainingManagementTemplate") @LoadBalanced
+    @Bean("trainingManagementTemplate")
+    @LoadBalanced
     public RestTemplate getTrainingManagementTemplate(@Value("${training.management.service.url}") String url) {
         return new RestTemplateBuilder()
                 .rootUri(url)

@@ -3,7 +3,6 @@ package com.microservice.erp.services.impl;
 import com.microservice.erp.domain.entities.ApiAccessToken;
 import com.microservice.erp.domain.repositories.IApiAccessTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
