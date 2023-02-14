@@ -29,8 +29,6 @@ public class CitizenDetailApiService {
     @Autowired
     private IApiAccessTokenRepository iApiAccessTokenRepository;
 
-
-
     @Autowired
     private RestTemplate restTemplate;
 
