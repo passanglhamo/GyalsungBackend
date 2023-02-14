@@ -3,6 +3,7 @@ package com.microservice.erp.domain.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 @Setter
@@ -29,5 +30,7 @@ public class SignupRequestDto {
     private String permanentDzongkhag;
     private String permanentGeog;
     private String permanentPlaceName;
+    private BigInteger personStaId;
+    private String presentCountry;
     //endregion
 }

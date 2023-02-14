@@ -163,6 +163,12 @@ public class SignupService implements ISignupService {
         userInfo.setSignupUser('Y');
         userInfo.setUsername(signupRequestDto.getCid());
 
+        //Adding data whethere person is monk/nun/student/dropout
+       // userInfo.setPersonStatusId(signupRequestDto.getPersonStatusId());
+
+        //Adding present address (Country)
+        userInfo.setPresentCountry(signupRequestDto.getPresentCountry());
+
         BigInteger userId = iUserInfoRepository.save(userInfo).getId();
 //        todo: add to queue following data: password, roles, email, username, userId
 
