@@ -3,7 +3,6 @@ package com.microservice.erp.services.impl;
 import com.microservice.erp.domain.entities.ApiAccessToken;
 import com.microservice.erp.domain.repositories.IApiAccessTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -20,7 +19,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Base64;
-import java.util.Objects;
 import java.util.Properties;
 
 @Service
@@ -33,11 +31,6 @@ public class CitizenDetailApiService {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
-    @Autowired
-    @Qualifier("datahubTokenTemplate")
-    private RestTemplate restTemplate;
-
 
     public ApiAccessToken getApplicationToken() throws ParseException, IOException {
         ApiAccessToken token = iApiAccessTokenRepository.findTop1ByOrderByIdDesc();
@@ -68,9 +61,10 @@ public class CitizenDetailApiService {
         String authStringEnc = Base64.getEncoder().encodeToString((consumerKey + ":" + consumerSecret).getBytes());
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Basic " + authStringEnc);
-        HttpEntity<String> request = new HttpEntity<>(headers);
+        HttpEntity<String> request = new HttpEntity<String>(headers);
+        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ApiAccessToken> response = restTemplate.exchange(dataHubEndPointUrl, HttpMethod.POST, request, ApiAccessToken.class);
-        apiAccessToken.setAccess_token(Objects.requireNonNull(response.getBody()).getAccess_token());
+        apiAccessToken.setAccess_token(response.getBody().getAccess_token());
         apiAccessToken.setExpires_in(response.getBody().getExpires_in());
         apiAccessToken.setScope(response.getBody().getScope());
         apiAccessToken.setToken_type(response.getBody().getToken_type());
