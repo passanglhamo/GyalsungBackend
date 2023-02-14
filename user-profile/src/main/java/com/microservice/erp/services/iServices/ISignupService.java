@@ -23,6 +23,6 @@ public interface ISignupService {
 
     ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, JsonProcessingException;
 
-    ResponseEntity<?> getExpectedUserDetails(String authHeader, String dateString) throws IOException, ParseException;
+    ResponseEntity<?> getExpectedPopulationByYear(String dateString) throws IOException, ParseException;
 
 }

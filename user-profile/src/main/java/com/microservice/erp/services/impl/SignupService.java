@@ -162,7 +162,6 @@ public class SignupService implements ISignupService {
         UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
         userInfo.setSignupUser('Y');
         userInfo.setUsername(signupRequestDto.getCid());
-
         BigInteger userId = iUserInfoRepository.save(userInfo).getId();
 //        todo: add to queue following data: password, roles, email, username, userId
 
@@ -173,26 +172,19 @@ public class SignupService implements ISignupService {
     }
 
     @Override
-    public ResponseEntity<?> getExpectedUserDetails(String authHeader, String dateString) throws IOException, ParseException {
-
+    public ResponseEntity<?> getExpectedPopulationByYear(String dateString) throws IOException, ParseException {
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
         String getExpectedUserDetails = props.getProperty("getExpectedUserDetails.endPointURL");
         //todo need to get age from properties file
         String userUrl = getExpectedUserDetails + "/" + dateString + "/18";
         URL url = new URL(userUrl);
-
         ObjectMapper mapper = new ObjectMapper();
-
-
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
-
         con.setRequestMethod("GET");
         con.setRequestProperty("Content-Type", "application/json");
         con.setRequestProperty("Authorization", "Bearer " + apiAccessToken.getAccess_token());
-
-
         int responseCode = con.getResponseCode();
         if (responseCode == HttpURLConnection.HTTP_OK) {
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -202,7 +194,6 @@ public class SignupService implements ISignupService {
                 response.append(inputLine);
             }
             in.close();
-
             return ResponseEntity.ok().body(mapper.writeValueAsString(response));
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("Data  not found."));
