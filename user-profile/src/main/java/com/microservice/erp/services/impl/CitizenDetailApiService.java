@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Base64;
+import java.util.Objects;
 import java.util.Properties;
 
 @Service
@@ -28,12 +29,9 @@ public class CitizenDetailApiService {
     @Autowired
     private IApiAccessTokenRepository iApiAccessTokenRepository;
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
 
-    @Autowired @Qualifier("datahubTokenTemplate")
+
+    @Autowired
     private RestTemplate restTemplate;
 
 
@@ -66,9 +64,9 @@ public class CitizenDetailApiService {
         String authStringEnc = Base64.getEncoder().encodeToString((consumerKey + ":" + consumerSecret).getBytes());
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Basic " + authStringEnc);
-        HttpEntity<String> request = new HttpEntity<String>(headers);
-        ResponseEntity<ApiAccessToken> response = restTemplate.exchange("", HttpMethod.POST, request, ApiAccessToken.class);
-        apiAccessToken.setAccess_token(response.getBody().getAccess_token());
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<ApiAccessToken> response = restTemplate.exchange(dataHubEndPointUrl, HttpMethod.POST, request, ApiAccessToken.class);
+        apiAccessToken.setAccess_token(Objects.requireNonNull(response.getBody()).getAccess_token());
         apiAccessToken.setExpires_in(response.getBody().getExpires_in());
         apiAccessToken.setScope(response.getBody().getScope());
         apiAccessToken.setToken_type(response.getBody().getToken_type());
