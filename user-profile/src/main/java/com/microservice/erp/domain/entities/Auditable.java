@@ -21,14 +21,15 @@ public class Auditable<ID, VERSION> extends Persistable<ID, VERSION> {
     @Column(name = "last_modified_date")
     LocalDate lastModifiedDate;
 
-    @AttributeOverride(name = "username", column = @Column(name = "created_by"))
+    @AttributeOverride(name = "username", column = @Column(name = "created_by", columnDefinition = "bigint"))
     @Embedded
     @CreatedBy
     Username createdBy;
 
-    @AttributeOverride(name = "username", column = @Column(name = "last_modified_by"))
+    @AttributeOverride(name = "username", column = @Column(name = "last_modified_by",columnDefinition = "bigint"))
     @Embedded
     @LastModifiedBy
+    @Column(columnDefinition = "bigint")
     Username lastModifiedBy;
 
     public LocalDate getCreatedDate() {

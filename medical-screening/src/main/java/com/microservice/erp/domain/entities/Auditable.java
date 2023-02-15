@@ -13,14 +13,14 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 public class Auditable<ID, VERSION> extends Persistable<ID, VERSION> {
 
-    @AttributeOverride(name = "username", column = @Column(name = "created_by"))
+    @AttributeOverride(name = "username", column = @Column(name = "created_by",columnDefinition = "bigint"))
     @Embedded @CreatedBy
     Username createdBy;
 
     @CreatedDate
     LocalDate createdDate;
 
-    @AttributeOverride(name = "username", column = @Column(name = "last_modified_by"))
+    @AttributeOverride(name = "username", column = @Column(name = "last_modified_by",columnDefinition = "bigint"))
     @Embedded @LastModifiedBy
     Username lastModifiedBy;
 

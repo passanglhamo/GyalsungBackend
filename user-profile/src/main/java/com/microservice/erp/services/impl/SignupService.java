@@ -162,6 +162,13 @@ public class SignupService implements ISignupService {
         UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
         userInfo.setSignupUser('Y');
         userInfo.setUsername(signupRequestDto.getCid());
+
+        //Adding data whethere person is monk/nun/student/dropout
+        userInfo.setPersonStaId(signupRequestDto.getPersonStaId());
+
+        //Adding present address (Country)
+        userInfo.setPresentCountry(signupRequestDto.getPresentCountry());
+
         BigInteger userId = iUserInfoRepository.save(userInfo).getId();
 //        todo: add to queue following data: password, roles, email, username, userId
 
@@ -185,6 +192,8 @@ public class SignupService implements ISignupService {
         con.setRequestMethod("GET");
         con.setRequestProperty("Content-Type", "application/json");
         con.setRequestProperty("Authorization", "Bearer " + apiAccessToken.getAccess_token());
+
+
         int responseCode = con.getResponseCode();
         if (responseCode == HttpURLConnection.HTTP_OK) {
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -194,6 +203,7 @@ public class SignupService implements ISignupService {
                 response.append(inputLine);
             }
             in.close();
+
             return ResponseEntity.ok().body(mapper.writeValueAsString(response));
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("Data  not found."));

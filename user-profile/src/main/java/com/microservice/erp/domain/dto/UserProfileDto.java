@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -64,6 +63,8 @@ public class UserProfileDto {
     private MultipartFile profilePicture;
     private byte[] profilePhoto;
     private Object roles;
+    private BigInteger personStaId;
     private Character status;
+
     //endregion
 }
