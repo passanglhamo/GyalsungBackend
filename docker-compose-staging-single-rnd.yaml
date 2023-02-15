@@ -1,0 +1,216 @@
+version: '3.5'
+
+networks:
+  web-app-net:
+    name: my-web-app-net
+    #driver: overlay
+    driver: bridge
+
+volumes:
+  redis-inmemory-storage:
+  activemq-storage:
+  mysql-db-storage:
+  pg-authDB-storage:
+  pg-userProfileDB-storage:
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    networks:
+      - web-app-net
+    volumes:
+      - redis-inmemory-storage:/data
+
+  activemq:
+    image: webcenter/activemq
+    ports:
+      - 8161:8161
+      - 61616:61616
+      - 61613:61613
+    environment:
+      - ACTIVEMQ_MIN_MEMORY=512
+      - ACTIVEMQ_MAX_MEMORY=2048
+      - ACTIVEMQ_ADMIN_LOGIN=admin
+      - ACTIVEMQ_ADMIN_PASSWORD=admin
+    restart: on-failure
+    networks:
+      - web-app-net
+    volumes:
+      - activemq-storage:/var/log/activemq
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    ports:
+      - 2181:2181
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - web-app-net
+
+  kafka:
+    image: bitnami/kafka:latest
+    ports:
+      - 9092:9092
+      - 9093:9093
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      #Place Device-Current IP Or EC2-Private-IP
+      #To connect from an external machine, change localhost to your host's external IP/hostname,
+      #EXTERNAL://localhost:9093, If we need to access the kafka from our host-machine for debug purpose.
+      #EXTERNAL://<ec2-private-ip>:9093, In case of aws-ec2 instance, we have to broadcast on the ec2's private ip, other wise can't be listen from other ec2 instance.
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_LISTENERS=CLIENT://:9092,EXTERNAL://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
+      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+      #
+    depends_on:
+      - zookeeper
+    networks:
+      - web-app-net
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    ports:
+      - 8091:8080
+    restart: on-failure
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+      - KAFKA_CLUSTERS_0_READONLY=false
+    depends_on:
+      - kafka
+    networks:
+      - web-app-net
+
+  fake-smtp:
+    image: rnwood/smtp4dev
+    ports:
+      - 587:25
+      - 3000:80
+    networks:
+      - web-app-net
+
+  pg-authDB:
+    image: postgres
+    environment:
+      POSTGRES_DB: authDB
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root@123
+    ports:
+      - 5432:5432
+    networks:
+      - web-app-net
+    volumes:
+      - pg-authDB-storage:/var/lib/postgresql/data
+
+  pg-userProfileDB:
+    image: postgres
+    environment:
+      POSTGRES_DB: userProfileDB
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root@123
+    ports:
+      - 5433:5432
+    networks:
+      - web-app-net
+    volumes:
+      - pg-userProfileDB-storage:/var/lib/postgresql/data
+
+  eureka-service-discovery:
+    image: engrajibkumerghosh/ms-training-repo-v1:eureka-service-discovery-v1.0.5
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+    ports:
+      - 801:801
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  api-gateway:
+    image: engrajibkumerghosh/ms-training-repo-v1:cloud-gateway-service-v1.0.5
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus,gateway
+      app.eureka.service.host: eureka-service-discovery
+      app.eureka.service.port: 801
+      redis.host: redis
+      redis.port: 6379
+    ports:
+      - 80:80
+    depends_on:
+      - eureka-service-discovery
+      - auth-service
+      - user-profile
+      - training-management
+      - enrolment-deferment-exemption
+      - medical-screening
+      - notification
+      - auth-service2
+      - user-profile2
+      - enrolment-deferment-exemption2
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  auth-service:
+    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.5
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: eureka-service-discovery
+      app.eureka.service.port: 801
+      app.redis.host: redis
+      app.redis.port: 6379
+      app.mail.host: 172.30.3.140
+      app.mail.port: 587
+      app.activemq.host: activemq
+      app.activemq.port: 61616
+      app.db.host: pg-authDB
+      app.db.port: 5432
+      app.db.name: authDB
+      app.db.username: root
+      app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
+    ports:
+      - 8083:8083
+    depends_on:
+      - eureka-service-discovery
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  user-profile:
+    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0.7
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: eureka-service-discovery
+      app.eureka.service.port: 801
+      app.db.host: pg-userProfileDB
+      app.db.port: 5432
+      app.db.name: userProfileDB
+      app.db.username: root
+      app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
+    ports:
+      - 8084:8084
+    extra_hosts:
+      - stg-sso.dit.gov.bt: 172.30.78.24
+      - staging-datahub-apim.dit.gov.bt: 172.30.78.130
+    depends_on:
+      - eureka-service-discovery
+    restart: on-failure
+    networks:
+      - web-app-net
+
+  
+
+
+#end of scripts
