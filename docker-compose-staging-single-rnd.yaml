@@ -144,13 +144,6 @@ services:
       - eureka-service-discovery
       - auth-service
       - user-profile
-      - training-management
-      - enrolment-deferment-exemption
-      - medical-screening
-      - notification
-      - auth-service2
-      - user-profile2
-      - enrolment-deferment-exemption2
     restart: on-failure
     networks:
       - web-app-net
@@ -210,7 +203,7 @@ services:
     networks:
       - web-app-net
 
-  
+
 
 
 #end of scripts
