@@ -153,6 +153,12 @@ public class UserInfo extends Auditable<BigInteger, Long> implements UserDetails
     @Column(name = "person_status_Id", columnDefinition = "bigint")
     private BigInteger personStaId;
 
+    @Column(name = "student_code", columnDefinition = "varchar(255)")
+    private String studentCode;
+
+    @Column(name = "is_lgbt", columnDefinition = "char(1)")
+    private Character isLGBT;
+
     @JsonIgnore
     private boolean enabled;
 
@@ -536,6 +542,22 @@ public class UserInfo extends Auditable<BigInteger, Long> implements UserDetails
 
     public void setPersonStaId(BigInteger personStaId) {
         this.personStaId = personStaId;
+    }
+
+    public String getStudentCode() {
+        return studentCode;
+    }
+
+    public void setStudentCode(String studentCode) {
+        this.studentCode = studentCode;
+    }
+
+    public Character getIsLGBT() {
+        return isLGBT;
+    }
+
+    public void setIsLGBT(Character isLGBT) {
+        this.isLGBT = isLGBT;
     }
 
     @Override

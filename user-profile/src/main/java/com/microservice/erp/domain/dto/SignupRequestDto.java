@@ -32,5 +32,6 @@ public class SignupRequestDto {
     private String permanentPlaceName;
     private BigInteger personStaId;
     private String presentCountry;
+    private Character isLGBT;
     //endregion
 }

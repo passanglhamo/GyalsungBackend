@@ -33,5 +33,7 @@ public class PersonStatus {
     public void setPersonStatus(String personStatus) {
         this.personStatus = personStatus;
     }
+
+
     //endregion
 }
