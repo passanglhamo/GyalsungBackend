@@ -6,80 +6,58 @@ networks:
     #driver: overlay
     driver: bridge
 
-volumes:
-  pg-userProfileDB-storage:
-  pgadmin-userProfileDB-data:
-
-services:
-  pg-userProfileDB:
-    image: postgres
+services:  
+  auth-service:
+    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.8
     environment:
-      POSTGRES_DB: userProfileDB
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root@123
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+      app.eureka.service.host: eureka-service-discovery
+      app.eureka.service.port: 801
+      app.redis.host: redis
+      app.redis.port: 6379
+      app.mail.host: 172.30.3.140
+      app.mail.port: 587
+      app.activemq.host: activemq
+      app.activemq.port: 61616
+      app.db.host: pg-authDB
+      app.db.port: 5432
+      app.db.name: authDB
+      app.db.username: root
+      app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
     ports:
-      - 5432:5432
-    networks:
-      - web-app-net
-    volumes:
-      - pg-userProfileDB-storage:/var/lib/postgresql/data
-
-  pgadmin-userProfileDB:
-    image: dpage/pgadmin4
-    ports:
-      - 5050:80
-    environment:
-      PGADMIN_DEFAULT_EMAIL: root@mypage.com
-      PGADMIN_DEFAULT_PASSWORD: root@123
-    volumes:
-      - pgadmin-userProfileDB-data:/var/lib/pgadmin
-    restart: on-failure
-    networks:
-      - web-app-net
+      - 8083:8083
     depends_on:
-      - pg-userProfileDB
-
-  auth-webapp:
-    image: auth-web-service:1.0
-    build:
-      context: ./auth-service
-      dockerfile: Dockerfile
-    environment:
-      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
-      app.eureka.service.host: ${app.eureka.service.host}
-      app.eureka.service.port: ${app.eureka.service.port}
-    ports:
-      - 8043:8083
+      - eureka-service-discovery
     restart: on-failure
     networks:
       - web-app-net
 
-  user-profile-webapp:
-    image: user-profile-web-service:1.0
-    build:
-      context: ./user-profile
-      dockerfile: Dockerfile
+  user-profile:
+    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0.8
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
-      app.eureka.service.host: ${app.eureka.service.host}
-      app.eureka.service.port: ${app.eureka.service.port}
+      app.eureka.service.host: eureka-service-discovery
+      app.eureka.service.port: 801
+      app.db.host: pg-userProfileDB
+      app.db.port: 5432
+      app.db.name: userProfileDB
+      app.db.username: root
+      app.db.password: root@123
+      app.zookeeper.host: zookeeper
+      app.zookeeper.port: 2181
+      app.kafka.host: kafka
+      app.kafka.port: 9092
     ports:
-      - 8044:8084
-    restart: on-failure
-    networks:
-      - web-app-net
-
-  training-management-webapp:
-    image: training-management-web-service:1.0
-    build:
-      context: ./training-management
-      dockerfile: Dockerfile
-    environment:
-      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
-      app.eureka.service.host: ${app.eureka.service.host}
-      app.eureka.service.port: ${app.eureka.service.port}
-    ports:
-      - 8046:8086
+      - 8084:8084
+    extra_hosts:
+      - "stg-sso.dit.gov.bt:172.30.78.24"
+      - "staging-datahub-apim.dit.gov.bt:172.30.78.130"
+    depends_on:
+      - eureka-service-discovery
     restart: on-failure
     networks:
       - web-app-net

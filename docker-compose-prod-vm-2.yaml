@@ -6,22 +6,39 @@ networks:
     #driver: overlay
     driver: bridge
 
-services:
-  api-gateway:
-    image: api-gateway:1.0
-    build:
-      context: ./gateway-service-config
-      dockerfile: Dockerfile
+services:  
+  eureka-service-discovery:
+    image: engrajibkumerghosh/ms-training-repo-v1:eureka-service-discovery-v1.0.8
     environment:
-      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus,gateway
-      app.eureka.service.host: ${app.eureka.service.host}
-      app.eureka.service.port: ${app.eureka.service.port}
-      redis.host: ${redis.host}
-      redis.port: ${redis.port}
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
     ports:
-      - 80:80
+      - 801:801
     restart: on-failure
     networks:
       - web-app-net
 
+  api-gateway:
+    image: engrajibkumerghosh/ms-training-repo-v1:cloud-gateway-service-v1.0.8
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus,gateway
+      app.eureka.service.host: eureka-service-discovery
+      app.eureka.service.port: 801
+      redis.host: redis
+      redis.port: 6379
+    ports:
+      - 80:80
+    depends_on:
+      - eureka-service-discovery
+      - auth-service
+      - user-profile
+      - training-management
+      - enrolment-deferment-exemption
+      - medical-screening
+      - notification
+      - auth-service2
+      - user-profile2
+      - enrolment-deferment-exemption2
+    restart: on-failure
+    networks:
+      - web-app-net
 #end of scripts

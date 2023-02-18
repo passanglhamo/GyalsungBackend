@@ -6,18 +6,15 @@ networks:
     #driver: overlay
     driver: bridge
 
-services:
-  discovery-service:
-    image: discovery-service:1.0
-    build:
-      context: ./eureka-service-discovery
-      dockerfile: Dockerfile
+services:  
+  nginx:
+    image: nginx/nginx-exporter:latest
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
     ports:
-      - 801:801
+      - 8443:8443
     restart: on-failure
     networks:
       - web-app-net
-
+      
 #end of scripts

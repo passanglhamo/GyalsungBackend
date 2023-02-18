@@ -1,0 +1,131 @@
+version: '3.5'
+
+networks:
+  web-app-net:
+    name: my-web-app-net
+    #driver: overlay
+    driver: bridge
+
+services:
+  exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - 9100
+    networks:
+      - web-app-net
+
+  prom:
+    image: prometheus-db:1.0
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - 9090:9090
+    depends_on:
+      - exporter
+    networks:
+      - web-app-net
+      
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    depends_on:
+      - prom
+    networks:
+      - web-app-net
+
+  elasticsearch:
+     image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+     ports:
+       - 9200:9200
+     environment:
+       - "discovery.type=single-node"
+     volumes:
+       - ./elkstack/elasticsearch/data:/usr/share/elasticsearch/data:rw              # Persistence data
+     deploy:
+       replicas: 1
+       update_config:
+         parallelism: 1
+         delay: 5s
+       restart_policy:
+         condition: on-failure
+       placement:
+         constraints:
+           - node.role == worker
+           - node.labels.elk-node-01 == yes
+     networks:
+       - web-app-net
+
+   logstash:
+     image: docker.elastic.co/logstash/logstash:7.2.0
+     ports:
+       - 25826:25826
+       - 5044:5044
+     volumes:
+       - ./elkstack/logstash/pipeline:/usr/share/logstash/pipeline:ro                # Pipeline configuration
+     restart: on-failure
+     depends_on:
+       - elasticsearch
+     deploy:
+       replicas: 1
+       update_config:
+         parallelism: 1
+         delay: 5s
+       restart_policy:
+         condition: on-failure
+       placement:
+         constraints:
+           - node.role == worker
+           - node.labels.elk-node-01 == yes
+     networks:
+       - web-app-net
+
+   kibana:
+     image: docker.elastic.co/kibana/kibana:7.2.0
+     ports:
+       - 5601:5601
+     restart: on-failure
+     depends_on:
+       - elasticsearch
+     deploy:
+       replicas: 1
+       update_config:
+         parallelism: 1
+         delay: 5s
+       restart_policy:
+         condition: on-failure
+       placement:
+         constraints:
+           - node.role == worker
+           - node.labels.elk-node-01 == yes
+     networks:
+       - web-app-net
+
+   filebeat:
+     image: docker.elastic.co/beats/filebeat:7.2.0
+     command: filebeat -e -strict.perms=false
+     volumes:
+       - ./elkstack/filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro # Configuration file, e.g. commend was introduced for passing the file permission.
+       - /var/lib/docker/containers:/var/lib/docker/containers:ro                    # Docker logs
+       - /var/run/docker.sock:/var/run/docker.sock:ro                                # Additional information about containers
+       - ./elkstack/filebeat/data:/usr/share/filebeat/data:rw                        # Persistence data
+     user: root                                                                      # Allow access to log files and docker.sock
+     restart: on-failure
+     depends_on:
+       - logstash
+     deploy:
+       replicas: 1
+       update_config:
+         parallelism: 1
+         delay: 5s
+       restart_policy:
+         condition: on-failure
+       placement:
+         constraints:
+           - node.role == worker
+           - node.labels.elk-node-01 == yes
+     networks:
+       - web-app-net      
+
+#end of scripts

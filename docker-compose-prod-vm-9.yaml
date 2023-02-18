@@ -7,15 +7,15 @@ networks:
     driver: bridge
 
 services:  
-  enrolment-deferment-exemption2:
-    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.8
+  training-management2:
+    image: engrajibkumerghosh/ms-training-repo-v1:training-management-v1.0.8
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
-      app.db.host: pg-enrolmentDB
+      app.db.host: pg-trainingDB
       app.db.port: 5432
-      app.db.name: enrolmentDB
+      app.db.name: trainingDB
       app.db.username: root
       app.db.password: root@123
       app.zookeeper.host: zookeeper
@@ -23,22 +23,22 @@ services:
       app.kafka.host: kafka
       app.kafka.port: 9092
     ports:
-      - 8097:8087
+      - 8096:8086
     depends_on:
       - eureka-service-discovery
     restart: on-failure
     networks:
       - web-app-net
 
-  medical-screening2:
-    image: engrajibkumerghosh/ms-training-repo-v1:medical-screening-v1.0.8
+  notification2:
+    image: engrajibkumerghosh/ms-training-repo-v1:notification-v1.0.8
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
-      app.db.host: pg-medicalDB
+      app.db.host: pg-notifyDB
       app.db.port: 5432
-      app.db.name: medicalDB
+      app.db.name: notifyDB
       app.db.username: root
       app.db.password: root@123
       app.zookeeper.host: zookeeper
@@ -46,7 +46,7 @@ services:
       app.kafka.host: kafka
       app.kafka.port: 9092
     ports:
-      - 8098:8088
+      - 8095:8085
     depends_on:
       - eureka-service-discovery
     restart: on-failure
