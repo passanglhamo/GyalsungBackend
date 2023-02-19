@@ -24,8 +24,11 @@ services:
       app.kafka.port: 9092
     ports:
       - 8086:8086
-    depends_on:
-      - eureka-service-discovery
+    extra_hosts:
+      - "eureka-service-discovery:172.30.3.140"
+      - "pg-trainingDB:172.30.3.140"
+      - "zookeeper:172.30.3.140"
+      - "kafka:172.30.3.140"
     restart: on-failure
     networks:
       - web-app-net
@@ -47,8 +50,11 @@ services:
       app.kafka.port: 9092
     ports:
       - 8085:8085
-    depends_on:
-      - eureka-service-discovery
+    extra_hosts:
+      - "eureka-service-discovery:172.30.3.140"
+      - "pg-notifyDB:172.30.3.140"
+      - "zookeeper:172.30.3.140"
+      - "kafka:172.30.3.140"
     restart: on-failure
     networks:
       - web-app-net

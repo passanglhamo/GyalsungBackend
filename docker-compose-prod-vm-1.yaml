@@ -6,13 +6,15 @@ networks:
     #driver: overlay
     driver: bridge
 
-services:  
+services:
   nginx:
-    image: nginx/nginx-exporter:latest
-    environment:
-      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+    container_name: nginx-ha-nlb
+    image: nginx:latest
     ports:
-      - 8443:8443
+      - 8080:80
+      - 8443:443
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
     restart: on-failure
     networks:
       - web-app-net

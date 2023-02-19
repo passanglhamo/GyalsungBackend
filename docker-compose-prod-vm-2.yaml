@@ -6,7 +6,19 @@ networks:
     #driver: overlay
     driver: bridge
 
-services:  
+services:
+  nginx:
+    container_name: nginx-1
+    image: nginx:latest
+    ports:
+      - 8080:80
+      - 8443:443
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    restart: on-failure
+    networks:
+      - web-app-net
+
   eureka-service-discovery:
     image: engrajibkumerghosh/ms-training-repo-v1:eureka-service-discovery-v1.0.8
     environment:
@@ -27,17 +39,9 @@ services:
       redis.port: 6379
     ports:
       - 80:80
-    depends_on:
-      - eureka-service-discovery
-      - auth-service
-      - user-profile
-      - training-management
-      - enrolment-deferment-exemption
-      - medical-screening
-      - notification
-      - auth-service2
-      - user-profile2
-      - enrolment-deferment-exemption2
+    extra_hosts:
+      - "eureka-service-discovery:172.30.3.140"
+      - "redis:172.30.3.140"
     restart: on-failure
     networks:
       - web-app-net
