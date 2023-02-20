@@ -25,10 +25,10 @@ services:
     ports:
       - 8086:8086
     extra_hosts:
-      - "eureka-service-discovery:172.30.3.140"
-      - "pg-trainingDB:172.30.3.140"
-      - "zookeeper:172.30.3.140"
-      - "kafka:172.30.3.140"
+      - "eureka-service-discovery:172.30.3.4"
+      - "pg-trainingDB:172.30.3.22"
+      - "zookeeper:172.30.3.18"
+      - "kafka:172.30.3.18"
     restart: on-failure
     networks:
       - web-app-net
@@ -51,10 +51,10 @@ services:
     ports:
       - 8085:8085
     extra_hosts:
-      - "eureka-service-discovery:172.30.3.140"
-      - "pg-notifyDB:172.30.3.140"
-      - "zookeeper:172.30.3.140"
-      - "kafka:172.30.3.140"
+      - "eureka-service-discovery:172.30.3.4"
+      - "pg-notifyDB:172.30.3.19"
+      - "zookeeper:172.30.3.18"
+      - "kafka:172.30.3.18"
     restart: on-failure
     networks:
       - web-app-net

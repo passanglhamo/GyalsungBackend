@@ -31,12 +31,12 @@ services:
     ports:
       - 8093:8083
     extra_hosts:
-      - "eureka-service-discovery:172.30.3.140"
-      - "redis:172.30.3.140"
-      - "activemq:172.30.3.140"
-      - "pg-authDB:172.30.3.140"
-      - "zookeeper:172.30.3.140"
-      - "kafka:172.30.3.140"
+      - "eureka-service-discovery:172.30.3.4"
+      - "redis:172.30.3.18"
+      - "activemq:172.30.3.18"
+      - "pg-authDB:172.30.3.19"
+      - "zookeeper:172.30.3.18"
+      - "kafka:172.30.3.18"
     restart: on-failure
     networks:
       - web-app-net
@@ -61,10 +61,10 @@ services:
     extra_hosts:
       - "stg-sso.dit.gov.bt:172.30.78.24"
       - "staging-datahub-apim.dit.gov.bt:172.30.78.130"
-      - "eureka-service-discovery:172.30.3.140"
-      - "pg-userProfileDB:172.30.3.140"
-      - "zookeeper:172.30.3.140"
-      - "kafka:172.30.3.140"
+      - "eureka-service-discovery:172.30.3.4"
+      - "pg-userProfileDB:172.30.3.20"
+      - "zookeeper:172.30.3.18"
+      - "kafka:172.30.3.18"
     restart: on-failure
     networks:
       - web-app-net
