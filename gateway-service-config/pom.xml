@@ -101,11 +101,11 @@
 			<artifactId>JSQLEditor</artifactId>
 			<version>1.1.4.6-RELEASE</version>
 		</dependency>
-		<dependency>
-			<groupId>com.github.itsoulltd.WebComponentKit</groupId>
-			<artifactId>jjwt-web-token</artifactId>
-			<version>${WebComponentKit.version}</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.github.itsoulltd.WebComponentKit</groupId>-->
+<!--			<artifactId>jjwt-web-token</artifactId>-->
+<!--			<version>${WebComponentKit.version}</version>-->
+<!--		</dependency>-->
         <dependency>
             <groupId>com.github.itsoulltd.WebComponentKit</groupId>
             <artifactId>jjwt-web-token</artifactId>
