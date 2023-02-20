@@ -41,69 +41,69 @@ scrape_configs:
     scrape_interval: 5s
     #localhost || machine-ip || aws-public-dns:port
     static_configs:
-      - targets: ['172.30.3.4:80']
+      - targets: ['api-gateway:80']
 
   - job_name: 'eureka-discovery-service'
     metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
     #localhost || machine-ip || aws-public-dns:port
     static_configs:
-      - targets: ['172.30.3.4:801']
+      - targets: ['discovery-service:801']
 
   - job_name: 'auth-service'
     metrics_path: '/api/auth/actuator/prometheus'
     scrape_interval: 15s
     #localhost || machine-ip || aws-public-dns:port
     static_configs:
-      - targets: ['172.30.3.6:8083', '172.30.3.7:8093']
+      - targets: ['auth-webapp:8083']
 
-  #- job_name: 'first-service'
-  #  metrics_path: '/api/employee/actuator/prometheus'
-  #  scrape_interval: 5s
-  #  #localhost || machine-ip || aws-public-dns:port
-  #  static_configs:
-  #    - targets: ['first-webapp:8081']
-  #
-  #- job_name: 'second-service'
-  #  metrics_path: '/api/consumer/actuator/prometheus'
-  #  scrape_interval: 5s
-  #  #localhost || machine-ip || aws-public-dns:port
-  #  static_configs:
-  #    - targets: ['second-webapp:8082']
+  - job_name: 'first-service'
+    metrics_path: '/api/employee/actuator/prometheus'
+    scrape_interval: 5s
+    #localhost || machine-ip || aws-public-dns:port
+    static_configs:
+      - targets: ['first-webapp:8081']
+
+  - job_name: 'second-service'
+    metrics_path: '/api/consumer/actuator/prometheus'
+    scrape_interval: 5s
+    #localhost || machine-ip || aws-public-dns:port
+    static_configs:
+      - targets: ['second-webapp:8082']
 
   - job_name: 'user-profile'
     metrics_path: '/api/user/profile/actuator/prometheus'
     scrape_interval: 5s
     #localhost || machine-ip || aws-public-dns:port
     static_configs:
-      - targets: ['172.30.3.6:8084', '172.30.3.7:8094']
+      - targets: ['user-profile-webapp:8084']
 
   - job_name: 'training-management'
     metrics_path: '/api/training/management/actuator/prometheus'
     scrape_interval: 5s
     #localhost || machine-ip || aws-public-dns:port
     static_configs:
-      - targets: ['172.30.3.16:8086', '172.30.3.17:8096']
+      - targets: ['training-management-webapp:8086']
 
   - job_name: 'enrolment-deferment-exemption-management'
     metrics_path: '/api/enrolment/deferment/exemption/actuator/prometheus'
     scrape_interval: 5s
     #localhost || machine-ip || aws-public-dns:port
     static_configs:
-      - targets: ['172.30.3.8:8087', '172.30.3.10:8097']
+      - targets: ['enrolment-deferment-exemption-webapp:8087']
 
   - job_name: 'medical-screening'
     metrics_path: '/api/medical/screening/actuator/prometheus'
     scrape_interval: 5s
     #localhost || machine-ip || aws-public-dns:port
     static_configs:
-      - targets: ['172.30.3.8:8088', '172.30.3.10:8098']
+      - targets: ['medical-screening-webapp:8088']
 
   - job_name: 'notification'
     metrics_path: '/api/notification/actuator/prometheus'
     scrape_interval: 5s
     #localhost || machine-ip || aws-public-dns:port
     static_configs:
-      - targets: ['172.30.3.16:8085', '172.30.3.16:8095']
+      - targets: ['notification-webapp:8085']
 
 #End Of File
