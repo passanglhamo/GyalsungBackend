@@ -14,7 +14,7 @@ services:
       app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
       app.db.host: pg-enrolmentDB
-      app.db.port: 5432
+      app.db.port: 5435
       app.db.name: enrolmentDB
       app.db.username: root
       app.db.password: root@123
@@ -40,7 +40,7 @@ services:
       app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
       app.db.host: pg-medicalDB
-      app.db.port: 5432
+      app.db.port: 5436
       app.db.name: medicalDB
       app.db.username: root
       app.db.password: root@123

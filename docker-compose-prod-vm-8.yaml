@@ -14,7 +14,7 @@ services:
       app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
       app.db.host: pg-trainingDB
-      app.db.port: 5432
+      app.db.port: 5434
       app.db.name: trainingDB
       app.db.username: root
       app.db.password: root@123
@@ -40,7 +40,7 @@ services:
       app.eureka.service.host: eureka-service-discovery
       app.eureka.service.port: 801
       app.db.host: pg-notifyDB
-      app.db.port: 5432
+      app.db.port: 5437
       app.db.name: notifyDB
       app.db.username: root
       app.db.password: root@123
