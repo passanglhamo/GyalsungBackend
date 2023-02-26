@@ -41,7 +41,7 @@ scrape_configs:
     scrape_interval: 5s
     #localhost || machine-ip || aws-public-dns:port
     static_configs:
-      - targets: ['172.30.3.4:80']
+      - targets: ['172.30.3.4:80', '172.30.3.5:80']
 
   - job_name: 'eureka-discovery-service'
     metrics_path: '/actuator/prometheus'
