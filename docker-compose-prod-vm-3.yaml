@@ -7,18 +7,6 @@ networks:
     driver: bridge
 
 services:
-  nginx:
-    container_name: nginx-2
-    image: nginx:latest
-    ports:
-      - 8080:80
-      - 8443:443
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-    restart: on-failure
-    networks:
-      - web-app-net
-
   api-gateway:
     image: engrajibkumerghosh/ms-training-repo-v1:cloud-gateway-service-v1.0.8
     environment:
