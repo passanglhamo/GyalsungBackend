@@ -7,6 +7,15 @@ networks:
     driver: bridge
 
 services:
+  eureka-service-discovery:
+    image: engrajibkumerghosh/ms-training-repo-v1:eureka-service-discovery-v1.0.8
+    environment:
+      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+    ports:
+      - 801:801
+    restart: on-failure
+    network_mode: "host"
+
   api-gateway:
     image: engrajibkumerghosh/ms-training-repo-v1:cloud-gateway-service-v1.0.8
     environment:
@@ -20,19 +29,6 @@ services:
     extra_hosts:
       - "eureka-service-discovery:172.30.3.4"
       - "redis:172.30.3.18"
-      - "afda21a4e060:172.30.3.7"
-      - "5706910580bb:172.30.3.7"
-      - "b1f73308401a:172.30.3.7"
-      - "c6762d3a79aa:172.30.3.7"
-      - "7fdf20fa7d54:172.30.3.10"
-      - "c79d253cb822:172.30.3.10"
-      - "116490b1ebaf:172.30.3.10"
-      - "3fdd4667b10f:172.30.3.10"
-      - "77c75dc887e8:172.30.3.17"
-      - "47d0101fd590:172.30.3.17"
-      - "e84d985766a9:172.30.3.17"
-      - "bffc03e6e08a:172.30.3.17"
     restart: on-failure
-    networks:
-      - web-app-net
+    network_mode: "host"
 #end of scripts
