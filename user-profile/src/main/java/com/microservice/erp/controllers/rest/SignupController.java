@@ -60,4 +60,9 @@ public class SignupController {
         return iSignupService.getExpectedPopulationByYear(dateString);
     }
 
+    @GetMapping("/getPersonDetailsByCid")
+    public ResponseEntity<?> getPersonDetailsByCid(String cid) throws ParseException, IOException, ApiException {
+        return iSignupService.getPersonDetailsByCid(cid);
+    }
+
 }

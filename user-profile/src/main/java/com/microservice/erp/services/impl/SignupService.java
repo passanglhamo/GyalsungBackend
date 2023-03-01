@@ -12,7 +12,6 @@ import com.microservice.erp.domain.repositories.ISignupSmsOtpRepository;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISignupService;
 import com.squareup.okhttp.OkHttpClient;
-import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -40,7 +39,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@AllArgsConstructor
+//@AllArgsConstructor
 public class SignupService implements ISignupService {
     private final CitizenDetailApiService citizenDetailApiService;
     private final ISignupSmsOtpRepository iSignupSmsOtpRepository;
@@ -49,6 +48,14 @@ public class SignupService implements ISignupService {
 
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
+
+    public SignupService(CitizenDetailApiService citizenDetailApiService, ISignupSmsOtpRepository iSignupSmsOtpRepository, ISignupEmailVerificationCodeRepository iSignupEmailVerificationCodeRepository, IUserInfoRepository iUserInfoRepository, AddToQueue addToQueue) {
+        this.citizenDetailApiService = citizenDetailApiService;
+        this.iSignupSmsOtpRepository = iSignupSmsOtpRepository;
+        this.iSignupEmailVerificationCodeRepository = iSignupEmailVerificationCodeRepository;
+        this.iUserInfoRepository = iUserInfoRepository;
+        this.addToQueue = addToQueue;
+    }
 
 
     @Override
@@ -214,6 +221,56 @@ public class SignupService implements ISignupService {
     }
 
 
+    @Override
+    public ResponseEntity<?> getPersonDetailsByCid(String cid) throws IOException, ParseException, ApiException {
+        CitizenDetailDto citizenDetailDto = new CitizenDetailDto();
+        Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
+        Properties props = PropertiesLoaderUtils.loadProperties(resource);
+        String getCitizenDetails = props.getProperty("getCitizenDetails.endPointURL");
+        OkHttpClient httpClient = new OkHttpClient();
+        httpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
+        httpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
+        ApiClient apiClient = new ApiClient();
+        apiClient.setHttpClient(httpClient);
+        apiClient.setBasePath(getCitizenDetails);
+        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
+        apiClient.setAccessToken(apiAccessToken.getAccess_token());
+
+        DefaultApi api = new DefaultApi(apiClient);
+        CitizenDetailsResponse citizenDetailsResponse = api.citizendetailsCidGet(cid);
+        ParentdetailResponse parentdetailResponse = api.parentdetailsCidGet(cid);
+        if (citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail() != null && !citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().isEmpty()) {
+            CitizendetailsObj citizendetailsObj = citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().get(0);
+            ParentdetailObj parentdetailObj = parentdetailResponse.getParentDetailResponse().getParentDetail().get(0);
+            char genderChar = citizendetailsObj.getGender().charAt(0);
+            String genderName = "Male";
+            if (genderChar == 'F') {
+                genderName = "Female";
+            } else if (genderChar == 'O') {
+                genderName = "Other";
+            }
+            citizenDetailDto.setFullName(citizendetailsObj.getFirstName() + " " + citizendetailsObj.getMiddleName() + " " + citizendetailsObj.getLastName());
+            citizenDetailDto.setFullName(citizenDetailDto.getFullName().replaceAll("null", ""));
+            citizenDetailDto.setCid(citizendetailsObj.getCid());
+            citizenDetailDto.setDob(citizendetailsObj.getDob());
+            citizenDetailDto.setGender(genderChar);
+            citizenDetailDto.setGenderName(genderName);
+            citizenDetailDto.setFatherName(citizendetailsObj.getFatherName());
+            citizenDetailDto.setFatherCid(parentdetailObj.getFatherCID());
+            citizenDetailDto.setMotherName(citizendetailsObj.getMotherName());
+            citizenDetailDto.setMotherCid(parentdetailObj.getMotherCID());
+            citizenDetailDto.setVillageName(citizendetailsObj.getVillageName());
+            citizenDetailDto.setGeogName(citizendetailsObj.getGewogName());
+            citizenDetailDto.setDzongkhagName(citizendetailsObj.getDzongkhagName());
+            citizenDetailDto.setHouseNo(citizendetailsObj.getHouseNo());
+            citizenDetailDto.setThramNo(citizendetailsObj.getThramNo());
+
+        } else {
+            return ResponseEntity.badRequest().body(new MessageResponse("No information found matching CID No " + cid));
+        }
+        return ResponseEntity.ok(citizenDetailDto);
+    }
+
     public static String generateVerificationCode(int count) {
         StringBuilder builder = new StringBuilder();
         while (count-- != 0) {
@@ -225,25 +282,17 @@ public class SignupService implements ISignupService {
 
     private ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, ApiException, IOException {
         CitizenDetailDto citizenDetailDto = new CitizenDetailDto();
-
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
         String getCitizenDetails = props.getProperty("getCitizenDetails.endPointURL");
-
-
         OkHttpClient httpClient = new OkHttpClient();
         httpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
         httpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
-
         ApiClient apiClient = new ApiClient();
         apiClient.setHttpClient(httpClient);
-
         apiClient.setBasePath(getCitizenDetails);
-
-        //region off this in stagging
         ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
         apiClient.setAccessToken(apiAccessToken.getAccess_token());
-        //endregion
 
         DefaultApi api = new DefaultApi(apiClient);
         CitizenDetailsResponse citizenDetailsResponse = api.citizendetailsCidGet(cid);
@@ -251,18 +300,14 @@ public class SignupService implements ISignupService {
         if (citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail() != null && !citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().isEmpty()) {
             CitizendetailsObj citizendetailsObj = citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().get(0);
             ParentdetailObj parentdetailObj = parentdetailResponse.getParentDetailResponse().getParentDetail().get(0);
-
             char genderChar = citizendetailsObj.getGender().charAt(0);
-            //todo need to remove static code
             String genderName = "Male";
             if (genderChar == 'F') {
                 genderName = "Female";
             } else if (genderChar == 'O') {
                 genderName = "Other";
             }
-
             String censusDob = citizendetailsObj.getDob();
-
             if (!censusDob.equals(dob)) {
                 return ResponseEntity.badRequest().body(new MessageResponse("CID and date of birth did not matched."));
             }
