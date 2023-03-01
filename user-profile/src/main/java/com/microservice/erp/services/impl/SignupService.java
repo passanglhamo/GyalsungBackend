@@ -25,6 +25,8 @@ import org.wso2.client.api.ApiException;
 import org.wso2.client.api.DCRC_CitizenDetailsAPI.DefaultApi;
 import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizenDetailsResponse;
 import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
+import org.wso2.client.model.DCRC_CitizenDetailsAPI.ParentdetailObj;
+import org.wso2.client.model.DCRC_CitizenDetailsAPI.ParentdetailResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -245,8 +247,10 @@ public class SignupService implements ISignupService {
 
         DefaultApi api = new DefaultApi(apiClient);
         CitizenDetailsResponse citizenDetailsResponse = api.citizendetailsCidGet(cid);
+        ParentdetailResponse parentdetailResponse = api.parentdetailsCidGet(cid);
         if (citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail() != null && !citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().isEmpty()) {
             CitizendetailsObj citizendetailsObj = citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().get(0);
+            ParentdetailObj parentdetailObj = parentdetailResponse.getParentDetailResponse().getParentDetail().get(0);
 
             char genderChar = citizendetailsObj.getGender().charAt(0);
             //todo need to remove static code
@@ -269,9 +273,9 @@ public class SignupService implements ISignupService {
             citizenDetailDto.setGender(genderChar);
             citizenDetailDto.setGenderName(genderName);
             citizenDetailDto.setFatherName(citizendetailsObj.getFatherName());
-            citizenDetailDto.setFatherCid(null);
+            citizenDetailDto.setFatherCid(parentdetailObj.getFatherCID());
             citizenDetailDto.setMotherName(citizendetailsObj.getMotherName());
-            citizenDetailDto.setMotherCid(null);
+            citizenDetailDto.setMotherCid(parentdetailObj.getMotherCID());
             citizenDetailDto.setVillageName(citizendetailsObj.getVillageName());
             citizenDetailDto.setGeogName(citizendetailsObj.getGewogName());
             citizenDetailDto.setDzongkhagName(citizendetailsObj.getDzongkhagName());
