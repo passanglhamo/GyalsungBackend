@@ -14,6 +14,9 @@ public class PersonStatus {
 
     @Column(name = "person_status", columnDefinition = "varchar(255)")
     private String personStatus;
+
+    @Column(name = "is_student", columnDefinition = "char(1)")
+    private Character isStudent;
     //endregion
 
 
@@ -34,6 +37,13 @@ public class PersonStatus {
         this.personStatus = personStatus;
     }
 
+    public Character getIsStudent() {
+        return isStudent;
+    }
+
+    public void setIsStudent(Character isStudent) {
+        this.isStudent = isStudent;
+    }
 
     //endregion
 }

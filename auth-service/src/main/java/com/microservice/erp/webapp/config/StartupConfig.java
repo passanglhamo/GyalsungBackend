@@ -75,6 +75,30 @@ public class StartupConfig implements CommandLineRunner {
     @Value("${app.screen.roleWisePermission.screenUrl}")
     private String roleWisePermissionUrl;
 
+    @Value("${app.screen.dashboard}")
+    private String dashboard;
+
+    @Value("${app.screen.dashboardUrl}")
+    private String dashboardUrl;
+
+    @Value("${app.screen.dashboardExpected}")
+    private String dashboardExpected;
+
+    @Value("${app.screen.dashboardExpectedUrl}")
+    private String dashboardExpectedUrl;
+
+    @Value("${app.screen.dashboardExpectedMale}")
+    private String dashboardExpectedMale;
+
+    @Value("${app.screen.dashboardExpectedMaleUrl}")
+    private String dashboardExpectedMaleUrl;
+
+    @Value("${app.screen.dashboardExpectedFemale}")
+    private String dashboardExpectedFemale;
+
+    @Value("${app.screen.dashboardExpectedFemaleUrl}")
+    private String dashboardExpectedFemaleUrl;
+
 
 
     public StartupConfig(UserRepository userRepository, PasswordEncoder passwordEncoder, IRoleRepository roleRepository,
@@ -111,6 +135,14 @@ public class StartupConfig implements CommandLineRunner {
                 , roleWisePermission
                 , roleWisePermissionUrl
                 , policyUrl
+                , dashboard
+                , dashboardUrl
+                , dashboardExpected
+                , dashboardExpectedUrl
+                , dashboardExpectedMale
+                , dashboardExpectedMaleUrl
+                , dashboardExpectedFemale
+                , dashboardExpectedFemaleUrl
                 );
     }
 
@@ -122,7 +154,11 @@ public class StartupConfig implements CommandLineRunner {
                                String screenName, String url,
                                String roleName, String roleUrl,
                                String roleWisePermission, String roleWisePermissionUrl,
-                               String policyUrl) {
+                               String policyUrl, String dashboard ,
+                               String dashboardUrl,String dashboardExpected,
+                               String dashboardExpectedUrl, String dashboardExpectedMale,
+                               String dashboardExpectedMaleUrl, String dashboardExpectedFemale,
+                               String dashboardExpectedFemaleUrl) {
 
         Optional<User> opt = userRepository.findByUsername(username);
         if (opt.isPresent()) return;
@@ -135,45 +171,67 @@ public class StartupConfig implements CommandLineRunner {
         }
 
         if (!screenRepository.findByScreenName(groupName).isPresent()) {
+
             Screen screen = new Screen();
             screen.setScreenId(1);
-            screen.setScreenName(groupName);
-            screen.setScreenUrl(groupUrl);
-            screen.setScreenIconName(groupName);
-            screen.setScreenGroupId(screenGroupRepository.findByScreenGroupName(screenGroupName).get().getId());
+            screen.setScreenName(dashboard);
+            screen.setScreenUrl(dashboardUrl);
+            screen.setScreenIconName(dashboard);
             screenRepository.save(screen);
 
+            Screen screen1 = new Screen();
+            screen1.setScreenId(2);
+            screen1.setScreenName(dashboardExpected);
+            screen1.setScreenUrl(dashboardExpectedUrl);
+            screen1.setScreenIconName(dashboardExpected);
+            screenRepository.save(screen1);
+
             Screen screen2 = new Screen();
-            screen2.setScreenId(2);
-            screen2.setScreenName(screenName);
-            screen2.setScreenUrl(url);
-            screen2.setScreenIconName(screenName);
-            screen2.setScreenGroupId(screenGroupRepository.findByScreenGroupName(screenGroupName).get().getId());
+            screen2.setScreenId(3);
+            screen2.setScreenName(dashboardExpectedMale);
+            screen2.setScreenUrl(dashboardExpectedMaleUrl);
+            screen2.setScreenIconName(dashboardExpectedMale);
             screenRepository.save(screen2);
 
             Screen screen3 = new Screen();
-            screen3.setScreenId(3);
-            screen3.setScreenName(roleName);
-            screen3.setScreenUrl(roleUrl);
-            screen3.setScreenIconName(roleName);
-            screen3.setScreenGroupId(screenGroupRepository.findByScreenGroupName(screenGroupName).get().getId());
+            screen3.setScreenId(4);
+            screen3.setScreenName(dashboardExpectedFemale);
+            screen3.setScreenUrl(dashboardExpectedFemaleUrl);
+            screen3.setScreenIconName(dashboardExpectedFemale);
             screenRepository.save(screen3);
 
+
             Screen screen4 = new Screen();
-            screen4.setScreenId(4);
-            screen4.setScreenName(roleWisePermission);
-            screen4.setScreenUrl(roleWisePermissionUrl);
-            screen4.setScreenIconName(roleWisePermission);
+            screen4.setScreenId(5);
+            screen4.setScreenName(groupName);
+            screen4.setScreenUrl(groupUrl);
+            screen4.setScreenIconName(groupName);
             screen4.setScreenGroupId(screenGroupRepository.findByScreenGroupName(screenGroupName).get().getId());
             screenRepository.save(screen4);
 
             Screen screen5 = new Screen();
-            screen5.setScreenId(5);
-            screen5.setScreenName(policyName);
-            screen5.setScreenUrl(policyUrl);
-            screen5.setScreenIconName(policyName);
+            screen5.setScreenId(6);
+            screen5.setScreenName(screenName);
+            screen5.setScreenUrl(url);
+            screen5.setScreenIconName(screenName);
             screen5.setScreenGroupId(screenGroupRepository.findByScreenGroupName(screenGroupName).get().getId());
-            screenRepository.save(screen4);
+            screenRepository.save(screen5);
+
+            Screen screen6 = new Screen();
+            screen6.setScreenId(7);
+            screen6.setScreenName(roleName);
+            screen6.setScreenUrl(roleUrl);
+            screen6.setScreenIconName(roleName);
+            screen6.setScreenGroupId(screenGroupRepository.findByScreenGroupName(screenGroupName).get().getId());
+            screenRepository.save(screen6);
+
+            Screen screen7 = new Screen();
+            screen7.setScreenId(8);
+            screen7.setScreenName(roleWisePermission);
+            screen7.setScreenUrl(roleWisePermissionUrl);
+            screen7.setScreenIconName(roleWisePermission);
+            screen7.setScreenGroupId(screenGroupRepository.findByScreenGroupName(screenGroupName).get().getId());
+            screenRepository.save(screen7);
         }
 
         Policy policy = new Policy();

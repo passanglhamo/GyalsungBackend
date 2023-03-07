@@ -12,6 +12,8 @@ import com.microservice.erp.domain.repositories.ISignupSmsOtpRepository;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISignupService;
 import com.squareup.okhttp.OkHttpClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -27,6 +29,7 @@ import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
 import org.wso2.client.model.DCRC_CitizenDetailsAPI.ParentdetailObj;
 import org.wso2.client.model.DCRC_CitizenDetailsAPI.ParentdetailResponse;
 
+import javax.json.JsonArray;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,6 +40,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 //@AllArgsConstructor
@@ -213,12 +218,35 @@ public class SignupService implements ISignupService {
             }
             in.close();
 
-            return ResponseEntity.ok().body(mapper.writeValueAsString(response));
+            JSONArray details = new JSONObject(response.toString()).getJSONObject("details").getJSONArray("detail");
+            List<JSONObject> detailsList = toList(details);
+            List<ExpectedPopulationDto> expectedList = new ArrayList<>();
+            detailsList.forEach(item->{
+                ExpectedPopulationDto expectedPopulationDto = new ExpectedPopulationDto();
+                String cidNo = item.getString("cidNo");
+                expectedPopulationDto.setCidNo(cidNo);
+                expectedPopulationDto.setDob(item.getString("dob"));
+                expectedPopulationDto.setName(item.getString("name"));
+                expectedPopulationDto.setGender(item.getString("gender"));
+                expectedPopulationDto.setIsRegistered(iUserInfoRepository.existsByCid(cidNo));
+                expectedList.add(expectedPopulationDto);
+            });
+
+
+            return ResponseEntity.ok().body(expectedList);
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("Data  not found."));
         }
 
+
     }
+
+    private static List<JSONObject> toList(JSONArray array) {
+        return IntStream.range(0, array.length())
+                .mapToObj(array::getJSONObject)
+                .collect(Collectors.toList());
+    }
+
 
 
     @Override
