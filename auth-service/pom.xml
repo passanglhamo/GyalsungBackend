@@ -248,7 +248,8 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <scope>provided</scope>
+            <version>1.18.24</version>
+            <optional>true</optional>
         </dependency>
         <!-- lombok end-->
         <!--region related to citizen detail start-->
