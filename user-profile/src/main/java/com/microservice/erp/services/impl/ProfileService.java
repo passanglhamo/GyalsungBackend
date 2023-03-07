@@ -119,7 +119,7 @@ public class ProfileService implements IProfileService {
     @Override
     public ResponseEntity<?> checkEmailExistOrNot(String email) {
         Optional<UserInfo> userInfoDb = iUserInfoRepository.findByEmail(email);
-        if (!userInfoDb.isPresent()) {
+        if (userInfoDb.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         } else {
             return ResponseEntity.ok(new MessageResponse("Email available."));

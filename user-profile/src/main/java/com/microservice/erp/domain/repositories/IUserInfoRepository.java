@@ -26,4 +26,7 @@ public interface IUserInfoRepository extends JpaRepository<UserInfo, BigInteger>
     List<UserInfo> getAllUsersEligibleForTraining(Date paramDate, Integer paramAge);
 
     List<UserInfo> findAllBySignupUserOrderByFullNameAsc(char signupUser);
+
+    boolean  existsByCid(String cid);
+
 }
