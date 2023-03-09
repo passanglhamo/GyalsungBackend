@@ -194,50 +194,56 @@ public class SignupService implements ISignupService {
 
     @Override
     public ResponseEntity<?> getExpectedPopulationByYear(String dateString) throws IOException, ParseException {
-        Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
-        Properties props = PropertiesLoaderUtils.loadProperties(resource);
-        String getExpectedUserDetails = props.getProperty("getExpectedUserDetails.endPointURL");
-        //todo need to get age from properties file
-        String userUrl = getExpectedUserDetails + "/" + dateString + "/18";
+        String endPointUrl;
+        try {
+            Properties props = PropertiesLoaderUtils.loadProperties(new ClassPathResource("/apiConfig/dcrcApi.properties"));
+            endPointUrl = props.getProperty("getExpectedUserDetails.endPointURL");
+            //todo need to get age from properties file
+        } catch (IOException ex) {
+            throw new RuntimeException("Error loading properties file", ex);
+        }
+
+        String userUrl = String.format("%s/%s/%s", endPointUrl, dateString, "18");
         URL url = new URL(userUrl);
-        ObjectMapper mapper = new ObjectMapper();
+
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
         con.setRequestMethod("GET");
+        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
         con.setRequestProperty("Content-Type", "application/json");
         con.setRequestProperty("Authorization", "Bearer " + apiAccessToken.getAccess_token());
 
-
         int responseCode = con.getResponseCode();
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                JSONArray details = new JSONObject(in.readLine()).getJSONObject("details").getJSONArray("detail");
+
+                Set<String> cidNos = IntStream.range(0, details.length())
+                        .mapToObj(i -> details.getJSONObject(i).getString("cidNo"))
+                        .collect(Collectors.toSet());
+
+                List<UserInfo> userInfoList = iUserInfoRepository.findByCidIn(cidNos);
+
+                Map<String, Boolean> existsByCidNoMap = userInfoList.stream()
+                        .collect(Collectors.toMap(UserInfo::getCid, userInfo -> true));
+
+                List<ExpectedPopulationDto> expectedList = IntStream.range(0, details.length())
+                        .mapToObj(i -> {
+                            JSONObject item = details.getJSONObject(i);
+                            String cidNo = item.getString("cidNo");
+                            ExpectedPopulationDto expectedPopulationDto = new ExpectedPopulationDto();
+                            expectedPopulationDto.setCidNo(cidNo);
+                            expectedPopulationDto.setDob(item.getString("dob"));
+                            expectedPopulationDto.setName(item.getString("name"));
+                            expectedPopulationDto.setGender(item.getString("gender"));
+                            expectedPopulationDto.setIsRegistered(existsByCidNoMap.get(cidNo));
+                            return expectedPopulationDto;
+                        })
+                        .collect(Collectors.toList());
+                return ResponseEntity.ok().body(expectedList);
             }
-            in.close();
-
-            JSONArray details = new JSONObject(response.toString()).getJSONObject("details").getJSONArray("detail");
-            List<JSONObject> detailsList = toList(details);
-            List<ExpectedPopulationDto> expectedList = new ArrayList<>();
-            detailsList.forEach(item->{
-                ExpectedPopulationDto expectedPopulationDto = new ExpectedPopulationDto();
-                String cidNo = item.getString("cidNo");
-                expectedPopulationDto.setCidNo(cidNo);
-                expectedPopulationDto.setDob(item.getString("dob"));
-                expectedPopulationDto.setName(item.getString("name"));
-                expectedPopulationDto.setGender(item.getString("gender"));
-                expectedPopulationDto.setIsRegistered(iUserInfoRepository.existsByCid(cidNo));
-                expectedList.add(expectedPopulationDto);
-            });
-
-
-            return ResponseEntity.ok().body(expectedList);
         } else {
-            return ResponseEntity.badRequest().body(new MessageResponse("Data  not found."));
+            return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
         }
-
 
     }
 

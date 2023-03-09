@@ -6,9 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public interface IUserInfoRepository extends JpaRepository<UserInfo, BigInteger> {
@@ -27,6 +25,5 @@ public interface IUserInfoRepository extends JpaRepository<UserInfo, BigInteger>
 
     List<UserInfo> findAllBySignupUserOrderByFullNameAsc(char signupUser);
 
-    boolean  existsByCid(String cid);
-
+    List<UserInfo> findByCidIn(Set<String> cidNos);
 }
