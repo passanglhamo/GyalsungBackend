@@ -235,6 +235,11 @@
             <artifactId>postgresql</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.mashape.unirest</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>1.4.9</version>
+        </dependency>
         <!--region related to citizen detail start-->
         <!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
         <dependency>

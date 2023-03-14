@@ -7,6 +7,11 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
 import java.util.Properties;
 
 public class SmsSender {
@@ -17,8 +22,12 @@ public class SmsSender {
                 Resource resource = new ClassPathResource("/smsConfig/smsConfig.properties");
                 Properties props = PropertiesLoaderUtils.loadProperties(resource);
                 final String smsUrl = props.getProperty("sms.url");
-                RestTemplate restTemplate = new RestTemplate();
-                restTemplate.exchange(smsUrl + destinationNumber + "&msg=" + message, HttpMethod.GET, null, String.class);
+//                RestTemplate restTemplate = new RestTemplate();
+//                restTemplate.exchange(smsUrl + destinationNumber + "&msg=" + message, HttpMethod.GET, null, String.class);
+
+                Unirest.setTimeouts(0, 0);
+                HttpResponse<String> response = Unirest.get(smsUrl + destinationNumber + "&msg=" + message)
+                        .asString();
             }
         }.start();
     }
