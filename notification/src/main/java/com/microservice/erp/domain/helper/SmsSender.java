@@ -24,10 +24,9 @@ public class SmsSender {
                 final String smsUrl = props.getProperty("sms.url");
 //                RestTemplate restTemplate = new RestTemplate();
 //                restTemplate.exchange(smsUrl + destinationNumber + "&msg=" + message, HttpMethod.GET, null, String.class);
-
+                String finalMessage = message.replaceAll("\\s+", "+");
                 Unirest.setTimeouts(0, 0);
-                HttpResponse<String> response = Unirest.get(smsUrl + destinationNumber + "&msg=" + message)
-                        .asString();
+                HttpResponse<String> response = Unirest.get(smsUrl + destinationNumber + "&msg=" + finalMessage).asString();
             }
         }.start();
     }
