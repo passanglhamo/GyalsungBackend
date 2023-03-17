@@ -33,30 +33,31 @@ services:
     networks:
       - web-app-net
 
-  notification:
-    image: engrajibkumerghosh/ms-training-repo-v1:notification-v1.0.8
-    environment:
-      management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
-      app.eureka.service.host: eureka-service-discovery
-      app.eureka.service.port: 801
-      app.db.host: pg-notifyDB
-      app.db.port: 5437
-      app.db.name: notifyDB
-      app.db.username: root
-      app.db.password: root@123
-      app.zookeeper.host: zookeeper
-      app.zookeeper.port: 2181
-      app.kafka.host: kafka
-      app.kafka.port: 9092
-    ports:
-      - 8085:8085
-    extra_hosts:
-      - "eureka-service-discovery:172.30.3.4"
-      - "pg-notifyDB:172.30.3.19"
-      - "zookeeper:172.30.3.18"
-      - "kafka:172.30.3.18"
-    restart: on-failure
-    networks:
-      - web-app-net
+  #notification:
+  #  image: engrajibkumerghosh/ms-training-repo-v1:notification-v1.0.8
+  #  environment:
+  #    management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
+  #    app.eureka.service.host: eureka-service-discovery
+  #    app.eureka.service.port: 801
+  #    app.db.host: pg-notifyDB
+  #    app.db.port: 5437
+  #    app.db.name: notifyDB
+  #    app.db.username: root
+  #    app.db.password: root@123
+  #    app.zookeeper.host: zookeeper
+  #    app.zookeeper.port: 2181
+  #    app.kafka.host: kafka
+  #    app.kafka.port: 9092
+  #  ports:
+  #    - 8085:8085
+  #  extra_hosts:
+  #    - "eureka-service-discovery:172.30.3.4"
+  #    - "pg-notifyDB:172.30.3.19"
+  #    - "zookeeper:172.30.3.18"
+  #    - "kafka:172.30.3.18"  
+  #    - "3dc5dc1fe7c3:172.30.3.6"
+  #  restart: on-failure
+  #  networks:
+  #    - web-app-net
       
 #end of scripts
