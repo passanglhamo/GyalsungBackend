@@ -1,5 +1,6 @@
 package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dao.SecuritySettingDao;
 import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.dto.ResetPasswordDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
@@ -11,7 +12,6 @@ import com.microservice.erp.domain.repositories.IRequestPasswordChangeRepository
 import com.microservice.erp.domain.repositories.UserRepository;
 import com.microservice.erp.services.definition.ISecuritySettingService;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,17 +27,19 @@ public class SecuritySettingService implements ISecuritySettingService {
     private final IRequestPasswordChangeRepository requestPasswordChangeRepository;
     private final PasswordEncoder encoder;
     private final AddToQueue addToQueue;
+    private final SecuritySettingDao securitySettingDao;
 
-    public SecuritySettingService(UserRepository userRepository, IRequestPasswordChangeRepository requestPasswordChangeRepository, PasswordEncoder encoder, AddToQueue addToQueue) {
+    public SecuritySettingService(UserRepository userRepository, IRequestPasswordChangeRepository requestPasswordChangeRepository, PasswordEncoder encoder, AddToQueue addToQueue, SecuritySettingDao securitySettingDao) {
         this.userRepository = userRepository;
         this.requestPasswordChangeRepository = requestPasswordChangeRepository;
         this.encoder = encoder;
         this.addToQueue = addToQueue;
+        this.securitySettingDao = securitySettingDao;
     }
 
     @Override
     public ResponseEntity<?> changePassword(UserProfileDto userProfileDto) {
-        if(Objects.isNull(userProfileDto.getUserId())){
+        if (Objects.isNull(userProfileDto.getUserId())) {
             return ResponseEntity.badRequest().body(new MessageResponse("User does not exist."));
         }
 
@@ -65,7 +67,7 @@ public class SecuritySettingService implements ISecuritySettingService {
 
     @Override
     public ResponseEntity<?> resetUserPassword(UserProfileDto userProfileDto) {
-        if(Objects.isNull(userProfileDto.getUserId())){
+        if (Objects.isNull(userProfileDto.getUserId())) {
             return ResponseEntity.badRequest().body(new MessageResponse("User does not exist."));
         }
         User userDb = userRepository.findByUserId(userProfileDto.getUserId()).get();
@@ -136,9 +138,9 @@ public class SecuritySettingService implements ISecuritySettingService {
                 if (pwChangeRequest.getStatus() != 'P') {
                     return ResponseEntity.badRequest().body(new MessageResponse("You have already changed password using this link. Please request new link."));
                 }
-                User user = new ModelMapper().map(userDb, User.class);
-                user.setPassword(encoder.encode(resetPasswordDto.getPassword()));
-                userRepository.save(user);
+                String pw = encoder.encode(resetPasswordDto.getPassword());
+                BigInteger id = userDb.getId();
+                securitySettingDao.updatePassword(pw, id);
 
                 pwChangeRequest.setStatus('C');//P =  Requested, C = Changed
                 pwChangeRequest.setUpdatedBy(userDb.getUserId());
