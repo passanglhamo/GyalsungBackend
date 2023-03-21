@@ -47,11 +47,10 @@ public class SecuritySettingService implements ISecuritySettingService {
         User user = new ModelMapper().map(userDb, User.class);
 
         //current pw must be equal to existing pw
-//        TODO: need to check pw match, matches method is not working. need to check one more time
-//        String curPw = userProfileDto.getCurrentPassword();
-//        if (!encoder.matches(userDb.get().getPassword(), curPw)) {
-//            return ResponseEntity.badRequest().body(new MessageResponse("Current password doesn't match."));
-//        }
+        String curPw = userProfileDto.getCurrentPassword();
+        if (!encoder.matches(curPw, userDb.get().getPassword())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Current password doesn't match."));
+        }
 
         //confirm current pw must be equal to pw
         if (!Objects.equals(userProfileDto.getNewPassword(), userProfileDto.getConfirmPassword())) {
@@ -60,7 +59,6 @@ public class SecuritySettingService implements ISecuritySettingService {
 
         user.setPassword(encoder.encode(userProfileDto.getNewPassword()));
         userRepository.save(user);
-        //TODO: send email after changing password
         return ResponseEntity.ok(new MessageResponse("Password changed successfully."));
     }
 
