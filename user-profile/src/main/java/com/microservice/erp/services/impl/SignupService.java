@@ -1,7 +1,6 @@
 package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.ApiAccessToken;
 import com.microservice.erp.domain.entities.SignupEmailVerificationCode;
@@ -29,7 +28,6 @@ import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
 import org.wso2.client.model.DCRC_CitizenDetailsAPI.ParentdetailObj;
 import org.wso2.client.model.DCRC_CitizenDetailsAPI.ParentdetailResponse;
 
-import javax.json.JsonArray;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -44,7 +42,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
-//@AllArgsConstructor
 public class SignupService implements ISignupService {
     private final CitizenDetailApiService citizenDetailApiService;
     private final ISignupSmsOtpRepository iSignupSmsOtpRepository;
@@ -254,7 +251,6 @@ public class SignupService implements ISignupService {
     }
 
 
-
     @Override
     public ResponseEntity<?> getPersonDetailsByCid(String cid) throws IOException, ParseException, ApiException {
         CitizenDetailDto citizenDetailDto = new CitizenDetailDto();
@@ -303,6 +299,14 @@ public class SignupService implements ISignupService {
             return ResponseEntity.badRequest().body(new MessageResponse("No information found matching CID No " + cid));
         }
         return ResponseEntity.ok(citizenDetailDto);
+    }
+
+    @Override
+    public ResponseEntity<?> getSignUpUsers(String tillDate) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = format.parse(tillDate);
+        List<UserInfo> saUsers = iUserInfoRepository.getAllUserTillDate('Y', date);
+        return ResponseEntity.ok(saUsers);
     }
 
     public static String generateVerificationCode(int count) {

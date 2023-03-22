@@ -25,5 +25,8 @@ public interface IUserInfoRepository extends JpaRepository<UserInfo, BigInteger>
 
     List<UserInfo> findAllBySignupUserOrderByFullNameAsc(char signupUser);
 
+    @Query(value = "select * from user_info u where signup_user =:signupUser AND created_date <=:tillDate", nativeQuery = true)
+    List<UserInfo> getAllUserTillDate(char signupUser, Date tillDate);
+
     List<UserInfo> findByCidIn(Set<String> cidNos);
 }

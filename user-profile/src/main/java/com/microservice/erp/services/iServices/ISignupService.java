@@ -8,6 +8,7 @@ import org.wso2.client.api.ApiException;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 
 
 public interface ISignupService {
@@ -26,4 +27,6 @@ public interface ISignupService {
     ResponseEntity<?> getExpectedPopulationByYear(String dateString) throws IOException, ParseException;
 
     ResponseEntity<?> getPersonDetailsByCid(String cid) throws IOException, ParseException, ApiException;
+
+    ResponseEntity<?> getSignUpUsers(String tillDate) throws ParseException;
 }
