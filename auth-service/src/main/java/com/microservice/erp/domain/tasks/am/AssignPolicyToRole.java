@@ -46,11 +46,16 @@ public class AssignPolicyToRole extends AbstractTask<Message, Response> {
 
             Optional<Policy> existingPolicy = policyRepository.findById(policy.getId());
             if(!existingPolicy.isPresent()) return new Response().setMessage("Policy Not Found.").setStatus(500);
-
             role = existingRole.get();
+
+            boolean roleExists = existingPolicy.get().getRoles().stream()
+                    .anyMatch(r -> r.getId().equals(role.getId()));
+            if(roleExists){
+                return new Response().setMessage(existingPolicy.get().getPolicyName()+" and "+ role.getRoleName()+ " is already mapped.").setStatus(208);
+            }
             role.addPolicies(existingPolicy.get());
             Role saved = repository.save(role);
-            return new Response().setMessage("Successfully Policy Assigned with Role : " + saved.getId()).setStatus(200);
+            return new Response().setMessage("Successfully Policy Assigned with Role : " + role.getRoleName()).setStatus(200);
         }
         return new Response().setMessage("RoleRepository is null.").setStatus(500);
     }

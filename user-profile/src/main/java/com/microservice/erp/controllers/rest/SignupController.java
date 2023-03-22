@@ -12,6 +12,7 @@ import org.wso2.client.api.ApiException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -63,6 +64,11 @@ public class SignupController {
     @GetMapping("/getPersonDetailsByCid")
     public ResponseEntity<?> getPersonDetailsByCid(String cid) throws ParseException, IOException, ApiException {
         return iSignupService.getPersonDetailsByCid(cid);
+    }
+
+    @GetMapping("/getSignUpUsers")
+    public ResponseEntity<?> getSignUpUsers(@RequestParam("dateString") String dateString) throws ParseException {
+        return iSignupService.getSignUpUsers(dateString);
     }
 
 }
