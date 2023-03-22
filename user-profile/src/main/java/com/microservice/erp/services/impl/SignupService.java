@@ -103,7 +103,7 @@ public class SignupService implements ISignupService {
     public ResponseEntity<?> receiveEmailVcode(NotificationRequestDto notificationRequestDto) throws Exception {
         Optional<UserInfo> userInfoDB = iUserInfoRepository.findByEmail(notificationRequestDto.getEmail());
         if (userInfoDB.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
+            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use. Please try different one."));
         }
         String verificationCode = generateVerificationCode(6);
 
@@ -252,7 +252,6 @@ public class SignupService implements ISignupService {
                 .mapToObj(array::getJSONObject)
                 .collect(Collectors.toList());
     }
-
 
 
     @Override
