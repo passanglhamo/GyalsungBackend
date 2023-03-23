@@ -39,9 +39,10 @@ public class EnrolmentController {
     @RequestMapping(value = "/getEnrolmentListByYearAndCoursePreference", method = RequestMethod.GET)
     public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(@RequestHeader("Authorization") String authHeader
             , @RequestParam("year") String year
+            , @RequestParam("applicationStatus") Character applicationStatus
             , @RequestParam("courseId") BigInteger courseId
             , @RequestParam("coursePreferenceNumber") Integer coursePreferenceNumber) {
-        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, courseId, coursePreferenceNumber);
+        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year,applicationStatus, courseId, coursePreferenceNumber);
     }
 
     @PostMapping(value = "/allocateEnrolments")

@@ -134,11 +134,11 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     }
 
     @Override
-    public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId, Integer coursePreferenceNumber) {
+    public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, Character applicationStatus, BigInteger courseId, Integer coursePreferenceNumber) {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
-        List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, courseId, coursePreferenceNumber);
+        List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, applicationStatus, courseId, coursePreferenceNumber);
         if (enrolmentListDtos == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("No information found."));
         }
