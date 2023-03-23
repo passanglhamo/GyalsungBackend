@@ -202,7 +202,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
-        // to check already allocated or not
+        // to check already canceled or not
         for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
             if (enrolmentInfo.getStatus() == ApprovalStatus.CANCELED.value()) {//C= Canceled
                 return ResponseEntity.badRequest().body(new MessageResponse("Application(s) already canceled."));
@@ -242,11 +242,9 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     public ResponseEntity<?> allocateEnrolments(String authHeader, EnrolmentInfoCommand command) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
-
         // to check already allocated or not
         for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
-            //todo remove static code
-            if (enrolmentInfo.getStatus() == 'A') {
+            if (enrolmentInfo.getStatus() == ApprovalStatus.APPROVED.value()) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Already allocated training institute."));
             }
         }
@@ -258,7 +256,6 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
                 item.setAllocatedCourseId(command.getAllocatedCourseId());
                 iEnrolmentInfoRepository.save(item);
             }
-
         });
         // to send email and sms
         for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
