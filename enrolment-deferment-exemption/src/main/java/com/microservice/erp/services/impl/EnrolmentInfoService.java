@@ -1,5 +1,6 @@
 package com.microservice.erp.services.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dao.EnrolmentDao;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
@@ -197,6 +198,47 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     @Override
     @Transactional()
+    public ResponseEntity<?> cancelEnrolments(String authHeader, EnrolmentInfoCommand command) throws JsonProcessingException {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
+        // to check already allocated or not
+        for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
+            if (enrolmentInfo.getStatus() == ApprovalStatus.CANCELED.value()) {//C= Canceled
+                return ResponseEntity.badRequest().body(new MessageResponse("Application(s) already canceled."));
+            }
+        }
+        //to save update enrolment info
+        iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
+            if (!item.getStatus().equals(ApprovalStatus.CANCELED.value())) {
+                item.setStatus(ApprovalStatus.CANCELED.value());
+                iEnrolmentInfoRepository.save(item);
+            }
+        });
+        // to send email and sms
+        for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", authHeader);
+            HttpEntity<String> request = new HttpEntity<>(headers);
+
+            String userUrl = properties.getUserProfileById() + enrolmentInfo.getUserId();
+            ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
+            String fullName = Objects.requireNonNull(userResponse.getBody()).getFullName();
+            String mobileNo = Objects.requireNonNull(userResponse.getBody()).getMobileNo();
+            String email = Objects.requireNonNull(userResponse.getBody()).getEmail();
+
+            String message = "Dear " + fullName + ", Your application for Gyalsnung Registration has been canceled upon your request to withdraw for the year " + enrolmentInfo.getYear() + ".";
+            String subject = "Registration Approval";
+
+            EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo);
+            addToQueue.addToQueue("email", eventBus);
+            addToQueue.addToQueue("sms", eventBus);
+        }
+        return ResponseEntity.ok(new MessageResponse("Application cancelled successfully."));
+    }
+
+    @Override
+    @Transactional()
     public ResponseEntity<?> allocateEnrolments(String authHeader, EnrolmentInfoCommand command) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
@@ -253,7 +295,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             addToQueue.addToQueue("email", eventBus);
             addToQueue.addToQueue("sms", eventBus);
         }
-        return ResponseEntity.ok(new MessageResponse("Training allocated successfully"));
+        return ResponseEntity.ok(new MessageResponse("Training allocated successfully."));
     }
 
     @Override

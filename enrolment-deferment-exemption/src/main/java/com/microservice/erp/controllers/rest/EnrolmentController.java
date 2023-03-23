@@ -52,6 +52,14 @@ public class EnrolmentController {
         return iEnrolmentInfoService.allocateEnrolments(authHeader, command);
     }
 
+    @PostMapping(value = "/cancelEnrolments")
+    public ResponseEntity<?> cancelEnrolments(@RequestHeader("Authorization") String authHeader,
+                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
+        return iEnrolmentInfoService.cancelEnrolments(authHeader, command);
+    }
+
     @RequestMapping(value = "/getEnrolmentListByYearCourseAndAcademy", method = RequestMethod.GET)
     public ResponseEntity<?> getEnrolmentListByYearCourseAndAcademy(@RequestHeader("Authorization") String authHeader
             , @RequestParam("year") String year
