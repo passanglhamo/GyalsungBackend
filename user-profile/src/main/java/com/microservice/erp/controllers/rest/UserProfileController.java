@@ -47,6 +47,10 @@ public class UserProfileController {
         return iProfileService.getProfileInfoByIds(userIds);
     }
 
+    @GetMapping("/getUserInformationByCid")
+    public ResponseEntity<?> getUserInformationByCid(@RequestParam("cid") String cid) {
+        return iProfileService.getUserInformationByCid(cid);
+    }
 
     @PostMapping("/receiveOtp")
     public ResponseEntity<?> receiveOtp(@RequestBody UserProfileDto userProfileDto) throws JsonProcessingException {

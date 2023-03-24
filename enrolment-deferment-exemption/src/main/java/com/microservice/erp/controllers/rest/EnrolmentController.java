@@ -42,7 +42,13 @@ public class EnrolmentController {
             , @RequestParam("applicationStatus") Character applicationStatus
             , @RequestParam("courseId") BigInteger courseId
             , @RequestParam("coursePreferenceNumber") Integer coursePreferenceNumber) {
-        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year,applicationStatus, courseId, coursePreferenceNumber);
+        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, applicationStatus, courseId, coursePreferenceNumber);
+    }
+
+    @RequestMapping(value = "/getUserInformationByCid", method = RequestMethod.GET)
+    public ResponseEntity<?> getUserInformationByCid(@RequestHeader("Authorization") String authHeader
+            , @RequestParam("cid") String cid) {
+        return iEnrolmentInfoService.getUserInformationByCid(authHeader, cid);
     }
 
     @PostMapping(value = "/allocateEnrolments")
@@ -55,8 +61,8 @@ public class EnrolmentController {
 
     @PostMapping(value = "/cancelEnrolments")
     public ResponseEntity<?> cancelEnrolments(@RequestHeader("Authorization") String authHeader,
-                                                @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                                @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) throws Exception {
+                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                              @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) throws Exception {
         SpringSecurityAuditorAware.setToken(token);
         return iEnrolmentInfoService.cancelEnrolments(authHeader, command);
     }

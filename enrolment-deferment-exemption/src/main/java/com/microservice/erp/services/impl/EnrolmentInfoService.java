@@ -197,6 +197,13 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     }
 
     @Override
+    public ResponseEntity<?> getUserInformationByCid(String authHeader, String cid) {
+        List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByCid(cid, authHeader);
+        //todo: need to check if user is enrolled or not, if enrolled only, then send to front end
+        return ResponseEntity.ok(userProfileDtos);
+    }
+
+    @Override
     @Transactional()
     public ResponseEntity<?> cancelEnrolments(String authHeader, EnrolmentInfoCommand command) throws JsonProcessingException {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
@@ -250,7 +257,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         }
         //to save update enrolment info
         iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
-            if (item.getStatus().equals(ApprovalStatus.PENDING.value())) {
+            if (item.getStatus().equals(ApprovalStatus.PENDING.value()) || item.getStatus().equals(ApprovalStatus.CANCELED.value())) {
                 item.setStatus(ApprovalStatus.APPROVED.value());
                 item.setTrainingAcademyId(command.getTrainingAcademyId());
                 item.setAllocatedCourseId(command.getAllocatedCourseId());

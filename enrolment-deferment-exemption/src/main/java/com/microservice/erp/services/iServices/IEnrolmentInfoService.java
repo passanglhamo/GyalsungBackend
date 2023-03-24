@@ -25,6 +25,8 @@ public interface IEnrolmentInfoService {
     ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, Character applicationStatus, BigInteger courseId
             , Integer coursePreferenceNumber);
 
+    ResponseEntity<?> getUserInformationByCid(String authHeader, String cid);
+
     ResponseEntity<?> allocateEnrolments(String authHeader, @Valid EnrolmentInfoCommand command) throws Exception;
 
     ResponseEntity<?> getEnrolmentListByYearCourseAndAcademy(String authHeader, String year, Integer trainingAcademyId, BigInteger courseId);
@@ -36,6 +38,7 @@ public interface IEnrolmentInfoService {
     ResponseEntity<?> getMyEnrolmentInfo(BigInteger userId);
 
     ResponseEntity<?> cancelEnrolments(String authHeader, EnrolmentInfoCommand command) throws JsonProcessingException;
+
 
     @Getter
     @Setter
