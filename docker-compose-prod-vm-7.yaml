@@ -7,7 +7,7 @@ networks:
     driver: bridge
 
 services:  
-  enrolment-deferment-exemption2:
+  enrolment-deferment-exemption:
     image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.8
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
@@ -23,17 +23,19 @@ services:
       app.kafka.host: kafka
       app.kafka.port: 9092
     ports:
-      - 8097:8087
+      - 8087:8087
     extra_hosts:
       - "eureka-service-discovery:172.30.3.4"
       - "pg-enrolmentDB:172.30.3.22"
       - "zookeeper:172.30.3.18"
-      - "kafka:172.30.3.18"
+      - "kafka:172.30.3.18"  
+      - "152646b24609:172.30.3.7"
+      - "d8d542874984:172.30.3.16"
     restart: on-failure
     networks:
       - web-app-net
 
-  medical-screening2:
+  medical-screening:
     image: engrajibkumerghosh/ms-training-repo-v1:medical-screening-v1.0.8
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
@@ -49,12 +51,14 @@ services:
       app.kafka.host: kafka
       app.kafka.port: 9092
     ports:
-      - 8098:8088
+      - 8088:8088
     extra_hosts:
       - "eureka-service-discovery:172.30.3.4"
       - "pg-medicalDB:172.30.3.20"
       - "zookeeper:172.30.3.18"
-      - "kafka:172.30.3.18"
+      - "kafka:172.30.3.18"  
+      - "152646b24609:172.30.3.7"
+      - "d8d542874984:172.30.3.16"
     restart: on-failure
     networks:
       - web-app-net

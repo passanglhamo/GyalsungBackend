@@ -29,7 +29,7 @@ services:
       - "pg-enrolmentDB:172.30.3.22"
       - "zookeeper:172.30.3.18"
       - "kafka:172.30.3.18"    
-      - "391329cce2d3:172.30.3.7"
+      - "152646b24609:172.30.3.7"
       - "d8d542874984:172.30.3.16"
     restart: on-failure
     networks:
@@ -57,7 +57,7 @@ services:
       - "pg-medicalDB:172.30.3.20"
       - "zookeeper:172.30.3.18"
       - "kafka:172.30.3.18"     
-      - "391329cce2d3:172.30.3.7"
+      - "152646b24609:172.30.3.7"
       - "d8d542874984:172.30.3.16"
     restart: on-failure
     networks:
