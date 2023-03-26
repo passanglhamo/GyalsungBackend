@@ -53,4 +53,5 @@ public interface IProfileService {
 
     ResponseEntity<?> getProfileInfoByIds(List<BigInteger> userIds);
 
+    ResponseEntity<?> getUserInformationByCid(String cid);
 }

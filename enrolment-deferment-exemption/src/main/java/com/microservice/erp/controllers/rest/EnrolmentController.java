@@ -39,9 +39,16 @@ public class EnrolmentController {
     @RequestMapping(value = "/getEnrolmentListByYearAndCoursePreference", method = RequestMethod.GET)
     public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(@RequestHeader("Authorization") String authHeader
             , @RequestParam("year") String year
+            , @RequestParam("applicationStatus") Character applicationStatus
             , @RequestParam("courseId") BigInteger courseId
             , @RequestParam("coursePreferenceNumber") Integer coursePreferenceNumber) {
-        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, courseId, coursePreferenceNumber);
+        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, applicationStatus, courseId, coursePreferenceNumber);
+    }
+
+    @RequestMapping(value = "/getUserInformationByCid", method = RequestMethod.GET)
+    public ResponseEntity<?> getUserInformationByCid(@RequestHeader("Authorization") String authHeader
+            , @RequestParam("cid") String cid) {
+        return iEnrolmentInfoService.getUserInformationByCid(authHeader, cid);
     }
 
     @PostMapping(value = "/allocateEnrolments")
@@ -50,6 +57,14 @@ public class EnrolmentController {
                                                 @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) throws Exception {
         SpringSecurityAuditorAware.setToken(token);
         return iEnrolmentInfoService.allocateEnrolments(authHeader, command);
+    }
+
+    @PostMapping(value = "/cancelEnrolments")
+    public ResponseEntity<?> cancelEnrolments(@RequestHeader("Authorization") String authHeader,
+                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                              @RequestBody IEnrolmentInfoService.EnrolmentInfoCommand command) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
+        return iEnrolmentInfoService.cancelEnrolments(authHeader, command);
     }
 
     @RequestMapping(value = "/getEnrolmentListByYearCourseAndAcademy", method = RequestMethod.GET)

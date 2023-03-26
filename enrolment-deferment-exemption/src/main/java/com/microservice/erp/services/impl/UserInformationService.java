@@ -29,7 +29,7 @@ public class UserInformationService {
     private final HeaderToken headerToken;
 
 
-    public List<UserProfileDto> getUserInformationByListOfIds(List<BigInteger> userIdsVal,String authHeader){
+    public List<UserProfileDto> getUserInformationByListOfIds(List<BigInteger> userIdsVal, String authHeader) {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
@@ -39,6 +39,17 @@ public class UserInformationService {
         String userUrl = properties.getUserProfileByIds() + userIds;
         ResponseEntity<List<UserProfileDto>> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, new ParameterizedTypeReference<List<UserProfileDto>>() {
         });
+        return userResponse.getBody();
+    }
+
+    public List<UserProfileDto> getUserInformationByCid(String cid, String authHeader) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+        HttpEntity<String> request = headerToken.tokenHeader(authHeader);
+        String userUrl = properties.getUsersCid() + cid;
+        ResponseEntity<List<UserProfileDto>> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, new ParameterizedTypeReference<>() {
+        });
+        
         return userResponse.getBody();
     }
 }

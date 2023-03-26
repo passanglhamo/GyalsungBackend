@@ -7,7 +7,7 @@ networks:
     driver: bridge
 
 services:  
-  #auth-service2:
+  #auth-service:
   #  image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.8
   #  environment:
   #    management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
@@ -29,7 +29,7 @@ services:
   #    app.kafka.host: kafka
   #    app.kafka.port: 9092
   #  ports:
-  #    - 8093:8083
+  #    - 8083:8083
   #  extra_hosts:
   #    - "eureka-service-discovery:172.30.3.4"
   #    - "redis:172.30.3.18"
@@ -57,7 +57,7 @@ services:
       app.kafka.host: kafka
       app.kafka.port: 9092
     ports:
-      - 8094:8084
+      - 8084:8084
     extra_hosts:
       - "stg-sso.dit.gov.bt:172.30.78.24"
       - "staging-datahub-apim.dit.gov.bt:172.30.78.130"

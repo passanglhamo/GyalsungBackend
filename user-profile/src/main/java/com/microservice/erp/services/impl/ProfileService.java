@@ -328,7 +328,7 @@ public class ProfileService implements IProfileService {
 
         MultipartFile profilePicture = userProfileDto.getProfilePicture();
 
-        if(Objects.isNull(profilePicture)){
+        if (Objects.isNull(profilePicture)) {
             return ResponseEntity.badRequest().body(new MessageResponse("User does not have profile picture."));
         }
         String filename = profilePicture.getOriginalFilename();
@@ -397,4 +397,10 @@ public class ProfileService implements IProfileService {
         return ResponseEntity.ok(userInfos);
     }
 
+    @Override
+    public ResponseEntity<?> getUserInformationByCid(String cid) {
+        cid = cid.trim().equals("") ? null : cid;
+        List<UserInfo> userInfos = iUserInfoRepository.findAllByCid(cid);
+        return ResponseEntity.ok(userInfos);
+    }
 }

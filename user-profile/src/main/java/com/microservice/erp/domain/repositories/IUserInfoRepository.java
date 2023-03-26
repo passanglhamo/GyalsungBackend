@@ -29,4 +29,6 @@ public interface IUserInfoRepository extends JpaRepository<UserInfo, BigInteger>
     List<UserInfo> getAllUserTillDate(char signupUser, Date tillDate);
 
     List<UserInfo> findByCidIn(Set<String> cidNos);
+
+    List<UserInfo> findAllByCid(String cid);
 }

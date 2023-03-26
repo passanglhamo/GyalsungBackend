@@ -1,5 +1,6 @@
 package com.microservice.erp.services.iServices;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
 import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
@@ -21,8 +22,10 @@ public interface IEnrolmentInfoService {
 
     ResponseEntity<?> saveEnrolment(String authHeader, EnrolmentDto enrolmentDto) throws Exception;
 
-    ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, BigInteger courseId
+    ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, Character applicationStatus, BigInteger courseId
             , Integer coursePreferenceNumber);
+
+    ResponseEntity<?> getUserInformationByCid(String authHeader, String cid);
 
     ResponseEntity<?> allocateEnrolments(String authHeader, @Valid EnrolmentInfoCommand command) throws Exception;
 
@@ -33,6 +36,9 @@ public interface IEnrolmentInfoService {
     ResponseEntity<?> getEnrolmentValidation(BigInteger userId);
 
     ResponseEntity<?> getMyEnrolmentInfo(BigInteger userId);
+
+    ResponseEntity<?> cancelEnrolments(String authHeader, EnrolmentInfoCommand command) throws JsonProcessingException;
+
 
     @Getter
     @Setter

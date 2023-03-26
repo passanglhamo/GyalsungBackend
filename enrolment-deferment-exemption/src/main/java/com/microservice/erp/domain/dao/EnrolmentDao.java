@@ -20,11 +20,12 @@ public class EnrolmentDao extends BaseDao {
     }
 
     @Transactional
-    public List<EnrolmentListDto> getEnrolmentListByYearAndCoursePreference(String year, BigInteger courseId,
+    public List<EnrolmentListDto> getEnrolmentListByYearAndCoursePreference(String year, Character applicationStatus, BigInteger courseId,
                                                                             Integer coursePreferenceNumber) {
         String sqlQuery = environment.getProperty("CommonDao.getEnrolmentListByYearAndCoursePreference");
         NativeQuery hQuery = (NativeQuery) hibernateQuery(sqlQuery, EnrolmentListDto.class)
                 .setParameter("year", year)
+                .setParameter("applicationStatus", applicationStatus)
                 .setParameter("courseId", courseId)
                 .setParameter("coursePreferenceNumber", coursePreferenceNumber);
         return hQuery.list().isEmpty() ? null : hQuery.list();
