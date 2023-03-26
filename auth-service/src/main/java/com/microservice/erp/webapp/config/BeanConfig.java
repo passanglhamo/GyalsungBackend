@@ -33,10 +33,13 @@ public class BeanConfig {
                 ? env.getProperty("app.redis.host") : "localhost";
         String redisPort = env.getProperty("app.redis.port") != null
                 ? env.getProperty("app.redis.port") : "6379";
+        String redisPassword = env.getProperty("app.redis.password") != null
+                ? env.getProperty("app.redis.password") : "gyalsung@2023";
         Config conf = new Config();
         conf.useSingleServer()
                 .setAddress(String.format("redis://%s:%s",redisHost, redisPort))
                 .setRetryAttempts(5)
+                .setPassword(redisPassword)
                 .setRetryInterval(1500);
         //Redisson-Client instance are fully-thread safe.
         return Redisson.create(conf);

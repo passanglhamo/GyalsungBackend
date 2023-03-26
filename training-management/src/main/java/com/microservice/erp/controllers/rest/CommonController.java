@@ -58,4 +58,9 @@ public class CommonController {
         return iCommonService.getTrainingAcademyById(academyId);
     }
 
+    @GetMapping("/getAllActiveHospital")
+    public ResponseEntity<?> getAllActiveHospital() {
+        return iCommonService.getAllActiveHospital();
+    }
+
 }

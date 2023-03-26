@@ -85,6 +85,7 @@ services:
 
   redis:
     image: redis:latest
+    command: '--requirepass gyalsung@2023'
     ports:
       - 6379:6379
     networks:
@@ -123,44 +124,44 @@ services:
     networks:
       - web-app-net
 
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    ports:
-      - 8091:8080
-    restart: on-failure
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
-      - KAFKA_CLUSTERS_0_READONLY=false
-    depends_on:
-      - kafka
-    networks:
-      - web-app-net
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui
+#    ports:
+#      - 8091:8080
+#    restart: on-failure
+#    environment:
+#      - KAFKA_CLUSTERS_0_NAME=local
+#      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+#      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+#      - KAFKA_CLUSTERS_0_READONLY=false
+#    depends_on:
+#      - kafka
+#    networks:
+#      - web-app-net
 
-  activemq:
-    image: webcenter/activemq
-    ports:
-      - 8161:8161
-      - 61616:61616
-      - 61613:61613
-    environment:
-      - ACTIVEMQ_MIN_MEMORY=512
-      - ACTIVEMQ_MAX_MEMORY=2048
-      - ACTIVEMQ_ADMIN_LOGIN=admin
-      - ACTIVEMQ_ADMIN_PASSWORD=admin
-    restart: on-failure
-    networks:
-      - web-app-net
-    volumes:
-      - activemq-storage:/var/log/activemq
+#  activemq:
+#    image: webcenter/activemq
+#    ports:
+#      - 8161:8161
+#      - 61616:61616
+#      - 61613:61613
+#    environment:
+#      - ACTIVEMQ_MIN_MEMORY=512
+#      - ACTIVEMQ_MAX_MEMORY=2048
+#      - ACTIVEMQ_ADMIN_LOGIN=admin
+#      - ACTIVEMQ_ADMIN_PASSWORD=admin
+#    restart: on-failure
+#    networks:
+#      - web-app-net
+#    volumes:
+#      - activemq-storage:/var/log/activemq
 
-  fake-smtp:
-    image: rnwood/smtp4dev
-    ports:
-      - 587:25
-      - 3000:80
-    networks:
-      - web-app-net
+#  fake-smtp:
+#    image: rnwood/smtp4dev
+#    ports:
+#      - 587:25
+#      - 3000:80
+#    networks:
+#      - web-app-net
 
 #end of scripts

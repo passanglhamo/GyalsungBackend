@@ -20,4 +20,7 @@ public interface ICommonService {
     ResponseEntity<?> getAllTrainingAcademies();
 
     ResponseEntity<?> getTrainingAcademyById(Integer academyId);
+
+    ResponseEntity<?> getAllActiveHospital();
+
 }

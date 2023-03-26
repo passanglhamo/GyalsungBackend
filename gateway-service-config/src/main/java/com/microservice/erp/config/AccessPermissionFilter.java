@@ -52,7 +52,7 @@ public class AccessPermissionFilter extends AbstractGatewayFilterFactory<AccessP
             String token = TokenValidator.parseToken(authHeader, "Bearer ");
             JWTPayload payload = TokenValidator.parsePayload(token, JWTPayload.class);
             String body = String.format("{\"username\":\"%s\", \"action\":\"%s\", \"resource\":\"%s\"}"
-                    ,payload.getIss()
+                    ,payload.getIss().isEmpty()?payload.getData().get("email"):payload.getIss()
                     , action
                     , resource);
             //

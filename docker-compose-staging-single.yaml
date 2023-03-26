@@ -21,6 +21,7 @@ volumes:
 services:
   redis:
     image: redis:latest
+    command: '--requirepass gyalsung@2023'
     ports:
       - 6379:6379
     networks:
@@ -28,22 +29,22 @@ services:
     volumes:
       - redis-inmemory-storage:/data
 
-  activemq:
-    image: webcenter/activemq
-    ports:
-      - 8161:8161
-      - 61616:61616
-      - 61613:61613
-    environment:
-      - ACTIVEMQ_MIN_MEMORY=512
-      - ACTIVEMQ_MAX_MEMORY=2048
-      - ACTIVEMQ_ADMIN_LOGIN=admin
-      - ACTIVEMQ_ADMIN_PASSWORD=admin
-    restart: on-failure
-    networks:
-      - web-app-net
-    volumes:
-      - activemq-storage:/var/log/activemq
+#  activemq:
+#    image: webcenter/activemq
+#    ports:
+#      - 8161:8161
+#      - 61616:61616
+#      - 61613:61613
+#    environment:
+#      - ACTIVEMQ_MIN_MEMORY=512
+#      - ACTIVEMQ_MAX_MEMORY=2048
+#      - ACTIVEMQ_ADMIN_LOGIN=admin
+#      - ACTIVEMQ_ADMIN_PASSWORD=admin
+#    restart: on-failure
+#    networks:
+#      - web-app-net
+#    volumes:
+#      - activemq-storage:/var/log/activemq
 
   zookeeper:
     image: bitnami/zookeeper:latest
@@ -76,20 +77,20 @@ services:
     networks:
       - web-app-net
 
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    ports:
-      - 8091:8080
-    restart: on-failure
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
-      - KAFKA_CLUSTERS_0_READONLY=false
-    depends_on:
-      - kafka
-    networks:
-      - web-app-net
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui
+#    ports:
+#      - 8091:8080
+#    restart: on-failure
+#    environment:
+#      - KAFKA_CLUSTERS_0_NAME=local
+#      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+#      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+#      - KAFKA_CLUSTERS_0_READONLY=false
+#    depends_on:
+#      - kafka
+#    networks:
+#      - web-app-net
 
 #  fake-smtp:
 #    image: rnwood/smtp4dev
@@ -193,7 +194,8 @@ services:
       - pg-notifyDB-storage:/var/lib/postgresql/data
 
   eureka-service-discovery:
-    image: engrajibkumerghosh/ms-training-repo-v1:eureka-service-discovery-v1.0.14
+    image: engrajibkumerghosh/ms-training-repo-v1:eureka-service-discovery-v1.0.17
+
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
     ports:
@@ -203,7 +205,8 @@ services:
       - web-app-net
 
   api-gateway:
-    image: engrajibkumerghosh/ms-training-repo-v1:cloud-gateway-service-v1.0.14
+    image: engrajibkumerghosh/ms-training-repo-v1:cloud-gateway-service-v1.0.17
+
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus,gateway
       app.eureka.service.host: eureka-service-discovery
@@ -228,7 +231,8 @@ services:
       - web-app-net
 
   auth-service:
-    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.14
+    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.17
+
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -237,8 +241,8 @@ services:
       app.redis.port: 6379
       app.mail.host: 172.30.3.140
       app.mail.port: 587
-      app.activemq.host: activemq
-      app.activemq.port: 61616
+#      app.activemq.host: activemq
+#      app.activemq.port: 61616
       app.db.host: pg-authDB
       app.db.port: 5432
       app.db.name: authDB
@@ -257,7 +261,8 @@ services:
       - web-app-net
 
   user-profile:
-    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0.14
+    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0.17
+
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -283,7 +288,8 @@ services:
       - web-app-net
 
   training-management:
-    image: engrajibkumerghosh/ms-training-repo-v1:training-management-v1.0.14
+    image: engrajibkumerghosh/ms-training-repo-v1:training-management-v1.0.17
+
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -306,7 +312,8 @@ services:
       - web-app-net
 
   enrolment-deferment-exemption:
-    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.14
+    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.17
+
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -329,7 +336,8 @@ services:
       - web-app-net
 
   medical-screening:
-    image: engrajibkumerghosh/ms-training-repo-v1:medical-screening-v1.0.14
+    image: engrajibkumerghosh/ms-training-repo-v1:medical-screening-v1.0.17
+
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -352,7 +360,8 @@ services:
       - web-app-net
 
   notification:
-    image: engrajibkumerghosh/ms-training-repo-v1:notification-v1.0.14
+    image: engrajibkumerghosh/ms-training-repo-v1:notification-v1.0.17
+
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -377,7 +386,8 @@ services:
   # Second Instances
 
   auth-service2:
-    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.14
+    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.17
+
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -386,8 +396,8 @@ services:
       app.redis.port: 6379
       app.mail.host: 172.30.3.140
       app.mail.port: 587
-      app.activemq.host: activemq
-      app.activemq.port: 61616
+#      app.activemq.host: activemq
+#      app.activemq.port: 61616
       app.db.host: pg-authDB
       app.db.port: 5432
       app.db.name: authDB
@@ -406,7 +416,8 @@ services:
       - web-app-net
 
   user-profile2:
-    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0.14
+    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0.17
+
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -432,7 +443,8 @@ services:
       - web-app-net
 
   enrolment-deferment-exemption2:
-    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.14
+    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.17
+
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -453,6 +465,3 @@ services:
     restart: on-failure
     networks:
       - web-app-net
-
-
-#end of scripts

@@ -55,6 +55,12 @@ public class CommonService implements ICommonService {
     }
 
     @Override
+    public ResponseEntity<?> getAllActiveHospital() {
+        List<Hospital> hospitals = hospitalRepository.findAllByStatusOrderByHospitalNameAsc('A');
+        return ResponseEntity.ok(hospitals);
+    }
+
+    @Override
     public ResponseEntity<?> getHospitalById(Integer hospitalId) {
         Hospital hospital = hospitalRepository.findByHospitalId(hospitalId);
         return ResponseEntity.ok(hospital);

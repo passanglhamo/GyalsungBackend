@@ -165,10 +165,14 @@ public class SaUserService implements ISaUserService {
         if (saUserEmail.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
-        Optional<UserInfo> saUserCid = iUserInfoRepository.findByCid(userDto.getCid());
-        if (saUserCid.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("CID " + userDto.getCid() + " already in use."));
+
+        if(!userDto.getCid().isEmpty()){
+            Optional<UserInfo> saUserCid = iUserInfoRepository.findByCid(userDto.getCid());
+            if (saUserCid.isPresent()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("CID " + userDto.getCid() + " already in use."));
+            }
         }
+
         UserInfo saUser = new ModelMapper().map(userDto, UserInfo.class);
         saUser.setUsername(userDto.getEmail());
 

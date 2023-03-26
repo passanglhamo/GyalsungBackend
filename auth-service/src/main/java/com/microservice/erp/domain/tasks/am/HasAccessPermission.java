@@ -31,6 +31,9 @@ public class HasAccessPermission extends AbstractTask<Message, AccessPermission>
         AccessPermission permission = (AccessPermission) getMessage();
         //...
         Optional<User> exist = repository.findByUsername(permission.getUsername());
+        if(!exist.isPresent()){
+            exist = repository.findByEmail(permission.getUsername());
+        }
         if (exist.isPresent()){
             List<Role> roles = new ArrayList<>(exist.get().getRoles());
             List<Policy> policiesFrmRole = roles.stream()
