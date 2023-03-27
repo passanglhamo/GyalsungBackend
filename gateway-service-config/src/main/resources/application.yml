@@ -39,6 +39,7 @@ management:
 redis:
   host: localhost
   port: 6379
+  password: gyalsung@2023
 #Eureka-Config:
 app.eureka.service.host: localhost
 app.eureka.service.port: 801
