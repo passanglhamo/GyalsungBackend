@@ -30,9 +30,11 @@ services:
       - "eureka-service-discovery:172.30.3.4"
       - "pg-userProfileDB:172.30.3.20"
       - "zookeeper:172.30.3.18"
-      - "kafka:172.30.3.18"  
-      - "87f187b0b223:172.30.3.6"
-      - "d8d542874984:172.30.3.16"
+      - "kafka:172.30.3.18"
+      - "6441d0d9fe09:172.30.3.6"
+      - "07f7f3bdc2c6:172.30.3.6"
+      - "e89c8ca855ae:172.30.3.7"
+      - "2cbdcc2d566d:172.30.3.7"
     restart: on-failure
     networks:
       - web-app-net
