@@ -8,7 +8,7 @@ networks:
 
 services:  
   enrolment-deferment-exemption:
-    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.8
+    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.18
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
@@ -36,7 +36,7 @@ services:
       - web-app-net
 
   medical-screening:
-    image: engrajibkumerghosh/ms-training-repo-v1:medical-screening-v1.0.8
+    image: engrajibkumerghosh/ms-training-repo-v1:medical-screening-v1.0.18
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
       app.eureka.service.host: eureka-service-discovery
