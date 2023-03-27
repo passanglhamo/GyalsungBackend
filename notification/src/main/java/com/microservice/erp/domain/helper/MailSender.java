@@ -45,7 +45,7 @@ public class MailSender {
         final String username = props.getProperty("mail.username", "dhicompact@dhi.bt");
         final String password = props.getProperty("mail.password", "ogie pmue ewlk pwgd");
         String host = props.getProperty("mail.host", "smtp.gmail.com");
-        String port = props.getProperty("mail.port", "587");
+        String port = props.getProperty("mail.port", "465");
         String auth = props.getProperty("mail.auth", "true");
         String startLlsEnable = props.getProperty("mail.startLlsEnable", "true");
 
@@ -59,6 +59,7 @@ public class MailSender {
         properties.put(smtpPort, port);
         properties.put(smtpAuth, auth);
         properties.put(smtpStartLlsEnable, startLlsEnable);
+        properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
         //creating session of current user.
         Session session = Session.getInstance(properties, new Authenticator() {

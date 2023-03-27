@@ -59,23 +59,23 @@ public class NotificationController {
                     .setStatus(HttpStatus.UNAUTHORIZED.value()));
     }
 
-    @PostMapping("/mail")
-    public ResponseEntity<String> sendEmail(@RequestBody Email email) {
-        //
-        int code = emailSender.sendHtmlMessage(email);
-        return ResponseEntity.status(code).body((code == 200 ? "Email send successful" : "Email dispatch successful"));
-    }
-
-    @PostMapping("/mail/otp/{username}")
-    public ResponseEntity<String> sendOtpEmail(@PathVariable("username") String username
-            , @RequestBody Email email) {
-        //
-        Otp otp = otpService.storeOtp(username);
-        email.setTemplate("email-otp-msg.html");
-        email.getProperties().put("name", username);
-        email.getProperties().put("otp", otp.getValue());
-        int code = emailSender.sendHtmlMessage(email);
-        return ResponseEntity.status(code).body((code == 200 ? "Email send successful" : "Email dispatch successful"));
-    }
+//    @PostMapping("/mail")
+//    public ResponseEntity<String> sendEmail(@RequestBody Email email) {
+//        //
+//        int code = emailSender.sendHtmlMessage(email);
+//        return ResponseEntity.status(code).body((code == 200 ? "Email send successful" : "Email dispatch successful"));
+//    }
+//
+//    @PostMapping("/mail/otp/{username}")
+//    public ResponseEntity<String> sendOtpEmail(@PathVariable("username") String username
+//            , @RequestBody Email email) {
+//        //
+//        Otp otp = otpService.storeOtp(username);
+//        email.setTemplate("email-otp-msg.html");
+//        email.getProperties().put("name", username);
+//        email.getProperties().put("otp", otp.getValue());
+//        int code = emailSender.sendHtmlMessage(email);
+//        return ResponseEntity.status(code).body((code == 200 ? "Email send successful" : "Email dispatch successful"));
+//    }
 
 }
