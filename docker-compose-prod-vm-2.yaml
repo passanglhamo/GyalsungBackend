@@ -25,6 +25,7 @@ services:
       app.eureka.service.port: 801
       redis.host: redis
       redis.port: 6379
+      redis.password: gyalsung@2023
     ports:
       - 80:80
     extra_hosts:

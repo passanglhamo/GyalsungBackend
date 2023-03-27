@@ -13,11 +13,12 @@ volumes:
 services:
   redis:
     image: redis:latest
+    command: '--requirepass gyalsung@2023'
+    #command: redis-server --requirepass gyalsung@2023
     ports:
       - 6379:6379
     networks:
       - web-app-net
-    #command: redis-server --requirepass Sys@2023
     volumes:
       - redis-inmemory-storage:/data
 
