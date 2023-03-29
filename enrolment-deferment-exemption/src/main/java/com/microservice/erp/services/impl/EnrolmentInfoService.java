@@ -174,34 +174,37 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
                     .findAny()
                     .orElse(null);
             EnrolmentListDto enrolmentListDto = new EnrolmentListDto();
-            enrolmentListDto.setUser_id(enrolmentListInput.getUser_id());
-            enrolmentListDto.setFull_name(item.getFullName());
-            enrolmentListDto.setCid(item.getCid());
-            enrolmentListDto.setDob(item.getDob());
+            if(!Objects.isNull(enrolmentListInput)){
+                enrolmentListDto.setUser_id(enrolmentListInput.getUser_id());
+                enrolmentListDto.setFull_name(item.getFullName());
+                enrolmentListDto.setCid(item.getCid());
+                enrolmentListDto.setDob(item.getDob());
 
-            enrolmentListDto.setEnrolment_id(enrolmentListInput.getEnrolment_id());
-            enrolmentListDto.setEnrolled_on(enrolmentListInput.getEnrolled_on());
-            enrolmentListDto.setRemarks(enrolmentListInput.getRemarks());
-            enrolmentListDto.setStatus(enrolmentListInput.getStatus());
-            enrolmentListDto.setTraining_academy_id(enrolmentListInput.getTraining_academy_id());
-            enrolmentListDto.setYear(enrolmentListInput.getYear());
-            enrolmentListDto.setPreference_number(enrolmentListInput.getPreference_number());
-            enrolmentListDto.setCourse_id(enrolmentListInput.getCourse_id());
+                enrolmentListDto.setEnrolment_id(enrolmentListInput.getEnrolment_id());
+                enrolmentListDto.setEnrolled_on(enrolmentListInput.getEnrolled_on());
+                enrolmentListDto.setRemarks(enrolmentListInput.getRemarks());
+                enrolmentListDto.setStatus(enrolmentListInput.getStatus());
+                enrolmentListDto.setTraining_academy_id(enrolmentListInput.getTraining_academy_id());
+                enrolmentListDto.setYear(enrolmentListInput.getYear());
+                enrolmentListDto.setPreference_number(enrolmentListInput.getPreference_number());
+                enrolmentListDto.setCourse_id(enrolmentListInput.getCourse_id());
 
-            Integer trainingAcademyId = enrolmentListInput.getTraining_academy_id();
-            if (trainingAcademyId != null) {
-                String urlTraining = properties.getTrainingManAcademyByAcademyId() + trainingAcademyId;
-                ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
-                enrolmentListDto.setAcademy_name(Objects.requireNonNull(responseTraining.getBody()).getName());
+                Integer trainingAcademyId = enrolmentListInput.getTraining_academy_id();
+                if (trainingAcademyId != null) {
+                    String urlTraining = properties.getTrainingManAcademyByAcademyId() + trainingAcademyId;
+                    ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
+                    enrolmentListDto.setAcademy_name(Objects.requireNonNull(responseTraining.getBody()).getName());
+                }
+                BigInteger allocatedCourseId = enrolmentListInput.getAllocated_course_id();
+                if (allocatedCourseId != null) {
+                    String urlCourse = properties.getTrainingManCourseByCourceId() + allocatedCourseId;
+                    ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
+                    enrolmentListDto.setCourseName(Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName());
+                }
+
+                enrolmentList.add(enrolmentListDto);
             }
-            BigInteger allocatedCourseId = enrolmentListInput.getAllocated_course_id();
-            if (allocatedCourseId != null) {
-                String urlCourse = properties.getTrainingManCourseByCourceId() + allocatedCourseId;
-                ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
-                enrolmentListDto.setCourseName(Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName());
-            }
 
-            enrolmentList.add(enrolmentListDto);
 
         });
 
