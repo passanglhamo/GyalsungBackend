@@ -55,7 +55,7 @@ public class MedicalBookingService implements IMedicalBookingService {
         HospitalScheduleTime hospitalScheduleTimeByUserId = iHospitalScheduleTimeRepository.findByBookedBy(medicalBookingDto.getUserId());
         if (hospitalScheduleTimeByUserId != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("You have already booked an appointment. " +
-                    "Go to change appointment and change it if you want to chane your appointment."));
+                    "Go to change appointment and change it if you want to change your appointment."));
         }
         HospitalScheduleTime hospitalScheduleTimeDb = iHospitalScheduleTimeRepository.findById(medicalBookingDto.getScheduleTimeId()).get();
         HospitalScheduleTime hospitalScheduleTime = new ModelMapper().map(hospitalScheduleTimeDb, HospitalScheduleTime.class);
