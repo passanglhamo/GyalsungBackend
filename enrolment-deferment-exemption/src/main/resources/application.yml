@@ -41,7 +41,7 @@ user.service.url: http://USER-PROFILE/api/user/profile
 user.service.check.under.age: /userProfile/checkUnderAge?userId=
 user.service.profile.by.userId: /userProfile/getProfileInfo?userId=
 user.service.profile.by.userIds: /userProfile/getProfileInfoByIds?userIds=
-user.service.profile.by.cid: /userProfile/getUserInformationByCid?cid=
+user.service.profile.by.partial.cid: /userProfile/getUserInformationByPartialCid?cid=
 
 
 #Training-Management-Service

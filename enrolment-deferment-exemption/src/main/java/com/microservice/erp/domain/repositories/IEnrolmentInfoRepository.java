@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Rajib Kumer Ghosh
@@ -13,4 +15,5 @@ import java.math.BigInteger;
 @Repository
 public interface IEnrolmentInfoRepository extends JpaRepository<EnrolmentInfo, BigInteger> {
     EnrolmentInfo findByUserId(BigInteger userId);
+
 }

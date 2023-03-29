@@ -27,8 +27,8 @@ public class ApplicationProperties {
     @Value("${user.service.profile.by.userIds}")
     private String userProfileByIds;
 
-    @Value("${user.service.profile.by.cid}")
-    private String usersCid;
+    @Value("${user.service.profile.by.partial.cid}")
+    private String usersByPartialCid;
 
     @Value("${training.management.hospital.by.hospitalId}")
     private String trainingHospitalById;

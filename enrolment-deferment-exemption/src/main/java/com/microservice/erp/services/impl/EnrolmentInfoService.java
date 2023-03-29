@@ -134,74 +134,83 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     }
 
     @Override
-    public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, Character applicationStatus, BigInteger courseId, Integer coursePreferenceNumber) {
+    public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, Character applicationStatus, BigInteger courseId, Integer coursePreferenceNumber,
+                                                                       String cid) {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+        List<EnrolmentListDto> enrolmentListDtos;
 
-        List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, applicationStatus, courseId, coursePreferenceNumber);
+        if(!courseId.equals(BigInteger.ZERO)){
+            enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, applicationStatus, courseId, coursePreferenceNumber);
+        }else{
+            enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndStatus(year, applicationStatus);
+        }
+
         if (enrolmentListDtos == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("No information found."));
         }
         List<EnrolmentListDto> enrolmentList = new ArrayList<>();
+        List<BigInteger> userIdsVal = new ArrayList<>();
+        List<UserProfileDto> userProfileDtos;
+        if (!cid.isEmpty()) {
+            userProfileDtos = userInformationService.getUserInformationByPartialCid(cid, authHeader);
+        } else {
+            userIdsVal = enrolmentListDtos
+                    .stream()
+                    .map(EnrolmentListDto::getUser_id)
+                    .collect(Collectors.toList());
+            userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsVal, authHeader);
 
-        List<BigInteger> userIdsVal = enrolmentListDtos
-                .stream()
-                .map(EnrolmentListDto::getUser_id)
-                .collect(Collectors.toList());
+        }
 
-        List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsVal, authHeader);
-
-        //to get user detail from m-user-service
-        enrolmentListDtos.forEach(item -> {
+        userProfileDtos.forEach(item->{
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
 
-            UserProfileDto userProfileDto = userProfileDtos
+            EnrolmentListDto enrolmentListInput = enrolmentListDtos
                     .stream()
-                    .filter(user -> item.getUser_id().equals(user.getId()))
+                    .filter(enrolment -> item.getId().equals(enrolment.getUser_id()))
                     .findAny()
                     .orElse(null);
-
             EnrolmentListDto enrolmentListDto = new EnrolmentListDto();
-            enrolmentListDto.setUser_id(item.getUser_id());
-            enrolmentListDto.setFull_name(userProfileDto.getFullName());
-            enrolmentListDto.setCid(userProfileDto.getCid());
-            enrolmentListDto.setDob(userProfileDto.getDob());
+            if(!Objects.isNull(enrolmentListInput)){
+                enrolmentListDto.setUser_id(enrolmentListInput.getUser_id());
+                enrolmentListDto.setFull_name(item.getFullName());
+                enrolmentListDto.setCid(item.getCid());
+                enrolmentListDto.setDob(item.getDob());
 
-            enrolmentListDto.setEnrolment_id(item.getEnrolment_id());
-            enrolmentListDto.setEnrolled_on(item.getEnrolled_on());
-            enrolmentListDto.setRemarks(item.getRemarks());
-            enrolmentListDto.setStatus(item.getStatus());
-            enrolmentListDto.setTraining_academy_id(item.getTraining_academy_id());
-            enrolmentListDto.setYear(item.getYear());
-            enrolmentListDto.setPreference_number(item.getPreference_number());
-            enrolmentListDto.setCourse_id(item.getCourse_id());
+                enrolmentListDto.setEnrolment_id(enrolmentListInput.getEnrolment_id());
+                enrolmentListDto.setEnrolled_on(enrolmentListInput.getEnrolled_on());
+                enrolmentListDto.setRemarks(enrolmentListInput.getRemarks());
+                enrolmentListDto.setStatus(enrolmentListInput.getStatus());
+                enrolmentListDto.setTraining_academy_id(enrolmentListInput.getTraining_academy_id());
+                enrolmentListDto.setYear(enrolmentListInput.getYear());
+                enrolmentListDto.setPreference_number(enrolmentListInput.getPreference_number());
+                enrolmentListDto.setCourse_id(enrolmentListInput.getCourse_id());
 
-            Integer trainingAcademyId = item.getTraining_academy_id();
-            if (trainingAcademyId != null) {
-                String urlTraining = properties.getTrainingManAcademyByAcademyId() + trainingAcademyId;
-                ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
-                enrolmentListDto.setAcademy_name(Objects.requireNonNull(responseTraining.getBody()).getName());
+                Integer trainingAcademyId = enrolmentListInput.getTraining_academy_id();
+                if (trainingAcademyId != null) {
+                    String urlTraining = properties.getTrainingManAcademyByAcademyId() + trainingAcademyId;
+                    ResponseEntity<TrainingAcademyDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyDto.class);
+                    enrolmentListDto.setAcademy_name(Objects.requireNonNull(responseTraining.getBody()).getName());
+                }
+                BigInteger allocatedCourseId = enrolmentListInput.getAllocated_course_id();
+                if (allocatedCourseId != null) {
+                    String urlCourse = properties.getTrainingManCourseByCourceId() + allocatedCourseId;
+                    ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
+                    enrolmentListDto.setCourseName(Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName());
+                }
+
+                enrolmentList.add(enrolmentListDto);
             }
-            BigInteger allocatedCourseId = item.getAllocated_course_id();
-            if (allocatedCourseId != null) {
-                String urlCourse = properties.getTrainingManCourseByCourceId() + allocatedCourseId;
-                ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
-                enrolmentListDto.setCourseName(Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName());
-            }
 
-            enrolmentList.add(enrolmentListDto);
+
         });
+
         return ResponseEntity.ok(enrolmentList);
     }
 
-    @Override
-    public ResponseEntity<?> getUserInformationByCid(String authHeader, String cid) {
-        List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByCid(cid, authHeader);
-        //todo: need to check if user is enrolled or not, if enrolled only, then send to front end
-        return ResponseEntity.ok(userProfileDtos);
-    }
 
     @Override
     @Transactional()

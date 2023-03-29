@@ -34,7 +34,7 @@ public class UserInformationService {
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
         HttpEntity<String> request = headerToken.tokenHeader(authHeader);
-        String userIds = userIdsVal.stream().map(String::valueOf).collect(Collectors.joining());
+        String userIds = userIdsVal.stream().map(String::valueOf).collect(Collectors.joining(","));
 
         String userUrl = properties.getUserProfileByIds() + userIds;
         ResponseEntity<List<UserProfileDto>> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, new ParameterizedTypeReference<List<UserProfileDto>>() {
@@ -42,11 +42,11 @@ public class UserInformationService {
         return userResponse.getBody();
     }
 
-    public List<UserProfileDto> getUserInformationByCid(String cid, String authHeader) {
+    public List<UserProfileDto> getUserInformationByPartialCid(String cid, String authHeader) {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
         HttpEntity<String> request = headerToken.tokenHeader(authHeader);
-        String userUrl = properties.getUsersCid() + cid;
+        String userUrl = properties.getUsersByPartialCid() + cid;
         ResponseEntity<List<UserProfileDto>> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, new ParameterizedTypeReference<>() {
         });
         

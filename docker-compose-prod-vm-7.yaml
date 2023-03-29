@@ -28,9 +28,10 @@ services:
       - "eureka-service-discovery:172.30.3.4"
       - "pg-enrolmentDB:172.30.3.22"
       - "zookeeper:172.30.3.18"
-      - "kafka:172.30.3.18"  
-      - "152646b24609:172.30.3.7"
-      - "d8d542874984:172.30.3.16"
+      - "kafka:172.30.3.18"
+      - "53b496475220:172.30.3.16"
+      - "07f7f3bdc2c6:172.30.3.6"
+      - "2cbdcc2d566d:172.30.3.7"
     restart: on-failure
     networks:
       - web-app-net
@@ -56,9 +57,10 @@ services:
       - "eureka-service-discovery:172.30.3.4"
       - "pg-medicalDB:172.30.3.20"
       - "zookeeper:172.30.3.18"
-      - "kafka:172.30.3.18"  
-      - "152646b24609:172.30.3.7"
-      - "d8d542874984:172.30.3.16"
+      - "kafka:172.30.3.18"
+      - "53b496475220:172.30.3.16"
+      - "07f7f3bdc2c6:172.30.3.6"
+      - "2cbdcc2d566d:172.30.3.7"
     restart: on-failure
     networks:
       - web-app-net
