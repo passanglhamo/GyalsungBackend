@@ -41,15 +41,11 @@ public class EnrolmentController {
             , @RequestParam("year") String year
             , @RequestParam("applicationStatus") Character applicationStatus
             , @RequestParam("courseId") BigInteger courseId
-            , @RequestParam("coursePreferenceNumber") Integer coursePreferenceNumber) {
-        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, applicationStatus, courseId, coursePreferenceNumber);
+            , @RequestParam("coursePreferenceNumber") Integer coursePreferenceNumber
+            , @RequestParam("cid") String cid) {
+        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, applicationStatus, courseId, coursePreferenceNumber,cid);
     }
 
-    @RequestMapping(value = "/getUserInformationByCid", method = RequestMethod.GET)
-    public ResponseEntity<?> getUserInformationByCid(@RequestHeader("Authorization") String authHeader
-            , @RequestParam("cid") String cid) {
-        return iEnrolmentInfoService.getUserInformationByCid(authHeader, cid);
-    }
 
     @PostMapping(value = "/allocateEnrolments")
     public ResponseEntity<?> allocateEnrolments(@RequestHeader("Authorization") String authHeader,

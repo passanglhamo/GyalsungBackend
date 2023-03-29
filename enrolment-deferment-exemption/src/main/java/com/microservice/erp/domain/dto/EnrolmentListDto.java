@@ -1,5 +1,6 @@
 package com.microservice.erp.domain.dto;
 
+import com.microservice.erp.domain.entities.EnrolmentInfo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,5 +27,6 @@ public class EnrolmentListDto {
     private Integer preference_number;
     private BigInteger course_id;
     private String courseName;
+
     //endregion
 }

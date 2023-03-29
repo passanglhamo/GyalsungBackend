@@ -398,9 +398,9 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public ResponseEntity<?> getUserInformationByCid(String cid) {
+    public ResponseEntity<?> getUserInformationByPartialCid(String cid) {
         cid = cid.trim().equals("") ? null : cid;
-        List<UserInfo> userInfos = iUserInfoRepository.findAllByCid(cid);
+        List<UserInfo> userInfos = iUserInfoRepository.findAllByCidStartsWith(cid);
         return ResponseEntity.ok(userInfos);
     }
 }

@@ -23,9 +23,7 @@ public interface IEnrolmentInfoService {
     ResponseEntity<?> saveEnrolment(String authHeader, EnrolmentDto enrolmentDto) throws Exception;
 
     ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, Character applicationStatus, BigInteger courseId
-            , Integer coursePreferenceNumber);
-
-    ResponseEntity<?> getUserInformationByCid(String authHeader, String cid);
+            , Integer coursePreferenceNumber,String cid);
 
     ResponseEntity<?> allocateEnrolments(String authHeader, @Valid EnrolmentInfoCommand command) throws Exception;
 
