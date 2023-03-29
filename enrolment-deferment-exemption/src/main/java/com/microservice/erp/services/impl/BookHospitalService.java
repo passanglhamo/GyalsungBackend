@@ -1,5 +1,6 @@
 package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dao.BookHospitalDao;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.HospitalBooking;
 import com.microservice.erp.domain.helper.MessageResponse;
@@ -16,18 +17,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class BookHospitalService implements IBookHospitalService {
+    private final BookHospitalDao bookHospitalDao;
     private final IHospitalBookingRepository iHospitalBookingRepository;
+    private final UserInformationService userInformationService;
 
     @Autowired
     @Qualifier("trainingManagementTemplate")
     RestTemplate restTemplate;
 
-    public BookHospitalService(IHospitalBookingRepository iHospitalBookingRepository) {
+    public BookHospitalService(BookHospitalDao bookHospitalDao, IHospitalBookingRepository iHospitalBookingRepository, UserInformationService userInformationService) {
+        this.bookHospitalDao = bookHospitalDao;
         this.iHospitalBookingRepository = iHospitalBookingRepository;
+        this.userInformationService = userInformationService;
     }
 
     @Override
@@ -41,7 +50,7 @@ public class BookHospitalService implements IBookHospitalService {
     }
 
     @Override
-    public ResponseEntity<?> getPreviousBookingDetailByUserId(String authHeader, BookHospitalDto bookHospitalDto ) {
+    public ResponseEntity<?> getPreviousBookingDetailByUserId(String authHeader, BookHospitalDto bookHospitalDto) {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
@@ -83,5 +92,50 @@ public class BookHospitalService implements IBookHospitalService {
         iHospitalBookingRepository.save(hospitalBooking);
         return ResponseEntity.ok(new MessageResponse("Hospital booked successfully."));
     }
+
+    @Override
+    public ResponseEntity<?> getAllBookingByHospitalIdAndYear(String authHeader, BigInteger year, Integer hospitalId) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
+        List<BookHospitalDto> bookHospitalDtos = bookHospitalDao.getAllBookingByYearAndHospitalId(year, hospitalId);
+        List<BigInteger> userIds = bookHospitalDtos
+                .stream()
+                .map(BookHospitalDto::getUser_id)
+                .collect(Collectors.toList());
+        List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByListOfIds(userIds, authHeader);
+
+        List<BookHospitalListDto> bookHospitalListDtos = new ArrayList<>();
+        bookHospitalDtos.forEach(item -> {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Authorization", authHeader);
+            HttpEntity<String> request = new HttpEntity<>(headers);
+
+            UserProfileDto userProfileDto = userProfileDtos
+                    .stream()
+                    .filter(user -> item.getUser_id().equals(user.getId()))
+                    .findAny()
+                    .orElse(null);
+
+            BookHospitalListDto bookHospitalListDto = new BookHospitalListDto();
+            bookHospitalListDto.setUser_id(item.getUser_id());
+            bookHospitalListDto.setFull_name(userProfileDto.getFullName());
+            bookHospitalListDto.setCid(userProfileDto.getCid());
+            bookHospitalListDto.setGender(userProfileDto.getGender());
+            bookHospitalListDto.setScreening_date(item.getScreening_date());
+
+            bookHospitalListDto.setHospital_booking_id(item.getHospital_booking_id());
+
+
+            String hospitalUrl = properties.getTrainingHospitalById() + hospitalId;
+            ResponseEntity<HospitalDto> hospitalDtoResponseEntity = restTemplate.exchange(hospitalUrl, HttpMethod.GET, request, HospitalDto.class);
+            bookHospitalListDto.setHospital_name(Objects.requireNonNull(hospitalDtoResponseEntity.getBody()).getHospitalName());
+
+
+            bookHospitalListDtos.add(bookHospitalListDto);
+        });
+        return ResponseEntity.ok(bookHospitalListDtos);
+    }
+
 }
 

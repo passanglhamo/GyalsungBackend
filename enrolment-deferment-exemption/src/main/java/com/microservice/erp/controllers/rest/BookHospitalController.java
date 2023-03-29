@@ -9,6 +9,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
+
 @RestController
 @RequestMapping("/booking")
 @AllArgsConstructor
@@ -33,4 +35,14 @@ public class BookHospitalController {
         SpringSecurityAuditorAware.setToken(token);
         return iBookHospitalService.bookHospital(authHeader, bookHospitalDto);
     }
+
+
+    @RequestMapping(value = "/getAllBookingByHospitalIdAndYear", method = RequestMethod.GET)
+    public ResponseEntity<?> getAllBookingByHospitalIdAndYear(@RequestHeader("Authorization") String authHeader
+            , @RequestParam("year") BigInteger year
+            , @RequestParam("hospitalId") Integer hospitalId
+    ) {
+        return iBookHospitalService.getAllBookingByHospitalIdAndYear(authHeader, year, hospitalId);
+    }
+
 }
