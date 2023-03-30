@@ -48,3 +48,5 @@ user.service.profile.by.partial.cid: /userProfile/getUserInformationByPartialCid
 training.management.service.url: http://TRAINING-MANAGEMENT/api/training/management
 training.management.academy.by.academyId: /common/getTrainingAcademyById?academyId=
 training.management.course.by.courseId: /fieldSpecializations/getCourseByCourseId?courseId=
+training.management.hospital.by.hospitalId: /common/getHospitalById?hospitalId=
+training.management.mappedHospital.by.hospitalId: /common/getHospitalMappingByHospitalId?hospitalId=

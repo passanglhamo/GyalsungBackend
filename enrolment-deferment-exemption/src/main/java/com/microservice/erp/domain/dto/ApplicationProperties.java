@@ -30,4 +30,9 @@ public class ApplicationProperties {
     @Value("${user.service.profile.by.partial.cid}")
     private String usersByPartialCid;
 
+    @Value("${training.management.hospital.by.hospitalId}")
+    private String trainingHospitalById;
+
+    @Value("${training.management.mappedHospital.by.hospitalId}")
+    private String trainingMappedHospitalById;
 }
