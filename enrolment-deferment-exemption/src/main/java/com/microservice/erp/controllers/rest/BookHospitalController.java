@@ -39,9 +39,7 @@ public class BookHospitalController {
 
     @RequestMapping(value = "/getAllBookingByHospitalIdAndYear", method = RequestMethod.GET)
     public ResponseEntity<?> getAllBookingByHospitalIdAndYear(@RequestHeader("Authorization") String authHeader
-            , @RequestParam("year") BigInteger year
-            , @RequestParam("hospitalId") Integer hospitalId
-    ) {
+            , @RequestParam("year") BigInteger year, @RequestParam("hospitalId") Integer hospitalId) {
         return iBookHospitalService.getAllBookingByHospitalIdAndYear(authHeader, year, hospitalId);
     }
 
