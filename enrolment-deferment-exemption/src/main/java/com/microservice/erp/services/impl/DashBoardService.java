@@ -15,8 +15,8 @@ public class DashBoardService implements IDashBoardService {
     }
 
     @Override
-    public ResponseEntity<?> getRegistrationInfoFigures(String year) {
-        DashboardDto dashboardDto = dashBoardDao.getRegistrationInfoFigures(year);
+    public ResponseEntity<?> getEdeFigure(String year) {
+        DashboardDto dashboardDto = dashBoardDao.getEdeFigure(year);
         return ResponseEntity.ok(dashboardDto);
     }
 }
