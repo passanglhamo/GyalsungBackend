@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.infoworks.lab.beans.tasks.definition.TaskStack;
 import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.models.LoginRequest;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
@@ -36,6 +37,9 @@ public class ForgetPassFlowTest extends BaseTaskTest {
 
     @Mock
     private UserRepository repository;
+
+    @Mock
+    private IRoleRepository iRoleRepository;
 
     @Mock
     private PasswordEncoder encoder;
@@ -196,7 +200,7 @@ public class ForgetPassFlowTest extends BaseTaskTest {
         //
         TaskStack loginStack = TaskStack.createSync(true);
         loginStack.push(new CheckUserExist(repository, request.getUsername()));
-        loginStack.push(new Login(repository, encoder, null,false,request));
+        loginStack.push(new Login(repository, encoder, null,false,iRoleRepository,request));
         loginStack.commit(true, (message, state) -> {
             LOG.info("Login Status: " + state.name());
             if (message != null)

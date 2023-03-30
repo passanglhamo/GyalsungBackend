@@ -1,6 +1,7 @@
 package com.microservice.erp.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.microservice.erp.domain.helper.CustomGrantedAuthority;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -66,7 +67,7 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
     @Transient
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (roles == null) return new ArrayList<>();
-        return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(toList());
+        return this.roles.stream().map(role -> new CustomGrantedAuthority(role.getRoleName(),role.getIsOpenUser())).collect(toList());
     }
 
     public BigInteger getUserId() {

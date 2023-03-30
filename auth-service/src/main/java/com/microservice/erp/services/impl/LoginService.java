@@ -5,6 +5,7 @@ import com.infoworks.lab.rest.models.Message;
 import com.infoworks.lab.rest.models.Response;
 import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.models.LoginRequest;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import com.microservice.erp.domain.tasks.iam.*;
 import com.microservice.erp.services.definition.iLogin;
@@ -29,12 +30,15 @@ public class LoginService implements iLogin {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private RoleWiseAccessPermissionService roleWiseAccessPermissionService;
+    private IRoleRepository iRoleRepository;
 
 
-    public LoginService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService) {
+
+    public LoginService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,IRoleRepository iRoleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleWiseAccessPermissionService = roleWiseAccessPermissionService;
+        this.iRoleRepository = iRoleRepository;
     }
 
     @Value("${app.login.token.ttl.duration.millis}")
@@ -47,7 +51,7 @@ public class LoginService implements iLogin {
         request.setTokenTtl(tokenTtl);
         TaskStack loginStack = TaskStack.createSync(true);
         loginStack.push(new CheckUserExist(userRepository, request.getUsername()));
-        loginStack.push(new Login(userRepository, passwordEncoder, roleWiseAccessPermissionService, isNDILogin,request));
+        loginStack.push(new Login(userRepository, passwordEncoder, roleWiseAccessPermissionService, isNDILogin,iRoleRepository,request));
         loginStack.commit(true, (message, state) -> {
             LOG.info("Login Status: " + state.name());
             if (message != null)

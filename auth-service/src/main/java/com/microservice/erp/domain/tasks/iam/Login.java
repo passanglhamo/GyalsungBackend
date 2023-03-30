@@ -7,6 +7,7 @@ import com.microservice.erp.domain.entities.Role;
 import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.helper.Permission;
 import com.microservice.erp.domain.models.LoginRequest;
+import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import com.infoworks.lab.jwtoken.definition.TokenProvider;
 import com.infoworks.lab.rest.models.Message;
@@ -32,22 +33,25 @@ public class Login extends TokenizerTask {
     private PasswordEncoder encoder;
     private RoleWiseAccessPermissionService roleWiseAccessPermissionService;
     private Boolean isNDILogin;
+    private IRoleRepository iRoleRepository;
 
 
-    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,Boolean isNDILogin, Property... properties) {
+
+    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,Boolean isNDILogin,IRoleRepository iRoleRepository, Property... properties) {
         super(properties);
         this.repository = repository;
         this.encoder = encoder;
         this.roleWiseAccessPermissionService = roleWiseAccessPermissionService;
         this.isNDILogin = isNDILogin;
+        this.iRoleRepository = iRoleRepository;
     }
 
-    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,Boolean isNDILogin, String username) {
-        this(repository, encoder, roleWiseAccessPermissionService,isNDILogin, new Property("username", username));
+    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,Boolean isNDILogin,IRoleRepository iRoleRepository, String username) {
+        this(repository, encoder, roleWiseAccessPermissionService,isNDILogin,iRoleRepository, new Property("username", username));
     }
 
-    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,Boolean isNDILogin, LoginRequest request) {
-        this(repository, encoder, roleWiseAccessPermissionService,isNDILogin, request.getRow().getProperties().toArray(new Property[0]));
+    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,Boolean isNDILogin,IRoleRepository iRoleRepository, LoginRequest request) {
+        this(repository, encoder, roleWiseAccessPermissionService,isNDILogin,iRoleRepository, request.getRow().getProperties().toArray(new Property[0]));
     }
 
     @Override
@@ -119,6 +123,7 @@ public class Login extends TokenizerTask {
                 List<ScreenDto> accessScreens = new ArrayList<>();
                 for (Role saRole : exist.get().getRoles()) {
                     BigInteger roleId = saRole.getId();
+                    Optional<Role> role = iRoleRepository.findById(roleId);
                     List<PermissionListDto> permissionListDtos = roleWiseAccessPermissionService.getRoleMappedScreens(roleId);
                     if (permissionListDtos != null) {
                         for (PermissionListDto permissionListDto : permissionListDtos) {
@@ -128,7 +133,6 @@ public class Login extends TokenizerTask {
                             screenDto.setDelete(false);
                             screenDto.setEdit(false);
                             screenDto.setSave(false);
-
                             if (permissionListDto.getSave_allowed() != null && permissionListDto.getSave_allowed() == 'Y') {
                                 accessPermissions.add(new SimpleGrantedAuthority(screenId + "-" + Permission.ADD));
                                 screenDto.setSave(true);

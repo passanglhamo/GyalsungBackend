@@ -194,7 +194,7 @@ services:
       - pg-notifyDB-storage:/var/lib/postgresql/data
 
   eureka-service-discovery:
-    image: engrajibkumerghosh/ms-training-repo-v1:eureka-service-discovery-v1.0.17
+    image: engrajibkumerghosh/ms-training-repo-v1:eureka-service-discovery-v1.0.19
 
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
@@ -205,7 +205,7 @@ services:
       - web-app-net
 
   api-gateway:
-    image: engrajibkumerghosh/ms-training-repo-v1:cloud-gateway-service-v1.0.17
+    image: engrajibkumerghosh/ms-training-repo-v1:cloud-gateway-service-v1.0.19
 
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus,gateway
@@ -231,7 +231,7 @@ services:
       - web-app-net
 
   auth-service:
-    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.17
+    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.19
 
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
@@ -261,7 +261,7 @@ services:
       - web-app-net
 
   user-profile:
-    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0.17
+    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0.19
 
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
@@ -281,6 +281,8 @@ services:
     extra_hosts:
       - "stg-sso.dit.gov.bt:172.30.78.24"
       - "staging-datahub-apim.dit.gov.bt:172.30.78.130"
+      - "datahub-apim.dit.gov.bt:172.30.78.42"
+      - "sso.dit.gov.bt:172.30.78.43"
     depends_on:
       - eureka-service-discovery
     restart: on-failure
@@ -288,7 +290,7 @@ services:
       - web-app-net
 
   training-management:
-    image: engrajibkumerghosh/ms-training-repo-v1:training-management-v1.0.17
+    image: engrajibkumerghosh/ms-training-repo-v1:training-management-v1.0.19
 
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
@@ -312,7 +314,7 @@ services:
       - web-app-net
 
   enrolment-deferment-exemption:
-    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.17
+    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.19
 
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
@@ -336,7 +338,7 @@ services:
       - web-app-net
 
   medical-screening:
-    image: engrajibkumerghosh/ms-training-repo-v1:medical-screening-v1.0.17
+    image: engrajibkumerghosh/ms-training-repo-v1:medical-screening-v1.0.19
 
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
@@ -360,7 +362,7 @@ services:
       - web-app-net
 
   notification:
-    image: engrajibkumerghosh/ms-training-repo-v1:notification-v1.0.17
+    image: engrajibkumerghosh/ms-training-repo-v1:notification-v1.0.19
 
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
@@ -386,7 +388,7 @@ services:
   # Second Instances
 
   auth-service2:
-    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.17
+    image: engrajibkumerghosh/ms-training-repo-v1:auth-service-v1.0.19
 
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
@@ -416,7 +418,7 @@ services:
       - web-app-net
 
   user-profile2:
-    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0.17
+    image: engrajibkumerghosh/ms-training-repo-v1:user-profile-v1.0.19
 
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
@@ -443,7 +445,7 @@ services:
       - web-app-net
 
   enrolment-deferment-exemption2:
-    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.17
+    image: engrajibkumerghosh/ms-training-repo-v1:enrolment-deferment-exemption-v1.0.19
 
     environment:
       management.endpoints.web.exposure.include: health,metrics,httptrace,prometheus
