@@ -61,10 +61,14 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> getProfileInfo(String authHeader, BigInteger userId) {
+        UserInfo userInfo = iUserInfoRepository.findById(userId).get();
+        return profileInfo(authHeader,userInfo);
+    }
+
+    private ResponseEntity<?> profileInfo(String authHeader, UserInfo userInfo) {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
-        UserInfo userInfo = iUserInfoRepository.findById(userId).get();
         UserProfileDto userProfileDto = new ModelMapper().map(userInfo, UserProfileDto.class);
         userProfileDto.setPassword(null);
         HttpHeaders headers = new HttpHeaders();
@@ -83,9 +87,30 @@ public class ProfileService implements IProfileService {
         return ResponseEntity.ok(userProfileDto);
     }
 
+
+    @Override
+    public ResponseEntity<?> getProfileInfoByCid(String authHeader, String cid) {
+        UserInfo userInfo = iUserInfoRepository.findByCid(cid).get();
+        return profileInfo(authHeader,userInfo);
+    }
+
     @Override
     public ResponseEntity<?> getProfilePicture(BigInteger userId) throws IOException {
         UserInfo userInfo = iUserInfoRepository.findById(userId).get();
+        String profilePictureUrl = userInfo.getProfilePictureUrl();
+        if (profilePictureUrl == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Profile picture not set yet."));
+        } else {
+            UserProfileDto userProfileDto = new UserProfileDto();
+            Path url = Paths.get(profilePictureUrl);// retrieve the image by its url
+            userProfileDto.setProfilePhoto(IOUtils.toByteArray(url.toUri()));
+            return ResponseEntity.ok(userProfileDto);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getProfilePictureByCid(String cid) throws IOException {
+        UserInfo userInfo = iUserInfoRepository.findByCid(cid).get();
         String profilePictureUrl = userInfo.getProfilePictureUrl();
         if (profilePictureUrl == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Profile picture not set yet."));
