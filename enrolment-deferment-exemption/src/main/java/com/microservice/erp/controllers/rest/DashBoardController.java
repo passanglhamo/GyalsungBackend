@@ -9,10 +9,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/dashboard")
 @AllArgsConstructor
 public class DashBoardController {
-    private IDashBoardService iDashBoardService;
+    private final IDashBoardService iDashBoardService;
 
-    @GetMapping(value = "/getRegistrationInfoFigures")
-    public ResponseEntity<?> getRegistrationInfoFigures(@RequestParam("year") String year) {
-        return iDashBoardService.getRegistrationInfoFigures(year);
+    @GetMapping(value = "/getEdeFigure")
+    public ResponseEntity<?> getEdeFigure(@RequestParam("year") String year) {
+        return iDashBoardService.getEdeFigure(year);
+    }
+
+    @GetMapping(value = "/getTotalRegisteredList")
+    public ResponseEntity<?> getTotalRegisteredList(@RequestHeader("Authorization") String authHeader, @RequestParam("year") String year) {
+        return iDashBoardService.getTotalRegisteredList(authHeader, year);
+    }
+
+    @GetMapping(value = "/getEarlyEnlistmentList")
+    public ResponseEntity<?> getEarlyEnlistmentList(@RequestHeader("Authorization") String authHeader, @RequestParam("year") String year) {
+        return iDashBoardService.getEarlyEnlistmentList(authHeader, year);
     }
 }

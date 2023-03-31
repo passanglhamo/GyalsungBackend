@@ -37,9 +37,19 @@ public class UserProfileController {
         return iProfileService.getProfilePicture(userId);
     }
 
+    @RequestMapping(value = "/getProfilePictureByCid", method = RequestMethod.GET)
+    public ResponseEntity<?> getProfilePictureByCid(@RequestParam("cid") String cid) throws IOException {
+        return iProfileService.getProfilePictureByCid(cid);
+    }
+
     @GetMapping("/getProfileInfo")
     public ResponseEntity<?> getProfileInfo(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") BigInteger userId) {
         return iProfileService.getProfileInfo(authHeader, userId);
+    }
+
+    @GetMapping("/getProfileInfoByCid")
+    public ResponseEntity<?> getProfileInfoByCid(@RequestHeader("Authorization") String authHeader, @RequestParam("cid") String cid) {
+        return iProfileService.getProfileInfoByCid(authHeader, cid);
     }
 
     @GetMapping("/getProfileInfoByIds")

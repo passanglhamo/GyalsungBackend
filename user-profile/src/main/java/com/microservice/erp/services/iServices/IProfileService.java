@@ -16,7 +16,11 @@ public interface IProfileService {
 
     ResponseEntity<?> getProfileInfo(String authHeader, BigInteger userId);
 
+    ResponseEntity<?> getProfileInfoByCid(String authHeader, String cid);
+
     ResponseEntity<?> getProfilePicture(BigInteger userId) throws IOException;
+
+    ResponseEntity<?> getProfilePictureByCid(String cid) throws IOException;
 
     ResponseEntity<?> changeMobileNo(UserProfileDto userProfileDto);
 
