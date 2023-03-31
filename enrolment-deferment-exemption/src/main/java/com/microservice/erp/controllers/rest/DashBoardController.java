@@ -15,4 +15,14 @@ public class DashBoardController {
     public ResponseEntity<?> getEdeFigure(@RequestParam("year") String year) {
         return iDashBoardService.getEdeFigure(year);
     }
+
+    @GetMapping(value = "/getTotalRegisteredList")
+    public ResponseEntity<?> getTotalRegisteredList(@RequestHeader("Authorization") String authHeader, @RequestParam("year") String year) {
+        return iDashBoardService.getTotalRegisteredList(authHeader, year);
+    }
+
+    @GetMapping(value = "/getEarlyEnlistmentList")
+    public ResponseEntity<?> getEarlyEnlistmentList(@RequestHeader("Authorization") String authHeader, @RequestParam("year") String year) {
+        return iDashBoardService.getEarlyEnlistmentList(authHeader, year);
+    }
 }
