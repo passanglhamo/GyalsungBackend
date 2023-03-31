@@ -156,12 +156,12 @@ services:
 #    volumes:
 #      - activemq-storage:/var/log/activemq
 
-  fake-smtp:
-    image: rnwood/smtp4dev
-    ports:
-      - 587:25
-      - 3000:80
-    networks:
-      - web-app-net
+#  fake-smtp:
+#    image: rnwood/smtp4dev
+#    ports:
+#      - 587:25
+#      - 3000:80
+#    networks:
+#      - web-app-net
 
 #end of scripts

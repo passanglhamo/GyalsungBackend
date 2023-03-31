@@ -46,4 +46,10 @@ public class PolicyRoleUserMappingController {
 
         return iPolicyRoleUserMappingService.savePolicyUserMap(command);
     }
+
+    @PostMapping("/removePolicyUserMap")
+    public ResponseEntity<?> removePolicyUserMap(@RequestBody IPolicyRoleUserMappingService.CreatePolicyUserCommand command) {
+
+        return iPolicyRoleUserMappingService.removePolicyUserMap(command);
+    }
 }

@@ -35,4 +35,6 @@ public class ApplicationProperties {
 
     @Value("${training.management.mappedHospital.by.hospitalId}")
     private String trainingMappedHospitalById;
+
+
 }

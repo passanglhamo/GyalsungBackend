@@ -16,4 +16,5 @@ public interface IFieldSpecializationRepository extends JpaRepository<FieldSpeci
 
     List<FieldSpecialization> findAllByDefaultCourseOrderByFieldSpecNameAsc(boolean defaultCourse);
     List<FieldSpecialization> findAllByOrderByFieldSpecNameAsc();
+
 }

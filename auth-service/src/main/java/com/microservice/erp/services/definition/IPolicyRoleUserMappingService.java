@@ -23,6 +23,8 @@ public interface IPolicyRoleUserMappingService {
 
     ResponseEntity<List<Policy>> getAllMappedPolicyUserByUser(BigInteger userId);
 
+    ResponseEntity<?> removePolicyUserMap(CreatePolicyUserCommand command);
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -46,5 +48,6 @@ public interface IPolicyRoleUserMappingService {
         @NotNull(message = "Policy cannot be null")
         private BigInteger policyId;
     }
+
 
 }

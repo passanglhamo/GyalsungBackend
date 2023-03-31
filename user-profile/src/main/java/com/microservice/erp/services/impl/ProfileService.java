@@ -317,7 +317,7 @@ public class ProfileService implements IProfileService {
             userInfo = iUserInfoRepository.findByUsername(searchKey);
         }
         if (userInfo.isPresent()) {
-            return ResponseEntity.ok(userInfo);
+            return ResponseEntity.ok().body(userInfo.get());
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("User not found matching " + searchKey));
         }

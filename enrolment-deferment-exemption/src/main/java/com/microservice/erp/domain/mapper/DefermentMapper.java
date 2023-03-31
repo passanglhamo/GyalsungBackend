@@ -73,7 +73,7 @@ public class DefermentMapper {
     public DefermentDto mapToDomain(DefermentInfo deferment) {
         return DefermentDto.withId(
                 deferment.getId(),
-                deferment.getFromDate(),
+                deferment.getDefermentYear(),
                 deferment.getUserId(),
                 deferment.getReasonId(),
                 deferment.getApprovalRemarks(),

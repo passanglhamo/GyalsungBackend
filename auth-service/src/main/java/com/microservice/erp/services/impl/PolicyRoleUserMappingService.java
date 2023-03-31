@@ -10,8 +10,11 @@ import com.microservice.erp.domain.repositories.UserRepository;
 import com.microservice.erp.domain.tasks.am.AssignPolicyToRole;
 import com.microservice.erp.domain.tasks.am.AssignPolicyToUser;
 import com.microservice.erp.domain.tasks.am.RemovePolicyFromRole;
+import com.microservice.erp.domain.tasks.am.RemovePolicyFromUser;
 import com.microservice.erp.services.definition.IPolicyRoleUserMappingService;
+import com.microservice.erp.webapp.config.SecurityConfig;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -82,6 +85,19 @@ public class PolicyRoleUserMappingService implements IPolicyRoleUserMappingServi
                 userRepository.findByUserId(userId).get()
         );
         return ResponseEntity.ok(policies);
+    }
+
+    @Override
+    public ResponseEntity<?> removePolicyUserMap(CreatePolicyUserCommand command) {
+        User user = new User();
+        user.setUserId(command.getUserId());
+        Optional<Policy> policyOpt = repository.findById(command.getPolicyId());
+        Policy policy = (policyOpt.isPresent()) ? policyOpt.get() : new Policy();
+        RemovePolicyFromUser removePolicy = new RemovePolicyFromUser(userRepository, user, policy);
+        Response response = removePolicy.execute(null);
+        return (response.getStatus() == 200)
+                ? ResponseEntity.ok(response.getMessage())
+                : ResponseEntity.status(response.getStatus()).body(response.getError());
     }
 
 }

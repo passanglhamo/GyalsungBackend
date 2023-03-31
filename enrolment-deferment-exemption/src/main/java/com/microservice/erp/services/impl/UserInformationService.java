@@ -49,7 +49,19 @@ public class UserInformationService {
         String userUrl = properties.getUsersByPartialCid() + cid;
         ResponseEntity<List<UserProfileDto>> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, new ParameterizedTypeReference<>() {
         });
-        
+
+        return userResponse.getBody();
+    }
+
+    public UserProfileDto getUserInformationById(BigInteger id, String authHeader) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
+        HttpEntity<String> request = headerToken.tokenHeader(authHeader);
+
+        String userUrl = properties.getUserProfileById() + id;
+        ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, request, new ParameterizedTypeReference<UserProfileDto>() {
+        });
         return userResponse.getBody();
     }
 }

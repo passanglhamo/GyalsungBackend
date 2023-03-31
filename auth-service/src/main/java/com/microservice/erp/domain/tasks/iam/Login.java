@@ -123,7 +123,6 @@ public class Login extends TokenizerTask {
                 List<ScreenDto> accessScreens = new ArrayList<>();
                 for (Role saRole : exist.get().getRoles()) {
                     BigInteger roleId = saRole.getId();
-                    Optional<Role> role = iRoleRepository.findById(roleId);
                     List<PermissionListDto> permissionListDtos = roleWiseAccessPermissionService.getRoleMappedScreens(roleId);
                     if (permissionListDtos != null) {
                         for (PermissionListDto permissionListDto : permissionListDtos) {

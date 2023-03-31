@@ -42,7 +42,7 @@ public class RemovePolicyFromUser extends AbstractTask<Message, Response> {
             return new Response().setMessage("Policy Not Found.").setStatus(500);
 
         if (repository != null){
-            Optional<User> exist = repository.findByUsername(user.getUsername());
+            Optional<User> exist = repository.findByUserId(user.getUserId());
             if (exist.isPresent()){
                 user = exist.get();
                 user.getPolicies().remove(policy);

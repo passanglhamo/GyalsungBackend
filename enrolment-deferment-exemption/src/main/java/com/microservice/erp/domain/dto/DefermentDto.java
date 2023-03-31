@@ -19,8 +19,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DefermentDto {
-    private BigInteger id;
-    private  Date fromDate;
+    private   BigInteger id;
+    private  String defermentYear;
     private  BigInteger userId;
     private  BigInteger reasonId;
     private  String approvalRemarks;
@@ -37,7 +37,7 @@ public class DefermentDto {
 
         public static DefermentDto withId(
                 BigInteger id,
-                Date fromDate,
+                String defermentYear,
                 BigInteger userId,
                 BigInteger reasonId,
                 String approvalRemarks,
@@ -52,7 +52,7 @@ public class DefermentDto {
                 Character gender) {
             return new DefermentDto(
                     id,
-                    fromDate,
+                    defermentYear,
                     userId,
                     reasonId,
                     approvalRemarks,

@@ -31,9 +31,10 @@ public interface ICreateDefermentService {
         @NotNull(message = "Reason cannot be null")
         private BigInteger reasonId;
         private String approvalRemarks;
-        @NotNull(message = "Till date cannot be null")
-        private Date toDate;
+        @NotNull(message = "Year cannot be null")
+        private String defermentYear;
         private Character status;
+        private Character gender;
         private String remarks;
         private MultipartFile[] proofDocuments;
     }
