@@ -40,4 +40,9 @@ public class DashBoardController {
     public ResponseEntity<?> getAcademyWiseEnrolmentFigure(@RequestHeader("Authorization") String authHeader, @RequestParam("year") String year) {
         return iDashBoardService.getAcademyWiseEnrolmentFigure(authHeader, year);
     }
+
+    @GetMapping(value = "/getTaskStatusByYear")
+    public ResponseEntity<?> getTaskStatusByYear(@RequestHeader("Authorization") String authHeader, @RequestParam("year") String year) {
+        return iDashBoardService.getTaskStatusByYear(authHeader, year);
+    }
 }

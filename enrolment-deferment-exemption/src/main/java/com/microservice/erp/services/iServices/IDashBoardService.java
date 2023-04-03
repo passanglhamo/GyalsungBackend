@@ -14,4 +14,6 @@ public interface IDashBoardService {
     ResponseEntity<?> getExemptedList(String authHeader, String year);
 
     ResponseEntity<?> getAcademyWiseEnrolmentFigure(String authHeader, String year);
+
+    ResponseEntity<?> getTaskStatusByYear(String authHeader, String year);
 }

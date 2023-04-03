@@ -61,25 +61,21 @@ public class DashBoardService implements IDashBoardService {
     @Override
 
     public ResponseEntity<?> getEarlyEnlistmentList(String authHeader, String year) {
-
         List<EnrolmentInfo> enrolmentInfos = iEnrolmentInfoRepository.findByYearAndUnderAge(year, 'Y');
-
         return getUserList(authHeader, enrolmentInfos);
     }
 
     @Override
     public ResponseEntity<?> getDeferredList(String authHeader, String year) {
         Character status = ApprovalStatus.APPROVED.value();
+        //todo:get deferment list
 //        List<DefermentInfo> defermentInfos = iDefermentInfoRepository.findByYearAndStatus(year, status);
         List<DefermentInfo> defermentInfos = null;
-
         List<BigInteger> userIds = defermentInfos
                 .stream()
                 .map(DefermentInfo::getUserId)
                 .collect(Collectors.toList());
-
         List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByListOfIds(userIds, authHeader);
-
         List<DefermentDto> defermentDtoList = new ArrayList<>();
         defermentDtoList.forEach(defermentDto -> {
             UserProfileDto userProfileDto = userProfileDtos
@@ -98,6 +94,7 @@ public class DashBoardService implements IDashBoardService {
 
     @Override
     public ResponseEntity<?> getExemptedList(String authHeader, String year) {
+        //todo:get exempted list
         return null;
     }
 
@@ -128,6 +125,12 @@ public class DashBoardService implements IDashBoardService {
             trainingAcademyWiseEnrolmentDtos.add(trainingAcademyWiseEnrolmentDto);
         }
         return ResponseEntity.ok(trainingAcademyWiseEnrolmentDtos);
+    }
+
+    @Override
+    public ResponseEntity<?> getTaskStatusByYear(String authHeader, String year) {
+        TaskStatusDto taskStatusDto = dashBoardDao.getTaskStatusByYear(year);
+        return ResponseEntity.ok(taskStatusDto);
     }
 
     private ResponseEntity<?> getUserList(String authHeader, List<EnrolmentInfo> enrolmentInfos) {
