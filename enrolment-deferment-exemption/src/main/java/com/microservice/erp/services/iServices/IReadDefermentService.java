@@ -12,9 +12,7 @@ import java.util.List;
 public interface IReadDefermentService {
     List<DefermentDto> getAllDefermentList(String authHeader);
 
-    ResponseEntity<?> downloadFiles(BigInteger defermentId, HttpServletResponse response);
-
-    List<DefermentDto> getDefermentListByToDateStatus(String authHeader,Date toDate, Character status);
+    List<DefermentDto> getDefermentListByDefermentYearReasonStatus(String authHeader,String defermentYear, BigInteger reasonId, Character status);
 
     ResponseEntity<?> getDefermentByUserId(BigInteger userId);
 

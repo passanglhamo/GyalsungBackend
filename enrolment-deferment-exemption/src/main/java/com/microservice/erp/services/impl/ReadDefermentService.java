@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReadDefermentService implements IReadDefermentService {
     private final IDefermentInfoRepository repository;
-    private final IDefermentFileInfoRepository repositoryFile;
     private final DefermentMapper mapper;
     private final DefermentExemptionValidation defermentExemptionValidation;
     private final UserInformationService userInformationService;
@@ -71,28 +70,12 @@ public class ReadDefermentService implements IReadDefermentService {
 
 
     @Override
-    public ResponseEntity<?> downloadFiles(BigInteger defermentId, HttpServletResponse response) {
-        DefermentFileInfo defermentFile = repositoryFile.findById(defermentId).get();
-        ResponseMessage responseMessage = new ResponseMessage();
-        String uploadFilePath = defermentFile.getFilePath();
-        String fileName = defermentFile.getFileName();
-
-        try {
-            responseMessage = FileUploadToExternalLocation.fileDownloader(fileName, uploadFilePath, response);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public List<DefermentDto> getDefermentListByDefermentYearReasonStatus(String authHeader, String defermentYear, BigInteger reasonId, Character status) {
+        if(defermentYear.isEmpty()){
+            defermentYear= null;
         }
-        responseMessage.setDto(uploadFilePath);
-        responseMessage.setText(uploadFilePath);
-        responseMessage.setStatus(SystemDataInt.MESSAGE_STATUS_SUCCESSFUL.value());
-
-        return ResponseEntity.ok(responseMessage);
-    }
-
-    @Override
-    public List<DefermentDto> getDefermentListByToDateStatus(String authHeader, Date toDate, Character status) {
         List<DefermentDto> defermentDtoList = repository.getDefermentListByToDateStatus(
-                toDate, status)
+                defermentYear,reasonId, status)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());

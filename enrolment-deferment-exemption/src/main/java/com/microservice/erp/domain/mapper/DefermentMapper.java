@@ -97,7 +97,7 @@ public class DefermentMapper {
                 null,
                 null,
                 null,
-                null
+                deferment.getGender()
         );
     }
 }

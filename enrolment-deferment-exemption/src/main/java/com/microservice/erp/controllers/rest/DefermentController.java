@@ -31,7 +31,7 @@ public class DefermentController {
     public ResponseEntity<?> saveDeferment(HttpServletRequest request,
                                            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                            @ModelAttribute ICreateDefermentService.
-            CreateDefermentCommand command) throws Exception {
+                                                   CreateDefermentCommand command) throws Exception {
         SpringSecurityAuditorAware.setToken(token);
         return service.saveDeferment(request, command);
     }
@@ -46,7 +46,7 @@ public class DefermentController {
                                           @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                           @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
         SpringSecurityAuditorAware.setToken(token);
-        return updateService.approveByIds(authHeader,command);
+        return updateService.approveByIds(authHeader, command);
     }
 
     @PostMapping(value = "/rejectByIds")
@@ -63,11 +63,12 @@ public class DefermentController {
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @GetMapping(value = "/getDefermentListByToDateStatus")
-    public List<DefermentDto> getDefermentListByToDateStatus(@RequestHeader("Authorization") String authHeader,
-                                                             @RequestParam("toDate") Date toDate
+    @GetMapping(value = "/getDefermentListByDefermentYearReasonStatus")
+    public List<DefermentDto> getDefermentListByDefermentYearReasonStatus(@RequestHeader("Authorization") String authHeader,
+                                                                          @RequestParam("defermentYear") String defermentYear
+            , @RequestParam("reasonId") BigInteger reasonId
             , @RequestParam("status") Character status) {
-        return readService.getDefermentListByToDateStatus(authHeader, toDate, status);
+        return readService.getDefermentListByDefermentYearReasonStatus(authHeader, defermentYear, reasonId, status);
     }
 
     @GetMapping(value = "/getDefermentByUserId")

@@ -15,7 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -25,6 +28,8 @@ public class ExemptionMapper {
 
         ExemptionInfo exemption = new ModelMapper().map(command, ExemptionInfo.class);
         exemption.setStatus(ApprovalStatus.PENDING.value());
+        LocalDate currentDate = LocalDate.now();
+        exemption.setExemptionYear(String.valueOf(currentDate.getYear()));
         if (!Objects.isNull(command.getProofDocuments())) {
             exemption.setFiles(
                     Arrays.stream(command.getProofDocuments())
@@ -92,6 +97,6 @@ public class ExemptionMapper {
                 null,
                 null,
                 null,
-                null);
+                exemption.getGender());
     }
 }

@@ -14,8 +14,8 @@ import java.util.List;
 public interface IDefermentInfoRepository extends JpaRepository<DefermentInfo, BigInteger> {
 
  @Query(value = "select d.* from ede_deferment_info d \n" +
-         "where d.to_date <=:toDate AND d.status =:status", nativeQuery = true)
- List<DefermentInfo> getDefermentListByToDateStatus(Date toDate, Character status);
+         "where (:defermentYear IS NULL OR d.deferment_year =:defermentYear) AND (:reasonId IS NULL OR d.reason_id =:reasonId) AND (:defermentStatus IS NULL OR d.status =:defermentStatus)", nativeQuery = true)
+ List<DefermentInfo> getDefermentListByToDateStatus(String defermentYear, BigInteger reasonId, Character defermentStatus);
 
  @Query(value = "select d.* from ede_deferment_info d \n" +
          "where d.user_id =:userId order by deferment_id DESC LIMIT 1", nativeQuery = true)

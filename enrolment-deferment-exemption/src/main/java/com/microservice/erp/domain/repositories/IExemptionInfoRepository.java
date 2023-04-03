@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface IExemptionInfoRepository extends JpaRepository<ExemptionInfo, BigInteger> {
-    boolean existsByUserIdAndStatusIn(BigInteger userId, Collection<Character> status);
 
     @Query(value = "FROM ede_exemption_info e " +
             "WHERE ((e.status=:status) )")

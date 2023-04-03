@@ -49,6 +49,14 @@ public class ExemptionInfo extends Auditable<BigInteger, Long> {
     @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
 
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "exemption_year", columnDefinition = "char(4)")
+    private String exemptionYear;
+
+    @Column(name = "gender", columnDefinition = "char(1)")
+    private Character gender;
+
     @OneToMany(
             mappedBy = "exemption",
             cascade = CascadeType.ALL,
@@ -113,6 +121,22 @@ public class ExemptionInfo extends Auditable<BigInteger, Long> {
 
     public void setFiles(Set<ExemptionFileInfo> files) {
         this.files = files;
+    }
+
+    public String getExemptionYear() {
+        return exemptionYear;
+    }
+
+    public void setExemptionYear(String exemptionYear) {
+        this.exemptionYear = exemptionYear;
+    }
+
+    public Character getGender() {
+        return gender;
+    }
+
+    public void setGender(Character gender) {
+        this.gender = gender;
     }
     //endregion
 }

@@ -25,6 +25,7 @@ public interface ICreateExemptionService {
         private BigInteger reasonId;
         private String approvalRemarks;
         private Character status;
+        private Character gender;
         private String remarks;
         private MultipartFile[] proofDocuments;
     }

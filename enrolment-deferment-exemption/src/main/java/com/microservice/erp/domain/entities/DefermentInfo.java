@@ -21,7 +21,7 @@ public class DefermentInfo extends Auditable<BigInteger, Long> {
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
-   @Column(name = "gender", columnDefinition = "char(1)")
+    @Column(name = "gender", columnDefinition = "char(1)")
     private Character gender;
 
     @NotNull
