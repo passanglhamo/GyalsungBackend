@@ -24,7 +24,7 @@ public class DashBoardDao extends BaseDao {
         String sqlQuery = environment.getProperty("CommonDao.getEdeFigure");
         try {
             return (DashboardDto) entityManager.createNativeQuery(sqlQuery)
-                     .setParameter("year", year)
+                    .setParameter("year", year)
                     .unwrap(SQLQuery.class).setResultTransformer(Transformers.aliasToBean(DashboardDto.class))
                     .getSingleResult();
         } catch (NoResultException ex) {

@@ -8,4 +8,10 @@ public interface IDashBoardService {
     ResponseEntity<?> getTotalRegisteredList(String authHeader, String year);
 
     ResponseEntity<?> getEarlyEnlistmentList(String authHeader, String year);
+
+    ResponseEntity<?> getDeferredList(String authHeader, String year);
+
+    ResponseEntity<?> getExemptedList(String authHeader, String year);
+
+    ResponseEntity<?> getAcademyWiseEnrolmentFigure(String authHeader, String year);
 }

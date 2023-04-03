@@ -25,4 +25,19 @@ public class DashBoardController {
     public ResponseEntity<?> getEarlyEnlistmentList(@RequestHeader("Authorization") String authHeader, @RequestParam("year") String year) {
         return iDashBoardService.getEarlyEnlistmentList(authHeader, year);
     }
+
+    @GetMapping(value = "/getDeferredList")
+    public ResponseEntity<?> getDeferredList(@RequestHeader("Authorization") String authHeader, @RequestParam("year") String year) {
+        return iDashBoardService.getDeferredList(authHeader, year);
+    }
+
+    @GetMapping(value = "/getExemptedList")
+    public ResponseEntity<?> getExemptedList(@RequestHeader("Authorization") String authHeader, @RequestParam("year") String year) {
+        return iDashBoardService.getExemptedList(authHeader, year);
+    }
+
+    @GetMapping(value = "/getAcademyWiseEnrolmentFigure")
+    public ResponseEntity<?> getAcademyWiseEnrolmentFigure(@RequestHeader("Authorization") String authHeader, @RequestParam("year") String year) {
+        return iDashBoardService.getAcademyWiseEnrolmentFigure(authHeader, year);
+    }
 }

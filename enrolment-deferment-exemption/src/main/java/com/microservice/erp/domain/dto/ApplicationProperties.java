@@ -22,7 +22,7 @@ public class ApplicationProperties {
     private String trainingManAcademyByAcademyId;
 
     @Value("${training.management.course.by.courseId}")
-    private String trainingManCourseByCourceId;
+    private String trainingManCourseByCourseId;
 
     @Value("${user.service.profile.by.userIds}")
     private String userProfileByIds;
@@ -35,6 +35,9 @@ public class ApplicationProperties {
 
     @Value("${training.management.mappedHospital.by.hospitalId}")
     private String trainingMappedHospitalById;
+
+    @Value("${training.management.academy.allAcademy}")
+    private String allAcademy;
 
 
 }
