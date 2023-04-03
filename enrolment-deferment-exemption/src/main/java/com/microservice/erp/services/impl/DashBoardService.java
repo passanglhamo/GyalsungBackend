@@ -53,7 +53,7 @@ public class DashBoardService implements IDashBoardService {
     }
 
     @Override
-    public ResponseEntity<?> getTotalRegisteredList(String authHeader, String year) {
+    public ResponseEntity<?> getRegisteredList(String authHeader, String year) {
         List<EnrolmentInfo> enrolmentInfos = iEnrolmentInfoRepository.findByYear(year);
         return getUserList(authHeader, enrolmentInfos);
     }

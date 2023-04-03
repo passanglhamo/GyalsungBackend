@@ -16,9 +16,9 @@ public class DashBoardController {
         return iDashBoardService.getEdeFigure(year);
     }
 
-    @GetMapping(value = "/getTotalRegisteredList")
-    public ResponseEntity<?> getTotalRegisteredList(@RequestHeader("Authorization") String authHeader, @RequestParam("year") String year) {
-        return iDashBoardService.getTotalRegisteredList(authHeader, year);
+    @GetMapping(value = "/getRegisteredList")
+    public ResponseEntity<?> getRegisteredList(@RequestHeader("Authorization") String authHeader, @RequestParam("year") String year) {
+        return iDashBoardService.getRegisteredList(authHeader, year);
     }
 
     @GetMapping(value = "/getEarlyEnlistmentList")

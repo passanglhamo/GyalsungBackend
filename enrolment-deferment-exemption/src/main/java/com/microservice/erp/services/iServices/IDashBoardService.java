@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 public interface IDashBoardService {
     ResponseEntity<?> getEdeFigure(String year);
 
-    ResponseEntity<?> getTotalRegisteredList(String authHeader, String year);
+    ResponseEntity<?> getRegisteredList(String authHeader, String year);
 
     ResponseEntity<?> getEarlyEnlistmentList(String authHeader, String year);
 
