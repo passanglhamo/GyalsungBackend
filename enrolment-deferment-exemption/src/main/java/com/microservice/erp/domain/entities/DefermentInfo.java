@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
@@ -26,7 +27,7 @@ public class DefermentInfo extends Auditable<BigInteger, Long> {
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "deferment_year", columnDefinition = "char(4)")
+    @Column(name = "deferment_year", columnDefinition = "char(4) ")
     private String defermentYear;
 
     @NotNull(message = "Till date cannot be null")

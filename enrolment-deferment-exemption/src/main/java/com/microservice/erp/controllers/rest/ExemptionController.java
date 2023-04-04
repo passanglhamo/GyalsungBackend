@@ -62,10 +62,14 @@ public class ExemptionController {
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @GetMapping(value = "/getExemptionListByStatus")
+    @GetMapping(value = "/getExemptionListByCriteria")
     public List<ExemptionDto> getExemptionListByStatus(@RequestHeader("Authorization") String authHeader,
-                                                       @RequestParam("status") Character status) {
-        return readService.getExemptionListByStatus(authHeader, status);
+                                                       @RequestParam("exemptionYear") String exemptionYear
+            , @RequestParam("reasonId") BigInteger reasonId
+            , @RequestParam("status") Character status
+            , @RequestParam("gender") Character gender
+            , @RequestParam("cid") String cid) {
+        return readService.getExemptionListByCriteria(authHeader,exemptionYear, status,reasonId,gender,cid);
     }
 
     @GetMapping(value = "/getExemptionByUserId")

@@ -70,7 +70,15 @@ public class UpdateDefermentService implements IUpdateDefermentService {
 
     @Override
     public ResponseEntity<?> rejectByIds(String authHeader, @Valid UpdateDefermentCommand command) {
+        DefermentInfo defermentInfo = repository.findAllById(command.getDefermentIds())
+                .stream()
+                .filter(d -> (d.getStatus().equals(ApprovalStatus.REJECTED.value()))
+                ).findFirst().orElse(null);
 
+        if (!Objects.isNull(defermentInfo)) {
+            return new ResponseEntity<>("There are some application that are already rejected.", HttpStatus.ALREADY_REPORTED);
+
+        }
         repository.findAllById(command.getDefermentIds()).forEach(d -> {
             d.setStatus(ApprovalStatus.REJECTED.value());
             d.setApprovalRemarks(command.getRemarks());

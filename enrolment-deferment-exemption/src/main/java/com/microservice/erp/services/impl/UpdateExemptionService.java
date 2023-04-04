@@ -68,7 +68,15 @@ public class UpdateExemptionService implements IUpdateExemptionService {
 
     @Override
     public ResponseEntity<?> rejectByIds(String authHeader, UpdateExemptionCommand command) {
+        ExemptionInfo exemptionInfo = repository.findAllById(command.getExemptionIds())
+                .stream()
+                .filter(d -> (d.getStatus().equals(ApprovalStatus.REJECTED.value()))
+                ).findFirst().orElse(null);
 
+        if (!Objects.isNull(exemptionInfo)) {
+            return new ResponseEntity<>("There are some application that are already rejected.", HttpStatus.ALREADY_REPORTED);
+
+        }
         repository.findAllById(command.getExemptionIds()).forEach(d -> {
                 d.setStatus(ApprovalStatus.REJECTED.value());
                 d.setApprovalRemarks(command.getRemarks());

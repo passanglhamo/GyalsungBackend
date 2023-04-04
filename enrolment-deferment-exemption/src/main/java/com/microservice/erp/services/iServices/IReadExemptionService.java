@@ -9,7 +9,7 @@ import java.util.List;
 public interface IReadExemptionService {
     List<ExemptionDto> getAllExemptionList(String authHeader);
 
-    List<ExemptionDto> getExemptionListByStatus(String authHeader, Character status);
+    List<ExemptionDto> getExemptionListByCriteria(String authHeader, String exemptionYear,Character status, BigInteger reasonId, Character gender, String cid);
 
     ResponseEntity<?> getExemptionByUserId(BigInteger userId);
 

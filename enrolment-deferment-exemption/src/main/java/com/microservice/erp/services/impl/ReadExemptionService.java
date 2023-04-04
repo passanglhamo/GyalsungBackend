@@ -1,5 +1,6 @@
 package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dto.DefermentDto;
 import com.microservice.erp.domain.dto.ExemptionDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.ExemptionInfo;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -57,33 +59,53 @@ public class ReadExemptionService implements IReadExemptionService {
     }
 
     @Override
-    public List<ExemptionDto> getExemptionListByStatus(String authHeader, Character status) {
-        List<ExemptionDto> exemptionDtoList = repository.getExemptionListByToDateStatus(status)
+    public List<ExemptionDto> getExemptionListByCriteria(String authHeader, String exemptionYear, Character status,
+                                                         BigInteger reasonId, Character gender, String cid) {
+
+        exemptionYear = exemptionYear.isEmpty() ? null : exemptionYear;
+        cid = cid.isEmpty() ? null : cid;
+
+        List<ExemptionDto> exemptionDtoList = repository.getExemptionListByToDateStatus(exemptionYear,status,gender, reasonId)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
+        List<BigInteger> userIdsVal;
+        List<ExemptionDto> exemptionDtos = new ArrayList<>();
+        List<UserProfileDto> userProfileDtos;
 
-        List<BigInteger> userIdsVal = exemptionDtoList
-                .stream()
-                .map(ExemptionDto::getUserId)
-                .collect(Collectors.toList());
+        if (!Objects.isNull(cid)) {
+            userProfileDtos = userInformationService.getUserInformationByPartialCid(cid, authHeader);
+        } else {
+            userIdsVal = exemptionDtoList
+                    .stream()
+                    .map(ExemptionDto::getUserId)
+                    .collect(Collectors.toList());
+            userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsVal, authHeader);
 
-        List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsVal, authHeader);
+        }
 
         //Merge exemption and user information
-        exemptionDtoList.forEach(defermentDto -> {
-            UserProfileDto userProfileDto = userProfileDtos
+        userProfileDtos.forEach(item -> {
+            ExemptionDto exemptionDto = exemptionDtoList
                     .stream()
-                    .filter(user -> defermentDto.getUserId().equals(user.getId()))
+                    .filter(exemption -> item.getId().equals(exemption.getUserId()))
                     .findAny()
                     .orElse(null);
-            defermentDto.setFullName(Objects.requireNonNull(userProfileDto).getFullName());
-            defermentDto.setCid(Objects.requireNonNull(userProfileDto).getCid());
-            defermentDto.setDob(Objects.requireNonNull(userProfileDto).getDob());
-            defermentDto.setGender(Objects.requireNonNull(userProfileDto).getGender());
+            ExemptionDto exemptionData = new ExemptionDto();
+            if (!Objects.isNull(exemptionDto)) {
+                exemptionData.setId(exemptionDto.getId());
+                exemptionData.setApprovalRemarks(exemptionDto.getApprovalRemarks());
+                exemptionData.setStatus(exemptionDto.getStatus());
+                exemptionData.setFullName(Objects.requireNonNull(item).getFullName());
+                exemptionData.setCid(Objects.requireNonNull(item).getCid());
+                exemptionData.setDob(Objects.requireNonNull(item).getDob());
+                exemptionData.setGender(Objects.requireNonNull(item).getGender());
+                exemptionData.setExemptionFileDtos(exemptionDto.getExemptionFileDtos());
+                exemptionData.setReasonId(exemptionDto.getReasonId());
+            }
+            exemptionDtos.add(exemptionData);
         });
-
-        return exemptionDtoList;
+        return exemptionDtos;
 
     }
 
