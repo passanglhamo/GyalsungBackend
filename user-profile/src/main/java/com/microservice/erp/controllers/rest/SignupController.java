@@ -55,10 +55,10 @@ public class SignupController {
         return iSignupService.signup(signupRequestDto);
     }
 
-    @GetMapping("/getExpectedPopulationByYear")
-    public ResponseEntity<?> getExpectedUserDetails(@RequestParam("dateString") String dateString)
+    @GetMapping("/getEligiblePopulationByYearAndAge")
+    public ResponseEntity<?> getEligiblePopulationByYearAndAge(@RequestParam("dateString") String dateString)
             throws IOException, ParseException {
-        return iSignupService.getExpectedPopulationByYear(dateString);
+        return iSignupService.getEligiblePopulationByYearAndAge(dateString);
     }
 
     @GetMapping("/getPersonDetailsByCid")

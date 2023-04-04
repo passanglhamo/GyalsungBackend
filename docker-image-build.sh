@@ -1,6 +1,6 @@
 #!/bin/bash
 
-AppVersion="v1.0.19"
+AppVersion="v1.0.20"
 DockerHubUser="engrajibkumerghosh"
 DockerHubRepoName="ms-training-repo-v1"
 DockerHubRepository="${DockerHubUser}/${DockerHubRepoName}"

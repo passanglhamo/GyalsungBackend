@@ -190,16 +190,15 @@ public class SignupService implements ISignupService {
     }
 
     @Override
-    public ResponseEntity<?> getExpectedPopulationByYear(String dateString) throws IOException, ParseException {
+    public ResponseEntity<?> getEligiblePopulationByYearAndAge(String dateString) throws IOException, ParseException {
         String endPointUrl;
         try {
             Properties props = PropertiesLoaderUtils.loadProperties(new ClassPathResource("/apiConfig/dcrcApi.properties"));
-            endPointUrl = props.getProperty("getExpectedUserDetails.endPointURL");
-            //todo need to get age from properties file
+            endPointUrl = props.getProperty("getEligiblePopulationByYearAndAge.endPointURL");
         } catch (IOException ex) {
             throw new RuntimeException("Error loading properties file", ex);
         }
-
+//todo:need to pass age dynamic
         String userUrl = String.format("%s/%s/%s", endPointUrl, dateString, "18");
         URL url = new URL(userUrl);
 

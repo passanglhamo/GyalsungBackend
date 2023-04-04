@@ -21,4 +21,6 @@ public interface IEnrolmentInfoRepository extends JpaRepository<EnrolmentInfo, B
     List<EnrolmentInfo> findByYear(String year);
 
     List<EnrolmentInfo> findByYearAndUnderAge(String year, Character underAge);
+
+    List<EnrolmentInfo> findByYearAndTrainingAcademyIdAndStatusAndGender(String year, Integer trainingAcademyId, Character status, Character gender);
 }

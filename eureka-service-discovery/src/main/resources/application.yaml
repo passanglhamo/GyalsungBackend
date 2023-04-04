@@ -10,6 +10,8 @@ management:
         include: health,metrics,httptrace,prometheus
 #Eureka-Config:
 eureka:
+  instance:
+    preferIpAddress: true
   client:
     registerWithEureka: false
     fetchRegistry: false

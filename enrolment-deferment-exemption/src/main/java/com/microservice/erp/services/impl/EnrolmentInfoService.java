@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -197,7 +196,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
                 }
                 BigInteger allocatedCourseId = enrolmentListInput.getAllocated_course_id();
                 if (allocatedCourseId != null) {
-                    String urlCourse = properties.getTrainingManCourseByCourceId() + allocatedCourseId;
+                    String urlCourse = properties.getTrainingManCourseByCourseId() + allocatedCourseId;
                     ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
                     enrolmentListDto.setCourseName(Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName());
                 }
@@ -295,7 +294,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             }
             BigInteger allocatedCourseId = enrolmentInfo.getAllocatedCourseId();
             if (allocatedCourseId != null) {
-                String urlCourse = properties.getTrainingManCourseByCourceId() + allocatedCourseId;
+                String urlCourse = properties.getTrainingManCourseByCourseId() + allocatedCourseId;
                 ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
                 courseName = Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName();
             }
@@ -364,7 +363,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             }
             BigInteger allocatedCourseId = item.getAllocated_course_id();
             if (allocatedCourseId != null) {
-                String urlCourse = properties.getTrainingManCourseByCourceId() + allocatedCourseId;
+                String urlCourse = properties.getTrainingManCourseByCourseId() + allocatedCourseId;
                 ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
                 enrolmentListDto.setCourseName(Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName());
             }
@@ -411,7 +410,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             }
             BigInteger allocatedCourseId = enrolmentInfo.getAllocatedCourseId();
             if (allocatedCourseId != null) {
-                String urlCourse = properties.getTrainingManCourseByCourceId() + allocatedCourseId;
+                String urlCourse = properties.getTrainingManCourseByCourseId() + allocatedCourseId;
                 ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
                 courseName = Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName();
             }

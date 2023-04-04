@@ -32,6 +32,10 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://${app.eureka.service.host}:${app.eureka.service.port}/eureka
+    registerWithEureka: true
+    fetchRegistry: true
+  instance:
+    preferIpAddress: true
 
 #Service-config
 app.eureka.api.gateway.port: 80
@@ -47,6 +51,7 @@ user.service.profile.by.partial.cid: /userProfile/getUserInformationByPartialCid
 #Training-Management-Service
 training.management.service.url: http://TRAINING-MANAGEMENT/api/training/management
 training.management.academy.by.academyId: /common/getTrainingAcademyById?academyId=
+training.management.academy.allAcademy: /common/getAllTrainingAcademies
 training.management.course.by.courseId: /fieldSpecializations/getCourseByCourseId?courseId=
 training.management.hospital.by.hospitalId: /common/getHospitalById?hospitalId=
 training.management.mappedHospital.by.hospitalId: /common/getHospitalMappingByHospitalId?hospitalId=

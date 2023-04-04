@@ -13,4 +13,8 @@ public class DashboardDto {
     private BigInteger total_female_registered;
     private BigInteger total_male_ee;
     private BigInteger total_female_ee;
+    private BigInteger total_male_deferred;
+    private BigInteger total_female_deferred;
+    private BigInteger total_male_exempted;
+    private BigInteger total_female_exempted;
 }

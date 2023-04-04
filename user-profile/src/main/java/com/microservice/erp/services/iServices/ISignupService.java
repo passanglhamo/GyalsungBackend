@@ -24,7 +24,7 @@ public interface ISignupService {
 
     ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, JsonProcessingException;
 
-    ResponseEntity<?> getExpectedPopulationByYear(String dateString) throws IOException, ParseException;
+    ResponseEntity<?> getEligiblePopulationByYearAndAge(String dateString) throws IOException, ParseException;
 
     ResponseEntity<?> getPersonDetailsByCid(String cid) throws IOException, ParseException, ApiException;
 
