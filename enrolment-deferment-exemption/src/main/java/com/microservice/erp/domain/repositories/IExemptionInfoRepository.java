@@ -26,4 +26,5 @@ public interface IExemptionInfoRepository extends JpaRepository<ExemptionInfo, B
             "order by exemption_id DESC LIMIT 1", nativeQuery = true)
     ExemptionInfo getExemptionByUserIdNotCancelled(BigInteger userId, Character cancelStatus);
 
+    List<ExemptionInfo> findByExemptionYearAndStatus(String year, Character status);
 }

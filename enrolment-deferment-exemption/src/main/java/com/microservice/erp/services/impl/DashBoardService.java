@@ -4,6 +4,7 @@ import com.microservice.erp.domain.dao.DashBoardDao;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
+import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.repositories.*;
@@ -77,20 +78,20 @@ public class DashBoardService implements IDashBoardService {
         List<DefermentDto> defermentDtoList = new ArrayList<>();
 
         userProfileDtos.forEach(userProfileDto -> {
-            DefermentInfo defermentDto = defermentInfos
+            DefermentInfo defermentInfo = defermentInfos
                     .stream()
                     .filter(deferment -> deferment.getUserId().equals(userProfileDto.getId()))
                     .findAny()
                     .orElse(null);
-            if (defermentDto != null) {
-                DefermentDto defermentDto1 = new DefermentDto();
-                defermentDto1.setFullName(userProfileDto.getFullName());
-                defermentDto1.setCid(userProfileDto.getCid());
-                defermentDto1.setDob(userProfileDto.getDob());
-                defermentDto1.setGender(userProfileDto.getGender());
-                defermentDto1.setDefermentYear(defermentDto.getDefermentYear());
-                defermentDto1.setId(defermentDto.getId());
-                defermentDtoList.add(defermentDto1);
+            if (defermentInfo != null) {
+                DefermentDto defermentDto = new DefermentDto();
+                defermentDto.setFullName(userProfileDto.getFullName());
+                defermentDto.setCid(userProfileDto.getCid());
+                defermentDto.setDob(userProfileDto.getDob());
+                defermentDto.setGender(userProfileDto.getGender());
+                defermentDto.setDefermentYear(defermentInfo.getDefermentYear());
+                defermentDto.setId(defermentInfo.getId());
+                defermentDtoList.add(defermentDto);
             }
 
         });
@@ -100,7 +101,35 @@ public class DashBoardService implements IDashBoardService {
     @Override
     public ResponseEntity<?> getExemptedList(String authHeader, String year) {
         //todo:get exempted list
-        return null;
+        Character status = ApprovalStatus.APPROVED.value();
+        List<ExemptionInfo> exemptionInfos = iExemptionInfoRepository.findByExemptionYearAndStatus(year, status);
+        List<BigInteger> userIds = exemptionInfos
+                .stream()
+                .map(ExemptionInfo::getUserId)
+                .collect(Collectors.toList());
+        List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByListOfIds(userIds, authHeader);
+        List<ExemptionDto> exemptionDtoList = new ArrayList<>();
+
+        userProfileDtos.forEach(userProfileDto -> {
+            ExemptionInfo exemptionInfo = exemptionInfos
+                    .stream()
+                    .filter(exemption -> exemption.getUserId().equals(userProfileDto.getId()))
+                    .findAny()
+                    .orElse(null);
+
+            if (exemptionInfo != null) {
+                ExemptionDto exemptionDto = new ExemptionDto();
+                exemptionDto.setFullName(userProfileDto.getFullName());
+                exemptionDto.setCid(userProfileDto.getCid());
+                exemptionDto.setDob(userProfileDto.getDob());
+                exemptionDto.setGender(userProfileDto.getGender());
+                exemptionDto.setExemptionYear(exemptionInfo.getExemptionYear());
+                exemptionDto.setId(exemptionInfo.getId());
+                exemptionDtoList.add(exemptionDto);
+            }
+
+        });
+        return ResponseEntity.ok(exemptionDtoList);
     }
 
     @Override

@@ -76,6 +76,7 @@ public class ExemptionMapper {
 
     public ExemptionDto mapToDomain(ExemptionInfo exemption) {
         return ExemptionDto.withId(
+                exemption.getExemptionYear(),
                 exemption.getId(),
                 exemption.getUserId(),
                 exemption.getReasonId(),

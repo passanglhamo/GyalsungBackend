@@ -19,7 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExemptionDto {
-
+    private String exemptionYear;
     private BigInteger id;
     private BigInteger userId;
     private BigInteger reasonId;
@@ -35,6 +35,7 @@ public class ExemptionDto {
     private Character gender;
 
     public static ExemptionDto withId(
+            String exemptionYear,
             BigInteger id,
             BigInteger userId,
             BigInteger reasonId,
@@ -48,6 +49,7 @@ public class ExemptionDto {
             Date dob,
             Character gender) {
         return new ExemptionDto(
+                exemptionYear,
                 id,
                 userId,
                 reasonId,
