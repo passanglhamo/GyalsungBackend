@@ -26,4 +26,5 @@ public interface IDefermentInfoRepository extends JpaRepository<DefermentInfo, B
          "order by deferment_id DESC LIMIT 1", nativeQuery = true)
  DefermentInfo getDefermentByUserIdNotCancelled(BigInteger userId,Character cancelStatus);
 
+    List<DefermentInfo> findByDefermentYearAndStatus(String year, Character status);
 }

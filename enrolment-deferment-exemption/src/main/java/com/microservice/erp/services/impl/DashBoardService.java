@@ -68,26 +68,31 @@ public class DashBoardService implements IDashBoardService {
     @Override
     public ResponseEntity<?> getDeferredList(String authHeader, String year) {
         Character status = ApprovalStatus.APPROVED.value();
-        //todo:get deferment list
-//        List<DefermentInfo> defermentInfos = iDefermentInfoRepository.findByYearAndStatus(year, status);
-        List<DefermentInfo> defermentInfos = null;
+        List<DefermentInfo> defermentInfos = iDefermentInfoRepository.findByDefermentYearAndStatus(year, status);
         List<BigInteger> userIds = defermentInfos
                 .stream()
                 .map(DefermentInfo::getUserId)
                 .collect(Collectors.toList());
         List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByListOfIds(userIds, authHeader);
         List<DefermentDto> defermentDtoList = new ArrayList<>();
-        defermentDtoList.forEach(defermentDto -> {
-            UserProfileDto userProfileDto = userProfileDtos
+
+        userProfileDtos.forEach(userProfileDto -> {
+            DefermentInfo defermentDto = defermentInfos
                     .stream()
-                    .filter(user -> defermentDto.getUserId().equals(user.getId()))
+                    .filter(deferment -> deferment.getUserId().equals(userProfileDto.getId()))
                     .findAny()
                     .orElse(null);
-            defermentDto.setFullName(Objects.requireNonNull(userProfileDto).getFullName());
-            defermentDto.setCid(Objects.requireNonNull(userProfileDto).getCid());
-            defermentDto.setDob(Objects.requireNonNull(userProfileDto).getDob());
-            defermentDto.setGender(Objects.requireNonNull(userProfileDto).getGender());
-            defermentDtoList.add(defermentDto);
+            if (defermentDto != null) {
+                DefermentDto defermentDto1 = new DefermentDto();
+                defermentDto1.setFullName(userProfileDto.getFullName());
+                defermentDto1.setCid(userProfileDto.getCid());
+                defermentDto1.setDob(userProfileDto.getDob());
+                defermentDto1.setGender(userProfileDto.getGender());
+                defermentDto1.setDefermentYear(defermentDto.getDefermentYear());
+                defermentDto1.setId(defermentDto.getId());
+                defermentDtoList.add(defermentDto1);
+            }
+
         });
         return ResponseEntity.ok(defermentDtoList);
     }

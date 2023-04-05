@@ -19,53 +19,53 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DefermentDto {
-    private   BigInteger id;
-    private  String defermentYear;
-    private  BigInteger userId;
-    private  BigInteger reasonId;
-    private  String approvalRemarks;
-    private  Date toDate;
-    private  Character status;
-    private  String remarks;
-    private  MultipartFile[] proofDocuments;
-    private  Collection<DefermentFileDto> defermentFileDtos;
+    private BigInteger id;
+    private String defermentYear;
+    private BigInteger userId;
+    private BigInteger reasonId;
+    private String approvalRemarks;
+    private Date toDate;
+    private Character status;
+    private String remarks;
+    private MultipartFile[] proofDocuments;
+    private Collection<DefermentFileDto> defermentFileDtos;
 
     private String fullName;
     private String cid;
     private Date dob;
     private Character gender;
 
-        public static DefermentDto withId(
-                BigInteger id,
-                String defermentYear,
-                BigInteger userId,
-                BigInteger reasonId,
-                String approvalRemarks,
-                Date toDate,
-                Character status,
-                String remarks,
-                MultipartFile[] proofDocuments,
-                Collection<DefermentFileDto> defermentFileDtos,
-                String fullName,
-                String cid,
-                Date dob,
-                Character gender) {
-            return new DefermentDto(
-                    id,
-                    defermentYear,
-                    userId,
-                    reasonId,
-                    approvalRemarks,
-                    toDate,
-                    status,
-                    remarks,
-                    proofDocuments,
-                    defermentFileDtos,
-                    fullName,
-                    cid,
-                    dob,
-                    gender);
-        }
+    public static DefermentDto withId(
+            BigInteger id,
+            String defermentYear,
+            BigInteger userId,
+            BigInteger reasonId,
+            String approvalRemarks,
+            Date toDate,
+            Character status,
+            String remarks,
+            MultipartFile[] proofDocuments,
+            Collection<DefermentFileDto> defermentFileDtos,
+            String fullName,
+            String cid,
+            Date dob,
+            Character gender) {
+        return new DefermentDto(
+                id,
+                defermentYear,
+                userId,
+                reasonId,
+                approvalRemarks,
+                toDate,
+                status,
+                remarks,
+                proofDocuments,
+                defermentFileDtos,
+                fullName,
+                cid,
+                dob,
+                gender);
+    }
 
 
 }
