@@ -51,10 +51,10 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://${app.eureka.service.host}:${app.eureka.service.port}/eureka
-    registerWithEureka: true
-    fetchRegistry: true
-  instance:
-    preferIpAddress: true
+#    registerWithEureka: true
+#    fetchRegistry: true
+#  instance:
+#    preferIpAddress: true
 
 #Service-config
 app.eureka.api.gateway.port: 80
