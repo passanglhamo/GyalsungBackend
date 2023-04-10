@@ -1,6 +1,7 @@
 package com.microservice.erp.controllers.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.SignupRequestDto;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
@@ -55,12 +56,6 @@ public class SignupController {
         return iSignupService.signup(signupRequestDto);
     }
 
-    @GetMapping("/getEligiblePopulationByYearAndAge")
-    public ResponseEntity<?> getEligiblePopulationByYearAndAge(@RequestParam("dateString") String dateString)
-            throws IOException, ParseException {
-        return iSignupService.getEligiblePopulationByYearAndAge(dateString);
-    }
-
     @GetMapping("/getPersonDetailsByCid")
     public ResponseEntity<?> getPersonDetailsByCid(String cid) throws ParseException, IOException, ApiException {
         return iSignupService.getPersonDetailsByCid(cid);
@@ -69,6 +64,18 @@ public class SignupController {
     @GetMapping("/getSignUpUsers")
     public ResponseEntity<?> getSignUpUsers(@RequestParam("dateString") String dateString) throws ParseException {
         return iSignupService.getSignUpUsers(dateString);
+    }
+
+    @GetMapping("/getEligiblePopulationByYearAndAge")
+    public ResponseEntity<?> getEligiblePopulationByYearAndAge(@RequestParam("dateString") String dateString)
+            throws IOException, ParseException, UnirestException {
+        return iSignupService.getEligiblePopulationByYearAndAge(dateString);
+    }
+
+    @GetMapping("/getListOfStudentsByClassAndYear")
+    public ResponseEntity<?> getListOfStudentsByClassAndYear(@RequestParam("className") String className, @RequestParam("year") String year)
+            throws IOException, ParseException, UnirestException {
+        return iSignupService.getListOfStudentsByClassAndYear(className, year);
     }
 
 }

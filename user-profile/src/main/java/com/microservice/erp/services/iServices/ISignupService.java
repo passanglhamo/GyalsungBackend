@@ -1,6 +1,7 @@
 package com.microservice.erp.services.iServices;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.SignupRequestDto;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,11 @@ public interface ISignupService {
 
     ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, JsonProcessingException;
 
-    ResponseEntity<?> getEligiblePopulationByYearAndAge(String dateString) throws IOException, ParseException;
-
     ResponseEntity<?> getPersonDetailsByCid(String cid) throws IOException, ParseException, ApiException;
 
     ResponseEntity<?> getSignUpUsers(String tillDate) throws ParseException;
+
+    ResponseEntity<?> getEligiblePopulationByYearAndAge(String dateString) throws IOException, ParseException, UnirestException;
+
+    ResponseEntity<?> getListOfStudentsByClassAndYear(String className, String year) throws IOException, ParseException, UnirestException;
 }

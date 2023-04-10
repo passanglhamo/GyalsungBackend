@@ -1,6 +1,7 @@
 package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.ApiAccessToken;
 import com.microservice.erp.domain.entities.SignupEmailVerificationCode;
@@ -34,12 +35,15 @@ import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.HttpResponse;
 
 @Service
 public class SignupService implements ISignupService {
@@ -190,7 +194,7 @@ public class SignupService implements ISignupService {
     }
 
     @Override
-    public ResponseEntity<?> getEligiblePopulationByYearAndAge(String dateString) throws IOException, ParseException {
+    public ResponseEntity<?> getEligiblePopulationByYearAndAge(String dateString) throws IOException, ParseException, UnirestException {
         String endPointUrl;
         try {
             Properties props = PropertiesLoaderUtils.loadProperties(new ClassPathResource("/apiConfig/dcrcApi.properties"));
@@ -236,6 +240,62 @@ public class SignupService implements ISignupService {
                         })
                         .collect(Collectors.toList());
                 return ResponseEntity.ok().body(expectedList);
+            }
+        } else {
+            return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getListOfStudentsByClassAndYear(String className, String year) throws IOException, ParseException, UnirestException {
+        String endPointUrl;
+        try {
+            Properties props = PropertiesLoaderUtils.loadProperties(new ClassPathResource("/apiConfig/dcrcApi.properties"));
+            endPointUrl = props.getProperty("getEligiblePopulationClassAndYear.endPointURL");
+        } catch (IOException ex) {
+            throw new RuntimeException("Error loading properties file", ex);
+        }
+        String userUrl = String.format("%s/%s/%s", endPointUrl, className, year);
+        URL url = new URL(userUrl);
+
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("Authorization", "Bearer " + apiAccessToken.getAccess_token());
+
+        int responseCode = con.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                JSONArray details = new JSONObject(in.readLine()).getJSONObject("StudentDetails").getJSONArray("StudentDetail");
+
+                Set<String> cidNos = IntStream.range(0, details.length())
+                        .mapToObj(i -> details.getJSONObject(i).get("CidNo").toString())
+                        .collect(Collectors.toSet());
+
+                List<UserInfo> userInfoList = iUserInfoRepository.findByCidIn(cidNos);
+
+                Map<String, Boolean> existsByCidNoMap = userInfoList.stream()
+                        .collect(Collectors.toMap(UserInfo::getCid, userInfo -> true));
+
+                List<MoeExpectedPopulationDto> moeExpectedPopulationDtos = IntStream.range(0, details.length())
+                        .mapToObj(i -> {
+                            JSONObject item = details.getJSONObject(i);
+                            String cidNo = item.get("CidNo").toString();
+                            MoeExpectedPopulationDto moeExpectedPopulationDto = new MoeExpectedPopulationDto();
+                            moeExpectedPopulationDto.setCidNo(cidNo);
+                            moeExpectedPopulationDto.setDob(item.get("DateOfBirth").toString());
+                            moeExpectedPopulationDto.setName(item.get("student_name").toString());
+                            moeExpectedPopulationDto.setGender(item.get("gender").toString());
+                            moeExpectedPopulationDto.setSchoolName(item.get("school_name").toString());
+                            moeExpectedPopulationDto.setStream(item.get("stream").toString());
+                            moeExpectedPopulationDto.setClassName(item.get("class").toString());
+                            moeExpectedPopulationDto.setSection(item.get("section").toString());
+                            moeExpectedPopulationDto.setIsRegistered(existsByCidNoMap.get(cidNo));
+                            return moeExpectedPopulationDto;
+                        })
+                        .collect(Collectors.toList());
+                return ResponseEntity.ok().body(moeExpectedPopulationDtos);
             }
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
