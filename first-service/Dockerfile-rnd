@@ -1,4 +1,13 @@
-FROM adoptopenjdk:8-jdk-hotspot
+FROM openjdk:8-jdk
+# Download and install OpenJDK 8u352
+RUN curl -L -b "oraclelicense=a" https://download.oracle.com/otn-pub/java/jdk/8u352-b76/aa0333dd3019491ca4f6ddbe78cdb6d0/jdk-8u352-linux-x64.tar.gz | tar zx && \
+    mv jdk1.8.0_352 /opt && \
+    ln -s /opt/jdk1.8.0_352 /opt/jdk
+
+# Set the JAVA_HOME environment variable
+ENV JAVA_HOME=/opt/jdk
+ENV PATH=${JAVA_HOME}/bin:${PATH}
+
 MAINTAINER erp.microservice.com
 
 RUN mkdir -m 755 -p /home/logs

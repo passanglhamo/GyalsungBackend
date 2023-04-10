@@ -1,5 +1,7 @@
 package com.microservice.erp.config;
 
+import com.infoworks.lab.jjwt.JWTPayload;
+import com.infoworks.lab.jjwt.TokenValidator;
 import com.microservice.erp.config.AuthFilter;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
@@ -17,6 +19,7 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -60,7 +63,7 @@ public class SpringCloudConfig {
     @Value("${app.notification.url}")
     private String notificationURL;
 
-    @Bean
+    /*@Bean
     public GlobalFilter globalFilter() {
         return (exchange, chain) -> {
             System.out.println("Pre Global filter");
@@ -69,11 +72,10 @@ public class SpringCloudConfig {
                 System.out.println("Post Global filter");
             }));
         };
-    }
+    }*/
 
     @Bean("CustomAuthFilter")
     public GatewayFilter getAuthFilter(WebClient.Builder builder) {
-
         return AuthFilter.createGatewayFilter(builder, new AuthFilter.Config(authValidationURL));
     }
 
@@ -89,6 +91,28 @@ public class SpringCloudConfig {
             , RedisRateLimiter rateLimiter) {
 
         return builder.routes()
+                .route("loginRateLimiter"
+                        , r -> r.path("/api/auth/auth/v1/login")
+                                .filters(f -> f.requestRateLimiter(c -> c.setRateLimiter(rateLimiter))
+                                        .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
+                                .uri(authURL))
+                .route("authModule"
+                        , r -> r.path("/api/auth/auth/**")
+                                .filters(f -> f.dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
+                                .uri(authURL))
+                /*.route("authModule"
+                        , r -> r.path("/api/auth/auth/**")
+                                .filters(f -> f.filter(authFilter)
+                                        .filter(accessPermissionFilter)
+                                        .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
+                                .uri(authURL))*/
+                .route("authorizationModule"
+                        , r -> r.path("/api/auth/access/**")
+                                .filters(f -> f.filter(authFilter)
+                                        .circuitBreaker(c -> c.setName("access_circuit")
+                                                .setFallbackUri("/api/fallback/messages/unreachable"))
+                                        .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
+                                .uri(authURL))
                 .route("employeeModuleRateLimit"
                         , r -> r.path("/api/employee/v1/rateLimit/**")
                                 .filters(f -> {
@@ -151,7 +175,6 @@ public class SpringCloudConfig {
                                         .filter(accessPermissionFilter)
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(notificationURL))
-
                 .route("authModule"
                         , r -> r.path("/api/auth/**")
                                 .filters(f -> f.filter(authFilter)
@@ -165,7 +188,7 @@ public class SpringCloudConfig {
     public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultCircuitBreakerFactory() {
         return (factory) -> factory.configureDefault(id -> {
             //Code breakdown for readability:
-            Duration timeout = Duration.ofMillis(2100); //For testing replace with 5100ms.
+            Duration timeout = Duration.ofMillis(3000); //For testing replace with 5100ms.
             return new Resilience4JConfigBuilder(id)
                     .circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
                     .timeLimiterConfig(TimeLimiterConfig.custom()
@@ -184,12 +207,38 @@ public class SpringCloudConfig {
         return new RedisRateLimiter(2, 3);
     }
 
-    @Bean
+    /*@Bean
     public KeyResolver userKeyResolver() {
-        /**
+        *//**
          * RedisRateLimiter need a KeyResolver, without this limiter will not work.
-         */
+         *//*
         return exchange -> Mono.just("rate-limiter-key");
+    }*/
+
+    @Bean
+    public KeyResolver userKeyResolver(){
+        return (exchange) -> {
+            if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)){
+                System.out.println("No Authorization-Header");//FIXME
+                return Mono.just("rate-limiter-key");
+            }
+            String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+            if (authHeader == null || authHeader.isEmpty()
+                    || !authHeader.startsWith("Bearer")){
+                System.out.println("EmptyORNull Authorization-Header");//FIXME
+                return Mono.just("rate-limiter-key");
+            }
+            //
+            System.out.println("Exist Authorization-Header");//FIXME
+            try {
+                String token = TokenValidator.parseToken(authHeader, "Bearer ");
+                JWTPayload payload = TokenValidator.parsePayload(token, JWTPayload.class);
+                String username = payload.getIss();
+                return Mono.just(username);
+            } catch (RuntimeException e) {
+                return Mono.just("rate-limiter-key");
+            }
+        };
     }
 
 }

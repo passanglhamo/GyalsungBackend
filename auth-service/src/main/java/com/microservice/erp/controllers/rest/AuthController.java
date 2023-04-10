@@ -189,6 +189,20 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/reset/{oldPass}/{newPass}")
+    public ResponseEntity<String> reset(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
+            , @PathVariable("oldPass") String oldPass
+            , @PathVariable("newPass") String newPass){
+        //
+        token = TokenValidator.parseToken(token, "Bearer ");
+        Response response = resetPassword.doReset(token, oldPass, newPass);
+        if (response.getStatus() == HttpStatus.OK.value()) {
+            return ResponseEntity.ok(response.toString());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response.toString());
+        }
+    }
+
     @PostMapping("/reset")
     public ResponseEntity<String> reset(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String token
             , @Valid @RequestBody ChangePassRequest changeRequest) {

@@ -69,8 +69,12 @@ public class ResetPassService implements iResetPassword {
     public Response didForget(String username) {
         Response response = new Response().setMessage("Not Implemented").setStatus(HttpStatus.NOT_IMPLEMENTED.value());
         //
+        /*Optional<User> optUser = repository.findByUsername(username);
+        String email = optUser.isPresent() ? optUser.get().getEmail() : "ept@g.com";*/
         Optional<User> optUser = repository.findByUsername(username);
-        String email = optUser.isPresent() ? optUser.get().getEmail() : "ept@g.com";
+        if (!optUser.isPresent()) return Response.CreateErrorResponse(new Exception(username + " not found!"));
+        String email = optUser.get().getEmail();
+        if (email == null || email.isEmpty()) return Response.CreateErrorResponse(new Exception(username + " doesn't have email address."));
         //
         TaskStack forgetPassStack = TaskStack.createSync(true);
         forgetPassStack.push(new CheckUserExist(repository, username));
@@ -102,7 +106,9 @@ public class ResetPassService implements iResetPassword {
         ChangePassword changePassword = new ChangePassword(token, oldPass, newPass, repository, passwordEncoder);
         Response response = changePassword.execute(null);
         //Send-Email-Task:
-        String templateName = (response.getStatus() == HttpStatus.OK.value()) ? resetPassSuccessTemplate : resetPassFailedTemplate;
+        String templateName = (response.getStatus() == HttpStatus.OK.value())
+                ? resetPassSuccessTemplate
+                : resetPassFailedTemplate;
         SendEmail sendEmail = new SendEmail(mailTemplate
                 , noReply
                 , email
