@@ -100,6 +100,10 @@ public class SpringCloudConfig {
                         , r -> r.path("/api/auth/auth/**")
                                 .filters(f -> f.dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(authURL))
+                .route("authModule"
+                        , r -> r.path("/api/auth/ndi/**")
+                                .filters(f -> f.dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
+                                .uri(authURL))
                 /*.route("authModule"
                         , r -> r.path("/api/auth/auth/**")
                                 .filters(f -> f.filter(authFilter)
@@ -113,6 +117,7 @@ public class SpringCloudConfig {
                                                 .setFallbackUri("/api/fallback/messages/unreachable"))
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(authURL))
+
                 .route("employeeModuleRateLimit"
                         , r -> r.path("/api/employee/v1/rateLimit/**")
                                 .filters(f -> {
@@ -145,6 +150,14 @@ public class SpringCloudConfig {
                 .route("consumerModule"
                         , r -> r.path("/api/consumer/**")
                                 .uri(secondURL))
+                .route("userProfile"
+                        , r -> r.path("/api/user/profile/signup/**")
+                                .filters(f -> f.dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
+                                .uri(userProfileURL))
+                .route("userProfile"
+                        , r -> r.path("/api/user/profile/common/getPersonStatus")
+                                .filters(f -> f.dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
+                                .uri(userProfileURL))
                 .route("userProfile"
                         , r -> r.path("/api/user/profile/**")
                                 .filters(f -> f.filter(authFilter)
