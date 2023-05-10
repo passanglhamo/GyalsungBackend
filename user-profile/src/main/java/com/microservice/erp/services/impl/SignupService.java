@@ -178,8 +178,6 @@ public class SignupService implements ISignupService {
         userInfo.setSignupUser('Y');
         userInfo.setUsername(signupRequestDto.getCid());
 
-        //Adding data whethere person is monk/nun/student/dropout
-        userInfo.setPersonStaId(signupRequestDto.getPersonStaId());
 
         //Adding present address (Country)
         userInfo.setPresentCountry(signupRequestDto.getPresentCountry());

@@ -78,7 +78,7 @@ public class NdiService implements INdiService {
     }
 
     public String getPresentationResult(String threadId) throws IOException, InterruptedException {
-        AtomicReference<String> returnMessage = new AtomicReference<>("");
+        AtomicReference<String> returnMessage = new AtomicReference<>(  "");
         Resource resource = new ClassPathResource("/ndiapi/ndiApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
         String natsUrl = props.getProperty("natsUrl.endPointURL");
