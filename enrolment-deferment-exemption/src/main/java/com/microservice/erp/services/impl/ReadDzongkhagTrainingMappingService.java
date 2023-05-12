@@ -1,9 +1,9 @@
 package com.microservice.erp.services.impl;
 
-import com.microservice.erp.domain.entities.DzongkhagTrainingMapping;
+import com.microservice.erp.domain.entities.DzongkhagTrainingPreAcaMapping;
 import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.repositories.IDzongkhagTrainingMappingRepository;
-import com.microservice.erp.services.iServices.IReadDzongkhagTrainingMappingService;
+import com.microservice.erp.domain.repositories.IDzongkhagTrainingAcaMappingRepository;
+import com.microservice.erp.services.iServices.IReadDzongkhagTrainingAcaMappingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,20 +12,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReadDzongkhagTrainingMappingService implements IReadDzongkhagTrainingMappingService {
+public class ReadDzongkhagTrainingMappingService implements IReadDzongkhagTrainingAcaMappingService {
 
-    private final IDzongkhagTrainingMappingRepository repository;
+    private final IDzongkhagTrainingAcaMappingRepository repository;
 
     @Override
-    public List<DzongkhagTrainingMapping> getAllDzongkhagTrainingList() {
+    public List<DzongkhagTrainingPreAcaMapping> getAllDzongkhagTrainingList() {
         return repository.findAll();
-    }
-
-
-
-    @Override
-    public List<DzongkhagTrainingMapping> getAllDzongkhagTrainingByStatus(String status) {
-        return repository.findAllByStatus(status);
     }
 
     @Override

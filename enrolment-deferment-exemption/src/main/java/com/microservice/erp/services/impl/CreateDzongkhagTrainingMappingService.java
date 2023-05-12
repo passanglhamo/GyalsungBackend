@@ -1,29 +1,21 @@
 package com.microservice.erp.services.impl;
 
-import com.microservice.erp.domain.entities.DzongkhagTrainingMapping;
-import com.microservice.erp.domain.repositories.IDzongkhagTrainingMappingRepository;
-import com.microservice.erp.services.iServices.ICreateDzongkhagTrainingMappingService;
+import com.microservice.erp.domain.entities.DzongkhagTrainingPreAcaMapping;
+import com.microservice.erp.domain.repositories.IDzongkhagTrainingAcaMappingRepository;
+import com.microservice.erp.services.iServices.ICreateDzongkhagTrainingAcaMappingService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CreateDzongkhagTrainingMappingService implements ICreateDzongkhagTrainingMappingService {
+public class CreateDzongkhagTrainingMappingService implements ICreateDzongkhagTrainingAcaMappingService {
 
-    private final IDzongkhagTrainingMappingRepository repository;
+    private final IDzongkhagTrainingAcaMappingRepository repository;
 
     @Override
-    public ResponseEntity<?> saveDzongkhagTraining(DzongkhagTrainingMapping dzongkhagTrainingMapping) {
-
-        boolean trainingDzongkhagMapExist = repository.existsByTrainingId(dzongkhagTrainingMapping.getTrainingId());
-
-        if (trainingDzongkhagMapExist) {
-            return new ResponseEntity<>("Selected training academy is already mapped.", HttpStatus.ALREADY_REPORTED);
-        }
-
-        repository.save(dzongkhagTrainingMapping);
+    public ResponseEntity<?> saveDzongkhagTraining(DzongkhagTrainingPreAcaMapping dzongkhagTrainingPreAcaMapping) {
+        repository.save(dzongkhagTrainingPreAcaMapping);
         return ResponseEntity.ok("Dzongkhag and training mapped successfully.");
     }
 }

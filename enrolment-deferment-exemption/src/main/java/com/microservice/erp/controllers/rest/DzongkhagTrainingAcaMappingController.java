@@ -1,8 +1,8 @@
 package com.microservice.erp.controllers.rest;
 
-import com.microservice.erp.domain.entities.DzongkhagTrainingMapping;
-import com.microservice.erp.services.iServices.ICreateDzongkhagTrainingMappingService;
-import com.microservice.erp.services.iServices.IReadDzongkhagTrainingMappingService;
+import com.microservice.erp.domain.entities.DzongkhagTrainingPreAcaMapping;
+import com.microservice.erp.services.iServices.ICreateDzongkhagTrainingAcaMappingService;
+import com.microservice.erp.services.iServices.IReadDzongkhagTrainingAcaMappingService;
 import com.microservice.erp.services.iServices.IUpdateDzongkhagTrainingMappingService;
 import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
@@ -17,28 +17,24 @@ import java.util.List;
 @RestController
 @RequestMapping("/dzongkhagTrainingMappings")
 @AllArgsConstructor
-public class DzongkhagTrainingMappingController {
+public class DzongkhagTrainingAcaMappingController {
 
-    private final ICreateDzongkhagTrainingMappingService service;
-    private final IReadDzongkhagTrainingMappingService readService;
+    private final ICreateDzongkhagTrainingAcaMappingService service;
+    private final IReadDzongkhagTrainingAcaMappingService readService;
     private final IUpdateDzongkhagTrainingMappingService updateService;
 
     @PostMapping
     public ResponseEntity<?> saveDzongkhagTraining(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                                   @Valid @RequestBody DzongkhagTrainingMapping dzongkhagTrainingMapping) {
+                                                   @RequestBody DzongkhagTrainingPreAcaMapping dzongkhagTrainingPreAcaMapping) {
         SpringSecurityAuditorAware.setToken(token);
-        return service.saveDzongkhagTraining(dzongkhagTrainingMapping);
+        return service.saveDzongkhagTraining(dzongkhagTrainingPreAcaMapping);
     }
 
     @GetMapping
-    public List<DzongkhagTrainingMapping> getAllDzongkhagTrainingList() {
+    public List<DzongkhagTrainingPreAcaMapping> getAllDzongkhagTrainingList() {
         return readService.getAllDzongkhagTrainingList();
     }
 
-    @GetMapping("/getAllDzongkhagTrainingByStatus")
-    public List<DzongkhagTrainingMapping> getAllDzongkhagTrainingByStatus(@RequestParam("status") String status) {
-        return readService.getAllDzongkhagTrainingByStatus(status);
-    }
 
     @GetMapping(value = "/getAllActiveTrainingsByDzongkhagId", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllActiveTrainingsByDzongkhagId(@RequestParam("dzongkhagId") Integer dzongkhagId) {
@@ -47,9 +43,9 @@ public class DzongkhagTrainingMappingController {
 
     @PutMapping("/updateDzongkhagTrainingMapping")
     public ResponseEntity<?> updateDzongkhagTrainingMapping(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                                            @Valid @RequestBody DzongkhagTrainingMapping dzongkhagTrainingMapping) {
+                                                            @Valid @RequestBody DzongkhagTrainingPreAcaMapping dzongkhagTrainingPreAcaMapping) {
         SpringSecurityAuditorAware.setToken(token);
-        return updateService.updateDzongkhagTrainingMapping(dzongkhagTrainingMapping);
+        return updateService.updateDzongkhagTrainingMapping(dzongkhagTrainingPreAcaMapping);
     }
 
 }
