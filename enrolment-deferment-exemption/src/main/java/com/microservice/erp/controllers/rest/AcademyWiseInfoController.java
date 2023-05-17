@@ -16,4 +16,5 @@ public class AcademyWiseInfoController {
         return iAcademyWiseInfoService.getEnrolmentFigureByYear(authHeader, year);
     }
 
+
 }

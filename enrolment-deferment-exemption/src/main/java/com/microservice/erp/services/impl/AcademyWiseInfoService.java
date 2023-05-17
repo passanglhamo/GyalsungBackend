@@ -1,9 +1,19 @@
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dao.AcademyWiseInfoDao;
-import com.microservice.erp.domain.dto.TrainingAcademyDto;
+import com.microservice.erp.domain.dto.*;
+import com.microservice.erp.domain.entities.DzongkhagTrainingPreAcaMapping;
+import com.microservice.erp.domain.entities.EnrolmentInfo;
+import com.microservice.erp.domain.helper.ApprovalStatus;
+import com.microservice.erp.domain.repositories.IDzongkhagTrainingAcaMappingRepository;
+import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.services.iServices.IAcademyWiseInfoService;
+import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -11,16 +21,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class AcademyWiseInfoService implements IAcademyWiseInfoService {
 
     private AcademyWiseInfoDao academyWiseInfoDao;
+
+
+    @Autowired
+    @Qualifier("trainingManagementTemplate")
+    RestTemplate restTemplate;
+
 
     @Override
     public ResponseEntity<?> getEnrolmentFigureByYear(String authHeader, String year) {
@@ -42,4 +58,7 @@ public class AcademyWiseInfoService implements IAcademyWiseInfoService {
         }
         return ResponseEntity.ok(trainingAcademyDtos);
     }
+
+
+
 }

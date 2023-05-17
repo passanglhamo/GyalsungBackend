@@ -20,9 +20,10 @@ public class EnrolmentInfo extends Auditable<BigInteger, Long> {
 
     @Column(name = "under_age", columnDefinition = "char(1)")
     private Character underAge;
-    @Column(name = "year", columnDefinition = "char(4)")
 
+    @Column(name = "year", columnDefinition = "char(4)")
     private String year;
+
     @Column(name = "training_academy_id", columnDefinition = "int")
     private Integer trainingAcademyId;
 
@@ -44,7 +45,7 @@ public class EnrolmentInfo extends Auditable<BigInteger, Long> {
             mappedBy = "enrolment",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.LAZY
+            fetch = FetchType.EAGER
     )
     private Set<EnrolmentCoursePreference> enrolmentCoursePreferences;
     //endregion

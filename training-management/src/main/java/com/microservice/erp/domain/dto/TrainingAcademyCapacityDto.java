@@ -24,9 +24,13 @@ public class TrainingAcademyCapacityDto {
     @NotNull
     @PositiveOrZero(message = "Male capacity can be only positive number")
     private Integer maleCapacityAmount;
+    private Integer maleCapacityAmountAllocated;
+
     @NotNull
     @PositiveOrZero(message = "Female capacity can be only positive number")
     private Integer femaleCapacityAmount;
+    private Integer femaleCapacityAmountAllocated;
+
     @NotNull
     @NotEmpty
     private String status;
@@ -36,14 +40,18 @@ public class TrainingAcademyCapacityDto {
             Integer academyId,
             String trainingYear,
             Integer maleCapacityAmount,
+            Integer maleCapacityAmountAllocated,
             Integer femaleCapacityAmount,
+            Integer femaleCapacityAmountAllocated,
             String status) {
         return new TrainingAcademyCapacityDto(
                 id,
                 academyId,
                 trainingYear,
                 maleCapacityAmount,
+                maleCapacityAmountAllocated,
                 femaleCapacityAmount,
+                femaleCapacityAmountAllocated,
                 status
         );
     }

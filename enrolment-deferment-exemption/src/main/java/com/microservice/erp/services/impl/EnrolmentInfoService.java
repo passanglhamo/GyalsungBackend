@@ -1,14 +1,18 @@
 package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservice.erp.domain.dao.EnrolmentDao;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
+import com.microservice.erp.domain.entities.DzongkhagTrainingPreAcaMapping;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.mapper.EnrolmentMapper;
+import com.microservice.erp.domain.repositories.IDzongkhagTrainingAcaMappingRepository;
 import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
@@ -17,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,11 +30,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +46,8 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     private final AddToQueue addToQueue;
     private final DefermentExemptionValidation defermentExemptionValidation;
     private final UserInformationService userInformationService;
+    private final AllocationAlgorithm allocationAlgorithm;
+    private final IDzongkhagTrainingAcaMappingRepository dzongkhagTrainingAcaMappingRepository;
 
     @Autowired
     @Qualifier("userProfileTemplate")
@@ -253,6 +258,11 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     }
 
     @Override
+    public List<EnrolmentInfo> getEnrolmentListByYearAndAcademy(String authHeader, String year, Integer trainingAcademyId) {
+        return iEnrolmentInfoRepository.findByYearAndTrainingAcademyId(year,trainingAcademyId);
+    }
+
+    @Override
     @Transactional()
     public ResponseEntity<?> allocateEnrolments(String authHeader, EnrolmentInfoCommand command) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
@@ -427,7 +437,23 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     }
 
     @Override
+    @Transactional()
     public ResponseEntity<?> getEnrolmentValidation(BigInteger userId) {
         return defermentExemptionValidation.getDefermentAndExemptValidation(userId);
     }
+
+
+    @Override
+    public ResponseEntity<?> allocateUserToTrainingAca(String authHeader, String year) throws IOException {
+
+
+        allocationAlgorithm.allocationAlgorithm(authHeader,year,'M');
+        allocationAlgorithm.allocationAlgorithm(authHeader,year,'F');
+
+        return ResponseEntity.ok("Allocated successfully");
+    }
+
+
+
+
 }

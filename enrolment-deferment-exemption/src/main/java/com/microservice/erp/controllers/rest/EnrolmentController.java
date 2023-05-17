@@ -1,6 +1,8 @@
 package com.microservice.erp.controllers.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
+import com.microservice.erp.domain.entities.EnrolmentInfo;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
@@ -8,7 +10,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -43,7 +47,7 @@ public class EnrolmentController {
             , @RequestParam("courseId") BigInteger courseId
             , @RequestParam("coursePreferenceNumber") Integer coursePreferenceNumber
             , @RequestParam("cid") String cid) {
-        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, applicationStatus, courseId, coursePreferenceNumber,cid);
+        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, applicationStatus, courseId, coursePreferenceNumber, cid);
     }
 
 
@@ -85,4 +89,21 @@ public class EnrolmentController {
     public ResponseEntity<?> getEnrolmentValidation(@RequestParam("userId") BigInteger userId) {
         return iEnrolmentInfoService.getEnrolmentValidation(userId);
     }
+
+    @RequestMapping(value = "/getEnrolmentListByYearAndAcademy", method = RequestMethod.GET)
+    public List<EnrolmentInfo> getEnrolmentListByYearAndAcademy(@RequestHeader("Authorization") String authHeader
+            , @RequestParam("year") String year
+            , @RequestParam("trainingAcademyId") Integer trainingAcademyId) {
+
+        return iEnrolmentInfoService.getEnrolmentListByYearAndAcademy(authHeader, year, trainingAcademyId);
+    }
+
+    @PostMapping(value = "/allocateUserToTrainingAca")
+    public ResponseEntity<?> allocateUserToTrainingAca(@RequestHeader("Authorization") String authHeader,
+                                                       @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                       @RequestParam("year") String year) throws IOException {
+        SpringSecurityAuditorAware.setToken(token);
+        return iEnrolmentInfoService.allocateUserToTrainingAca(authHeader,year);
+    }
+
 }

@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class Persistable<ID, VERSION> implements Serializable {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private ID id;
 
     @Version

@@ -9,6 +9,9 @@ spring:
         persistence:
           validation:
             mode: "none"
+      hibernate:
+        format_sql: true
+    show-sql: true
   servlet:
     multipart:
       enabled: true
@@ -21,6 +24,15 @@ management:
     web:
       exposure:
         include: health,metrics,httptrace,prometheus
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: TRACE
+        type:
+          descriptor:
+            sql:
+              BasicBinder: true
 app:
   home:
     #logs: /Users/${USER}/Logs
@@ -28,6 +40,7 @@ app:
 #Eureka-Config:
 app.eureka.service.host: localhost
 app.eureka.service.port: 801
+
 eureka:
   client:
     serviceUrl:
@@ -55,3 +68,6 @@ training.management.academy.allAcademy: /common/getAllTrainingAcademies
 training.management.course.by.courseId: /fieldSpecializations/getCourseByCourseId?courseId=
 training.management.hospital.by.hospitalId: /common/getHospitalById?hospitalId=
 training.management.mappedHospital.by.hospitalId: /common/getHospitalMappingByHospitalId?hospitalId=
+training.management.trainingCapacitites.by.trainingId: /trainingAcademyCapacities/getAllTrainingAcaCapByAcademyId?year=
+training.management.changeAllocateCapacities: /trainingAcademyCapacities/changeAllocateCapacities
+training.management.trainingAcademyCapacities: /trainingAcademyCapacities

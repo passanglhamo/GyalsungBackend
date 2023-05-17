@@ -6,10 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ITrainingAcademyCapacityRepository extends JpaRepository<TrainingAcademyCapacity, BigInteger> {
-    TrainingAcademyCapacity findByTrainingYearAndAcademyId(String trainingYear, Integer academyId);
+    Optional<TrainingAcademyCapacity> findByTrainingYearAndAcademyId(String trainingYear, Integer academyId);
 
     List<TrainingAcademyCapacity> findAll();
 

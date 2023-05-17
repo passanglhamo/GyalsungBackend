@@ -39,5 +39,13 @@ public class ApplicationProperties {
     @Value("${training.management.academy.allAcademy}")
     private String allAcademy;
 
+    @Value("${training.management.trainingCapacitites.by.trainingId}")
+    private String allTrainingAcaCapById;
+
+    @Value("${training.management.changeAllocateCapacities}")
+    private String changeAllocateCapacities;
+
+    @Value("${training.management.trainingAcademyCapacities}")
+    private String allTrainingCapacities;
 
 }

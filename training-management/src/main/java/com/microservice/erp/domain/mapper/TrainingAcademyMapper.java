@@ -1,15 +1,13 @@
-package com.microservice.erp.services.impl.mapper;
+package com.microservice.erp.domain.mapper;
+
 
 import com.microservice.erp.domain.dto.TrainingAcademyCapacityDto;
 import com.microservice.erp.domain.entities.TrainingAcademyCapacity;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TrainingAcademyCapacityMapper {
-    public TrainingAcademyCapacity mapToEntity(TrainingAcademyCapacityDto trainingAcademyCapacityDto) {
-        return new ModelMapper().map(trainingAcademyCapacityDto, TrainingAcademyCapacity.class);
-    }
+public class TrainingAcademyMapper {
+
 
     public TrainingAcademyCapacityDto mapToDomain(TrainingAcademyCapacity trainingAcademyCapacity) {
         return TrainingAcademyCapacityDto.withId(
@@ -17,11 +15,10 @@ public class TrainingAcademyCapacityMapper {
                 trainingAcademyCapacity.getAcademyId(),
                 trainingAcademyCapacity.getTrainingYear(),
                 trainingAcademyCapacity.getMaleCapacityAmount(),
-                trainingAcademyCapacity.getMaleCapacityAmountAllocated(),
+                trainingAcademyCapacity.getFemaleCapacityAmountAllocated(),
                 trainingAcademyCapacity.getFemaleCapacityAmount(),
                 trainingAcademyCapacity.getFemaleCapacityAmountAllocated(),
                 trainingAcademyCapacity.getStatus()
         );
     }
-
 }

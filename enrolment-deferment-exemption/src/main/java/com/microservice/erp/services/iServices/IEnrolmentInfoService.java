@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -37,6 +38,9 @@ public interface IEnrolmentInfoService {
 
     ResponseEntity<?> cancelEnrolments(String authHeader, EnrolmentInfoCommand command) throws JsonProcessingException;
 
+    List<EnrolmentInfo> getEnrolmentListByYearAndAcademy(String authHeader, String year, Integer trainingAcademyId);
+
+    ResponseEntity<?> allocateUserToTrainingAca(String authHeader, String year) throws IOException;
 
     @Getter
     @Setter

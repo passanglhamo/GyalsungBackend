@@ -31,10 +31,16 @@ public class TrainingAcademyCapacity extends Auditable<BigInteger, Long> {
     @Column(name = "male_capacity_amount",columnDefinition = "int")
     private Integer maleCapacityAmount;
 
+    @Column(name = "male_capacity_amount_allocated",columnDefinition = "int")
+    private Integer maleCapacityAmountAllocated;
+
     @Basic(optional = false)
     @NotNull(message = "Capacity must not be null")
     @Column(name = "female_capacity_amount",columnDefinition = "int")
     private Integer femaleCapacityAmount;
+
+    @Column(name = "female_capacity_amount_allocated",columnDefinition = "int")
+    private Integer femaleCapacityAmountAllocated;
 
 
     @NotNull
@@ -80,5 +86,21 @@ public class TrainingAcademyCapacity extends Auditable<BigInteger, Long> {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Integer getMaleCapacityAmountAllocated() {
+        return maleCapacityAmountAllocated;
+    }
+
+    public void setMaleCapacityAmountAllocated(Integer maleCapacityAmountAllocated) {
+        this.maleCapacityAmountAllocated = maleCapacityAmountAllocated;
+    }
+
+    public Integer getFemaleCapacityAmountAllocated() {
+        return femaleCapacityAmountAllocated;
+    }
+
+    public void setFemaleCapacityAmountAllocated(Integer femaleCapacityAmountAllocated) {
+        this.femaleCapacityAmountAllocated = femaleCapacityAmountAllocated;
     }
 }

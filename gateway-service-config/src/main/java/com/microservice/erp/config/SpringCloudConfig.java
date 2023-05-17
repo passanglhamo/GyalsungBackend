@@ -155,10 +155,6 @@ public class SpringCloudConfig {
                                 .filters(f -> f.dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(userProfileURL))
                 .route("userProfile"
-                        , r -> r.path("/api/user/profile/common/getPersonStatus")
-                                .filters(f -> f.dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
-                                .uri(userProfileURL))
-                .route("userProfile"
                         , r -> r.path("/api/user/profile/**")
                                 .filters(f -> f.filter(authFilter)
                                         .filter(accessPermissionFilter)

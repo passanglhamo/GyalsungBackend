@@ -21,12 +21,11 @@ public class EnrolmentCoursePreference extends Auditable<BigInteger, Long> {
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
-    @NotNull(message = "Priority number cannot not be null")
     @Column(name = "preference_number", columnDefinition = "int")
     private Integer preferenceNumber;
 
     @ManyToOne
-    @JoinColumn(name = "enrolment_id", nullable = false, columnDefinition = "bigint")
+    @JoinColumn(name = "enrolment_id", columnDefinition = "bigint")
     private EnrolmentInfo enrolment;
     //endregion
 

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/trainingAcademyCapacities")
@@ -34,7 +35,7 @@ public class TrainingAcademyCapacityController {
     }
 
     @GetMapping
-    public Collection<TrainingAcademyCapacity> getAllTrainingAcaCapList() {
+    public List<TrainingAcademyCapacityDto> getAllTrainingAcaCapList() {
 
         return readService.getAllTrainingAcaCapList();
     }
@@ -50,4 +51,19 @@ public class TrainingAcademyCapacityController {
         SpringSecurityAuditorAware.setToken(token);
         return updateService.updateTrainingAcademyIntake(trainingAcademyCapacityDto);
     }
+
+    @GetMapping("/getAllTrainingAcaCapByAcademyId")
+    public TrainingAcademyCapacity getAllTrainingAcaCapByAcademyId(@RequestParam("year") String year,
+                                                                   @RequestParam("academyId") Integer academyId) {
+        return readService.getAllTrainingAcaCapByAcademyId(year, academyId);
+    }
+
+    @PostMapping("/changeAllocateCapacities")
+    public ResponseEntity<String> changeAllocateCapacities(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                           @RequestBody String academyAccomodities) throws IOException {
+        SpringSecurityAuditorAware.setToken(token);
+        return updateService.changeAllocateCapacities(academyAccomodities);
+    }
+
+
 }
