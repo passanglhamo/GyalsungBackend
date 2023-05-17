@@ -262,12 +262,12 @@ public class ProfileService implements IProfileService {
     public ResponseEntity<?> changeGuardianInfo(UserProfileDto userProfileDto) {
         UserInfo userInfo = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
 
-        userInfo.setGuardianName(userProfileDto.getGuardianName());
-        userInfo.setGuardianCid(userProfileDto.getGuardianCid());
-        userInfo.setGuardianOccupation(userProfileDto.getGuardianOccupation());
-        userInfo.setGuardianMobileNo(userProfileDto.getGuardianMobileNo());
-        userInfo.setGuardianEmail(userProfileDto.getGuardianEmail());
-        userInfo.setRelationToGuardian(userProfileDto.getRelationToGuardian());
+//        userInfo.setGuardianName(userProfileDto.getGuardianName());
+//        userInfo.setGuardianCid(userProfileDto.getGuardianCid());
+//        userInfo.setGuardianOccupation(userProfileDto.getGuardianOccupation());
+//        userInfo.setGuardianMobileNo(userProfileDto.getGuardianMobileNo());
+//        userInfo.setGuardianEmail(userProfileDto.getGuardianEmail());
+//        userInfo.setRelationToGuardian(userProfileDto.getRelationToGuardian());
 
         iUserInfoRepository.save(userInfo);
         return ResponseEntity.ok(new MessageResponse("Guardian information updated successfully."));

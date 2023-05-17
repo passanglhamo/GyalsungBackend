@@ -6,6 +6,7 @@ import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.SignupRequestDto;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISignupService;
+import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.wso2.client.api.ApiException;
@@ -51,8 +52,9 @@ public class SignupController {
         return iSignupService.verifyEmailVcode(notificationRequestDto);
     }
 
+    @SneakyThrows
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) throws ParseException, JsonProcessingException {
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) throws ParseException, IOException, ApiException {
         return iSignupService.signup(signupRequestDto);
     }
 

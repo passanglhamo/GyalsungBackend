@@ -42,6 +42,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.HttpResponse;
 
@@ -138,20 +139,58 @@ public class SignupService implements ISignupService {
     }
 
     @Override
-    public ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, JsonProcessingException {
+    public ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, IOException, ApiException {
 
         //check already registered not by CID
-        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
-        if (userInfoDB.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + signupRequestDto.getCid() + " already exist."));
+//        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
+//        if (userInfoDB.isPresent()) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + signupRequestDto.getCid() + " already exist."));
+//        }
+
+//  to save guardian info, both the parents need will be guardian by default. If Parents are expired, then the separate guardian need to add from profile
+        UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
+
+        ResponseEntity<CitizenDetailDto> validateCitizenDetails = (ResponseEntity<CitizenDetailDto>) validateCitizenDetails(signupRequestDto.getCid(), signupRequestDto.getBirthDate());
+        Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(validateCitizenDetails.getBody().getDob());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(birthDate);
+        Calendar now = Calendar.getInstance();
+        int age = now.get(Calendar.YEAR) - calendar.get(Calendar.YEAR);
+//        todo: need to check age criteria before saving to the system
+        if (age < 15 || age > 25) {//todo:need to get the age dynamically
+            return ResponseEntity.badRequest().body(new MessageResponse("You do not meet the age criteria."));
         }
+        userInfo.setSignupUser('Y');
+        userInfo.setDob(birthDate);
+        userInfo.setUsername(validateCitizenDetails.getBody().getCid());
+
+        userInfo.setCid(validateCitizenDetails.getBody().getCid());
+        userInfo.setFullName(validateCitizenDetails.getBody().getFullName());
+        userInfo.setGender(validateCitizenDetails.getBody().getGender());
+        userInfo.setFatherName(validateCitizenDetails.getBody().getFatherName());
+        userInfo.setMotherName(validateCitizenDetails.getBody().getMotherName());
+        userInfo.setMotherCid(validateCitizenDetails.getBody().getMotherCid());
+        userInfo.setPermanentPlaceName(validateCitizenDetails.getBody().getVillageName());
+        userInfo.setPermanentGeog(validateCitizenDetails.getBody().getGeogName());
+        userInfo.setPermanentDzongkhag(validateCitizenDetails.getBody().getDzongkhagName());
+
+        userInfo.setGuardianNameFirst(validateCitizenDetails.getBody().getGuardianNameFirst());
+        userInfo.setGuardianCidFirst(validateCitizenDetails.getBody().getGuardianCidFirst());
+        userInfo.setRelationToGuardianFirst("Father");
+        userInfo.setGuardianNameSecond(validateCitizenDetails.getBody().getGuardianNameSecond());
+        userInfo.setGuardianCidSecond(validateCitizenDetails.getBody().getGuardianCidSecond());
+        userInfo.setRelationToGuardianSecond("Mother");
+
         //Mobile number verification OTP received from dto must be equal to backend
         NotificationRequestDto notificationRequestDto = new NotificationRequestDto();
         notificationRequestDto.setMobileNo(signupRequestDto.getMobileNo());
         notificationRequestDto.setOtp(signupRequestDto.getOtp());
-        ResponseEntity<?> responseEntity = verifyOtp(notificationRequestDto);
-        if (responseEntity.getStatusCode().value() != HttpStatus.OK.value()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("OTP didn't match."));
+
+        if (signupRequestDto.getPresentCountry().equals("Bhutan")) {
+            ResponseEntity<?> responseEntity = verifyOtp(notificationRequestDto);
+            if (responseEntity.getStatusCode().value() != HttpStatus.OK.value()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("OTP didn't match."));
+            }
         }
 
         //Email verification code received from dto must be equal to backend
@@ -172,24 +211,15 @@ public class SignupService implements ISignupService {
             return ResponseEntity.badRequest().body(new MessageResponse("Password didn't match."));
         }
 
-        Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(signupRequestDto.getBirthDate());
-        signupRequestDto.setDob(birthDate);
-        UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
-        userInfo.setSignupUser('Y');
-        userInfo.setUsername(signupRequestDto.getCid());
-
-
-        //Adding present address (Country)
         userInfo.setPresentCountry(signupRequestDto.getPresentCountry());
-
         BigInteger userId = iUserInfoRepository.save(userInfo).getId();
-//        todo: add to queue following data: password, roles, email, username, userId
-
+//        to queue following data: password, roles, email, username, userId in auth microservices
         EventBusUser eventBusSms = EventBusUser.withId(userId, 'A', userInfo.getCid(), userInfo.getEmail()
                 , userInfo.getUsername(), signupRequestDto.getPassword(), userInfo.getSignupUser(), null);
         addToQueue.addToUserQueue("addUser", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));
     }
+
 
     @Override
     public ResponseEntity<?> getEligiblePopulationByYearAndAge(String dateString) throws IOException, ParseException, UnirestException {
@@ -375,6 +405,7 @@ public class SignupService implements ISignupService {
         return builder.toString();
     }
 
+
     private ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, ApiException, IOException {
         CitizenDetailDto citizenDetailDto = new CitizenDetailDto();
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
@@ -421,6 +452,13 @@ public class SignupService implements ISignupService {
             citizenDetailDto.setDzongkhagName(citizendetailsObj.getDzongkhagName());
             citizenDetailDto.setHouseNo(citizendetailsObj.getHouseNo());
             citizenDetailDto.setThramNo(citizendetailsObj.getThramNo());
+
+            //set father name and father cid as guardian 1 name and guardian 1 cid, and mother name and cid as guardian 2 name and guardian 2 cid respectively
+            citizenDetailDto.setGuardianNameFirst(citizendetailsObj.getFatherName());
+            citizenDetailDto.setGuardianCidFirst(parentdetailObj.getFatherCID());
+            citizenDetailDto.setGuardianNameSecond(citizendetailsObj.getMotherName());
+            citizenDetailDto.setGuardianCidSecond(parentdetailObj.getMotherCID());
+
 
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("No information found matching CID No " + cid));
