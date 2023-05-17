@@ -23,7 +23,7 @@ public interface ISignupService {
 
     ResponseEntity<?> verifyEmailVcode(NotificationRequestDto notificationRequestDto);
 
-    ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, JsonProcessingException;
+    ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, IOException, ApiException;
 
     ResponseEntity<?> getPersonDetailsByCid(String cid) throws IOException, ParseException, ApiException;
 

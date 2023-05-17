@@ -25,6 +25,10 @@ public class CitizenDetailDto {
     private String dzongkhagName;
     private String houseNo;
     private String thramNo;
+    private String guardianNameFirst;
+    private String guardianCidFirst;
+    private String guardianNameSecond;
+    private String guardianCidSecond;
     //endregion
 
 }

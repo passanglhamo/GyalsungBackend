@@ -103,23 +103,41 @@ public class UserInfo extends Auditable<BigInteger, Long> implements UserDetails
     @Column(name = "mother_email", columnDefinition = "varchar(255)")
     private String motherEmail;
 
-    @Column(name = "guardian_name", columnDefinition = "varchar(255)")
-    private String guardianName;
+    @Column(name = "guardian_name_first", columnDefinition = "varchar(255)")
+    private String guardianNameFirst;
 
-    @Column(name = "guardian_cid", columnDefinition = "varchar(255)")
-    private String guardianCid;
+    @Column(name = "guardian_cid_first", columnDefinition = "varchar(255)")
+    private String guardianCidFirst;
 
-    @Column(name = "guardian_mobile_no", columnDefinition = "varchar(255)")
-    private String guardianMobileNo;
+    @Column(name = "guardian_mobile_no_first", columnDefinition = "varchar(255)")
+    private String guardianMobileNoFirst;
 
-    @Column(name = "guardian_occupation", columnDefinition = "varchar(255)")
-    private String guardianOccupation;
+    @Column(name = "guardian_occupation_first", columnDefinition = "varchar(255)")
+    private String guardianOccupationFirst;
 
-    @Column(name = "guardian_email", columnDefinition = "varchar(255)")
-    private String guardianEmail;
+    @Column(name = "guardian_email_first", columnDefinition = "varchar(255)")
+    private String guardianEmailFirst;
 
-    @Column(name = "relation_to_guardian", columnDefinition = "varchar(255)")
-    private String relationToGuardian;
+    @Column(name = "relation_to_guardian_first", columnDefinition = "varchar(255)")
+    private String relationToGuardianFirst;
+
+    @Column(name = "guardian_name_second", columnDefinition = "varchar(255)")
+    private String guardianNameSecond;
+
+    @Column(name = "guardian_cid_second", columnDefinition = "varchar(255)")
+    private String guardianCidSecond;
+
+    @Column(name = "guardian_mobile_no_second", columnDefinition = "varchar(255)")
+    private String guardianMobileNoSecond;
+
+    @Column(name = "guardian_occupation_second", columnDefinition = "varchar(255)")
+    private String guardianOccupationSecond;
+
+    @Column(name = "guardian_email_second", columnDefinition = "varchar(255)")
+    private String guardianEmailSecond;
+
+    @Column(name = "relation_to_guardian_second", columnDefinition = "varchar(255)")
+    private String relationToGuardianSecond;
 
     @Column(name = "social_media_link1", columnDefinition = "varchar(255)")
     private String socialMediaLink1;
@@ -408,52 +426,100 @@ public class UserInfo extends Auditable<BigInteger, Long> implements UserDetails
         this.motherEmail = motherEmail;
     }
 
-    public String getGuardianName() {
-        return guardianName;
+    public String getGuardianNameFirst() {
+        return guardianNameFirst;
     }
 
-    public void setGuardianName(String guardianName) {
-        this.guardianName = guardianName;
+    public void setGuardianNameFirst(String guardianNameFirst) {
+        this.guardianNameFirst = guardianNameFirst;
     }
 
-    public String getGuardianCid() {
-        return guardianCid;
+    public String getGuardianCidFirst() {
+        return guardianCidFirst;
     }
 
-    public void setGuardianCid(String guardianCid) {
-        this.guardianCid = guardianCid;
+    public void setGuardianCidFirst(String guardianCidFirst) {
+        this.guardianCidFirst = guardianCidFirst;
     }
 
-    public String getGuardianMobileNo() {
-        return guardianMobileNo;
+    public String getGuardianMobileNoFirst() {
+        return guardianMobileNoFirst;
     }
 
-    public void setGuardianMobileNo(String guardianMobileNo) {
-        this.guardianMobileNo = guardianMobileNo;
+    public void setGuardianMobileNoFirst(String guardianMobileNoFirst) {
+        this.guardianMobileNoFirst = guardianMobileNoFirst;
     }
 
-    public String getGuardianOccupation() {
-        return guardianOccupation;
+    public String getGuardianOccupationFirst() {
+        return guardianOccupationFirst;
     }
 
-    public void setGuardianOccupation(String guardianOccupation) {
-        this.guardianOccupation = guardianOccupation;
+    public void setGuardianOccupationFirst(String guardianOccupationFirst) {
+        this.guardianOccupationFirst = guardianOccupationFirst;
     }
 
-    public String getGuardianEmail() {
-        return guardianEmail;
+    public String getGuardianEmailFirst() {
+        return guardianEmailFirst;
     }
 
-    public void setGuardianEmail(String guardianEmail) {
-        this.guardianEmail = guardianEmail;
+    public void setGuardianEmailFirst(String guardianEmailFirst) {
+        this.guardianEmailFirst = guardianEmailFirst;
     }
 
-    public String getRelationToGuardian() {
-        return relationToGuardian;
+    public String getRelationToGuardianFirst() {
+        return relationToGuardianFirst;
     }
 
-    public void setRelationToGuardian(String relationToGuardian) {
-        this.relationToGuardian = relationToGuardian;
+    public void setRelationToGuardianFirst(String relationToGuardianFirst) {
+        this.relationToGuardianFirst = relationToGuardianFirst;
+    }
+
+    public String getGuardianNameSecond() {
+        return guardianNameSecond;
+    }
+
+    public void setGuardianNameSecond(String guardianNameSecond) {
+        this.guardianNameSecond = guardianNameSecond;
+    }
+
+    public String getGuardianCidSecond() {
+        return guardianCidSecond;
+    }
+
+    public void setGuardianCidSecond(String guardianCidSecond) {
+        this.guardianCidSecond = guardianCidSecond;
+    }
+
+    public String getGuardianMobileNoSecond() {
+        return guardianMobileNoSecond;
+    }
+
+    public void setGuardianMobileNoSecond(String guardianMobileNoSecond) {
+        this.guardianMobileNoSecond = guardianMobileNoSecond;
+    }
+
+    public String getGuardianOccupationSecond() {
+        return guardianOccupationSecond;
+    }
+
+    public void setGuardianOccupationSecond(String guardianOccupationSecond) {
+        this.guardianOccupationSecond = guardianOccupationSecond;
+    }
+
+    public String getGuardianEmailSecond() {
+        return guardianEmailSecond;
+    }
+
+    public void setGuardianEmailSecond(String guardianEmailSecond) {
+        this.guardianEmailSecond = guardianEmailSecond;
+    }
+
+    public String getRelationToGuardianSecond() {
+        return relationToGuardianSecond;
+    }
+
+    public void setRelationToGuardianSecond(String relationToGuardianSecond) {
+        this.relationToGuardianSecond = relationToGuardianSecond;
     }
 
     public String getSocialMediaLink1() {

@@ -13,9 +13,8 @@ public class SignupRequestDto {
     private String fullName;
     private Character gender;
     private String cid;
-    private String studentCode;
     private String birthDate;
-    private Date dob;
+//    private Date dob;
     private String mobileNo;
     private String otp;
     private String email;
@@ -30,8 +29,10 @@ public class SignupRequestDto {
     private String permanentDzongkhag;
     private String permanentGeog;
     private String permanentPlaceName;
-    private BigInteger personStaId;
     private String presentCountry;
-    private Character isLGBT;
+    private String guardianNameFirst;
+    private String guardianCidFirst;
+    private String guardianNameSecond;
+    private String guardianCidSecond;
     //endregion
 }
