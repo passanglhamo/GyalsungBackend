@@ -262,12 +262,19 @@ public class ProfileService implements IProfileService {
     public ResponseEntity<?> changeGuardianInfo(UserProfileDto userProfileDto) {
         UserInfo userInfo = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
 
-//        userInfo.setGuardianName(userProfileDto.getGuardianName());
-//        userInfo.setGuardianCid(userProfileDto.getGuardianCid());
-//        userInfo.setGuardianOccupation(userProfileDto.getGuardianOccupation());
-//        userInfo.setGuardianMobileNo(userProfileDto.getGuardianMobileNo());
-//        userInfo.setGuardianEmail(userProfileDto.getGuardianEmail());
-//        userInfo.setRelationToGuardian(userProfileDto.getRelationToGuardian());
+        userInfo.setGuardianNameFirst(userProfileDto.getGuardianNameFirst());
+        userInfo.setGuardianCidFirst(userProfileDto.getGuardianCidFirst());
+        userInfo.setGuardianOccupationFirst(userProfileDto.getGuardianOccupationFirst());
+        userInfo.setGuardianMobileNoFirst(userProfileDto.getGuardianMobileNoFirst());
+        userInfo.setGuardianEmailFirst(userProfileDto.getGuardianEmailFirst());
+        userInfo.setRelationToGuardianFirst(userProfileDto.getRelationToGuardianFirst());
+
+        userInfo.setGuardianNameSecond(userProfileDto.getGuardianNameSecond());
+        userInfo.setGuardianCidSecond(userProfileDto.getGuardianCidSecond());
+        userInfo.setGuardianOccupationSecond(userProfileDto.getGuardianOccupationSecond());
+        userInfo.setGuardianMobileNoSecond(userProfileDto.getGuardianMobileNoSecond());
+        userInfo.setGuardianEmailSecond(userProfileDto.getGuardianEmailSecond());
+        userInfo.setRelationToGuardianSecond(userProfileDto.getRelationToGuardianSecond());
 
         iUserInfoRepository.save(userInfo);
         return ResponseEntity.ok(new MessageResponse("Guardian information updated successfully."));
