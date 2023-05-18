@@ -41,13 +41,13 @@ public class EnrolmentInfo extends Auditable<BigInteger, Long> {
     @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
 
-    @OneToMany(
-            mappedBy = "enrolment",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
-    )
-    private Set<EnrolmentCoursePreference> enrolmentCoursePreferences;
+//    @OneToMany(
+//            mappedBy = "enrolment",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true,
+//            fetch = FetchType.EAGER
+//    )
+//    private Set<EnrolmentCoursePreference> enrolmentCoursePreferences;
     //endregion
 
     //region setters and getters
@@ -124,13 +124,13 @@ public class EnrolmentInfo extends Auditable<BigInteger, Long> {
         this.status = status;
     }
 
-    public Set<EnrolmentCoursePreference> getEnrolmentCoursePreferences() {
-        return enrolmentCoursePreferences;
-    }
-
-    public void setEnrolmentCoursePreferences(Set<EnrolmentCoursePreference> enrolmentCoursePreferences) {
-        this.enrolmentCoursePreferences = enrolmentCoursePreferences;
-    }
+//    public Set<EnrolmentCoursePreference> getEnrolmentCoursePreferences() {
+//        return enrolmentCoursePreferences;
+//    }
+//
+//    public void setEnrolmentCoursePreferences(Set<EnrolmentCoursePreference> enrolmentCoursePreferences) {
+//        this.enrolmentCoursePreferences = enrolmentCoursePreferences;
+//    }
 
     //endregion
 }

@@ -43,35 +43,5 @@ public class UpdateTrainingAcademyIntakeService implements IUpdateTrainingAcadem
         return ResponseEntity.ok("Training Academy Intake updated successfully.");
     }
 
-    @Override
-    public ResponseEntity<String> changeAllocateCapacities(String academyAccomodities) throws IOException {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-
-        List<TrainingAcapacitiesDto> trainingAcapacitiesList = objectMapper.readValue(academyAccomodities, new TypeReference<List<TrainingAcapacitiesDto>>() {
-        });
-        List<TrainingAcademyCapacity> updatedTrainingCapacityInfos = new ArrayList<>();
-
-        if (trainingAcapacitiesList.size() != 0) {
-            trainingAcapacitiesList.forEach(dto -> {
-                TrainingAcademyCapacity trainingAcademyCapacity = repository.findByTrainingYearAndAcademyId(dto.getYear(), dto.getAcademyId()).get();
-                if (dto.getGender().equals('M')) {
-                    trainingAcademyCapacity.setMaleCapacityAmountAllocated(dto.getAccommodationNumber());
-                } else {
-                    trainingAcademyCapacity.setFemaleCapacityAmountAllocated(dto.getAccommodationNumber());
-                }
-                updatedTrainingCapacityInfos.add(trainingAcademyCapacity);
-            });
-
-            if (!updatedTrainingCapacityInfos.isEmpty()) {
-
-                repository.saveAll(updatedTrainingCapacityInfos);
-            }
-        }
-
-        return ResponseEntity.ok("Changed successfully");
-
-    }
 
 }

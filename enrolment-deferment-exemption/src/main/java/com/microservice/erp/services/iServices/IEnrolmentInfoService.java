@@ -3,15 +3,12 @@ package com.microservice.erp.services.iServices;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
-import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -23,12 +20,11 @@ public interface IEnrolmentInfoService {
 
     ResponseEntity<?> saveEnrolment(String authHeader, EnrolmentDto enrolmentDto) throws Exception;
 
-    ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, Character applicationStatus, BigInteger courseId
-            , Integer coursePreferenceNumber,String cid);
+    ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, Character applicationStatus, String cid, Character gender);
 
     ResponseEntity<?> allocateEnrolments(String authHeader, @Valid EnrolmentInfoCommand command) throws Exception;
 
-    ResponseEntity<?> getEnrolmentListByYearCourseAndAcademy(String authHeader, String year, Integer trainingAcademyId, BigInteger courseId);
+    ResponseEntity<?> getEnrolmentListByYearCourseAndAcademy(String authHeader, String year, Integer trainingAcademyId);
 
     ResponseEntity<?> changeTrainingAcademy(String authHeader, @Valid EnrolmentInfoCommand command) throws Exception;
 
@@ -40,7 +36,7 @@ public interface IEnrolmentInfoService {
 
     List<EnrolmentInfo> getEnrolmentListByYearAndAcademy(String authHeader, String year, Integer trainingAcademyId);
 
-    ResponseEntity<?> allocateUserToTrainingAca(String authHeader, String year) throws IOException;
+    ResponseEntity<?> allocateUserToTrainingAca(String authHeader,AllocationCommand allocationCommand) throws IOException;
 
     @Getter
     @Setter
@@ -49,8 +45,17 @@ public interface IEnrolmentInfoService {
     class EnrolmentInfoCommand {
 
         private Integer trainingAcademyId;
-        private BigInteger allocatedCourseId;
-
+        private String year;
+//        private BigInteger allocatedCourseId;
         private List<BigInteger> enrolmentIds;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    class AllocationCommand {
+        private String year;
+        private Character gender;
     }
 }

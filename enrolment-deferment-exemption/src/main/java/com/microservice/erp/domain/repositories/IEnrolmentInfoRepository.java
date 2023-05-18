@@ -36,4 +36,10 @@ public interface IEnrolmentInfoRepository extends JpaRepository<EnrolmentInfo, B
 
 
     EnrolmentInfo findByUserIdAndYearAndStatus(BigInteger userId, String year, Character value);
+
+    @Query("SELECT COUNT(e) FROM ede_enrolment_info e " +
+            "WHERE e.status =:status AND e.gender =:gender AND e.year =:year " +
+            "AND e.trainingAcademyId =:academyId")
+    Long getCountByStatusAndGenderAndYearAndTrainingAcademyId(Character status, Character gender, String year,
+                                                              Integer academyId);
 }

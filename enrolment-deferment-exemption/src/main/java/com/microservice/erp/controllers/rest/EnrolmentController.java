@@ -44,10 +44,11 @@ public class EnrolmentController {
     public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(@RequestHeader("Authorization") String authHeader
             , @RequestParam("year") String year
             , @RequestParam("applicationStatus") Character applicationStatus
-            , @RequestParam("courseId") BigInteger courseId
-            , @RequestParam("coursePreferenceNumber") Integer coursePreferenceNumber
-            , @RequestParam("cid") String cid) {
-        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, applicationStatus, courseId, coursePreferenceNumber, cid);
+//            , @RequestParam("courseId") BigInteger courseId
+//            , @RequestParam("coursePreferenceNumber") Integer coursePreferenceNumber
+            , @RequestParam("cid") String cid
+            , @RequestParam("gender") Character gender) {
+        return iEnrolmentInfoService.getEnrolmentListByYearAndCoursePreference(authHeader, year, applicationStatus, cid,gender);
     }
 
 
@@ -71,9 +72,10 @@ public class EnrolmentController {
     public ResponseEntity<?> getEnrolmentListByYearCourseAndAcademy(@RequestHeader("Authorization") String authHeader
             , @RequestParam("year") String year
             , @RequestParam("trainingAcademyId") Integer trainingAcademyId
-            , @RequestParam("courseId") BigInteger courseId) {
+//            , @RequestParam("courseId") BigInteger courseId
+    ) {
 
-        return iEnrolmentInfoService.getEnrolmentListByYearCourseAndAcademy(authHeader, year, trainingAcademyId, courseId);
+        return iEnrolmentInfoService.getEnrolmentListByYearCourseAndAcademy(authHeader, year, trainingAcademyId);
     }
 
 
@@ -101,9 +103,9 @@ public class EnrolmentController {
     @PostMapping(value = "/allocateUserToTrainingAca")
     public ResponseEntity<?> allocateUserToTrainingAca(@RequestHeader("Authorization") String authHeader,
                                                        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                                       @RequestParam("year") String year) throws IOException {
+                                                       @RequestBody IEnrolmentInfoService.AllocationCommand command) throws IOException {
         SpringSecurityAuditorAware.setToken(token);
-        return iEnrolmentInfoService.allocateUserToTrainingAca(authHeader,year);
+        return iEnrolmentInfoService.allocateUserToTrainingAca(authHeader, command);
     }
 
 }

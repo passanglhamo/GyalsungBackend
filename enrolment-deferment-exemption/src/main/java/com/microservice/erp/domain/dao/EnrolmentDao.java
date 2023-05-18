@@ -40,12 +40,12 @@ public class EnrolmentDao extends BaseDao {
         return hQuery.list().isEmpty() ? null : hQuery.list();
     }
 
-    public List<EnrolmentListDto> getEnrolmentListByYearCourseAndAcademy(String year, Integer trainingAcademyId, BigInteger courseId) {
+    public List<EnrolmentListDto> getEnrolmentListByYearCourseAndAcademy(String year, Integer trainingAcademyId) {
         String sqlQuery = environment.getProperty("CommonDao.getEnrolmentListByYearCourseAndAcademy");
         NativeQuery hQuery = (NativeQuery) hibernateQuery(sqlQuery, EnrolmentListDto.class)
                 .setParameter("year", year)
-                .setParameter("trainingAcademyId", trainingAcademyId)
-                .setParameter("courseId", courseId);
+                .setParameter("trainingAcademyId", trainingAcademyId);
+//                .setParameter("courseId", courseId);
         return hQuery.list().isEmpty() ? null : hQuery.list();
     }
 }

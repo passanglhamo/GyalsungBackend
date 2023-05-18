@@ -13,19 +13,19 @@ public class EnrolmentMapper {
 
     public EnrolmentInfo mapToEntity(EnrolmentDto enrolmentDto) {
         EnrolmentInfo enrolmentInfo = new ModelMapper().map(enrolmentDto, EnrolmentInfo.class);
-        enrolmentInfo.setEnrolmentCoursePreferences(
-                enrolmentDto.getEnrolmentCoursesDtos()
-                        .stream()
-                        .map(ta ->
-                                new EnrolmentCoursePreference(
-                                        ta.getCourseId(),
-                                        enrolmentDto.getUserId(),
-                                        ta.getPreferenceNumber(),
-                                        enrolmentInfo
-                                )
-                        )
-                        .collect(Collectors.toSet())
-        );
+//        enrolmentInfo.setEnrolmentCoursePreferences(
+//                enrolmentDto.getEnrolmentCoursesDtos()
+//                        .stream()
+//                        .map(ta ->
+//                                new EnrolmentCoursePreference(
+//                                        ta.getCourseId(),
+//                                        enrolmentDto.getUserId(),
+//                                        ta.getPreferenceNumber(),
+//                                        enrolmentInfo
+//                                )
+//                        )
+//                        .collect(Collectors.toSet())
+//        );
         return enrolmentInfo;
     }
 }
