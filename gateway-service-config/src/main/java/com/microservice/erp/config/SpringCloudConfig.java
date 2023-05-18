@@ -104,6 +104,10 @@ public class SpringCloudConfig {
                         , r -> r.path("/api/auth/ndi/**")
                                 .filters(f -> f.dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(authURL))
+                .route("authModule"
+                        , r -> r.path("/api/auth/securitySetting/**")
+                                .filters(f -> f.dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
+                                .uri(authURL))
                 /*.route("authModule"
                         , r -> r.path("/api/auth/auth/**")
                                 .filters(f -> f.filter(authFilter)
