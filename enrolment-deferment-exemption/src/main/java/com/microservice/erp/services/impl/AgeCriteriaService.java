@@ -28,11 +28,11 @@ public class AgeCriteriaService implements IAgeCriteriaService {
 
     @Override
     public ResponseEntity<?> getAgeCriteria() {
-        List<AgeCriteria> ageCriteria = iAgeCriteriaRepository.findAll();
-        if (ageCriteria.size() > 0) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
-        } else {
+        AgeCriteria ageCriteria = iAgeCriteriaRepository.findTopByOrderByMinimumAgeDesc();
+        if (ageCriteria != null) {
             return ResponseEntity.ok(ageCriteria);
+        } else {
+            return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
         }
     }
 }

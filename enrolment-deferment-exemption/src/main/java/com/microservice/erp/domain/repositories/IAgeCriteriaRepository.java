@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.math.BigInteger;
 
 public interface IAgeCriteriaRepository extends JpaRepository<AgeCriteria, BigInteger> {
+    AgeCriteria findTopByOrderByMinimumAgeDesc();
 }
