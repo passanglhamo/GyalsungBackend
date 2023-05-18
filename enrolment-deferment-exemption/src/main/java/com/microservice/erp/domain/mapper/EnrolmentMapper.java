@@ -1,7 +1,7 @@
 package com.microservice.erp.domain.mapper;
 
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
-import com.microservice.erp.domain.entities.EnrolmentCoursePreference;
+//import com.microservice.erp.domain.entities.EnrolmentCoursePreference;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

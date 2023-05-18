@@ -42,7 +42,6 @@ public class AllocationAlgorithm {
 
         List<AllocateEnrollmentTempDto> allocateEnrollmentTempDtoList = new ArrayList<>();
         List<TrainingAcapacitiesDto> trainingAcapacitiesDtos = new ArrayList<>();
-        ObjectMapper objectMapper = new ObjectMapper();
 
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
