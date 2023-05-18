@@ -1,12 +1,9 @@
 package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservice.erp.domain.dao.EnrolmentDao;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.dto.enrolment.EnrolmentDto;
-import com.microservice.erp.domain.entities.DzongkhagTrainingPreAcaMapping;
 import com.microservice.erp.domain.entities.EnrolmentInfo;
 import com.microservice.erp.domain.entities.RegistrationDateInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
@@ -21,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -68,7 +64,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     public ResponseEntity<?> getMyEnrolmentInfo(BigInteger userId) {
         EnrolmentInfo enrolmentInfo = iEnrolmentInfoRepository.findByUserId(userId);
         if (enrolmentInfo != null) {
-            enrolmentInfo.setEnrolmentCoursePreferences(null);
+            //enrolmentInfo.setEnrolmentCoursePreferences(null);
             return ResponseEntity.ok(enrolmentInfo);
         } else {
             return ResponseEntity.badRequest().body("Information not found.");
@@ -138,17 +134,17 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     }
 
     @Override
-    public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, Character applicationStatus, BigInteger courseId, Integer coursePreferenceNumber,
-                                                                       String cid) {
+    public ResponseEntity<?> getEnrolmentListByYearAndCoursePreference(String authHeader, String year, Character applicationStatus,
+                                                                       String cid, Character gender) {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
         List<EnrolmentListDto> enrolmentListDtos;
 
-        if(!courseId.equals(BigInteger.ZERO)){
-            enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, applicationStatus, courseId, coursePreferenceNumber);
-        }else{
+//        if(!courseId.equals(BigInteger.ZERO)){
+//            enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, applicationStatus, courseId, coursePreferenceNumber);
+//        }else{
             enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndStatus(year, applicationStatus);
-        }
+//        }
 
         if (enrolmentListDtos == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("No information found."));
@@ -156,6 +152,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         List<EnrolmentListDto> enrolmentList = new ArrayList<>();
         List<BigInteger> userIdsVal = new ArrayList<>();
         List<UserProfileDto> userProfileDtos;
+
         if (!cid.isEmpty()) {
             userProfileDtos = userInformationService.getUserInformationByPartialCid(cid, authHeader);
         } else {
@@ -166,6 +163,13 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsVal, authHeader);
 
         }
+        if(!Objects.isNull(gender)){
+            userProfileDtos = userProfileDtos
+                    .stream()
+                    .filter(dto -> dto.getGender().equals(gender))
+                    .collect(Collectors.toList());
+        }
+
 
         userProfileDtos.forEach(item->{
             HttpHeaders headers = new HttpHeaders();
@@ -267,26 +271,38 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     public ResponseEntity<?> allocateEnrolments(String authHeader, EnrolmentInfoCommand command) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        HttpEntity<String> request = new HttpEntity<>(headers);
         // to check already allocated or not
         for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
             if (enrolmentInfo.getStatus() == ApprovalStatus.APPROVED.value()) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Already allocated training institute."));
             }
         }
+
+        List<EnrolmentInfo> allocateSuccessList = new ArrayList<>();
+
         //to save update enrolment info
         iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
             if (item.getStatus().equals(ApprovalStatus.PENDING.value()) || item.getStatus().equals(ApprovalStatus.CANCELED.value())) {
-                item.setStatus(ApprovalStatus.APPROVED.value());
-                item.setTrainingAcademyId(command.getTrainingAcademyId());
-                item.setAllocatedCourseId(command.getAllocatedCourseId());
-                iEnrolmentInfoRepository.save(item);
+                String urlAcaTraining = properties.getAllTrainingAcaCapById() + command.getYear() + "&academyId=" + command.getTrainingAcademyId();
+                ResponseEntity<TrainingAcademyCapacityDto> responseAcaTraining = restTemplate.exchange(urlAcaTraining, HttpMethod.GET, request, TrainingAcademyCapacityDto.class);
+                if ((((item.getGender().equals('M') ? Objects.requireNonNull(responseAcaTraining.getBody()).getMaleCapacityAmount() :
+                        Objects.requireNonNull(responseAcaTraining.getBody()).getFemaleCapacityAmount())-
+                        (iEnrolmentInfoRepository.getCountByStatusAndGenderAndYearAndTrainingAcademyId(ApprovalStatus.APPROVED.value(),
+                                item.getGender(), command.getYear(), command.getTrainingAcademyId())))) > 0){
+                    item.setStatus(ApprovalStatus.APPROVED.value());
+                    item.setTrainingAcademyId(command.getTrainingAcademyId());
+                    //item.setAllocatedCourseId(command.getAllocatedCourseId());
+                    iEnrolmentInfoRepository.save(item);
+                    allocateSuccessList.add(item);
+                }
+
             }
         });
         // to send email and sms
-        for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", authHeader);
-            HttpEntity<String> request = new HttpEntity<>(headers);
+        for (EnrolmentInfo enrolmentInfo : allocateSuccessList) {
             String academyName = "";
             String courseName = "";
 
@@ -321,12 +337,12 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     }
 
     @Override
-    public ResponseEntity<?> getEnrolmentListByYearCourseAndAcademy(String authHeader, String year, Integer trainingAcademyId, BigInteger courseId) {
+    public ResponseEntity<?> getEnrolmentListByYearCourseAndAcademy(String authHeader, String year, Integer trainingAcademyId) {
 
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
-        List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearCourseAndAcademy(year, trainingAcademyId, courseId);
+        List<EnrolmentListDto> enrolmentListDtos = enrolmentDao.getEnrolmentListByYearCourseAndAcademy(year, trainingAcademyId);
         if (enrolmentListDtos == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("No information found."));
         }
@@ -385,24 +401,32 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     @Override
     public ResponseEntity<?> changeTrainingAcademy(String authHeader, EnrolmentInfoCommand command) throws Exception {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        HttpEntity<String> request = new HttpEntity<>(headers);
 
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
-
+        String urlAcaTraining = properties.getAllTrainingAcaCapById() + command.getYear() + "&academyId=" + command.getTrainingAcademyId();
+        ResponseEntity<TrainingAcademyCapacityDto> responseAcaTraining = restTemplate.exchange(urlAcaTraining, HttpMethod.GET, request, TrainingAcademyCapacityDto.class);
+        List<EnrolmentInfo> allocateSuccessList = new ArrayList<>();
         //to save update enrolment info
         iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
-            //todo remove static
-            item.setStatus('A');
-            item.setTrainingAcademyId(command.getTrainingAcademyId());
-            item.setAllocatedCourseId(command.getAllocatedCourseId());
-            iEnrolmentInfoRepository.save(item);
+            if ((((item.getGender().equals('M') ? Objects.requireNonNull(responseAcaTraining.getBody()).getMaleCapacityAmount() :
+                    Objects.requireNonNull(responseAcaTraining.getBody()).getFemaleCapacityAmount())-
+                    (iEnrolmentInfoRepository.getCountByStatusAndGenderAndYearAndTrainingAcademyId(ApprovalStatus.APPROVED.value(),
+                            item.getGender(), command.getYear(), command.getTrainingAcademyId())))) > 0){
+                item.setStatus(ApprovalStatus.APPROVED.value());
+                item.setTrainingAcademyId(command.getTrainingAcademyId());
+                //item.setAllocatedCourseId(command.getAllocatedCourseId());
+                allocateSuccessList.add(item);
+                iEnrolmentInfoRepository.save(item);
+            }
+
         });
 
         // to send email and sms
-        for (EnrolmentInfo enrolmentInfo : iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds())) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", authHeader);
-            HttpEntity<String> request = new HttpEntity<>(headers);
+        for (EnrolmentInfo enrolmentInfo : allocateSuccessList) {
             String academyName = "";
             String courseName = "";
 
@@ -424,7 +448,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
                 ResponseEntity<TrainingAcademyDto> responseCourse = restTemplate.exchange(urlCourse, HttpMethod.GET, request, TrainingAcademyDto.class);
                 courseName = Objects.requireNonNull(responseCourse.getBody()).getFieldSpecName();
             }
-            String message = "Dear " + fullName + ", Your training academy have been changed to " + academyName + " to undergo Gyalsung training in " + courseName + " for the year " + enrolmentInfo.getYear();
+            String message = "Dear " + fullName + ", Your training academy have been changed to " + academyName + " to undergo Gyalsung training for the year " + enrolmentInfo.getYear();
             String subject = "Training Academy Change";
 
 
@@ -444,11 +468,17 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
 
     @Override
-    public ResponseEntity<?> allocateUserToTrainingAca(String authHeader, String year) throws IOException {
+    public ResponseEntity<?> allocateUserToTrainingAca(String authHeader,AllocationCommand allocationCommand) throws IOException {
 
 
-        allocationAlgorithm.allocationAlgorithm(authHeader,year,'M');
-        allocationAlgorithm.allocationAlgorithm(authHeader,year,'F');
+        if(Objects.isNull(allocationCommand.getGender())||allocationCommand.getGender().equals('M')){
+            allocationAlgorithm.allocationAlgorithm(authHeader,allocationCommand.getYear(),'M');
+
+        }
+        if(Objects.isNull(allocationCommand.getGender())||allocationCommand.getGender().equals('F')){
+            allocationAlgorithm.allocationAlgorithm(authHeader,allocationCommand.getYear(),'F');
+
+        }
 
         return ResponseEntity.ok("Allocated successfully");
     }

@@ -17,9 +17,7 @@ public class TrainingAcademyCapacityMapper {
                 trainingAcademyCapacity.getAcademyId(),
                 trainingAcademyCapacity.getTrainingYear(),
                 trainingAcademyCapacity.getMaleCapacityAmount(),
-                trainingAcademyCapacity.getMaleCapacityAmountAllocated(),
                 trainingAcademyCapacity.getFemaleCapacityAmount(),
-                trainingAcademyCapacity.getFemaleCapacityAmountAllocated(),
                 trainingAcademyCapacity.getStatus()
         );
     }

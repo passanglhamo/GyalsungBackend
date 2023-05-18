@@ -10,4 +10,8 @@ import java.math.BigInteger;
 public class AllocateEnrollmentTempDto {
     private BigInteger userId;
     private Integer academyId;
+    private String mobileNo;
+    private String fullName;
+    private String email;
+    private String academyName;
 }

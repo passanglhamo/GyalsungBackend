@@ -31,16 +31,17 @@ public class AllocationAlgorithm {
     private final IEnrolmentInfoRepository enrolmentInfoRepository;
     private final UserInformationService userInformationService;
     private final IDzongkhagTrainingAcaMappingRepository dzongkhagTrainingAcaMappingRepository;
+    private final AddToQueue addToQueue;
+
 
     @Autowired
     @Qualifier("trainingManagementTemplate")
     RestTemplate restTemplate;
 
-    public void allocationAlgorithm(String authHeader, String year, Character gender) throws JsonProcessingException {
+    public void allocationAlgorithm(String authHeader, String year, Character gender) {
 
         List<AllocateEnrollmentTempDto> allocateEnrollmentTempDtoList = new ArrayList<>();
         List<TrainingAcapacitiesDto> trainingAcapacitiesDtos = new ArrayList<>();
-        ObjectMapper objectMapper = new ObjectMapper();
 
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
@@ -53,13 +54,18 @@ public class AllocationAlgorithm {
                 year, ApprovalStatus.PENDING.value(), gender
         );
 
+
         if (enrolmentUserInfos.size() != 0) {
 
-            List<BigInteger> userIdsMale = enrolmentUserInfos
+            String urlAllTraining = properties.getAllAcademy() ;
+            ResponseEntity<List<TrainingAcademyDto>> trainingAcademyList = restTemplate.exchange(urlAllTraining, HttpMethod.GET, request, new ParameterizedTypeReference<List<TrainingAcademyDto>>() {
+            });
+
+            List<BigInteger> userIds = enrolmentUserInfos
                     .stream()
                     .map(EnrolmentInfo::getUserId)
                     .collect(Collectors.toList());
-            List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsMale, authHeader);
+            List<UserProfileDto> userProfileDtos = userInformationService.getUserInformationByListOfIds(userIds, authHeader);
 
             //List of all enrolled user in bhutan
             List<UserProfileDto> enrolledUserInBhutan = userProfileDtos.stream()
@@ -73,10 +79,11 @@ public class AllocationAlgorithm {
                     }))
                     .collect(Collectors.toList());
 
+
             //Allocate user to the training academy
             if (enrolledUserInBhutan.size() != 0) {
                 enrolledUserInBhutan.forEach(enrolledUser -> {
-
+                    Optional<TrainingAcademyDto> trainingAcademy = null;
                     DzongkhagTrainingPreAcaMapping dzongkhagTrainingPreAcaMappings =
                             dzongkhagTrainingAcaMappingRepository.findByDzongkhagId(enrolledUser.getPresentDzongkhagId());
                     String urlTraining = properties.getAllTrainingAcaCapById() + year + "&academyId=" + dzongkhagTrainingPreAcaMappings.getFirstPreference();
@@ -89,10 +96,17 @@ public class AllocationAlgorithm {
                     //Get first preference training capacities
                     ResponseEntity<TrainingAcademyCapacityDto> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, TrainingAcademyCapacityDto.class);
                     //allocate user to first preference
-                    if (responseTraining.getBody() != null && ((gender.equals('M')?Objects.requireNonNull(responseTraining.getBody()).getMaleCapacityAmount():
-                            Objects.requireNonNull(responseTraining.getBody()).getFemaleCapacityAmount()) - availableCapacity) > 0) {
+                    if (responseTraining.getBody() != null && (((gender.equals('M') ? Objects.requireNonNull(responseTraining.getBody()).getMaleCapacityAmount() :
+                            Objects.requireNonNull(responseTraining.getBody()).getFemaleCapacityAmount())-
+                            (enrolmentInfoRepository.getCountByStatusAndGenderAndYearAndTrainingAcademyId(ApprovalStatus.APPROVED.value(),
+                                    gender, year, dzongkhagTrainingPreAcaMappings.getFirstPreference()))) - availableCapacity) > 0) {
+                         trainingAcademy = Objects.requireNonNull(trainingAcademyList.getBody())
+                                .stream()
+                                .filter(t -> t.getTrainingAcaId().equals(dzongkhagTrainingPreAcaMappings.getFirstPreference()))
+                                .findFirst();
                         allocatedEnroll(enrolledUser.getId(), dzongkhagTrainingPreAcaMappings.getFirstPreference(),
-                                allocateEnrollmentTempDtoList, trainingAcapacitiesDtos, gender, year);
+                                allocateEnrollmentTempDtoList, trainingAcapacitiesDtos, gender, year,enrolledUser.getFullName(),
+                                enrolledUser.getMobileNo(),enrolledUser.getEmail(),trainingAcademy.get().getName());
 
                     } else {
                         String urlSecondTraining = properties.getAllTrainingAcaCapById() + year + "&academyId=" + dzongkhagTrainingPreAcaMappings.getSecondPreference();
@@ -103,10 +117,19 @@ public class AllocationAlgorithm {
                                 .mapToInt(TrainingAcapacitiesDto::getAccommodationNumber)
                                 .findFirst()
                                 .orElse(0);
-                        if (responseTraining.getBody() != null && ((gender.equals('M')?Objects.requireNonNull(responseSecondTraining.getBody()).getMaleCapacityAmount():
-                                Objects.requireNonNull(responseTraining.getBody()).getFemaleCapacityAmount()) - availableSecondCapacity) > 0) {
+                        if (responseTraining.getBody() != null && (((gender.equals('M') ? Objects.requireNonNull(responseSecondTraining.getBody()).getMaleCapacityAmount() :
+                                Objects.requireNonNull(responseTraining.getBody()).getFemaleCapacityAmount())-
+                                (enrolmentInfoRepository.getCountByStatusAndGenderAndYearAndTrainingAcademyId(ApprovalStatus.APPROVED.value(),
+                                        gender, year, dzongkhagTrainingPreAcaMappings.getSecondPreference()))) - availableSecondCapacity) > 0) {
+
+                            trainingAcademy = Objects.requireNonNull(trainingAcademyList.getBody())
+                                    .stream()
+                                    .filter(t -> t.getTrainingAcaId().equals(dzongkhagTrainingPreAcaMappings.getSecondPreference()))
+                                    .findFirst();
                             allocatedEnroll(enrolledUser.getId(), dzongkhagTrainingPreAcaMappings.getSecondPreference(),
-                                    allocateEnrollmentTempDtoList, trainingAcapacitiesDtos, gender, year);
+                                    allocateEnrollmentTempDtoList, trainingAcapacitiesDtos, gender, year,
+                                    enrolledUser.getFullName(),
+                                    enrolledUser.getMobileNo(),enrolledUser.getEmail(), trainingAcademy.get().getName());
 
                         } else {
                             String urlThirdTraining = properties.getAllTrainingAcaCapById() + year + "&academyId=" + dzongkhagTrainingPreAcaMappings.getThirdPreference();
@@ -117,10 +140,18 @@ public class AllocationAlgorithm {
                                     .mapToInt(TrainingAcapacitiesDto::getAccommodationNumber)
                                     .findFirst()
                                     .orElse(0);
-                            if (responseTraining.getBody() != null && ((gender.equals('M')?Objects.requireNonNull(responseThirdTraining.getBody()).getMaleCapacityAmount():
-                                    Objects.requireNonNull(responseTraining.getBody()).getFemaleCapacityAmount()) - availableThirdCapacity) > 0) {
+                            if (responseTraining.getBody() != null && (((gender.equals('M') ? Objects.requireNonNull(responseThirdTraining.getBody()).getMaleCapacityAmount() :
+                                    Objects.requireNonNull(responseTraining.getBody()).getFemaleCapacityAmount())-
+                                    (enrolmentInfoRepository.getCountByStatusAndGenderAndYearAndTrainingAcademyId(ApprovalStatus.APPROVED.value(),
+                                            gender, year, dzongkhagTrainingPreAcaMappings.getThirdPreference()))) - availableThirdCapacity) > 0) {
+                                trainingAcademy = Objects.requireNonNull(trainingAcademyList.getBody())
+                                        .stream()
+                                        .filter(t -> t.getTrainingAcaId().equals(dzongkhagTrainingPreAcaMappings.getThirdPreference()))
+                                        .findFirst();
                                 allocatedEnroll(enrolledUser.getId(), dzongkhagTrainingPreAcaMappings.getThirdPreference(),
-                                        allocateEnrollmentTempDtoList, trainingAcapacitiesDtos, gender, year);
+                                        allocateEnrollmentTempDtoList, trainingAcapacitiesDtos, gender, year,
+                                        enrolledUser.getFullName(),
+                                        enrolledUser.getMobileNo(),enrolledUser.getEmail(), trainingAcademy.get().getName());
 
                             } else {
                                 String urlFourthTraining = properties.getAllTrainingAcaCapById() + year + "&academyId=" + dzongkhagTrainingPreAcaMappings.getFourthPreference();
@@ -131,10 +162,18 @@ public class AllocationAlgorithm {
                                         .mapToInt(TrainingAcapacitiesDto::getAccommodationNumber)
                                         .findFirst()
                                         .orElse(0);
-                                if (responseTraining.getBody() != null && ((gender.equals('M')?Objects.requireNonNull(responseFourthTraining.getBody()).getMaleCapacityAmount():
-                                        Objects.requireNonNull(responseTraining.getBody()).getFemaleCapacityAmount()) - availableFourthCapacity) > 0) {
+                                if (responseTraining.getBody() != null && (((gender.equals('M') ? Objects.requireNonNull(responseFourthTraining.getBody()).getMaleCapacityAmount() :
+                                        Objects.requireNonNull(responseTraining.getBody()).getFemaleCapacityAmount())-
+                                        (enrolmentInfoRepository.getCountByStatusAndGenderAndYearAndTrainingAcademyId(ApprovalStatus.APPROVED.value(),
+                                                gender, year, dzongkhagTrainingPreAcaMappings.getFourthPreference()))) - availableFourthCapacity) > 0) {
+                                    trainingAcademy = Objects.requireNonNull(trainingAcademyList.getBody())
+                                            .stream()
+                                            .filter(t -> t.getTrainingAcaId().equals(dzongkhagTrainingPreAcaMappings.getFourthPreference()))
+                                            .findFirst();
                                     allocatedEnroll(enrolledUser.getId(), dzongkhagTrainingPreAcaMappings.getFourthPreference(),
-                                            allocateEnrollmentTempDtoList, trainingAcapacitiesDtos, gender, year);
+                                            allocateEnrollmentTempDtoList, trainingAcapacitiesDtos, gender, year,
+                                            enrolledUser.getFullName(),
+                                            enrolledUser.getMobileNo(),enrolledUser.getEmail(), trainingAcademy.get().getName());
 
                                 } else {
                                     String urlFifthTraining = properties.getAllTrainingAcaCapById() + year + "&academyId=" + dzongkhagTrainingPreAcaMappings.getFifthPreference();
@@ -145,10 +184,18 @@ public class AllocationAlgorithm {
                                             .mapToInt(TrainingAcapacitiesDto::getAccommodationNumber)
                                             .findFirst()
                                             .orElse(0);
-                                    if (responseTraining.getBody() != null && ((gender.equals('M')?Objects.requireNonNull(responseFifthTraining.getBody()).getMaleCapacityAmount():
-                                            Objects.requireNonNull(responseTraining.getBody()).getFemaleCapacityAmount()) - availableFifthCapacity) > 0) {
+                                    if (responseTraining.getBody() != null && (((gender.equals('M') ? Objects.requireNonNull(responseFifthTraining.getBody()).getMaleCapacityAmount() :
+                                            Objects.requireNonNull(responseTraining.getBody()).getFemaleCapacityAmount())-
+                                            (enrolmentInfoRepository.getCountByStatusAndGenderAndYearAndTrainingAcademyId(ApprovalStatus.APPROVED.value(),
+                                                    gender, year, dzongkhagTrainingPreAcaMappings.getFifthPreference()))) - availableFifthCapacity) > 0) {
+                                        trainingAcademy = Objects.requireNonNull(trainingAcademyList.getBody())
+                                                .stream()
+                                                .filter(t -> t.getTrainingAcaId().equals(dzongkhagTrainingPreAcaMappings.getFifthPreference()))
+                                                .findFirst();
                                         allocatedEnroll(enrolledUser.getId(), dzongkhagTrainingPreAcaMappings.getFifthPreference(),
-                                                allocateEnrollmentTempDtoList, trainingAcapacitiesDtos, gender, year);
+                                                allocateEnrollmentTempDtoList, trainingAcapacitiesDtos, gender, year,
+                                                enrolledUser.getFullName(),
+                                                enrolledUser.getMobileNo(),enrolledUser.getEmail(), trainingAcademy.get().getName());
 
                                     }
                                 }
@@ -173,18 +220,22 @@ public class AllocationAlgorithm {
             if (!updatedEnrolmentInfos.isEmpty()) {
 
                 enrolmentInfoRepository.saveAll(updatedEnrolmentInfos);
+                allocationMail(allocateEnrollmentTempDtoList,year);
             }
 
-            String jsonString = objectMapper.writeValueAsString(trainingAcapacitiesDtos);
-            HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
-
-            String changeUrl = properties.getChangeAllocateCapacities();
-            restTemplate.exchange(changeUrl, HttpMethod.POST, requestEntity, String.class);
 
             //To get the user which has been left out after allocation
             List<UserProfileDto> notAllocatedList = userProfileDtos.stream()
                     .filter(dto -> !allocateEnrollmentTempDtoList.stream().anyMatch(otherDto -> otherDto.getUserId().equals(dto.getId())))
+                    .sorted(Comparator.comparing(dto -> {
+                        EnrolmentInfo user = enrolmentUserInfos.stream()
+                                .filter(u -> u.getUserId().equals(dto.getId()))
+                                .findFirst()
+                                .orElse(null);
+                        return (user != null) ? user.getUserId() : null;
+                    }))
                     .collect(Collectors.toList());
+
 
             if (notAllocatedList.size() != 0) {
                 String urlTraining = properties.getAllTrainingCapacities();
@@ -193,37 +244,48 @@ public class AllocationAlgorithm {
                         };
                 ResponseEntity<List<TrainingAcademyCapacityDto>> responseTraining = restTemplate.exchange(urlTraining, HttpMethod.GET, request, responseType);
 
+
                 //To get list of academies which has vacant sit
                 List<TrainingAcademyCapacityDto> vacantAcademy = responseTraining.getBody()
                         .stream()
-                        .filter(training -> training.getTrainingYear().equals(year) && ((gender.equals('M') ? training.getMaleCapacityAmount() :
-                                training.getFemaleCapacityAmount()) - (
-                                trainingAcapacitiesDtos.stream()
-                                        .filter(trainingAcapacitiesDto -> trainingAcapacitiesDto.getYear().equals(year) &&
-                                                (trainingAcapacitiesDto.getAcademyId().equals(training.getAcademyId())) && trainingAcapacitiesDto.getGender().equals(gender))
-                                        .map(TrainingAcapacitiesDto::getAccommodationNumber)
-                                        .findFirst()
-                                        .orElse(0)
+                        .filter(training -> training.getTrainingYear().equals(year) && (
+                                ((gender.equals('M') ? training.getMaleCapacityAmount() : (training.getFemaleCapacityAmount())) -
+                                        (enrolmentInfoRepository.getCountByStatusAndGenderAndYearAndTrainingAcademyId(ApprovalStatus.APPROVED.value(),
+                                                gender, year, training.getAcademyId()))) - (
+                                        trainingAcapacitiesDtos.stream()
+                                                .filter(trainingAcapacitiesDto -> trainingAcapacitiesDto.getYear().equals(year) &&
+                                                        (trainingAcapacitiesDto.getAcademyId().equals(training.getAcademyId())) && trainingAcapacitiesDto.getGender().equals(gender))
+                                                .map(TrainingAcapacitiesDto::getAccommodationNumber)
+                                                .findFirst()
+                                                .orElse(0)
 
-                        )) > 0)
+                                )) > 0)
                         .collect(Collectors.toList());
 
                 List<AllocateEnrollmentTempDto> allocateRemainingEnrollmentTempDtoList = new ArrayList<>();
 
                 int notAllocatedNo = 0;
                 if (!vacantAcademy.isEmpty()) {
+                    Optional<TrainingAcademyDto> trainingAcademy = null;
                     for (TrainingAcademyCapacityDto vacant : vacantAcademy) {
-                        int vacantNo = (gender.equals('M') ? vacant.getMaleCapacityAmount()
-                                : vacant.getFemaleCapacityAmount()) - (trainingAcapacitiesDtos.stream()
+                        int vacantNo = (int) (((gender.equals('M') ? vacant.getMaleCapacityAmount()
+                                : vacant.getFemaleCapacityAmount()) -
+                                (enrolmentInfoRepository.getCountByStatusAndGenderAndYearAndTrainingAcademyId(ApprovalStatus.APPROVED.value(),
+                                        gender, year, vacant.getAcademyId()))) - (trainingAcapacitiesDtos.stream()
                                 .filter(trainingAcapacitiesDto -> trainingAcapacitiesDto.getYear().equals(year) &&
                                         (trainingAcapacitiesDto.getAcademyId().equals(vacant.getAcademyId())) && trainingAcapacitiesDto.getGender().equals(gender))
                                 .map(TrainingAcapacitiesDto::getAccommodationNumber)
                                 .findFirst()
-                                .orElse(0));
+                                .orElse(0)));
+                        trainingAcademy = Objects.requireNonNull(trainingAcademyList.getBody())
+                                .stream()
+                                .filter(t -> t.getTrainingAcaId().equals(vacant.getAcademyId()))
+                                .findFirst();
                         for (int i = 1; i <= vacantNo; i++) {
                             UserProfileDto user = notAllocatedList.get(notAllocatedNo);
                             allocatedEnroll(user.getId(), vacant.getAcademyId(),
-                                    allocateRemainingEnrollmentTempDtoList, trainingAcapacitiesDtos, 'M', year);
+                                    allocateRemainingEnrollmentTempDtoList, trainingAcapacitiesDtos, gender, year,
+                                    user.getFullName(),user.getMobileNo(),user.getEmail(), trainingAcademy.get().getName());
                             notAllocatedNo++;
                         }
                     }
@@ -244,12 +306,9 @@ public class AllocationAlgorithm {
                 if (!updatedRemainingEnrolmentInfos.isEmpty()) {
 
                     enrolmentInfoRepository.saveAll(updatedRemainingEnrolmentInfos);
+
+                    allocationMail(allocateRemainingEnrollmentTempDtoList,year);
                 }
-
-                String jsonVacantString = objectMapper.writeValueAsString(trainingAcapacitiesDtos);
-                HttpEntity<String> requestVacantEntity = new HttpEntity<>(jsonVacantString, headers);
-
-                restTemplate.exchange(changeUrl, HttpMethod.POST, requestVacantEntity, String.class);
 
             }
 
@@ -259,10 +318,15 @@ public class AllocationAlgorithm {
     }
 
     public void allocatedEnroll(BigInteger userId, Integer trainingAcademyId, List<AllocateEnrollmentTempDto> allocateEnrollmentTempDtoList,
-                                List<TrainingAcapacitiesDto> trainingAcapacitiesDtos, Character gender, String year) {
+                                List<TrainingAcapacitiesDto> trainingAcapacitiesDtos, Character gender, String year,
+                                String fullName, String mobileNo, String email, String fieldSpecName) {
         AllocateEnrollmentTempDto allocateEnrollmentTempDto = new AllocateEnrollmentTempDto();
         allocateEnrollmentTempDto.setUserId(userId);
         allocateEnrollmentTempDto.setAcademyId(trainingAcademyId);
+        allocateEnrollmentTempDto.setFullName(fullName);
+        allocateEnrollmentTempDto.setMobileNo(mobileNo);
+        allocateEnrollmentTempDto.setEmail(email);
+        allocateEnrollmentTempDto.setAcademyName(fieldSpecName);
         allocateEnrollmentTempDtoList.add(allocateEnrollmentTempDto);
 
         Optional<TrainingAcapacitiesDto> existingDto = trainingAcapacitiesDtos.stream()
@@ -283,5 +347,25 @@ public class AllocationAlgorithm {
         }
 
 
+    }
+
+    public void allocationMail(List<AllocateEnrollmentTempDto> allocateEnrollmentTempDtoList,String year){
+        allocateEnrollmentTempDtoList.forEach(dto -> {
+
+            String message = "Dear " + dto.getFullName() + ", You have been allocated to " +dto.getAcademyName()+ " training academy to undergo Gyalsung training for the year " + year;
+            String subject = "Registration Approval";
+            EventBus eventBus = EventBus.withId(dto.getEmail(), null, null, message, subject, dto.getMobileNo());
+
+            try {
+                addToQueue.addToQueue("email", eventBus);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            try {
+                addToQueue.addToQueue("sms", eventBus);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

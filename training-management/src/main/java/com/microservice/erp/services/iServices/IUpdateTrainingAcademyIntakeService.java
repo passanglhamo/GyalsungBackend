@@ -7,6 +7,5 @@ import java.io.IOException;
 
 public interface IUpdateTrainingAcademyIntakeService {
     ResponseEntity<?> updateTrainingAcademyIntake(TrainingAcademyCapacityDto trainingAcademyCapacityDto);
-    ResponseEntity<String> changeAllocateCapacities(String academyAccomodities) throws IOException;
 
 }

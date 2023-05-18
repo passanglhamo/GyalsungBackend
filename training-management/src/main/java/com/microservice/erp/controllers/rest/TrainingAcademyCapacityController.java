@@ -58,12 +58,6 @@ public class TrainingAcademyCapacityController {
         return readService.getAllTrainingAcaCapByAcademyId(year, academyId);
     }
 
-    @PostMapping("/changeAllocateCapacities")
-    public ResponseEntity<String> changeAllocateCapacities(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                                           @RequestBody String academyAccomodities) throws IOException {
-        SpringSecurityAuditorAware.setToken(token);
-        return updateService.changeAllocateCapacities(academyAccomodities);
-    }
 
 
 }
