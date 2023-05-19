@@ -3,13 +3,12 @@ package com.microservice.erp.services.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.microservice.erp.domain.dto.*;
-import com.microservice.erp.domain.entities.ApiAccessToken;
-import com.microservice.erp.domain.entities.SignupEmailVerificationCode;
-import com.microservice.erp.domain.entities.SignupSmsOtp;
-import com.microservice.erp.domain.entities.UserInfo;
+import com.microservice.erp.domain.entities.*;
+import com.microservice.erp.domain.repositories.IAgeCriteriaRepository;
 import com.microservice.erp.domain.repositories.ISignupEmailVerificationCodeRepository;
 import com.microservice.erp.domain.repositories.ISignupSmsOtpRepository;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
+import com.microservice.erp.services.iServices.IAgeCriteriaService;
 import com.microservice.erp.services.iServices.ISignupService;
 import com.squareup.okhttp.OkHttpClient;
 import org.json.JSONArray;
@@ -43,31 +42,48 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.HttpResponse;
-
 @Service
 public class SignupService implements ISignupService {
     private final CitizenDetailApiService citizenDetailApiService;
     private final ISignupSmsOtpRepository iSignupSmsOtpRepository;
     private final ISignupEmailVerificationCodeRepository iSignupEmailVerificationCodeRepository;
     private final IUserInfoRepository iUserInfoRepository;
+    private final IAgeCriteriaRepository iAgeCriteriaRepository;
 
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
 
-    public SignupService(CitizenDetailApiService citizenDetailApiService, ISignupSmsOtpRepository iSignupSmsOtpRepository, ISignupEmailVerificationCodeRepository iSignupEmailVerificationCodeRepository, IUserInfoRepository iUserInfoRepository, AddToQueue addToQueue) {
+    public SignupService(CitizenDetailApiService citizenDetailApiService, ISignupSmsOtpRepository iSignupSmsOtpRepository
+            , ISignupEmailVerificationCodeRepository iSignupEmailVerificationCodeRepository, IUserInfoRepository iUserInfoRepository
+            , IAgeCriteriaRepository iAgeCriteriaRepository, AddToQueue addToQueue) {
         this.citizenDetailApiService = citizenDetailApiService;
         this.iSignupSmsOtpRepository = iSignupSmsOtpRepository;
         this.iSignupEmailVerificationCodeRepository = iSignupEmailVerificationCodeRepository;
         this.iUserInfoRepository = iUserInfoRepository;
+        this.iAgeCriteriaRepository = iAgeCriteriaRepository;
         this.addToQueue = addToQueue;
     }
 
 
     @Override
     public ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException {
-        //todo:check age first
+        //to check age eligible age first
+        AgeCriteria ageCriteria = iAgeCriteriaRepository.findTopByOrderByMinimumAgeDesc();
+        if (ageCriteria == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Something went wrong. Please try again after some time."));
+        }
+        Integer minimumAge = ageCriteria.getMinimumAge();
+        Integer maximumAge = ageCriteria.getMaximumAge();
+
+        Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(dob);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(birthDate);
+        Calendar now = Calendar.getInstance();
+        int age = now.get(Calendar.YEAR) - calendar.get(Calendar.YEAR);
+        if (age < minimumAge || age > maximumAge) {
+            return ResponseEntity.badRequest().body(new MessageResponse("You do not meet the age criteria."));
+        }
+
         return validateCitizenDetails(cid, dob);
     }
 
@@ -143,10 +159,10 @@ public class SignupService implements ISignupService {
     public ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, IOException, ApiException {
 
         //check already registered not by CID
-//        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
-//        if (userInfoDB.isPresent()) {
-//            return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + signupRequestDto.getCid() + " already exist."));
-//        }
+        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
+        if (userInfoDB.isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + signupRequestDto.getCid() + " already exist."));
+        }
 
 //  to save guardian info, both the parents need will be guardian by default. If Parents are expired, then the separate guardian need to add from profile
         UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
@@ -157,8 +173,15 @@ public class SignupService implements ISignupService {
         calendar.setTime(birthDate);
         Calendar now = Calendar.getInstance();
         int age = now.get(Calendar.YEAR) - calendar.get(Calendar.YEAR);
-//        todo: need to check age criteria before saving to the system
-        if (age < 15 || age > 25) {//todo:need to get the age dynamically
+
+        AgeCriteria ageCriteria = iAgeCriteriaRepository.findTopByOrderByMinimumAgeDesc();
+        if (ageCriteria == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Something went wrong. Please try again after some time."));
+        }
+        Integer minimumAge = ageCriteria.getMinimumAge();
+        Integer maximumAge = ageCriteria.getMaximumAge();
+
+        if (age < minimumAge || age > maximumAge) {
             return ResponseEntity.badRequest().body(new MessageResponse("You do not meet the age criteria."));
         }
         userInfo.setSignupUser('Y');

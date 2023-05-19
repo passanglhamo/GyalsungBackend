@@ -21,27 +21,28 @@ public class AgeCriteria extends Auditable<BigInteger, Long> {
     //region private variables
     @NotNull(message = "Minimum age cannot be null")
     @Column(name = "minimum_age", columnDefinition = "int")
-    private BigInteger minimumAge;
+    private Integer minimumAge;
 
     @NotNull(message = "Maximum age cannot be null")
     @Column(name = "maximum_age", columnDefinition = "int")
-    private BigInteger maximumAge;
+    private Integer maximumAge;
     //endregion
 
     //region setters and getters
-    public BigInteger getMinimumAge() {
+
+    public Integer getMinimumAge() {
         return minimumAge;
     }
 
-    public void setMinimumAge(BigInteger minimumAge) {
+    public void setMinimumAge(Integer minimumAge) {
         this.minimumAge = minimumAge;
     }
 
-    public BigInteger getMaximumAge() {
+    public Integer getMaximumAge() {
         return maximumAge;
     }
 
-    public void setMaximumAge(BigInteger maximumAge) {
+    public void setMaximumAge(Integer maximumAge) {
         this.maximumAge = maximumAge;
     }
 
