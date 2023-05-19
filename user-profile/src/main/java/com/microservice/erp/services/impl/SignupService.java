@@ -67,6 +67,7 @@ public class SignupService implements ISignupService {
 
     @Override
     public ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException {
+        //todo:check age first
         return validateCitizenDetails(cid, dob);
     }
 

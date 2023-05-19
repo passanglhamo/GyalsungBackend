@@ -1,8 +1,8 @@
-package com.microservice.erp.services.impl.services;
+package com.microservice.erp.services.impl;
 
+import com.microservice.erp.domain.dto.MessageResponse;
 import com.microservice.erp.domain.entities.AgeCriteria;
-import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.repository.IAgeCriteriaRepository;
+import com.microservice.erp.domain.repositories.IAgeCriteriaRepository;
 import com.microservice.erp.services.iServices.IAgeCriteriaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
