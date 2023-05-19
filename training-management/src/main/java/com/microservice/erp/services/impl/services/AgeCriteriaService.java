@@ -1,18 +1,12 @@
-package com.microservice.erp.services.impl;
+package com.microservice.erp.services.impl.services;
 
 import com.microservice.erp.domain.entities.AgeCriteria;
-import com.microservice.erp.domain.entities.DzongkhagTrainingPreAcaMapping;
 import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.repositories.IAgeCriteriaRepository;
-import com.microservice.erp.domain.repositories.IDzongkhagTrainingAcaMappingRepository;
+import com.microservice.erp.domain.repository.IAgeCriteriaRepository;
 import com.microservice.erp.services.iServices.IAgeCriteriaService;
-import com.microservice.erp.services.iServices.ICreateDzongkhagTrainingAcaMappingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

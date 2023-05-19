@@ -1,4 +1,4 @@
-package com.microservice.erp.domain.repositories;
+package com.microservice.erp.domain.repository;
 
 import com.microservice.erp.domain.entities.AgeCriteria;
 import org.springframework.data.jpa.repository.JpaRepository;
