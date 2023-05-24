@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigInteger;
+import java.util.Date;
 
 @Setter
 @Getter
@@ -14,4 +15,5 @@ public class ParentConsentListDto {
     private String guardianMobileNo;
     private String cid;
     private String dob;
+    private Date submittedOn;
 }

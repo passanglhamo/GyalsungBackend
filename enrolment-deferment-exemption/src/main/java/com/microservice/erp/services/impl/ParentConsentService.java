@@ -143,6 +143,7 @@ public class ParentConsentService implements IParentConsentService {
                 parentConsentListDto.setDob(response.getBody().getDob());
                 parentConsentListDto.setGuardianName(item.getGuardianName());
                 parentConsentListDto.setGuardianMobileNo(item.getGuardianMobileNo());
+                parentConsentListDto.setSubmittedOn(item.getSubmittedOn());
                 parentConsentListDtos.add(parentConsentListDto);
             });
         } else {

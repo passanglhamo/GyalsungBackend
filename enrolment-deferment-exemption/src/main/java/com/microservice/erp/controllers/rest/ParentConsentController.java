@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/parentConsent")
 @AllArgsConstructor
 public class ParentConsentController {
-    private IParentConsentService parentConsentService;
+    private final IParentConsentService parentConsentService;
 
     @PostMapping(value = "/receiveOtp")
     public ResponseEntity<?> receiveOtp(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
