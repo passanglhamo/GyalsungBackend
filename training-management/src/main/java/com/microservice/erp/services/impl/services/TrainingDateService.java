@@ -40,7 +40,6 @@ public class TrainingDateService implements ITrainingDateService {
         return ResponseEntity.ok(new MessageResponse("Data saved successfully."));
     }
 
-
     @Override
     public ResponseEntity<?> updateTrainingDate(BigInteger userId, TrainingDate trainingDate) {
 
