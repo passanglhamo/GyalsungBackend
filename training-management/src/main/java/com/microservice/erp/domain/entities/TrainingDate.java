@@ -27,7 +27,7 @@ import java.util.Date;
     @NotNull
     @Basic(optional = false)
     @Column(name = "status", columnDefinition = "char(1)")
-    private String status;
+    private Character status;
 
     public BigInteger getTrainingDateId() {
         return trainingDateId;
@@ -45,11 +45,11 @@ import java.util.Date;
         this.trainingDate = trainingDate;
     }
 
-    public String getStatus() {
+    public Character getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Character status) {
         this.status = status;
     }
 }

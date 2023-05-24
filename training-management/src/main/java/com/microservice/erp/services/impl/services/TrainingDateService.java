@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TrainingDateService implements ITrainingDateService {
     private final ITrainingDateRepository iTrainingDateRepository;
-    private  final TrainingDateDao trainingDateDao;
+    private final TrainingDateDao trainingDateDao;
 
     @Override
     public ResponseEntity<?> saveTrainingDate(BigInteger userId, TrainingDate trainingDate) {
@@ -29,6 +29,11 @@ public class TrainingDateService implements ITrainingDateService {
         Character validation = trainingDateDao.findByYear(year);
         if (validation != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Date already exist for the year " + year));
+        }
+
+        TrainingDate statusActive = iTrainingDateRepository.findByStatus('A');
+        if (statusActive != null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Active date already exists. There should be only one active date in the system."));
         }
 
         TrainingDate trainingDateDb = iTrainingDateRepository.findFirstByOrderByTrainingDateIdDesc();
@@ -42,8 +47,26 @@ public class TrainingDateService implements ITrainingDateService {
 
     @Override
     public ResponseEntity<?> updateTrainingDate(BigInteger userId, TrainingDate trainingDate) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(trainingDate.getTrainingDate());
+        Integer newYear = calendar.get(Calendar.YEAR);
+
+        Character statusActive = trainingDateDao.findByStatusAndId('A', trainingDate.getTrainingDateId());
+        if (statusActive != null && trainingDate.getStatus() == 'A') {
+            return ResponseEntity.badRequest().body(new MessageResponse("Active date already exists. There should be only one active date in the system."));
+        }
 
         TrainingDate trainingDateDb = iTrainingDateRepository.findByTrainingDateId(trainingDate.getTrainingDateId());
+        calendar.setTime(trainingDateDb.getTrainingDate());
+        Integer existedYear = calendar.get(Calendar.YEAR);
+
+        if (existedYear != newYear) {
+            Character validation = trainingDateDao.findByYearAndId(newYear, trainingDate.getTrainingDateId());
+            if (validation != null) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Date already exist for the year " + newYear));
+            }
+        }
+
         TrainingDate trainingDateUpdate = new ModelMapper().map(trainingDateDb, TrainingDate.class);
         trainingDateUpdate.setTrainingDate(trainingDate.getTrainingDate());
         trainingDateUpdate.setStatus(trainingDate.getStatus());

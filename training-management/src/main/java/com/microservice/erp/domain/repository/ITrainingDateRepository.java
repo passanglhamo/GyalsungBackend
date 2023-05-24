@@ -12,9 +12,5 @@ import java.math.BigInteger;
 public interface ITrainingDateRepository extends JpaRepository<TrainingDate, BigInteger> {
     TrainingDate findByStatus(Character status);
     TrainingDate findFirstByOrderByTrainingDateIdDesc();
-
     TrainingDate findByTrainingDateId(BigInteger trainingDateId);
-
-    @Query(value = "select * from tms_training_date e where year(e.training_date) =:year", nativeQuery = true)
-    TrainingDate findByYear(@Param("year") String year);
 }
