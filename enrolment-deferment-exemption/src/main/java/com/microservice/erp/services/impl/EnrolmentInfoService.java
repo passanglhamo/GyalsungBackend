@@ -251,7 +251,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             String mobileNo = Objects.requireNonNull(userResponse.getBody()).getMobileNo();
             String email = Objects.requireNonNull(userResponse.getBody()).getEmail();
 
-            String message = "Dear " + fullName + ", Your application for Gyalsnung Registration has been canceled upon your request to withdraw for the year " + enrolmentInfo.getYear() + ".";
+            String message = "Dear " + fullName + ", Your application for Gyaslung Registration has been canceled upon your request to withdraw for the year " + enrolmentInfo.getYear() + ".";
             String subject = "Registration Approval";
 
             EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo);
