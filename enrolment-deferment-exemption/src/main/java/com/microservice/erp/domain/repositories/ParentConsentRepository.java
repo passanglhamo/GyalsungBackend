@@ -9,5 +9,7 @@ import java.util.List;
 public interface ParentConsentRepository extends JpaRepository<ParentConsent, BigInteger> {
     ParentConsent findByUserId(BigInteger userId);
 
+    boolean existsByUserId(BigInteger userId);
+
     List<ParentConsent> findByYearOrderBySubmittedOnAsc(String year);
 }

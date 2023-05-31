@@ -67,7 +67,7 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
     @Transient
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (roles == null) return new ArrayList<>();
-        return this.roles.stream().map(role -> new CustomGrantedAuthority(role.getRoleName(),role.getIsOpenUser())).collect(toList());
+        return this.roles.stream().map(role -> new CustomGrantedAuthority(role.getRoleName(),role.getUserType())).collect(toList());
     }
 
     public BigInteger getUserId() {

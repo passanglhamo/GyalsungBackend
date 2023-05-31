@@ -2,6 +2,7 @@ package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dto.RoleDto;
 import com.microservice.erp.domain.entities.Role;
+import com.microservice.erp.domain.helper.UserType;
 import com.microservice.erp.domain.mapper.RoleMapper;
 import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.services.definition.IRoleService;
@@ -22,8 +23,8 @@ public class SaRoleService implements IRoleService {
 
     @Override
     public ResponseEntity<?> saveRole(Role role) {
-        if (role.getIsOpenUser().equals('Y')) {
-            if (repository.existsByIsOpenUser('Y')) {
+        if (role.getUserType().equals(UserType.STUDENT.value())) {
+            if (repository.existsByUserType(UserType.STUDENT.value())) {
                 return new ResponseEntity<>("There can be only one student role.", HttpStatus.ALREADY_REPORTED);
             }
         }
@@ -45,15 +46,15 @@ public class SaRoleService implements IRoleService {
     public ResponseEntity<?> updateRole(RoleDto role) {
 
 
-        if(role.getIsOpenUser().equals('Y')){
-            if (repository.existsByIsOpenUserAndIdNot('Y', role.getId())) {
+        if(role.getUserType().equals(UserType.STUDENT.value())){
+            if (repository.existsByUserTypeAndIdNot(UserType.STUDENT.value(), role.getId())) {
                 return new ResponseEntity<>("There can be only one student role.", HttpStatus.ALREADY_REPORTED);
             }
         }
 
         repository.findById(role.getId()).ifPresent(d -> {
             d.setRoleName(role.getRoleName());
-            d.setIsOpenUser(role.getIsOpenUser());
+            d.setUserType(role.getUserType());
             repository.save(d);
 
         });

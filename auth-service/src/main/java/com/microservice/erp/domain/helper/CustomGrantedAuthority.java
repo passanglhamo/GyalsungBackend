@@ -33,7 +33,7 @@ public class CustomGrantedAuthority implements GrantedAuthority {
             return Collections.emptyList();
         }
         return roles.stream()
-                .map(role -> new CustomGrantedAuthority(role.getRoleName(), role.getIsOpenUser()))
+                .map(role -> new CustomGrantedAuthority(role.getRoleName(), role.getUserType()))
                 .collect(Collectors.toList());
     }
 }
