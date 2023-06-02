@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.SignupRequestDto;
-import com.microservice.erp.domain.repositories.IUserInfoRepository;
+import com.microservice.erp.services.iServices.IAgeCriteriaService;
 import com.microservice.erp.services.iServices.ISignupService;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +14,23 @@ import org.wso2.client.api.ApiException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/signup")
 public class SignupController {
-
+    private final IAgeCriteriaService iAgeCriteriaService;
     private final ISignupService iSignupService;
 
-    public SignupController(ISignupService iSignupService) {
+    public SignupController(IAgeCriteriaService iAgeCriteriaService, ISignupService iSignupService) {
+        this.iAgeCriteriaService = iAgeCriteriaService;
         this.iSignupService = iSignupService;
+    }
+
+
+    @GetMapping(value = "/getAgeCriteria")
+    public ResponseEntity<?> getAgeCriteria() {
+        return iAgeCriteriaService.getAgeCriteria();
     }
 
     @GetMapping("/getCitizenDetails")
