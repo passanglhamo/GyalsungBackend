@@ -67,6 +67,11 @@ public class SignupService implements ISignupService {
 
     @Override
     public ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException {
+        //todo: need to check if user is already exist or not by cid
+        Optional<UserInfo> userInfo = iUserInfoRepository.findByCid(cid);
+        if (userInfo.isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + cid + " already exist in the system."));
+        }
         //to check age eligible age first
         AgeCriteria ageCriteria = iAgeCriteriaRepository.findTopByOrderByMinimumAgeDesc();
         if (ageCriteria == null) {
@@ -78,7 +83,7 @@ public class SignupService implements ISignupService {
         Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(dob);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(birthDate);
-        Calendar now = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();  
         int age = now.get(Calendar.YEAR) - calendar.get(Calendar.YEAR);
         if (age < minimumAge || age > maximumAge) {
             return ResponseEntity.badRequest().body(new MessageResponse("You do not meet the age criteria."));
