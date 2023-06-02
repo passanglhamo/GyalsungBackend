@@ -354,7 +354,7 @@ public class AllocationAlgorithm {
 
             String message = "Dear " + dto.getFullName() + ", You have been allocated to " +dto.getAcademyName()+ " training academy to undergo Gyalsung training for the year " + year;
             String subject = "Registration Approval";
-            EventBus eventBus = EventBus.withId(dto.getEmail(), null, null, message, subject, dto.getMobileNo());
+            EventBus eventBus = EventBus.withId(dto.getEmail(), null, null, message, subject, dto.getMobileNo(),null,null);
 
             try {
                 addToQueue.addToQueue("email", eventBus);

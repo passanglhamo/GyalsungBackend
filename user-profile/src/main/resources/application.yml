@@ -63,6 +63,8 @@ app.eureka.api.gateway.port: 80
 auth.service.url: http://AUTH-SERVICE/api/auth
 #auth.service.user.by.userId: ${auth.service.url}/auth/v1/userByUserId?userId=
 auth.service.user.by.userId: /auth/v1/userByUserId?userId=
+auth.service.user.by.userIds: /auth/v1/userByUserIds?userIds=
+
 
 #Training-Management-Service
 training.management.service.url: http://TRAINING-MANAGEMENT/api/training/management

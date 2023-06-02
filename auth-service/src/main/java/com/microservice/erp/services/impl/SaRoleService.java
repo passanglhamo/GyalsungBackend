@@ -28,6 +28,12 @@ public class SaRoleService implements IRoleService {
                 return new ResponseEntity<>("There can be only one student role.", HttpStatus.ALREADY_REPORTED);
             }
         }
+
+        if (role.getUserType().equals(UserType.OPERATOR.value())) {
+            if (repository.existsByUserType(UserType.OPERATOR.value())) {
+                return new ResponseEntity<>("There can be only one student role.", HttpStatus.ALREADY_REPORTED);
+            }
+        }
         repository.save(role);
         return ResponseEntity.ok("Data saved successfully.");
     }
@@ -49,6 +55,12 @@ public class SaRoleService implements IRoleService {
         if(role.getUserType().equals(UserType.STUDENT.value())){
             if (repository.existsByUserTypeAndIdNot(UserType.STUDENT.value(), role.getId())) {
                 return new ResponseEntity<>("There can be only one student role.", HttpStatus.ALREADY_REPORTED);
+            }
+        }
+
+        if(role.getUserType().equals(UserType.OPERATOR.value())){
+            if (repository.existsByUserTypeAndIdNot(UserType.OPERATOR.value(), role.getId())) {
+                return new ResponseEntity<>("There can be only one operator role.", HttpStatus.ALREADY_REPORTED);
             }
         }
 

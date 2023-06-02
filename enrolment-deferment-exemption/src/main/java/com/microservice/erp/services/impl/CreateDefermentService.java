@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,9 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +37,7 @@ public class CreateDefermentService implements ICreateDefermentService {
     private final DefermentMapper mapper;
     private final HeaderToken headerToken;
     private final AddToQueue addToQueue;
+    private final MailToOperator mailToOperator;
     private final DefermentExemptionValidation defermentExemptionValidation;
     Integer fileLength = 5;
 
@@ -85,6 +89,9 @@ public class CreateDefermentService implements ICreateDefermentService {
 
         String userUrl = properties.getUserProfileById() + userId;
         ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
+        String fullName = Objects.requireNonNull(userResponse.getBody()).getFullName();
+        String cid = userResponse.getBody().getCid();
+
         String subject = "Acknowledged for Deferment";
 
         String emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
@@ -98,11 +105,17 @@ public class CreateDefermentService implements ICreateDefermentService {
                 null,
                 emailMessage,
                 subject,
-                Objects.requireNonNull(userResponse.getBody()).getMobileNo());
+                Objects.requireNonNull(userResponse.getBody()).getMobileNo(),
+                null,
+                null);
 
         //todo get from properties
         addToQueue.addToQueue("email", eventBus);
         addToQueue.addToQueue("sms", eventBus);
+
+        mailToOperator.sendMailToOperator(fullName,cid,properties,httpRequest,"deferment");
+
+
     }
 
 

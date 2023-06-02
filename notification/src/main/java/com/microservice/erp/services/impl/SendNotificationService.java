@@ -85,7 +85,9 @@ public class SendNotificationService implements ISendNotificationService {
                     null,
                     smsBody,
                     subject,
-                    userProfileDto.getMobileNo());
+                    userProfileDto.getMobileNo(),
+                    null,
+                    null);
 
             mailSenderService.sendSms(mapper.writeValueAsString(
                     mailSenderDto

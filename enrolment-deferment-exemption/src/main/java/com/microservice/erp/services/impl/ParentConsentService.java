@@ -53,7 +53,7 @@ public class ParentConsentService implements IParentConsentService {
 
         String message = "Dear " + parentConsentDto.getGuardianName() + ", " + parentConsentDto.getFullName() + " has requested parent/guardian consent for Gyalsung Registration." + " You have to share this OTP " + otp + " if you agree to send your son/daughter to Gyalsung training." + " Please read legal terms and conditions before you share OTP.";
 
-        EventBus eventBus = EventBus.withId(null, null, null, message, null, parentConsentDto.getGuardianMobileNo());
+        EventBus eventBus = EventBus.withId(null, null, null, message, null, parentConsentDto.getGuardianMobileNo(),null,null);
         addToQueue.addToQueue("sms", eventBus);
 
         ParentConsentOtp parentConsentOtp = new ModelMapper().map(parentConsentDto, ParentConsentOtp.class);
@@ -62,7 +62,7 @@ public class ParentConsentService implements IParentConsentService {
 
         String subject = "Parent/Guardian Consent for Gyalsung Registration";
 
-        EventBus eventBusMail = EventBus.withId(parentConsentDto.getGuardianEmail(), null, null, message, subject, null);
+        EventBus eventBusMail = EventBus.withId(parentConsentDto.getGuardianEmail(), null, null, message, subject, null,null,null);
 
         //todo need to get from properties
         addToQueue.addToQueue("email", eventBusMail);
@@ -98,7 +98,9 @@ public class ParentConsentService implements IParentConsentService {
                 null,
                 messageToUser,
                 subject,
-                parentConsentDto.getMobileNo());
+                parentConsentDto.getMobileNo(),
+                null,
+                null);
 
         //todo need to get from properties
         addToQueue.addToQueue("email",eventBusMail);
@@ -113,7 +115,9 @@ public class ParentConsentService implements IParentConsentService {
                 null,
                 messageToGuardian,
                 subject,
-                parentConsentDto.getGuardianMobileNo());
+                parentConsentDto.getGuardianMobileNo(),
+                null,
+                null);
 
 //todo need to get from properties
         addToQueue.addToQueue("email",mailSenderGuardianDto);

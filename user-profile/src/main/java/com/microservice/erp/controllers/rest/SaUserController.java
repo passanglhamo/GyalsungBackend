@@ -46,5 +46,10 @@ public class SaUserController {
         return iSaUserService.getUsers(authHeader);
     }
 
+    @GetMapping("/getOperatorUsers")
+    public ResponseEntity<?> getOperatorUsers(@RequestHeader("Authorization") String authHeader) {
+        return iSaUserService.getOperatorUsers(authHeader);
+    }
+
 
 }

@@ -139,7 +139,9 @@ public class UpdateDefermentService implements IUpdateDefermentService {
                 null,
                 emailMessage,
                 subject,
-                Objects.requireNonNull(userResponse.getBody()).getMobileNo());
+                Objects.requireNonNull(userResponse.getBody()).getMobileNo(),
+                null,
+                null);
 
         //todo get data from properties
         addToQueue.addToQueue("email", eventBus);

@@ -3,6 +3,7 @@ package com.microservice.erp.services.impl;
 import com.infoworks.lab.beans.tasks.definition.TaskStack;
 import com.infoworks.lab.rest.models.Response;
 import com.it.soul.lab.sql.query.models.Row;
+import com.microservice.erp.domain.entities.User;
 import com.microservice.erp.domain.models.NewAccountRequest;
 import com.microservice.erp.domain.models.NewTenantRequest;
 import com.microservice.erp.domain.repositories.IRoleRepository;
@@ -25,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class RegistrationService implements iRegistration {
@@ -113,4 +115,5 @@ public class RegistrationService implements iRegistration {
     public ResponseEntity<?> userByUserId(BigInteger userId) {
         return ResponseEntity.ok(repository.findByUserId(userId).get());
     }
+
 }

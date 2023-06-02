@@ -35,6 +35,8 @@ public class CreateExemptionService implements ICreateExemptionService {
     private final HeaderToken headerToken;
     private final DefermentExemptionValidation defermentExemptionValidation;
     Integer fileLength = 5;
+    private final MailToOperator mailToOperator;
+
 
     @Autowired
     @Qualifier("userProfileTemplate")
@@ -83,6 +85,8 @@ public class CreateExemptionService implements ICreateExemptionService {
 
         String userUrl = properties.getUserProfileById() + userId;
         ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
+        String fullName = Objects.requireNonNull(userResponse.getBody()).getFullName();
+        String cid = userResponse.getBody().getCid();
 
         String subject = "Acknowledged for Exemption";
 
@@ -95,10 +99,15 @@ public class CreateExemptionService implements ICreateExemptionService {
                 null,
                 emailMessage,
                 subject,
-                Objects.requireNonNull(userResponse.getBody()).getMobileNo());
+                Objects.requireNonNull(userResponse.getBody()).getMobileNo(),
+                null,
+                null);
 
         //todo Need to get from properties
         addToQueue.addToQueue("email", eventBus);
         addToQueue.addToQueue("sms", eventBus);
+
+        mailToOperator.sendMailToOperator(fullName,cid,properties,httpRequest,"deferment");
+
     }
 }

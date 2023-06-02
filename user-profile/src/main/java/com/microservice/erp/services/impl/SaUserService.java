@@ -9,12 +9,13 @@ import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISaUserService;
 import com.squareup.okhttp.OkHttpClient;
 import lombok.AllArgsConstructor;
+import org.json.JSONArray;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -33,13 +34,9 @@ import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -50,7 +47,8 @@ public class SaUserService implements ISaUserService {
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
 
-    @Autowired @Qualifier("authTemplate")
+    @Autowired
+    @Qualifier("authTemplate")
     RestTemplate restTemplate;
 
     @Override
@@ -160,13 +158,47 @@ public class SaUserService implements ISaUserService {
         }
     }
 
+    @Override
+    public ResponseEntity<?> getOperatorUsers(String authHeader) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        List<UserInfo> saUsers = iUserInfoRepository.findAllBySignupUserOrderByFullNameAsc('N');
+
+        List<UserProfileDto> userProfileDtos = new ArrayList<>();
+        saUsers.forEach(item -> {
+            UserProfileDto userProfileDto = new UserProfileDto();
+            String url = properties.getAuthServiceToGetUserById() + item.getId();
+            ResponseEntity<AuthUserDto> response = restTemplate.exchange(url, HttpMethod.GET, request, AuthUserDto.class);
+            if(new JSONArray("[" + Objects.requireNonNull(response.getBody()).getRoles().toString().substring(1, Objects.requireNonNull(response.getBody()).getRoles().toString().length() - 1).replaceAll("=", ":") + "]")
+                    .getJSONObject(0).getString("userType").equals("O")){
+                userProfileDto.setUserId(item.getId());
+                userProfileDto.setFullName(item.getFullName());
+                userProfileDto.setCid(item.getCid());
+                userProfileDto.setMobileNo(item.getMobileNo());
+                userProfileDto.setEmail(item.getEmail());
+                userProfileDto.setGender(item.getGender());
+                userProfileDto.setStatus(Objects.requireNonNull(response.getBody()).getStatus());
+                userProfileDto.setRoles(Objects.requireNonNull(response.getBody()).getRoles());
+                userProfileDtos.add(userProfileDto);
+            }
+
+        });
+
+        return ResponseEntity.ok(userProfileDtos);
+
+    }
+
+
     private ResponseEntity<?> addNewUser(UserDto userDto) throws JsonProcessingException {
         Optional<UserInfo> saUserEmail = iUserInfoRepository.findByEmail(userDto.getEmail());
         if (saUserEmail.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
         }
 
-        if(!userDto.getCid().isEmpty()){
+        if (!userDto.getCid().isEmpty()) {
             Optional<UserInfo> saUserCid = iUserInfoRepository.findByCid(userDto.getCid());
             if (saUserCid.isPresent()) {
                 return ResponseEntity.badRequest().body(new MessageResponse("CID " + userDto.getCid() + " already in use."));

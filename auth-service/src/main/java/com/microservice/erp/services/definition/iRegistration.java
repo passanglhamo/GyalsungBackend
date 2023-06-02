@@ -18,5 +18,4 @@ public interface iRegistration {
     Response createNewTenant(NewTenantRequest tenant);
 
     ResponseEntity<?> userByUserId(BigInteger userId);
-
 }

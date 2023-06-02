@@ -10,6 +10,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class MailSenderService {
 
@@ -18,7 +20,19 @@ public class MailSenderService {
 
         Gson gson = new Gson();
         MailSenderDto mailSenderDto = gson.fromJson(message, MailSenderDto.class);
-        MailSender.sendMail(mailSenderDto.getDestinationEmail(), null, null, mailSenderDto.getMessageBody(), mailSenderDto.getSubject());
+        if(!Objects.isNull(mailSenderDto.getDestinationEmail())){
+            MailSender.sendMail(mailSenderDto.getDestinationEmail(), null, null, mailSenderDto.getMessageBody(), mailSenderDto.getSubject());
+        }
+
+        if(!Objects.isNull(mailSenderDto.getDestinationEmails())){
+            mailSenderDto.getDestinationEmails().forEach(email->{
+                try {
+                    MailSender.sendMail(email, null, null, mailSenderDto.getMessageBody(), mailSenderDto.getSubject());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
 
     }
 
@@ -27,7 +41,20 @@ public class MailSenderService {
 
         Gson gson = new Gson();
         MailSenderDto mailSenderDto = gson.fromJson(message, MailSenderDto.class);
-        SmsSender.sendSms(mailSenderDto.getMobileNo(), mailSenderDto.getMessageBody());
+        if(!Objects.isNull(mailSenderDto.getMobileNo())){
+            SmsSender.sendSms(mailSenderDto.getMobileNo(), mailSenderDto.getMessageBody());
+        }
+
+
+        if(!Objects.isNull(mailSenderDto.getMobileNos())){
+            mailSenderDto.getMobileNos().forEach(mobileNo->{
+                try {
+                    SmsSender.sendSms(mobileNo, mailSenderDto.getMessageBody());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
 
     }
 

@@ -59,6 +59,8 @@ user.service.check.under.age: /userProfile/checkUnderAge?userId=
 user.service.profile.by.userId: /userProfile/getProfileInfo?userId=
 user.service.profile.by.userIds: /userProfile/getProfileInfoByIds?userIds=
 user.service.profile.by.partial.cid: /userProfile/getUserInformationByPartialCid?cid=
+user.service.operator: /saUser/getOperatorUsers
+
 
 
 #Training-Management-Service

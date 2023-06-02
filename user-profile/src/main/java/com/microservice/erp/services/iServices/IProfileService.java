@@ -58,4 +58,5 @@ public interface IProfileService {
     ResponseEntity<?> getProfileInfoByIds(List<BigInteger> userIds);
 
     ResponseEntity<?> getUserInformationByPartialCid(String cid);
+
 }

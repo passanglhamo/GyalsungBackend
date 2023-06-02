@@ -90,7 +90,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         EnrolmentInfo enrolmentInfoDb = iEnrolmentInfoRepository.findByUserId(new BigInteger(String.valueOf(enrolmentDto.getUserId())));
         //to check already enrolled or not
         if (enrolmentInfoDb != null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("You have already enrolled."));
+            return ResponseEntity.badRequest().body(new MessageResponse("You have already registered."));
         }
 
 
@@ -112,9 +112,6 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         //todo remove static code
         if (age < 18) {//todo: need to set Enum class for minimum age requirement
             enrolmentDto.setUnderAge('Y');
-            if(!parentConsentRepository.existsByUserId(userId)){
-                return ResponseEntity.badRequest().body(new MessageResponse("You are below 18 years. Please apply for parent consent."));
-            }
         } else {
             enrolmentDto.setUnderAge('N');
         }
@@ -130,11 +127,13 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         String message = "Dear " + fullName + ",  Thank you for registering to Gyalsung training.";
         String subject = "Gyalsung Registration";
 
-        EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo);
+        EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo,null,null);
 
         //todo get from properties
         addToQueue.addToQueue("email", eventBus);
         addToQueue.addToQueue("sms", eventBus);
+
+
 
         return ResponseEntity.ok(new MessageResponse("Enrolled successfully."));
     }
@@ -260,7 +259,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             String message = "Dear " + fullName + ", Your application for Gyaslung Registration has been canceled upon your request to withdraw for the year " + enrolmentInfo.getYear() + ".";
             String subject = "Registration Approval";
 
-            EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo);
+            EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo,null,null);
             addToQueue.addToQueue("email", eventBus);
             addToQueue.addToQueue("sms", eventBus);
         }
@@ -334,7 +333,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             String subject = "Registration Approval";
 
 
-            EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo);
+            EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo,null,null);
 
             addToQueue.addToQueue("email", eventBus);
             addToQueue.addToQueue("sms", eventBus);
@@ -458,7 +457,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             String subject = "Training Academy Change";
 
 
-            EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo);
+            EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo,null,null);
             // Todo get from properties
             addToQueue.addToQueue("email", eventBus);
             addToQueue.addToQueue("sms", eventBus);

@@ -135,7 +135,9 @@ public class UpdateExemptionService implements IUpdateExemptionService {
                 null,
                 emailMessage,
                 subject,
-                Objects.requireNonNull(userResponse.getBody()).getMobileNo());
+                Objects.requireNonNull(userResponse.getBody()).getMobileNo(),
+                null,
+                null);
 
         //todo need to get data from properties
         addToQueue.addToQueue("email", eventBus);

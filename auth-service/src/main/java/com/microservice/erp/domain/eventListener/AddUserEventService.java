@@ -45,7 +45,7 @@ public class AddUserEventService {
             userInfo.setPassword(encoder.encode(userEventInfo.getPassword()));
             userInfo.setSecrets(User.createRandomMapOfSecret());
             Set<Role> saRoles = new HashSet<>();
-            if (userEventInfo.getIsOpenUser().equals(UserType.STUDENT.value())) {
+            if (userEventInfo.getIsOpenUser().equals('Y')) {
                 Role saRoleDb = roleRepository.findByUserType(UserType.STUDENT.value());// to get student user role information
                 saRoles.add(saRoleDb);
                 userInfo.setRoles(saRoles);
@@ -65,7 +65,7 @@ public class AddUserEventService {
                 Set<Role> saRoles = new HashSet<>();
                 Set<Role> roleDb = user.getRoles();
                 user.getRoles().removeAll(roleDb);
-                if (userEventInfo.getIsOpenUser().equals(UserType.STUDENT.value())) {
+                if (userEventInfo.getIsOpenUser().equals('Y')) {
                     Role saRoleDb = roleRepository.findByUserType(UserType.STUDENT.value());// to get student user role information
                     saRoles.add(saRoleDb);
                     user.setRoles(saRoles);

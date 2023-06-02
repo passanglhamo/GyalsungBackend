@@ -15,4 +15,6 @@ public interface ISaUserService {
     ResponseEntity<?> saveUser(UserDto userDto) throws JsonProcessingException;
 
     ResponseEntity<?> getUsers(String authHeader);
+
+    ResponseEntity<?> getOperatorUsers(String authHeader);
 }

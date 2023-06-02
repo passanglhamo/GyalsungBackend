@@ -48,4 +48,7 @@ public class ApplicationProperties {
     @Value("${training.management.trainingAcademyCapacities}")
     private String allTrainingCapacities;
 
+    @Value("${user.service.operator}")
+    private String operatorUsers;
+
 }

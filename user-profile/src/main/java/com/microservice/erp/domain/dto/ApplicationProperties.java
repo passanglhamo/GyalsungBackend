@@ -21,4 +21,7 @@ public class ApplicationProperties {
     @Value("${training.management.dzongkhag.by.dzongkhayId}")
     private String trainingManDzongkhagByDzongkhagId;
 
+    @Value("${auth.service.user.by.userIds}")
+    private String authServiceToGetUserByIds;
+
 }
