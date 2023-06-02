@@ -88,7 +88,6 @@ public class StartupConfig implements CommandLineRunner {
         //
 //        SaRole role = new SaRole();
 //        role.setRoleName(userRole);
-//        role.setIsOpenUser('y');
 //        user.addRoles(role);
         //
 //        SaStatement statement = new SaStatement();

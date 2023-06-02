@@ -18,7 +18,7 @@ public class PermissionListDto {
     private Character save_allowed;
     private String screen_name;
     private String screen_url;
-    private Character isOpenUser;
+    private Character userType;
     //endregion
 
 }

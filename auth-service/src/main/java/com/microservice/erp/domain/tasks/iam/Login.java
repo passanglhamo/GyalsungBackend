@@ -36,8 +36,7 @@ public class Login extends TokenizerTask {
     private IRoleRepository iRoleRepository;
 
 
-
-    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,Boolean isNDILogin,IRoleRepository iRoleRepository, Property... properties) {
+    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService, Boolean isNDILogin, IRoleRepository iRoleRepository, Property... properties) {
         super(properties);
         this.repository = repository;
         this.encoder = encoder;
@@ -46,12 +45,12 @@ public class Login extends TokenizerTask {
         this.iRoleRepository = iRoleRepository;
     }
 
-    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,Boolean isNDILogin,IRoleRepository iRoleRepository, String username) {
-        this(repository, encoder, roleWiseAccessPermissionService,isNDILogin,iRoleRepository, new Property("username", username));
+    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService, Boolean isNDILogin, IRoleRepository iRoleRepository, String username) {
+        this(repository, encoder, roleWiseAccessPermissionService, isNDILogin, iRoleRepository, new Property("username", username));
     }
 
-    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,Boolean isNDILogin,IRoleRepository iRoleRepository, LoginRequest request) {
-        this(repository, encoder, roleWiseAccessPermissionService,isNDILogin,iRoleRepository, request.getRow().getProperties().toArray(new Property[0]));
+    public Login(UserRepository repository, PasswordEncoder encoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService, Boolean isNDILogin, IRoleRepository iRoleRepository, LoginRequest request) {
+        this(repository, encoder, roleWiseAccessPermissionService, isNDILogin, iRoleRepository, request.getRow().getProperties().toArray(new Property[0]));
     }
 
     @Override
@@ -99,7 +98,7 @@ public class Login extends TokenizerTask {
         }
         if (exist.isPresent()) {
             //PasswordEncoder::matches(RawPassword, EncodedPassword) == will return true/false
-            if(!isNDILogin){
+            if (!isNDILogin) {
                 if (!encoder.matches(request.getPassword(), exist.get().getPassword()))
                     return new Response().setStatus(401).setMessage("Password didn't matched.");
             }
