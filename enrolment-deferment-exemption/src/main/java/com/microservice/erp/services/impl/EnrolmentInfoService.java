@@ -9,9 +9,9 @@ import com.microservice.erp.domain.entities.RegistrationDateInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.mapper.EnrolmentMapper;
-import com.microservice.erp.domain.repositories.IDzongkhagTrainingAcaMappingRepository;
 import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
+import com.microservice.erp.domain.repositories.ParentConsentRepository;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,10 @@ import org.springframework.web.client.RestTemplate;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +46,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     private final DefermentExemptionValidation defermentExemptionValidation;
     private final UserInformationService userInformationService;
     private final AllocationAlgorithm allocationAlgorithm;
-    private final IDzongkhagTrainingAcaMappingRepository dzongkhagTrainingAcaMappingRepository;
+    private final ParentConsentRepository parentConsentRepository;
 
     @Autowired
     @Qualifier("userProfileTemplate")
@@ -109,6 +112,9 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         //todo remove static code
         if (age < 18) {//todo: need to set Enum class for minimum age requirement
             enrolmentDto.setUnderAge('Y');
+            if(!parentConsentRepository.existsByUserId(userId)){
+                return ResponseEntity.badRequest().body(new MessageResponse("You are below 18 years. Please apply for parent consent."));
+            }
         } else {
             enrolmentDto.setUnderAge('N');
         }
@@ -143,7 +149,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 //        if(!courseId.equals(BigInteger.ZERO)){
 //            enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndCoursePreference(year, applicationStatus, courseId, coursePreferenceNumber);
 //        }else{
-            enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndStatus(year, applicationStatus);
+        enrolmentListDtos = enrolmentDao.getEnrolmentListByYearAndStatus(year, applicationStatus);
 //        }
 
         if (enrolmentListDtos == null) {
@@ -163,7 +169,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
             userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsVal, authHeader);
 
         }
-        if(!Objects.isNull(gender)){
+        if (!Objects.isNull(gender)) {
             userProfileDtos = userProfileDtos
                     .stream()
                     .filter(dto -> dto.getGender().equals(gender))
@@ -171,7 +177,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         }
 
 
-        userProfileDtos.forEach(item->{
+        userProfileDtos.forEach(item -> {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
@@ -182,7 +188,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
                     .findAny()
                     .orElse(null);
             EnrolmentListDto enrolmentListDto = new EnrolmentListDto();
-            if(!Objects.isNull(enrolmentListInput)){
+            if (!Objects.isNull(enrolmentListInput)) {
                 enrolmentListDto.setUser_id(enrolmentListInput.getUser_id());
                 enrolmentListDto.setFull_name(item.getFullName());
                 enrolmentListDto.setCid(item.getCid());
@@ -263,7 +269,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
     @Override
     public List<EnrolmentInfo> getEnrolmentListByYearAndAcademy(String authHeader, String year, Integer trainingAcademyId) {
-        return iEnrolmentInfoRepository.findByYearAndTrainingAcademyId(year,trainingAcademyId);
+        return iEnrolmentInfoRepository.findByYearAndTrainingAcademyId(year, trainingAcademyId);
     }
 
     @Override
@@ -289,9 +295,9 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
                 String urlAcaTraining = properties.getAllTrainingAcaCapById() + command.getYear() + "&academyId=" + command.getTrainingAcademyId();
                 ResponseEntity<TrainingAcademyCapacityDto> responseAcaTraining = restTemplate.exchange(urlAcaTraining, HttpMethod.GET, request, TrainingAcademyCapacityDto.class);
                 if ((((item.getGender().equals('M') ? Objects.requireNonNull(responseAcaTraining.getBody()).getMaleCapacityAmount() :
-                        Objects.requireNonNull(responseAcaTraining.getBody()).getFemaleCapacityAmount())-
+                        Objects.requireNonNull(responseAcaTraining.getBody()).getFemaleCapacityAmount()) -
                         (iEnrolmentInfoRepository.getCountByStatusAndGenderAndYearAndTrainingAcademyId(ApprovalStatus.APPROVED.value(),
-                                item.getGender(), command.getYear(), command.getTrainingAcademyId())))) > 0){
+                                item.getGender(), command.getYear(), command.getTrainingAcademyId())))) > 0) {
                     item.setStatus(ApprovalStatus.APPROVED.value());
                     item.setTrainingAcademyId(command.getTrainingAcademyId());
                     //item.setAllocatedCourseId(command.getAllocatedCourseId());
@@ -413,9 +419,9 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
         //to save update enrolment info
         iEnrolmentInfoRepository.findAllById(command.getEnrolmentIds()).forEach(item -> {
             if ((((item.getGender().equals('M') ? Objects.requireNonNull(responseAcaTraining.getBody()).getMaleCapacityAmount() :
-                    Objects.requireNonNull(responseAcaTraining.getBody()).getFemaleCapacityAmount())-
+                    Objects.requireNonNull(responseAcaTraining.getBody()).getFemaleCapacityAmount()) -
                     (iEnrolmentInfoRepository.getCountByStatusAndGenderAndYearAndTrainingAcademyId(ApprovalStatus.APPROVED.value(),
-                            item.getGender(), command.getYear(), command.getTrainingAcademyId())))) > 0){
+                            item.getGender(), command.getYear(), command.getTrainingAcademyId())))) > 0) {
                 item.setStatus(ApprovalStatus.APPROVED.value());
                 item.setTrainingAcademyId(command.getTrainingAcademyId());
                 //item.setAllocatedCourseId(command.getAllocatedCourseId());
@@ -468,22 +474,20 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
 
 
     @Override
-    public ResponseEntity<?> allocateUserToTrainingAca(String authHeader,AllocationCommand allocationCommand) throws IOException {
+    public ResponseEntity<?> allocateUserToTrainingAca(String authHeader, AllocationCommand allocationCommand) throws IOException {
 
 
-        if(Objects.isNull(allocationCommand.getGender())||allocationCommand.getGender().equals('M')){
-            allocationAlgorithm.allocationAlgorithm(authHeader,allocationCommand.getYear(),'M');
+        if (Objects.isNull(allocationCommand.getGender()) || allocationCommand.getGender().equals('M')) {
+            allocationAlgorithm.allocationAlgorithm(authHeader, allocationCommand.getYear(), 'M');
 
         }
-        if(Objects.isNull(allocationCommand.getGender())||allocationCommand.getGender().equals('F')){
-            allocationAlgorithm.allocationAlgorithm(authHeader,allocationCommand.getYear(),'F');
+        if (Objects.isNull(allocationCommand.getGender()) || allocationCommand.getGender().equals('F')) {
+            allocationAlgorithm.allocationAlgorithm(authHeader, allocationCommand.getYear(), 'F');
 
         }
 
         return ResponseEntity.ok("Allocated successfully");
     }
-
-
 
 
 }

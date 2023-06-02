@@ -18,8 +18,8 @@ public class Role extends Auditable<BigInteger, Long> {
     @Column(name = "role_name", columnDefinition = "varchar(255)")
     private String roleName;
 
-    @Column(name = "is_open_user", columnDefinition = "char(1)")
-    private Character isOpenUser;
+    @Column(name = "user_type", columnDefinition = "char(1)")
+    private Character userType;
 
 
     @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY, mappedBy = "roles")
@@ -38,12 +38,12 @@ public class Role extends Auditable<BigInteger, Long> {
         this.roleName = roleName;
     }
 
-    public Character getIsOpenUser() {
-        return isOpenUser;
+    public Character getUserType() {
+        return userType;
     }
 
-    public void setIsOpenUser(Character isOpenUser) {
-        this.isOpenUser = isOpenUser;
+    public void setUserType(Character userType) {
+        this.userType = userType;
     }
 
     public Set<User> getUsers() {

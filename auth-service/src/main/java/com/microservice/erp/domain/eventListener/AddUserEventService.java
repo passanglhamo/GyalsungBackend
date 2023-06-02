@@ -3,6 +3,7 @@ package com.microservice.erp.domain.eventListener;
 import com.google.gson.Gson;
 import com.microservice.erp.domain.entities.Role;
 import com.microservice.erp.domain.entities.User;
+import com.microservice.erp.domain.helper.UserType;
 import com.microservice.erp.domain.repositories.IRoleRepository;
 import com.microservice.erp.domain.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +45,8 @@ public class AddUserEventService {
             userInfo.setPassword(encoder.encode(userEventInfo.getPassword()));
             userInfo.setSecrets(User.createRandomMapOfSecret());
             Set<Role> saRoles = new HashSet<>();
-            if (userEventInfo.getIsOpenUser().equals('Y')) {
-                Role saRoleDb = roleRepository.findByIsOpenUser('Y');// to get student user role information
+            if (userEventInfo.getIsOpenUser().equals(UserType.STUDENT.value())) {
+                Role saRoleDb = roleRepository.findByUserType(UserType.STUDENT.value());// to get student user role information
                 saRoles.add(saRoleDb);
                 userInfo.setRoles(saRoles);
             } else {
@@ -64,8 +65,8 @@ public class AddUserEventService {
                 Set<Role> saRoles = new HashSet<>();
                 Set<Role> roleDb = user.getRoles();
                 user.getRoles().removeAll(roleDb);
-                if (userEventInfo.getIsOpenUser().equals('Y')) {
-                    Role saRoleDb = roleRepository.findByIsOpenUser('Y');// to get student user role information
+                if (userEventInfo.getIsOpenUser().equals(UserType.STUDENT.value())) {
+                    Role saRoleDb = roleRepository.findByUserType(UserType.STUDENT.value());// to get student user role information
                     saRoles.add(saRoleDb);
                     user.setRoles(saRoles);
                 } else {

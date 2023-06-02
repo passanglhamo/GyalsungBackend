@@ -249,7 +249,7 @@ public class StartupConfig implements CommandLineRunner {
         Role role = new Role();
         if (roleRepository.findAll().size() == 0) {
             role.setRoleName(userRole);
-            role.setIsOpenUser('N');
+            role.setUserType(null);
             roleRepository.save(role);
         }
 

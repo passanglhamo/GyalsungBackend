@@ -11,7 +11,7 @@ public class RoleMapper {
         return RoleDto.withId(
                 saRole.getId(),
                 saRole.getRoleName(),
-                saRole.getIsOpenUser()
+                saRole.getUserType()
         );
     }
 }

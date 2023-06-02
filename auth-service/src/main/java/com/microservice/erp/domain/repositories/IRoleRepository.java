@@ -13,12 +13,12 @@ public interface IRoleRepository extends JpaRepository<Role, BigInteger> {
 
     List<Role> findAllByOrderByRoleNameAsc();
 
-    Role findByIsOpenUser(Character isOpenUser);
+    Role findByUserType(Character userType);
 
     Optional<Role> findByRoleName(String roleName);
 
-    boolean existsByIsOpenUser(Character isOpenUser);
+    boolean existsByUserType(Character userType);
 
-    boolean existsByIsOpenUserAndIdNot(Character isOpenUser, BigInteger id);
+    boolean existsByUserTypeAndIdNot(Character userType, BigInteger id);
 }
 
