@@ -10,13 +10,13 @@ import java.math.BigInteger;
 public class ChangeEmailVerificationCode {
     //region private variables
     @Id
-    @Column(name = "userId", columnDefinition = "bigint")
+    @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
     @Column(name = "email", columnDefinition = "varchar(255)")
     private String email;
 
-    @Column(name = "verificationCode", columnDefinition = "varchar(6)")
+    @Column(name = "verification_code", columnDefinition = "varchar(6)")
     private String verificationCode;
     //endregion
 

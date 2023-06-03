@@ -123,6 +123,10 @@ public class ProfileService implements IProfileService {
     }
 
     public ResponseEntity<?> receiveOtp(UserProfileDto userProfileDto) throws JsonProcessingException {
+        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByMobileNo(userProfileDto.getMobileNo());
+        if (userInfoDB.isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
+        }
         Random random = new Random();
         int number = random.nextInt(9999);//max upto 9999
         String otp = String.format("%04d", number);
@@ -169,6 +173,7 @@ public class ProfileService implements IProfileService {
 
         userInfoObject.setMobileNo(userProfileDto.getMobileNo());
         iUserInfoRepository.save(userInfoDb);
+         iChangeMobileNoSmsOtpRepository.deleteById(userInfoDb.getId());
         return ResponseEntity.ok(new MessageResponse("Mobile number changed successfully."));
     }
 
@@ -189,6 +194,9 @@ public class ProfileService implements IProfileService {
         }
         userInfoDb.setEmail(userProfileDto.getEmail());
         iUserInfoRepository.save(userInfoDb);
+
+        iChangeEmailVerificationCodeRepository.deleteById(userInfoDb.getId());
+
         //add to queue to update email in auth microservices
         EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, null, userInfo.getEmail()
                 , null, null, null, null);
@@ -227,8 +235,11 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto) throws Exception {
+        Optional<UserInfo> userInfoDb = iUserInfoRepository.findByEmail(userProfileDto.getEmail());
+        if (userInfoDb.isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
+        }
         String verificationCode = generateVerificationCode(6);
-
         String subject = "Email verification";
         String message = "Dear, The verification code to change email for Gyalsung system is " + verificationCode;
         EventBus eventBusEmail = EventBus.withId(userProfileDto.getEmail(), null, null, message, subject, null);
