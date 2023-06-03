@@ -22,9 +22,20 @@ public interface IDefermentInfoRepository extends JpaRepository<DefermentInfo, B
  DefermentInfo getDefermentByUserId(BigInteger userId);
 
  @Query(value = "select d.* from ede_deferment_info d \n" +
-         "where d.user_id =:userId AND (d.status !=:cancelStatus) " +
+         "where d.user_id =:userId AND (d.status !=:rejectStatus) " +
          "order by deferment_id DESC LIMIT 1", nativeQuery = true)
- DefermentInfo getDefermentByUserIdNotCancelled(BigInteger userId,Character cancelStatus);
+ DefermentInfo getDefermentByUserIdNotRejected(BigInteger userId,Character rejectStatus);
 
     List<DefermentInfo> findByDefermentYearAndStatus(String year, Character status);
+
+    List<DefermentInfo> findAllByDefermentYearAndUserIdAndStatusIn(String defermentYear, BigInteger userId, List<Character> status);
+
+    List<DefermentInfo> findAllByUserIdOrderByIdDesc(BigInteger userId);
+
+    List<DefermentInfo> findAllByStatusAndUserId(Character status, BigInteger userId);
+
+    DefermentInfo findByDefermentYearAndStatusAndUserId(String year, Character status,BigInteger userId);
+
+
+
 }

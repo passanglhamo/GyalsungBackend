@@ -56,7 +56,7 @@ public class CreateDefermentService implements ICreateDefermentService {
             }
         }
         StatusResponse responseMessage = (StatusResponse) defermentExemptionValidation
-                .getDefermentAndExemptValidation(command.getUserId()).getBody();
+                .getDefermentAndExemptValidation(command.getUserId(),'D',command.getDefermentYear()).getBody();
         if (!Objects.isNull(responseMessage)) {
             if (responseMessage.getStatus().equals(ApprovalStatus.APPROVED.value())) {
                 return new ResponseEntity<>(new MessageResponse(responseMessage.getMessage()), HttpStatus.ALREADY_REPORTED);

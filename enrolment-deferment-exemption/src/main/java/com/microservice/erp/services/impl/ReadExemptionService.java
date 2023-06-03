@@ -3,6 +3,7 @@ package com.microservice.erp.services.impl;
 import com.microservice.erp.domain.dto.DefermentDto;
 import com.microservice.erp.domain.dto.ExemptionDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
+import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.mapper.ExemptionMapper;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
@@ -118,6 +119,12 @@ public class ReadExemptionService implements IReadExemptionService {
 
     @Override
     public ResponseEntity<?> getExemptionValidation(BigInteger userId) {
-        return defermentExemptionValidation.getDefermentAndExemptValidation(userId);
+        return defermentExemptionValidation.getDefermentAndExemptValidation(userId,'E',"");
+    }
+
+    @Override
+    public ResponseEntity<?> getExemptionListByUserId(BigInteger userId) {
+        List<ExemptionInfo> exemptionInfos = repository.findAllByUserIdOrderByIdDesc(userId);
+        return ResponseEntity.ok(exemptionInfos);
     }
 }

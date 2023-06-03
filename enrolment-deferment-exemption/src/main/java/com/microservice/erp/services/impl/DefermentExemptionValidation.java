@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -23,48 +24,59 @@ public class DefermentExemptionValidation {
     private final IExemptionInfoRepository exemptionInfoRepository;
     private final IDefermentInfoRepository defermentInfoRepository;
 
-    public ResponseEntity<?> getDefermentAndExemptValidation(BigInteger userId) {
+    public ResponseEntity<?> getDefermentAndExemptValidation(BigInteger userId, Character deferEx,
+                                                             String year) {
         StatusResponse responseMessage = new StatusResponse();
-        ExemptionInfo exemptionInfo = exemptionInfoRepository.getExemptionByUserIdNotCancelled(userId, ApprovalStatus.CANCELED.value());
-        if (!Objects.isNull(exemptionInfo)) {
-            responseMessage.setStatus(ApprovalStatus.APPROVED.value());
-            if (exemptionInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
-                responseMessage.setMessage("There is already one approved exemption application. In order to add a new application, please ask for pending exemption to be canceled.");
-                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-            }
-            if (exemptionInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                responseMessage.setMessage("There is already one pending exemption application. In order to add a new application, please ask for pending exemption to be canceled.");
-                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-            }
+        if(deferEx.equals('E')){
+            List<ExemptionInfo> exemptionInfo = exemptionInfoRepository.findAllByStatusAndUserId(ApprovalStatus.PENDING.value(),userId);
+            if (!Objects.isNull(exemptionInfo)) {
+                if(exemptionInfo.size()!=0){
+                    responseMessage.setStatus(ApprovalStatus.APPROVED.value());
+                    responseMessage.setMessage("There is already one pending exemption application. In order to add a new application, please ask for pending exemption to be rejected.");
+                    return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
+                }
 
+            }
+            List<ExemptionInfo> exemptionInfoApprove = exemptionInfoRepository.findAllByStatusAndUserId(ApprovalStatus.APPROVED.value(),userId);
+            if (!Objects.isNull(exemptionInfoApprove)) {
+                if(exemptionInfo.size()!=0){
+                    responseMessage.setStatus(ApprovalStatus.APPROVED.value());
+                    responseMessage.setMessage("There is already one approved exemption application. In order to add a new application, please ask for pending exemption to be rejected.");
+                    return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
+                }
+
+            }
         }
-        DefermentInfo defermentInfo = defermentInfoRepository.getDefermentByUserIdNotCancelled(userId, ApprovalStatus.CANCELED.value());
-        if (!Objects.isNull(defermentInfo)) {
-            responseMessage.setStatus(ApprovalStatus.APPROVED.value());
-            if (defermentInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                responseMessage.setMessage("There is already one pending deferred application. In order to add a new application, please ask for pending deferment to be canceled.");
-                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
+        if(deferEx.equals('D')){
+            List<DefermentInfo> defermentInfo = defermentInfoRepository.findAllByStatusAndUserId(ApprovalStatus.PENDING.value(), userId);
+            if (!Objects.isNull(defermentInfo)) {
+                if(defermentInfo.size()!=0){
+                    responseMessage.setStatus(ApprovalStatus.APPROVED.value());
+                    responseMessage.setMessage("There is already one pending deferred application. In order to add a new application, please ask for pending deferment to be rejected.");
+                    return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
+                }
             }
-            if (defermentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
-                responseMessage.setMessage("There is already one approved deferred application. In order to add a new application, please ask for pending deferment to be canceled.");
-                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
+            DefermentInfo defermentInfoApprovalInYear= defermentInfoRepository.findByDefermentYearAndStatusAndUserId(year,ApprovalStatus.PENDING.value(), userId);
+            if (!Objects.isNull(defermentInfoApprovalInYear)) {
+                    responseMessage.setStatus(ApprovalStatus.APPROVED.value());
+                    responseMessage.setMessage("There is already one approved deferred application for selected year. In order to add a new application, please ask for approved deferment to be rejected.");
+                    return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
-
-
         }
-        EnrolmentInfo enrolmentInfo = enrolmentInfoRepository.findByUserId(userId);
-        if (!Objects.isNull(enrolmentInfo)) {
-            responseMessage.setStatus(ApprovalStatus.APPROVED.value());
-            if (enrolmentInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
-                responseMessage.setMessage("There is already one pending enrollment application. In order to add a new application, please ask for pending enrollment to be canceled.");
-                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-            } else if (enrolmentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
-                responseMessage.setMessage("There is already one pending enrollment application. In order to add a new application, please ask for pending enrollment to be canceled.");
-                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
-            }
 
-
-        }
+//        EnrolmentInfo enrolmentInfo = enrolmentInfoRepository.findByUserId(userId);
+//        if (!Objects.isNull(enrolmentInfo)) {
+//            responseMessage.setStatus(ApprovalStatus.APPROVED.value());
+//            if (enrolmentInfo.getStatus().equals(ApprovalStatus.PENDING.value())) {
+//                responseMessage.setMessage("There is already one pending enrollment application. In order to add a new application, please ask for pending enrollment to be canceled.");
+//                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
+//            } else if (enrolmentInfo.getStatus().equals(ApprovalStatus.APPROVED.value())) {
+//                responseMessage.setMessage("There is already one pending enrollment application. In order to add a new application, please ask for pending enrollment to be canceled.");
+//                return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
+//            }
+//
+//
+//        }
 
         responseMessage.setStatus('I');
         responseMessage.setMessage("No Validation");

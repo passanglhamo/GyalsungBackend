@@ -468,7 +468,7 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     @Override
     @Transactional()
     public ResponseEntity<?> getEnrolmentValidation(BigInteger userId) {
-        return defermentExemptionValidation.getDefermentAndExemptValidation(userId);
+        return defermentExemptionValidation.getDefermentAndExemptValidation(userId,'R',"");
     }
 
 

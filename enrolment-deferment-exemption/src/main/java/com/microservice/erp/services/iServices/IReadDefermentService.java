@@ -14,4 +14,8 @@ public interface IReadDefermentService {
     ResponseEntity<?> getDefermentByUserId(BigInteger userId);
 
     ResponseEntity<?> getDefermentValidation(BigInteger userId);
+
+    List<DefermentDto> getApprovedListByDefermentYearAndUserId(String authHeader, String defermentYear, BigInteger userId);
+
+    ResponseEntity<?> getDefermentListByUserId(BigInteger userId);
 }

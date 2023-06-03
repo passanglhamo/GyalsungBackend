@@ -14,4 +14,6 @@ public interface IReadExemptionService {
     ResponseEntity<?> getExemptionByUserId(BigInteger userId);
 
     ResponseEntity<?> getExemptionValidation(BigInteger userId);
+
+    ResponseEntity<?> getExemptionListByUserId(BigInteger userId);
 }

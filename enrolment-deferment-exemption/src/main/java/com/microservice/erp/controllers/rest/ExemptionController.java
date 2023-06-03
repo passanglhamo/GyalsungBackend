@@ -81,4 +81,9 @@ public class ExemptionController {
     public ResponseEntity<?> getExemptionValidation(@RequestParam("userId") BigInteger userId) {
         return readService.getExemptionValidation(userId);
     }
+
+    @GetMapping(value = "/getExemptionListByUserId")
+    public ResponseEntity<?> getExemptionListByUserId(@RequestParam("userId") BigInteger userId) {
+        return readService.getExemptionListByUserId(userId);
+    }
 }

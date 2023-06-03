@@ -70,7 +70,7 @@ public class DefermentController {
             , @RequestParam("status") Character status
             , @RequestParam("gender") Character gender
             , @RequestParam("cid") String cid) {
-        return readService.getDefermentListByDefermentYearReasonStatus(authHeader, defermentYear, reasonId, status, gender,cid);
+        return readService.getDefermentListByDefermentYearReasonStatus(authHeader, defermentYear, reasonId, status, gender, cid);
     }
 
     @GetMapping(value = "/getDefermentByUserId")
@@ -81,6 +81,18 @@ public class DefermentController {
     @GetMapping(value = "/getDefermentValidation")
     public ResponseEntity<?> getDefermentValidation(@RequestParam("userId") BigInteger userId) {
         return readService.getDefermentValidation(userId);
+    }
+
+    @GetMapping(value = "/getApprovedListByDefermentYearAndUserId")
+    public List<DefermentDto> getApprovedListByDefermentYearAndUserId(@RequestHeader("Authorization") String authHeader,
+                                                                          @RequestParam("defermentYear") String defermentYear
+            , @RequestParam("userId") BigInteger userId) {
+        return readService.getApprovedListByDefermentYearAndUserId(authHeader, defermentYear, userId);
+    }
+
+    @GetMapping(value = "/getDefermentListByUserId")
+    public ResponseEntity<?> getDefermentListByUserId(@RequestParam("userId") BigInteger userId) {
+        return readService.getDefermentListByUserId(userId);
     }
 
 }

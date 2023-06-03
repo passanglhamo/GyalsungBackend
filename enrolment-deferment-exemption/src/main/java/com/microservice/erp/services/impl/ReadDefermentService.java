@@ -4,6 +4,7 @@ import com.microservice.erp.domain.dto.DefermentDto;
 import com.microservice.erp.domain.dto.EnrolmentListDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.DefermentInfo;
+import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.mapper.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.IReadDefermentService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -121,7 +123,24 @@ public class ReadDefermentService implements IReadDefermentService {
     @Override
     public ResponseEntity<?> getDefermentValidation(BigInteger userId) {
         return defermentExemptionValidation
-                .getDefermentAndExemptValidation(userId);
+                .getDefermentAndExemptValidation(userId,'D',"");
+    }
+
+    @Override
+    public List<DefermentDto> getApprovedListByDefermentYearAndUserId(String authHeader, String defermentYear, BigInteger userId) {
+        List<Character> statuses = Arrays.asList(ApprovalStatus.APPROVED.value(),
+                ApprovalStatus.PENDING.value());
+
+        return repository.findAllByDefermentYearAndUserIdAndStatusIn(defermentYear, userId, statuses)
+                .stream()
+                .map(mapper::mapToDomain)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public ResponseEntity<?> getDefermentListByUserId(BigInteger userId) {
+        List<DefermentInfo> defermentInfo = repository.findAllByUserIdOrderByIdDesc(userId);
+        return ResponseEntity.ok(defermentInfo);
     }
 
 }
