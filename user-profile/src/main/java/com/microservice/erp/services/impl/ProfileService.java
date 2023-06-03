@@ -291,7 +291,7 @@ public class ProfileService implements IProfileService {
         userInfo.setSocialMediaLink2(userProfileDto.getSocialMediaLink2());
         userInfo.setSocialMediaLink3(userProfileDto.getSocialMediaLink3());
         iUserInfoRepository.save(userInfo);
-        return ResponseEntity.ok(new MessageResponse("Guardian information updated successfully."));
+        return ResponseEntity.ok(new MessageResponse("Social media link updated successfully."));
 
     }
 
