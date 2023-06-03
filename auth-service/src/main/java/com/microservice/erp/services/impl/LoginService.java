@@ -33,8 +33,7 @@ public class LoginService implements iLogin {
     private IRoleRepository iRoleRepository;
 
 
-
-    public LoginService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService,IRoleRepository iRoleRepository) {
+    public LoginService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleWiseAccessPermissionService roleWiseAccessPermissionService, IRoleRepository iRoleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleWiseAccessPermissionService = roleWiseAccessPermissionService;
@@ -45,13 +44,13 @@ public class LoginService implements iLogin {
     private long tokenTtl;
 
     @Override
-    public ResponseEntity<?> doLogin(LoginRequest request,Boolean isNDILogin) throws IOException {
+    public ResponseEntity<?> doLogin(LoginRequest request, Boolean isNDILogin) throws IOException {
         Response response = new Response().setMessage("Not Implemented").setStatus(HttpStatus.NOT_IMPLEMENTED.value());
         //
         request.setTokenTtl(tokenTtl);
         TaskStack loginStack = TaskStack.createSync(true);
         loginStack.push(new CheckUserExist(userRepository, request.getUsername()));
-        loginStack.push(new Login(userRepository, passwordEncoder, roleWiseAccessPermissionService, isNDILogin,iRoleRepository,request));
+        loginStack.push(new Login(userRepository, passwordEncoder, roleWiseAccessPermissionService, isNDILogin, iRoleRepository, request));
         loginStack.commit(true, (message, state) -> {
             LOG.info("Login Status: " + state.name());
             if (message != null)

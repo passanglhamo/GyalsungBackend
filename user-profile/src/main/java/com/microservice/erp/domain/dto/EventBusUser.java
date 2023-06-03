@@ -21,7 +21,7 @@ public class EventBusUser {
     String email;
     String username;
     String password;
-    Character isOpenUser;
+    Character userType;
     List<BigInteger> roles;
 
     public static EventBusUser withId(
@@ -31,7 +31,7 @@ public class EventBusUser {
             String email,
             String username,
             String password,
-            Character isOpenUser,
+            Character userType,
             List<BigInteger> roles) {
         return new EventBusUser(
                 userId,
@@ -40,7 +40,7 @@ public class EventBusUser {
                 email,
                 username,
                 password,
-                isOpenUser,
+                userType,
                 roles);
     }
 }

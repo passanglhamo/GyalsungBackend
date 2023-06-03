@@ -8,7 +8,6 @@ import com.microservice.erp.domain.repositories.IAgeCriteriaRepository;
 import com.microservice.erp.domain.repositories.ISignupEmailVerificationCodeRepository;
 import com.microservice.erp.domain.repositories.ISignupSmsOtpRepository;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
-import com.microservice.erp.services.iServices.IAgeCriteriaService;
 import com.microservice.erp.services.iServices.ISignupService;
 import com.squareup.okhttp.OkHttpClient;
 import org.json.JSONArray;
@@ -34,7 +33,6 @@ import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -67,7 +65,7 @@ public class SignupService implements ISignupService {
 
     @Override
     public ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException {
-        //todo: need to check if user is already exist or not by cid
+        // to check if user is already exist or not by cid
         Optional<UserInfo> userInfo = iUserInfoRepository.findByCid(cid);
         if (userInfo.isPresent()) {
             return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + cid + " already exist in the system."));
@@ -83,7 +81,7 @@ public class SignupService implements ISignupService {
         Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(dob);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(birthDate);
-        Calendar now = Calendar.getInstance();  
+        Calendar now = Calendar.getInstance();
         int age = now.get(Calendar.YEAR) - calendar.get(Calendar.YEAR);
         if (age < minimumAge || age > maximumAge) {
             return ResponseEntity.badRequest().body(new MessageResponse("You do not meet the age criteria."));
@@ -94,6 +92,10 @@ public class SignupService implements ISignupService {
 
     @Override
     public ResponseEntity<?> receiveOtp(NotificationRequestDto notificationRequestDto) throws JsonProcessingException {
+        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByMobileNo(notificationRequestDto.getMobileNo());
+        if (userInfoDB.isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
+        }
         Random random = new Random();
         int number = random.nextInt(9999);//max upto 9999
         String otp = String.format("%04d", number);
@@ -119,7 +121,7 @@ public class SignupService implements ISignupService {
         if (Objects.equals(signupSmsOtp.getOtp(), notificationRequestDto.getOtp())) {
             return ResponseEntity.ok("");
         } else {
-            return ResponseEntity.badRequest().body(new MessageResponse("OTP didn't match."));
+            return ResponseEntity.badRequest().body(new MessageResponse("The OTP didn't match."));
         }
     }
 
@@ -127,7 +129,7 @@ public class SignupService implements ISignupService {
     public ResponseEntity<?> receiveEmailVcode(NotificationRequestDto notificationRequestDto) throws Exception {
         Optional<UserInfo> userInfoDB = iUserInfoRepository.findByEmail(notificationRequestDto.getEmail());
         if (userInfoDB.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use. Please try different one."));
+            return ResponseEntity.badRequest().body(new MessageResponse("The email address you have entered is already in use. Please try different one."));
         }
         String verificationCode = generateVerificationCode(6);
 
@@ -156,7 +158,7 @@ public class SignupService implements ISignupService {
         if (Objects.equals(signupEmailVerificationCode.getVerificationCode(), notificationRequestDto.getVerificationCode())) {
             return ResponseEntity.ok("");
         } else {
-            return ResponseEntity.badRequest().body(new MessageResponse("Email verification code didn't match."));
+            return ResponseEntity.badRequest().body(new MessageResponse("The email verification code didn't match."));
         }
     }
 
@@ -218,26 +220,29 @@ public class SignupService implements ISignupService {
         if (signupRequestDto.getPresentCountry().equals("Bhutan")) {
             ResponseEntity<?> responseEntity = verifyOtp(notificationRequestDto);
             if (responseEntity.getStatusCode().value() != HttpStatus.OK.value()) {
-                return ResponseEntity.badRequest().body(new MessageResponse("OTP didn't match."));
+                return ResponseEntity.badRequest().body(new MessageResponse("The OTP didn't match."));
             }
         }
-
+        Optional<UserInfo> userInfoMobileNo = iUserInfoRepository.findByMobileNo(notificationRequestDto.getMobileNo());
+        if (userInfoMobileNo.isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
+        }
         //Email verification code received from dto must be equal to backend
         notificationRequestDto.setEmail(signupRequestDto.getEmail());
         notificationRequestDto.setVerificationCode(signupRequestDto.getVerificationCode());
         ResponseEntity<?> responseEntityEmail = verifyEmailVcode(notificationRequestDto);
         if (responseEntityEmail.getStatusCode().value() != HttpStatus.OK.value()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Email verification code didn't match."));
+            return ResponseEntity.badRequest().body(new MessageResponse("The email verification code didn't match."));
         }
 
         //To check if the email is already in use or not
         Optional<UserInfo> userInfoEmail = iUserInfoRepository.findByEmail(signupRequestDto.getEmail());
         if (userInfoEmail.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
+            return ResponseEntity.badRequest().body(new MessageResponse("The email address you have entered is already in use."));
         }
         //Password must be equal to confirm password
         if (!Objects.equals(signupRequestDto.getPassword(), signupRequestDto.getConfirmPassword())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Password didn't match."));
+            return ResponseEntity.badRequest().body(new MessageResponse("The password didn't match."));
         }
 
         userInfo.setPresentCountry(signupRequestDto.getPresentCountry());

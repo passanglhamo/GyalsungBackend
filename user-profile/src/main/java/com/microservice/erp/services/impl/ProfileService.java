@@ -155,6 +155,10 @@ public class ProfileService implements IProfileService {
     public ResponseEntity<?> changeMobileNo(UserProfileDto userProfileDto) {
         UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
 
+        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByMobileNo(userProfileDto.getMobileNo());
+        if (userInfoDB.isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
+        }
 
         //verify otp
         ResponseEntity<?> responseEntity = verifyOtp(userProfileDto);

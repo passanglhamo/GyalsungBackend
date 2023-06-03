@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 public class CustomGrantedAuthority implements GrantedAuthority {
 
     private final SimpleGrantedAuthority simpleGrantedAuthority;
-    private final Character isOpenUser;
+    private final Character userType;
 
-    public CustomGrantedAuthority(String roleName, Character isOpenUser) {
+    public CustomGrantedAuthority(String roleName, Character userType) {
         this.simpleGrantedAuthority = new SimpleGrantedAuthority(roleName);
-        this.isOpenUser = isOpenUser;
+        this.userType = userType;
     }
 
     @Override
@@ -24,8 +24,8 @@ public class CustomGrantedAuthority implements GrantedAuthority {
         return simpleGrantedAuthority.getAuthority();
     }
 
-    public Character getIsOpenUser() {
-        return isOpenUser;
+    public Character getUserType() {
+        return userType;
     }
 
     public static Collection<? extends GrantedAuthority> getAuthorities(List<Role> roles) {
