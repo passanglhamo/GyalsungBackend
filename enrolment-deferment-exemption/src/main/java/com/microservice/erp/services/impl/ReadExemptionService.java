@@ -95,6 +95,7 @@ public class ReadExemptionService implements IReadExemptionService {
             ExemptionDto exemptionData = new ExemptionDto();
             if (!Objects.isNull(exemptionDto)) {
                 exemptionData.setId(exemptionDto.getId());
+                exemptionData.setRemarks(exemptionDto.getRemarks());
                 exemptionData.setApprovalRemarks(exemptionDto.getApprovalRemarks());
                 exemptionData.setStatus(exemptionDto.getStatus());
                 exemptionData.setFullName(Objects.requireNonNull(item).getFullName());

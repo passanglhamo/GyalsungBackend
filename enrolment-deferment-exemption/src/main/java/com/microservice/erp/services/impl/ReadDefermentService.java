@@ -99,7 +99,9 @@ public class ReadDefermentService implements IReadDefermentService {
             DefermentDto defermentData = new DefermentDto();
             if (!Objects.isNull(defermentDto)) {
                 defermentData.setId(defermentDto.getId());
+                defermentData.setRemarks(defermentDto.getRemarks());
                 defermentData.setApprovalRemarks(defermentDto.getApprovalRemarks());
+                defermentData.setDefermentYear(defermentDto.getDefermentYear());
                 defermentData.setStatus(defermentDto.getStatus());
                 defermentData.setFullName(Objects.requireNonNull(item).getFullName());
                 defermentData.setCid(Objects.requireNonNull(item).getCid());
