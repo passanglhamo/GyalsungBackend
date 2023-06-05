@@ -141,8 +141,10 @@ public class ReadDefermentService implements IReadDefermentService {
 
     @Override
     public ResponseEntity<?> getDefermentListByUserId(BigInteger userId) {
-        List<DefermentInfo> defermentInfo = repository.findAllByUserIdOrderByIdDesc(userId);
-        return ResponseEntity.ok(defermentInfo);
+        return ResponseEntity.ok(repository.findAllByUserIdOrderByIdDesc(userId)
+                .stream()
+                .map(mapper::mapToDomain)
+                .collect(Collectors.toUnmodifiableList()));
     }
 
 }

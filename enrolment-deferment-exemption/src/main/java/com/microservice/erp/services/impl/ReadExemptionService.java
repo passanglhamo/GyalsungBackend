@@ -125,7 +125,9 @@ public class ReadExemptionService implements IReadExemptionService {
 
     @Override
     public ResponseEntity<?> getExemptionListByUserId(BigInteger userId) {
-        List<ExemptionInfo> exemptionInfos = repository.findAllByUserIdOrderByIdDesc(userId);
-        return ResponseEntity.ok(exemptionInfos);
+        return ResponseEntity.ok(repository.findAllByUserIdOrderByIdDesc(userId)
+                .stream()
+                .map(mapper::mapToDomain)
+                .collect(Collectors.toUnmodifiableList()));
     }
 }
