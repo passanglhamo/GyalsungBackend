@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -66,7 +67,7 @@ public class ReadExemptionService implements IReadExemptionService {
         exemptionYear = exemptionYear.isEmpty() ? null : exemptionYear;
         cid = cid.isEmpty() ? null : cid;
 
-        List<ExemptionDto> exemptionDtoList = repository.getExemptionListByToDateStatus(exemptionYear,status,gender, reasonId)
+        List<ExemptionDto> exemptionDtoList = repository.getExemptionListByToDateStatus(status,gender, reasonId)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
@@ -90,7 +91,7 @@ public class ReadExemptionService implements IReadExemptionService {
             ExemptionDto exemptionDto = exemptionDtoList
                     .stream()
                     .filter(exemption -> item.getId().equals(exemption.getUserId()))
-                    .findAny()
+                    .max(Comparator.comparing(ExemptionDto::getId))
                     .orElse(null);
             ExemptionDto exemptionData = new ExemptionDto();
             if (!Objects.isNull(exemptionDto)) {
@@ -104,6 +105,7 @@ public class ReadExemptionService implements IReadExemptionService {
                 exemptionData.setGender(Objects.requireNonNull(item).getGender());
                 exemptionData.setExemptionFileDtos(exemptionDto.getExemptionFileDtos());
                 exemptionData.setReasonId(exemptionDto.getReasonId());
+                exemptionData.setApplicationDate(exemptionDto.getApplicationDate());
             }
             exemptionDtos.add(exemptionData);
         });

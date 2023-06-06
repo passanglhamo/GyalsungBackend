@@ -13,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -91,10 +88,9 @@ public class ReadDefermentService implements IReadDefermentService {
 
         }
         userProfileDtos.forEach(item -> {
-            DefermentDto defermentDto = defermentDtoList
-                    .stream()
+            DefermentDto defermentDto = defermentDtoList.stream()
                     .filter(deferment -> item.getId().equals(deferment.getUserId()))
-                    .findAny()
+                    .max(Comparator.comparing(DefermentDto::getId))
                     .orElse(null);
             DefermentDto defermentData = new DefermentDto();
             if (!Objects.isNull(defermentDto)) {
@@ -109,6 +105,7 @@ public class ReadDefermentService implements IReadDefermentService {
                 defermentData.setGender(Objects.requireNonNull(item).getGender());
                 defermentData.setDefermentFileDtos(defermentDto.getDefermentFileDtos());
                 defermentData.setReasonId(defermentDto.getReasonId());
+                defermentData.setApplicationDate(defermentDto.getApplicationDate());
             }
             defermentDtos.add(defermentData);
         });

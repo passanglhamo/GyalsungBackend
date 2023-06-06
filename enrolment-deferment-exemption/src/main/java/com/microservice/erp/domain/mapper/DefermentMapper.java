@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,7 @@ public class DefermentMapper {
 
         DefermentInfo deferment = new ModelMapper().map(command, DefermentInfo.class);
         deferment.setStatus(ApprovalStatus.PENDING.value());
+        deferment.setApplicationDate(new Date());
         if (!Objects.isNull(command.getProofDocuments())) {
             deferment.setFiles(
                     Arrays.stream(command.getProofDocuments())
@@ -77,7 +79,7 @@ public class DefermentMapper {
                 deferment.getUserId(),
                 deferment.getReasonId(),
                 deferment.getApprovalRemarks(),
-                deferment.getToDate(),
+                deferment.getApplicationDate(),
                 deferment.getStatus(),
                 deferment.getRemarks(),
                 null,
@@ -97,7 +99,8 @@ public class DefermentMapper {
                 null,
                 null,
                 null,
-                deferment.getGender()
+                deferment.getGender(),
+                deferment.getApplicationDate()
         );
     }
 }

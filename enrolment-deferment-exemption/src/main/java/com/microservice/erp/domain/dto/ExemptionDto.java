@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 
@@ -33,6 +34,7 @@ public class ExemptionDto {
     private String cid;
     private Date dob;
     private Character gender;
+    private Date applicationDate;
 
     public static ExemptionDto withId(
             String exemptionYear,
@@ -47,7 +49,8 @@ public class ExemptionDto {
             String fullName,
             String cid,
             Date dob,
-            Character gender) {
+            Character gender,
+            Date applicationDate) {
         return new ExemptionDto(
                 exemptionYear,
                 id,
@@ -61,6 +64,7 @@ public class ExemptionDto {
                 fullName,
                 cid,
                 dob,
-                gender);
+                gender,
+                applicationDate);
     }
 }

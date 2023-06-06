@@ -1,12 +1,14 @@
 package com.microservice.erp.domain.entities;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -30,11 +32,10 @@ public class DefermentInfo extends Auditable<BigInteger, Long> {
     @Column(name = "deferment_year", columnDefinition = "char(4) ")
     private String defermentYear;
 
-    @NotNull(message = "Till date cannot be null")
-    @Basic(optional = false)
-    @Column(name = "to_date")
-    @Temporal(TemporalType.DATE)
-    private Date toDate = new java.sql.Date(new Date().getTime());
+    @CreatedDate
+    @Column(name = "application_date")
+    private Date applicationDate;
+
 
     @Basic(optional = false)
     @NotNull(message = "Reasons cannot be null")
@@ -85,12 +86,12 @@ public class DefermentInfo extends Auditable<BigInteger, Long> {
         this.defermentYear = defermentYear;
     }
 
-    public Date getToDate() {
-        return toDate;
+    public Date getApplicationDate() {
+        return applicationDate;
     }
 
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
+    public void setApplicationDate(Date applicationDate) {
+        this.applicationDate = applicationDate;
     }
 
     public BigInteger getReasonId() {

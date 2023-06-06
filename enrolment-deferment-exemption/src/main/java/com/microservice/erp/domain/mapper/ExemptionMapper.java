@@ -29,6 +29,7 @@ public class ExemptionMapper {
         ExemptionInfo exemption = new ModelMapper().map(command, ExemptionInfo.class);
         exemption.setStatus(ApprovalStatus.PENDING.value());
         LocalDate currentDate = LocalDate.now();
+        exemption.setApplicationDate(new Date());
         exemption.setExemptionYear(String.valueOf(currentDate.getYear()));
         if (!Objects.isNull(command.getProofDocuments())) {
             exemption.setFiles(
@@ -98,6 +99,7 @@ public class ExemptionMapper {
                 null,
                 null,
                 null,
-                exemption.getGender());
+                exemption.getGender(),
+                exemption.getApplicationDate());
     }
 }

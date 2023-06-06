@@ -32,7 +32,7 @@ public class DefermentExemptionValidation {
             if (!Objects.isNull(exemptionInfo)) {
                 if(exemptionInfo.size()!=0){
                     responseMessage.setStatus(ApprovalStatus.APPROVED.value());
-                    responseMessage.setMessage("There is already one pending exemption application. In order to add a new application, please ask for pending exemption to be rejected.");
+                    responseMessage.setMessage("There is already one pending exemption application. In order to add a new application, please contact gyalsung head quarter.");
                     return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
                 }
 
@@ -41,7 +41,7 @@ public class DefermentExemptionValidation {
             if (!Objects.isNull(exemptionInfoApprove)) {
                 if(exemptionInfo.size()!=0){
                     responseMessage.setStatus(ApprovalStatus.APPROVED.value());
-                    responseMessage.setMessage("There is already one approved exemption application. In order to add a new application, please ask for pending exemption to be rejected.");
+                    responseMessage.setMessage("There is already one approved exemption application. In order to add a new application, please contact gyalsung head quarter.");
                     return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
                 }
 
@@ -52,14 +52,14 @@ public class DefermentExemptionValidation {
             if (!Objects.isNull(defermentInfo)) {
                 if(defermentInfo.size()!=0){
                     responseMessage.setStatus(ApprovalStatus.APPROVED.value());
-                    responseMessage.setMessage("There is already one pending deferred application. In order to add a new application, please ask for pending deferment to be rejected.");
+                    responseMessage.setMessage("There is already one pending deferred application. In order to add a new application, please contact gyalsung head quarter.");
                     return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
                 }
             }
             DefermentInfo defermentInfoApprovalInYear= defermentInfoRepository.findByDefermentYearAndStatusAndUserId(year,ApprovalStatus.PENDING.value(), userId);
             if (!Objects.isNull(defermentInfoApprovalInYear)) {
                     responseMessage.setStatus(ApprovalStatus.APPROVED.value());
-                    responseMessage.setMessage("There is already one approved deferred application for selected year. In order to add a new application, please ask for approved deferment to be rejected.");
+                    responseMessage.setMessage("There is already one approved deferred application for selected year. In order to add a new application, please contact gyalsung head quarter.");
                     return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
             }
         }

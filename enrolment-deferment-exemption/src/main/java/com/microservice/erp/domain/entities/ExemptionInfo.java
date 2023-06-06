@@ -1,10 +1,12 @@
 package com.microservice.erp.domain.entities;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -22,11 +24,9 @@ public class ExemptionInfo extends Auditable<BigInteger, Long> {
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
-    @NotNull(message = "Application date cannot be null")
-    @Basic(optional = false)
+    @CreatedDate
     @Column(name = "application_date")
-    @Temporal(TemporalType.DATE)
-    private Date applicationDate = new java.sql.Date(new Date().getTime());
+    private Date applicationDate;
 
     @Basic(optional = false)
     @NotNull(message = "Reason id cannot be null")
