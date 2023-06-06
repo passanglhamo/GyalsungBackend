@@ -45,7 +45,7 @@ public class AddUserEventService {
             userInfo.setPassword(encoder.encode(userEventInfo.getPassword()));
             userInfo.setSecrets(User.createRandomMapOfSecret());
             Set<Role> saRoles = new HashSet<>();
-            if (userEventInfo.getUserType().equals('S')) {
+            if (userEventInfo.getUserType().equals('Y')) {
                 Role saRoleDb = roleRepository.findByUserType(UserType.STUDENT.value());// to get student user role information
                 saRoles.add(saRoleDb);
                 userInfo.setRoles(saRoles);
