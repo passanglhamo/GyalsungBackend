@@ -11,4 +11,6 @@ public interface IReadReasonService {
     List<Reason> getAllReasonByStatus(String status);
 
     Reason getAllReasonById(BigInteger id);
+
+    List<Reason> getAllReasonByExemptDeferment(String defermentExemption);
 }

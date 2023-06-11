@@ -10,8 +10,10 @@ import java.util.List;
 @Repository
 public interface IReasonRepository extends JpaRepository<Reason, BigInteger> {
 
-    List<Reason> findAllByStatus(String status);
+    List<Reason> findAllByStatus(Character status);
 
     List<Reason> findAllByOrderByReasonNameAsc();
+
+    List<Reason> findAllByDefermentExemptionAndStatus(Character defermentExemption,Character status);
 
 }

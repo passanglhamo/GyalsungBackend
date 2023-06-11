@@ -6,6 +6,8 @@ ADD target/*.jar ROOT.jar
 
 RUN ls -la /opt
 ADD stagingCertificate.cer /opt
+ADD productionCertificate.cer /opt
+RUN keytool --import -alias datahub -file /opt/productionCertificate.cer -keystore "/usr/local/openjdk-8/jre/lib/security/cacerts" -storepass changit
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "ROOT.jar"]

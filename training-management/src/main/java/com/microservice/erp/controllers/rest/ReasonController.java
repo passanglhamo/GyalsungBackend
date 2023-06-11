@@ -61,4 +61,9 @@ public class ReasonController {
         return updateService.updateReason(reason);
     }
 
+    @GetMapping("/getAllReasonByExemptDeferment")
+    public List<Reason> getAllReasonByExemptDeferment(@RequestParam("defermentExemption") String defermentExemption) {
+        return readService.getAllReasonByExemptDeferment(defermentExemption);
+    }
+
 }

@@ -22,8 +22,18 @@ public class Reason extends Auditable<BigInteger, Long> {
 
     @NotNull
     @Basic(optional = false)
+    @Column(name = "defer_exempt", columnDefinition = "char(1)")
+    private Character defermentExemption;
+
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "is_medical_reason", columnDefinition = "char(1)")
+    private Character isMedicalReason;
+
+    @NotNull
+    @Basic(optional = false)
     @Column(name = "status", columnDefinition = "char(1)")
-    private String status;
+    private Character status;
 
 
     public String getReasonName() {
@@ -34,11 +44,27 @@ public class Reason extends Auditable<BigInteger, Long> {
         this.reasonName = reasonName;
     }
 
-    public String getStatus() {
+    public Character getDefermentExemption() {
+        return defermentExemption;
+    }
+
+    public Character getIsMedicalReason() {
+        return isMedicalReason;
+    }
+
+    public void setIsMedicalReason(Character isMedicalReason) {
+        this.isMedicalReason = isMedicalReason;
+    }
+
+    public void setDefermentExemption(Character defermentExemption) {
+        this.defermentExemption = defermentExemption;
+    }
+
+    public Character getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Character status) {
         this.status = status;
     }
 }

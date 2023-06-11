@@ -21,12 +21,17 @@ public class ReadReasonService implements IReadReasonService {
 
     @Override
     public List<Reason> getAllReasonByStatus(String status) {
-        return repository.findAllByStatus(status);
+        return repository.findAllByStatus(status.charAt(0));
     }
 
     @Override
     public Reason getAllReasonById(BigInteger id) {
         return repository.findById(id).get();
+    }
+
+    @Override
+    public List<Reason> getAllReasonByExemptDeferment(String defermentExemption) {
+        return repository.findAllByDefermentExemptionAndStatus(defermentExemption.charAt(0),"A".charAt(0));
     }
 
 }

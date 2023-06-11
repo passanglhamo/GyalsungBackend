@@ -48,6 +48,24 @@ public class DefermentExemptionValidation {
             }
         }
         if(deferEx.equals('D')){
+            List<ExemptionInfo> exemptionInfo = exemptionInfoRepository.findAllByStatusAndUserId(ApprovalStatus.PENDING.value(),userId);
+            if (!Objects.isNull(exemptionInfo)) {
+                if(exemptionInfo.size()!=0){
+                    responseMessage.setStatus(ApprovalStatus.APPROVED.value());
+                    responseMessage.setMessage("There is already one pending exemption application. In order to add a new application, please contact gyalsung head quarter.");
+                    return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
+                }
+
+            }
+            List<ExemptionInfo> exemptionInfoApprove = exemptionInfoRepository.findAllByStatusAndUserId(ApprovalStatus.APPROVED.value(),userId);
+            if (!Objects.isNull(exemptionInfoApprove)) {
+                if(exemptionInfo.size()!=0){
+                    responseMessage.setStatus(ApprovalStatus.APPROVED.value());
+                    responseMessage.setMessage("There is already one approved exemption application. In order to add a new application, please contact gyalsung head quarter.");
+                    return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);
+                }
+
+            }
             List<DefermentInfo> defermentInfo = defermentInfoRepository.findAllByStatusAndUserId(ApprovalStatus.PENDING.value(), userId);
             if (!Objects.isNull(defermentInfo)) {
                 if(defermentInfo.size()!=0){

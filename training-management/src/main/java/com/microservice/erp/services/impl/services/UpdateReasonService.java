@@ -16,6 +16,8 @@ public class UpdateReasonService implements IUpdateReasonService {
     public ResponseEntity<?> updateReason(Reason reason) {
         repository.findById(reason.getId()).ifPresent(d -> {
             d.setReasonName(reason.getReasonName());
+            d.setDefermentExemption(reason.getDefermentExemption());
+            d.setIsMedicalReason(reason.getIsMedicalReason());
             d.setStatus(reason.getStatus());
             repository.save(d);
         });
