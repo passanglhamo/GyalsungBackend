@@ -469,7 +469,7 @@ public class SignupService implements ISignupService {
             }
             String censusDob = citizendetailsObj.getDob();
             if (!censusDob.equals(dob)) {
-                return ResponseEntity.badRequest().body(new MessageResponse("CID and date of birth did not matched."));
+                return ResponseEntity.badRequest().body(new MessageResponse("CID or date of birth is incorrect."));
             }
             citizenDetailDto.setFullName(citizendetailsObj.getFirstName() + " " + citizendetailsObj.getMiddleName() + " " + citizendetailsObj.getLastName());
             citizenDetailDto.setFullName(citizenDetailDto.getFullName().replaceAll("null", ""));
@@ -492,10 +492,8 @@ public class SignupService implements ISignupService {
             citizenDetailDto.setGuardianCidFirst(parentdetailObj.getFatherCID());
             citizenDetailDto.setGuardianNameSecond(citizendetailsObj.getMotherName());
             citizenDetailDto.setGuardianCidSecond(parentdetailObj.getMotherCID());
-
-
         } else {
-            return ResponseEntity.badRequest().body(new MessageResponse("No information found matching CID No " + cid));
+            return ResponseEntity.badRequest().body(new MessageResponse("CID or date of birth is incorrect."));
         }
         return ResponseEntity.ok(citizenDetailDto);
     }
