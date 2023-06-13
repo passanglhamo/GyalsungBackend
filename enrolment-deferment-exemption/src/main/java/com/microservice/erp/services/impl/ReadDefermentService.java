@@ -1,6 +1,7 @@
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dto.DefermentDto;
+import com.microservice.erp.domain.dto.DefermentListDto;
 import com.microservice.erp.domain.dto.EnrolmentListDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.DefermentInfo;
@@ -60,7 +61,7 @@ public class ReadDefermentService implements IReadDefermentService {
 
 
     @Override
-    public List<DefermentDto> getDefermentListByDefermentYearReasonStatus(String authHeader, String defermentYear,
+    public List<DefermentListDto> getDefermentListByDefermentYearReasonStatus(String authHeader, String defermentYear,
                                                                           BigInteger reasonId, Character status,
                                                                           Character gender, String cid) {
 
@@ -75,7 +76,7 @@ public class ReadDefermentService implements IReadDefermentService {
                 .collect(Collectors.toUnmodifiableList());
 
         List<BigInteger> userIdsVal;
-        List<DefermentDto> defermentDtos = new ArrayList<>();
+        List<DefermentListDto> defermentDtos = new ArrayList<>();
 
         if (!Objects.isNull(cid)) {
             userProfileDtos = userInformationService.getUserInformationByPartialCid(cid, authHeader);
@@ -92,7 +93,11 @@ public class ReadDefermentService implements IReadDefermentService {
                     .filter(deferment -> item.getId().equals(deferment.getUserId()))
                     .max(Comparator.comparing(DefermentDto::getId))
                     .orElse(null);
-            DefermentDto defermentData = new DefermentDto();
+            List<DefermentDto> defermentList = repository.findAllByUserIdOrderByIdDesc(item.getId())
+                    .stream()
+                    .map(mapper::mapToDomain)
+                    .collect(Collectors.toUnmodifiableList());
+            DefermentListDto defermentData = new DefermentListDto();
             if (!Objects.isNull(defermentDto)) {
                 defermentData.setId(defermentDto.getId());
                 defermentData.setRemarks(defermentDto.getRemarks());
@@ -106,6 +111,8 @@ public class ReadDefermentService implements IReadDefermentService {
                 defermentData.setDefermentFileDtos(defermentDto.getDefermentFileDtos());
                 defermentData.setReasonId(defermentDto.getReasonId());
                 defermentData.setApplicationDate(defermentDto.getApplicationDate());
+                defermentData.setUserId(defermentDto.getUserId());
+                defermentData.setDefermentList(defermentList);
             }
             defermentDtos.add(defermentData);
         });

@@ -1,6 +1,7 @@
 package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.ExemptionDto;
+import com.microservice.erp.domain.dto.ExemptionListDto;
 import com.microservice.erp.services.iServices.ICreateExemptionService;
 import com.microservice.erp.services.iServices.IReadExemptionService;
 import com.microservice.erp.services.iServices.IUpdateExemptionService;
@@ -63,8 +64,8 @@ public class ExemptionController {
     }
 
     @GetMapping(value = "/getExemptionListByCriteria")
-    public List<ExemptionDto> getExemptionListByStatus(@RequestHeader("Authorization") String authHeader,
-                                                       @RequestParam("exemptionYear") String exemptionYear
+    public List<ExemptionListDto> getExemptionListByStatus(@RequestHeader("Authorization") String authHeader,
+                                                           @RequestParam("exemptionYear") String exemptionYear
             , @RequestParam("reasonId") BigInteger reasonId
             , @RequestParam("status") Character status
             , @RequestParam("gender") Character gender

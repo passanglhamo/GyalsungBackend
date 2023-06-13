@@ -1,8 +1,6 @@
 package com.microservice.erp.services.impl;
 
-import com.microservice.erp.domain.dto.DefermentDto;
-import com.microservice.erp.domain.dto.ExemptionDto;
-import com.microservice.erp.domain.dto.UserProfileDto;
+import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.mapper.ExemptionMapper;
@@ -61,7 +59,7 @@ public class ReadExemptionService implements IReadExemptionService {
     }
 
     @Override
-    public List<ExemptionDto> getExemptionListByCriteria(String authHeader, String exemptionYear, Character status,
+    public List<ExemptionListDto> getExemptionListByCriteria(String authHeader, String exemptionYear, Character status,
                                                          BigInteger reasonId, Character gender, String cid) {
 
         exemptionYear = exemptionYear.isEmpty() ? null : exemptionYear;
@@ -72,8 +70,8 @@ public class ReadExemptionService implements IReadExemptionService {
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
         List<BigInteger> userIdsVal;
-        List<ExemptionDto> exemptionDtos = new ArrayList<>();
         List<UserProfileDto> userProfileDtos;
+        List<ExemptionListDto> exemptionListDtos = new ArrayList<>();
 
         if (!Objects.isNull(cid)) {
             userProfileDtos = userInformationService.getUserInformationByPartialCid(cid, authHeader);
@@ -93,7 +91,11 @@ public class ReadExemptionService implements IReadExemptionService {
                     .filter(exemption -> item.getId().equals(exemption.getUserId()))
                     .max(Comparator.comparing(ExemptionDto::getId))
                     .orElse(null);
-            ExemptionDto exemptionData = new ExemptionDto();
+            List<ExemptionDto> exemptionDtoList1 = repository.findAllByUserIdOrderByIdDesc(item.getId())
+                    .stream()
+                    .map(mapper::mapToDomain)
+                    .collect(Collectors.toUnmodifiableList());
+            ExemptionListDto exemptionData = new ExemptionListDto();
             if (!Objects.isNull(exemptionDto)) {
                 exemptionData.setId(exemptionDto.getId());
                 exemptionData.setRemarks(exemptionDto.getRemarks());
@@ -106,10 +108,13 @@ public class ReadExemptionService implements IReadExemptionService {
                 exemptionData.setExemptionFileDtos(exemptionDto.getExemptionFileDtos());
                 exemptionData.setReasonId(exemptionDto.getReasonId());
                 exemptionData.setApplicationDate(exemptionDto.getApplicationDate());
+                exemptionData.setUserId(exemptionDto.getUserId());
+                exemptionData.setExemptionList(exemptionDtoList1);
+
             }
-            exemptionDtos.add(exemptionData);
+            exemptionListDtos.add(exemptionData);
         });
-        return exemptionDtos;
+        return exemptionListDtos;
 
     }
 
