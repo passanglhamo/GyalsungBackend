@@ -68,7 +68,7 @@ public class SignupService implements ISignupService {
         // to check if user is already exist or not by cid
         Optional<UserInfo> userInfo = iUserInfoRepository.findByCid(cid);
         if (userInfo.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + cid + " already exist in the system."));
+            return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + cid + " already exists in the system."));
         }
         //to check age eligible age first
         AgeCriteria ageCriteria = iAgeCriteriaRepository.findTopByOrderByMinimumAgeDesc();
