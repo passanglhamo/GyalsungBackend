@@ -1,6 +1,7 @@
 package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.DefermentDto;
+import com.microservice.erp.domain.dto.DefermentListDto;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import com.microservice.erp.services.iServices.IReadDefermentService;
 import com.microservice.erp.services.iServices.IUpdateDefermentService;
@@ -64,8 +65,8 @@ public class DefermentController {
     }
 
     @GetMapping(value = "/getDefermentListByDefermentYearReasonStatus")
-    public List<DefermentDto> getDefermentListByDefermentYearReasonStatus(@RequestHeader("Authorization") String authHeader,
-                                                                          @RequestParam("defermentYear") String defermentYear
+    public List<DefermentListDto> getDefermentListByDefermentYearReasonStatus(@RequestHeader("Authorization") String authHeader,
+                                                                              @RequestParam("defermentYear") String defermentYear
             , @RequestParam("reasonId") BigInteger reasonId
             , @RequestParam("status") Character status
             , @RequestParam("gender") Character gender
