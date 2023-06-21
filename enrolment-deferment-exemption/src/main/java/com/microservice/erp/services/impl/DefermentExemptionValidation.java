@@ -59,7 +59,7 @@ public class DefermentExemptionValidation {
             }
             List<ExemptionInfo> exemptionInfoApprove = exemptionInfoRepository.findAllByStatusAndUserId(ApprovalStatus.APPROVED.value(),userId);
             if (!Objects.isNull(exemptionInfoApprove)) {
-                if(exemptionInfo.size()!=0){
+                if(exemptionInfoApprove.size()!=0){
                     responseMessage.setStatus(ApprovalStatus.APPROVED.value());
                     responseMessage.setMessage("There is already one approved exemption application. In order to add a new application, please contact gyalsung head quarter.");
                     return new ResponseEntity<>(responseMessage, HttpStatus.ALREADY_REPORTED);

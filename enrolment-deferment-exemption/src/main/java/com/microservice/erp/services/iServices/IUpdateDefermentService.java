@@ -15,6 +15,8 @@ public interface IUpdateDefermentService {
 
     ResponseEntity<?> rejectByIds(String authHeader, @Valid UpdateDefermentCommand command);
 
+    ResponseEntity<?> saveToDraft(String authHeader, @Valid UpdateDefermentCommand command);
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -22,7 +24,7 @@ public interface IUpdateDefermentService {
     class UpdateDefermentCommand {
 
         private String remarks;
-
+        private Character status;
         private List<BigInteger> defermentIds;
     }
 }

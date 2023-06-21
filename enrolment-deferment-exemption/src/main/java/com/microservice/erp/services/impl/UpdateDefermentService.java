@@ -39,19 +39,19 @@ public class UpdateDefermentService implements IUpdateDefermentService {
     @Override
     public ResponseEntity<?> approveByIds(String authHeader, UpdateDefermentCommand command) {
 
-        DefermentInfo defermentInfo = repository.findAllById(command.getDefermentIds())
-                .stream()
-                .filter(d -> (d.getStatus().equals(ApprovalStatus.APPROVED.value()) ||
-                        d.getStatus().equals(ApprovalStatus.REJECTED.value()))
-                ).findFirst().orElse(null);
-
-        if (!Objects.isNull(defermentInfo)) {
-            return new ResponseEntity<>("There are some application that are already approved or rejected.", HttpStatus.ALREADY_REPORTED);
-
-        }
+//        DefermentInfo defermentInfo = repository.findAllById(command.getDefermentIds())
+//                .stream()
+//                .filter(d -> (d.getStatus().equals(ApprovalStatus.APPROVED.value()) ||
+//                        d.getStatus().equals(ApprovalStatus.REJECTED.value()))
+//                ).findFirst().orElse(null);
+//
+//        if (!Objects.isNull(defermentInfo)) {
+//            return new ResponseEntity<>("There are some application that are already approved or rejected.", HttpStatus.ALREADY_REPORTED);
+//
+//        }
 
         repository.findAllById(command.getDefermentIds()).forEach(d -> {
-            if (d.getStatus().equals(ApprovalStatus.PENDING.value())) {
+//            if (d.getStatus().equals(ApprovalStatus.PENDING.value())) {
                 d.setStatus(ApprovalStatus.APPROVED.value());
                 d.setApprovalRemarks(command.getRemarks());
                 repository.save(d);
@@ -60,7 +60,7 @@ public class UpdateDefermentService implements IUpdateDefermentService {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-            }
+//            }
 
 
         });
@@ -70,15 +70,15 @@ public class UpdateDefermentService implements IUpdateDefermentService {
 
     @Override
     public ResponseEntity<?> rejectByIds(String authHeader, @Valid UpdateDefermentCommand command) {
-        DefermentInfo defermentInfo = repository.findAllById(command.getDefermentIds())
-                .stream()
-                .filter(d -> (d.getStatus().equals(ApprovalStatus.REJECTED.value()))
-                ).findFirst().orElse(null);
-
-        if (!Objects.isNull(defermentInfo)) {
-            return new ResponseEntity<>("There are some application that are already rejected.", HttpStatus.ALREADY_REPORTED);
-
-        }
+//        DefermentInfo defermentInfo = repository.findAllById(command.getDefermentIds())
+//                .stream()
+//                .filter(d -> (d.getStatus().equals(ApprovalStatus.REJECTED.value()))
+//                ).findFirst().orElse(null);
+//
+//        if (!Objects.isNull(defermentInfo)) {
+//            return new ResponseEntity<>("There are some application that are already rejected.", HttpStatus.ALREADY_REPORTED);
+//
+//        }
         repository.findAllById(command.getDefermentIds()).forEach(d -> {
             d.setStatus(ApprovalStatus.REJECTED.value());
             d.setApprovalRemarks(command.getRemarks());
@@ -93,6 +93,26 @@ public class UpdateDefermentService implements IUpdateDefermentService {
 
         return ResponseEntity.ok(new MessageResponse("Rejected successfully"));
 
+    }
+
+    @Override
+    public ResponseEntity<?> saveToDraft(String authHeader, UpdateDefermentCommand command) {
+        repository.findAllById(command.getDefermentIds()).forEach(d -> {
+            if (d.getStatus().equals(ApprovalStatus.PENDING.value())) {
+                d.setStatus(command.getStatus());
+                d.setApprovalRemarks(command.getRemarks());
+                repository.save(d);
+                try {
+                    sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.APPROVED.value());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+
+        });
+
+        return ResponseEntity.ok(new MessageResponse("Saved successfully"));
     }
 
     private void sendEmailAndSms(String authHeader, BigInteger userId, Character status) throws Exception {

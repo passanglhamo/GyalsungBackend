@@ -9,4 +9,5 @@ public interface IParentConsentService {
     ResponseEntity<?> submitParentConsent(ParentConsentDto parentConsentDto) throws Exception;
 
     ResponseEntity<?> getParentConsentList(String authHeader, String year, Character status);
+
 }

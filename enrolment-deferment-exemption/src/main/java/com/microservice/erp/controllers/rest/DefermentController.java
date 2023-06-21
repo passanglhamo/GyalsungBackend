@@ -9,12 +9,16 @@ import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 
@@ -60,8 +64,36 @@ public class DefermentController {
 
     @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
     public ResponseEntity<?> downloadFile(@RequestParam("url") String url) {
-        FileSystemResource file = new FileSystemResource(new File(url));
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+        File file = new File(url);
+        String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+
+        if (file.exists()) {
+            FileSystemResource resource = new FileSystemResource(file);
+            contentType = determineContentType(file.getName());
+            return ResponseEntity
+                    .ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+        } else {
+            // Handle file not found scenario
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    private String determineContentType(String fileName) {
+        String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+        switch (extension.toLowerCase()) {
+            case "pdf":
+                return "application/pdf";
+            case "jpg":
+            case "jpeg":
+                return "image/jpeg";
+            case "png":
+                return "image/png";
+            default:
+                return MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
     }
 
     @GetMapping(value = "/getDefermentListByDefermentYearReasonStatus")
@@ -95,5 +127,14 @@ public class DefermentController {
     public ResponseEntity<?> getDefermentListByUserId(@RequestParam("userId") BigInteger userId) {
         return readService.getDefermentListByUserId(userId);
     }
+
+    @PostMapping(value = "/saveToDraft")
+    public ResponseEntity<?> saveToDraft(@RequestHeader("Authorization") String authHeader,
+                                          @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                          @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
+        SpringSecurityAuditorAware.setToken(token);
+        return updateService.saveToDraft(authHeader, command);
+    }
+
 
 }

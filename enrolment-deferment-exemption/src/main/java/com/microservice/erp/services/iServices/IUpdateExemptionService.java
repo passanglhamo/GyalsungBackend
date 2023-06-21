@@ -15,6 +15,8 @@ public interface IUpdateExemptionService {
 
     ResponseEntity<?> rejectByIds(String authHeader,@Valid UpdateExemptionCommand command);
 
+    ResponseEntity<?> saveToDraft(String authHeader, UpdateExemptionCommand command);
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -22,7 +24,7 @@ public interface IUpdateExemptionService {
     class UpdateExemptionCommand {
 
         private String remarks;
-
+        private Character status;
         private List<BigInteger> exemptionIds;
     }
 }

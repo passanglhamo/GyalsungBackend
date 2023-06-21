@@ -93,6 +93,25 @@ public class UpdateExemptionService implements IUpdateExemptionService {
 
     }
 
+    @Override
+    public ResponseEntity<?> saveToDraft(String authHeader, UpdateExemptionCommand command) {
+        repository.findAllById(command.getExemptionIds()).forEach(d -> {
+            if (d.getStatus().equals(ApprovalStatus.PENDING.value())) {
+                d.setStatus(command.getStatus());
+                d.setApprovalRemarks(command.getRemarks());
+                repository.save(d);
+                try {
+                    sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.APPROVED.value());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+
+        });
+
+        return ResponseEntity.ok(new MessageResponse("Saved successfully"));    }
+
     private void sendEmailAndSms(String authHeader, BigInteger userId, Character status) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);

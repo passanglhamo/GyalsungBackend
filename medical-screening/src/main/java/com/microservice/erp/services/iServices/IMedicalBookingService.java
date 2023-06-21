@@ -1,5 +1,6 @@
 package com.microservice.erp.services.iServices;
 
+import com.microservice.erp.domain.dto.HospitalBookingDetailsDto;
 import com.microservice.erp.domain.dto.MedicalBookingDto;
 import org.springframework.http.ResponseEntity;
 
@@ -16,4 +17,6 @@ public interface IMedicalBookingService {
     ResponseEntity<?> getPreviousSelfDeclaration(String authHeader, BigInteger userId);
 
     ResponseEntity<?> resubmitSelfDeclaration(MedicalBookingDto medicalBookingDto);
+
+    ResponseEntity<?> bookHospitalAppointment(String authHeader, HospitalBookingDetailsDto hospitalBookingDetailsDto);
 }
