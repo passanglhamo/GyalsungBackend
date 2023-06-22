@@ -1,5 +1,6 @@
 package com.microservice.erp.controllers.rest;
 
+import com.microservice.erp.domain.dto.HospitalBookingDetailsDto;
 import com.microservice.erp.domain.dto.MedicalBookingDto;
 import com.microservice.erp.services.iServices.IMedicalBookingService;
 import com.microservice.erp.services.impl.services.SpringSecurityAuditorAware;
@@ -47,5 +48,13 @@ public class MedicalBookingController {
                                                      @RequestBody MedicalBookingDto medicalBookingDto) {
         SpringSecurityAuditorAware.setToken(token);
         return iMedicalBookingService.resubmitSelfDeclaration(medicalBookingDto);
+    }
+
+    @PostMapping(value = "/bookHospitalAppointment")
+    public ResponseEntity<?> bookHospitalAppointment(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                    @RequestHeader("Authorization") String authHeader,
+                                                    @RequestBody HospitalBookingDetailsDto hospitalBookingDetailsDto) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
+        return iMedicalBookingService.bookHospitalAppointment(authHeader, hospitalBookingDetailsDto);
     }
 }

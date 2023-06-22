@@ -1,13 +1,9 @@
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dto.*;
-import com.microservice.erp.domain.entities.HospitalScheduleDate;
-import com.microservice.erp.domain.entities.HospitalScheduleTime;
-import com.microservice.erp.domain.entities.MedicalSelfDeclaration;
+import com.microservice.erp.domain.entities.*;
 import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.repositories.IHospitalScheduleDateRepository;
-import com.microservice.erp.domain.repositories.IHospitalScheduleTimeRepository;
-import com.microservice.erp.domain.repositories.IMedicalSelfDeclarationRepository;
+import com.microservice.erp.domain.repositories.*;
 import com.microservice.erp.services.iServices.IMedicalBookingService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -34,6 +30,8 @@ import java.util.Objects;
 @AllArgsConstructor
 public class MedicalBookingService implements IMedicalBookingService {
     private final IHospitalScheduleDateRepository iHospitalScheduleDateRepository;
+    private final IHospitalBookingDateRepository iHospitalBookingDateRepository;
+    private final IHospitalBookingDetailsRepository iHospitalBookingDetailsRepository;
     private final IHospitalScheduleTimeRepository iHospitalScheduleTimeRepository;
     private final IMedicalSelfDeclarationRepository iMedicalSelfDeclarationRepository;
     private final AddToQueue addToQueue;
@@ -226,6 +224,18 @@ public class MedicalBookingService implements IMedicalBookingService {
             iMedicalSelfDeclarationRepository.save(medicalSelfDeclaration);
         }
         return ResponseEntity.ok("Resubmitted successfully.");
+    }
+
+    @Override
+    public ResponseEntity<?> bookHospitalAppointment(String authHeader, HospitalBookingDetailsDto hospitalBookingDetailsDto) {
+        HospitalBookingDate hospitalBookingDate = iHospitalBookingDateRepository.findByHospitalIdAndAppointmentDate(hospitalBookingDetailsDto.getHospitalId(),
+                hospitalBookingDetailsDto.getAppointmentDate());
+        HospitalBookingDetail hospitalBookingDetail = new HospitalBookingDetail();
+        hospitalBookingDetail.setHospitalBookingId(hospitalBookingDate.getId());
+        hospitalBookingDetail.setAmPm(hospitalBookingDetailsDto.getAmPm());
+        hospitalBookingDetail.setUserId(hospitalBookingDetailsDto.getUserId());
+        iHospitalBookingDetailsRepository.save(hospitalBookingDetail);
+        return ResponseEntity.ok("Booked successfully.");
     }
 
 }

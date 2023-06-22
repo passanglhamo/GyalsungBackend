@@ -35,4 +35,10 @@ public class ParentConsentController {
             , @RequestParam("status") Character status) {
         return parentConsentService.getParentConsentList(authHeader, year, status);
     }
+
+    //region forgot password
+//    @RequestMapping(value = "/requestParentConsent", method = RequestMethod.POST)
+//    public ResponseEntity<?> requestParentConsent(@RequestBody ParentConsentDto parentConsentDto) throws Exception {
+//        return parentConsentService.requestParentConsent(parentConsentDto);
+//    }
 }

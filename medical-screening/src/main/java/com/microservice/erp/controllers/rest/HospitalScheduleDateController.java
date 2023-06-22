@@ -2,6 +2,7 @@ package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.HospitalScheduleDateDto;
 import com.microservice.erp.domain.dto.HospitalScheduleTimeDto;
+import com.microservice.erp.domain.entities.HospitalBookingDate;
 import com.microservice.erp.services.iServices.ICreateHospitalScheduleDateService;
 import com.microservice.erp.services.iServices.IReadHospitalScheduleDateService;
 import com.microservice.erp.services.iServices.IUpdateHospitalScheduleTimeService;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/hospitalScheduleDate")
@@ -52,4 +55,19 @@ public class HospitalScheduleDateController {
     public ResponseEntity<?> getAllAvailableAppointmentDateByHospitalId(@RequestParam("hospitalId") BigInteger hospitalId) {
         return readService.getAllAvailableAppointmentDateByHospitalId(hospitalId);
     }
+
+    @GetMapping(value = "/getAllAppointmentDateByHospitalId", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<HospitalBookingDate> getAllAppointmentDateByHospitalId(@RequestParam("hospitalId") BigInteger hospitalId) {
+        return readService.getAllAppointmentDateByHospitalId(hospitalId);
+    }
+
+    @GetMapping(value = "/getHospitalBookingDetailByBookingId")
+    public HospitalBookingDate getHospitalBookingDetailByBookingId(@RequestHeader("Authorization") String authHeader,
+                                                                         @RequestParam("hospitalId") BigInteger hospitalId,
+                                                                         @RequestParam("appointmentDate") Date appointmentDate) {
+        return readService.getHospitalBookingDetailByBookingId(authHeader, hospitalId, appointmentDate);
+    }
+
+
+
 }
