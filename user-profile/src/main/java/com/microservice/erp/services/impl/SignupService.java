@@ -102,7 +102,7 @@ public class SignupService implements ISignupService {
 //
         String otp = generateOtp();
 
-        String message = "Your OTP for Gyalsung Registration is " + otp;
+        String message = "Your OTP for Gyalsung Registration is " + otp+" Please use this within 3 minutes.";
         SignupSmsOtp signupSmsOtp = new SignupSmsOtp();
         signupSmsOtp.setMobileNo(notificationRequestDto.getMobileNo());
         signupSmsOtp.setOtp(otp);
