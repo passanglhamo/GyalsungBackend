@@ -44,7 +44,7 @@ public class SignupRequestDto {
     private Character helperRequired;
     private String helperName;
     private String helperMobileNo;
-    private String helpebirthDaterEmail;
+    private String helperEmail;
     private String helperRelation;
     //endregion
 }
