@@ -40,5 +40,11 @@ public class SignupRequestDto {
     private String guardianCidFirst;
     private String guardianNameSecond;
     private String guardianCidSecond;
+
+    private Character helperRequired;
+    private String helperName;
+    private String helperMobileNo;
+    private String helperEmail;
+    private String helperRelation;
     //endregion
 }
