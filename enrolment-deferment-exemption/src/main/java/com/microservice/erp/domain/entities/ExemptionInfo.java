@@ -24,6 +24,11 @@ public class ExemptionInfo extends Auditable<BigInteger, Long> {
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "case_number", columnDefinition = "varchar(20) ")
+    private String caseNumber;
+
     @CreatedDate
     @Column(name = "application_date")
     private Date applicationDate;
@@ -134,5 +139,14 @@ public class ExemptionInfo extends Auditable<BigInteger, Long> {
     public void setGender(Character gender) {
         this.gender = gender;
     }
+
+    public String getCaseNumber() {
+        return caseNumber;
+    }
+
+    public void setCaseNumber(String caseNumber) {
+        this.caseNumber = caseNumber;
+    }
+
     //endregion
 }

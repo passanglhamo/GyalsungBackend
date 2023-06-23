@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -30,4 +31,6 @@ public interface IExemptionInfoRepository extends JpaRepository<ExemptionInfo, B
     List<ExemptionInfo> findAllByStatusAndUserId(Character status, BigInteger userId);
 
     List<ExemptionInfo> findAllByUserIdOrderByIdDesc(BigInteger userId);
+
+    ExemptionInfo findByReasonIdAndApplicationDateOrderByIdDesc(BigInteger reasonId, Date presentDate);
 }

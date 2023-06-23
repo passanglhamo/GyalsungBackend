@@ -66,7 +66,7 @@ public class CreateDefermentService implements ICreateDefermentService {
             }
         }
 
-        String caseNumber = caseNumberGenerator.caseNumberGenerator(authTokenHeader,command.getReasonId());
+        String caseNumber = caseNumberGenerator.caseNumberGenerator(authTokenHeader,command.getReasonId(),'D');
 
         var deferment = repository.save(
                 mapper.mapToEntity(

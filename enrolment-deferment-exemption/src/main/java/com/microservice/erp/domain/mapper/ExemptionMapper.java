@@ -24,12 +24,13 @@ import java.util.stream.Collectors;
 
 @Component
 public class ExemptionMapper {
-    public ExemptionInfo mapToEntity(HttpServletRequest request, ICreateExemptionService.CreateExemptionCommand command) {
+    public ExemptionInfo mapToEntity(HttpServletRequest request, ICreateExemptionService.CreateExemptionCommand command, String caseNumber) {
 
         ExemptionInfo exemption = new ModelMapper().map(command, ExemptionInfo.class);
         exemption.setStatus(ApprovalStatus.PENDING.value());
         LocalDate currentDate = LocalDate.now();
         exemption.setApplicationDate(new Date());
+        exemption.setCaseNumber(caseNumber);
         exemption.setExemptionYear(String.valueOf(currentDate.getYear()));
         if (!Objects.isNull(command.getProofDocuments())) {
             exemption.setFiles(
@@ -100,6 +101,7 @@ public class ExemptionMapper {
                 null,
                 null,
                 exemption.getGender(),
-                exemption.getApplicationDate());
+                exemption.getApplicationDate(),
+                exemption.getCaseNumber());
     }
 }

@@ -35,6 +35,7 @@ public class ExemptionDto {
     private Date dob;
     private Character gender;
     private Date applicationDate;
+    private String caseNumber;
 
     public static ExemptionDto withId(
             String exemptionYear,
@@ -50,7 +51,8 @@ public class ExemptionDto {
             String cid,
             Date dob,
             Character gender,
-            Date applicationDate) {
+            Date applicationDate,
+            String caseNumber) {
         return new ExemptionDto(
                 exemptionYear,
                 id,
@@ -65,6 +67,7 @@ public class ExemptionDto {
                 cid,
                 dob,
                 gender,
-                applicationDate);
+                applicationDate,
+                caseNumber);
     }
 }

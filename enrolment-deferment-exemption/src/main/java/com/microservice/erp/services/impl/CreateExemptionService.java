@@ -37,6 +37,7 @@ public class CreateExemptionService implements ICreateExemptionService {
     Integer fileLength = 5;
     private final MailToOperator mailToOperator;
 
+    private final CaseNumberGenerator caseNumberGenerator;
 
     @Autowired
     @Qualifier("userProfileTemplate")
@@ -60,24 +61,22 @@ public class CreateExemptionService implements ICreateExemptionService {
             }
         }
 
+        String caseNumber = caseNumberGenerator.caseNumberGenerator(authTokenHeader,command.getReasonId(),'E');
 
         var exemption = repository.save(
                 mapper.mapToEntity(
-                        request, command
+                        request, command,caseNumber
                 )
         );
 
         repository.save(exemption);
 
-        sendEmailAndSms(authTokenHeader, exemption.getUserId());
+        sendEmailAndSms(authTokenHeader, exemption.getUserId(),caseNumber);
 
-        return ResponseEntity.ok(new MessageResponse("An acknowledgement notifcation will be sent  to you as soon as you submit your  application.\" +\n" +
-                "                    \"Your Exemption application will be  reviewed and the outcome  of the exemption wil be sent \" +\n" +
-                "                    \" to you throught your email. If you  are not approved for exemption , you will have to complete the \" +\n" +
-                "                    \" Gyalsung pre-enlistment procedure"));
+        return ResponseEntity.ok(caseNumber);
     }
 
-    private void sendEmailAndSms(String authTokenHeader, BigInteger userId) throws Exception {
+    private void sendEmailAndSms(String authTokenHeader, BigInteger userId, String caseNumber) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
@@ -92,7 +91,7 @@ public class CreateExemptionService implements ICreateExemptionService {
 
         String emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
                 "\n" +
-                "This is to acknowledge the receipt of your exemption application. Your exemption application will be reviewed and the outcome of the exemption will be sent to you through your email within 10 days of the submission of your application. If you are not approved for exemption, you will have to complete the Gyalsung pre-enlistment procedure. \n";
+                "This is to acknowledge the receipt of your exemption application.Case number for your application is "+caseNumber+". Your exemption application will be reviewed and the outcome of the exemption will be sent to you through your email within 10 days of the submission of your application. If you are not approved for exemption, you will have to complete the Gyalsung pre-enlistment procedure. \n";
         EventBus eventBus = EventBus.withId(
                 Objects.requireNonNull(userResponse.getBody()).getEmail(),
                 null,
