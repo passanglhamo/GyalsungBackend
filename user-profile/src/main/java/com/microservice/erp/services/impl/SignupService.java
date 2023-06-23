@@ -146,6 +146,8 @@ public class SignupService implements ISignupService {
         SignupEmailVerificationCode signupEmailVerificationCode = new SignupEmailVerificationCode();
         signupEmailVerificationCode.setEmail(notificationRequestDto.getEmail());
         signupEmailVerificationCode.setVerificationCode(verificationCode);
+        signupEmailVerificationCode.setDate(new Date());
+        signupEmailVerificationCode.setExpiryTime(180);//seconds
         iSignupEmailVerificationCodeRepository.save(signupEmailVerificationCode);
         return ResponseEntity.ok(signupEmailVerificationCode);
     }
@@ -244,13 +246,16 @@ public class SignupService implements ISignupService {
         ResponseEntity<?> responseEntityEmail = verifyEmailVcode(notificationRequestDto);
         if (responseEntityEmail.getStatusCode().value() != HttpStatus.OK.value()) {
             return ResponseEntity.badRequest().body(new MessageResponse("The email verification code didn't match."));
-        }else
+        }else{
+            iSignupEmailVerificationCodeRepository.deleteById(signupRequestDto.getEmail());
+        }
 //
 //        //To check if the email is already in use or not
 //        Optional<UserInfo> userInfoEmail = iUserInfoRepository.findByEmail(signupRequestDto.getEmail());
 //        if (userInfoEmail.isPresent()) {
 //            return ResponseEntity.badRequest().body(new MessageResponse("The email address you have entered is already in use."));
 //        }
+
         //Password must be equal to confirm password
         if (!Objects.equals(signupRequestDto.getPassword(), signupRequestDto.getConfirmPassword())) {
             return ResponseEntity.badRequest().body(new MessageResponse("The password didn't match."));
