@@ -92,22 +92,26 @@ public class SignupService implements ISignupService {
 
     @Override
     public ResponseEntity<?> receiveOtp(NotificationRequestDto notificationRequestDto) throws JsonProcessingException {
-        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByMobileNo(notificationRequestDto.getMobileNo());
-        if (userInfoDB.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
-        }
-        Random random = new Random();
-        int number = random.nextInt(9999);//max upto 9999
-        String otp = String.format("%04d", number);
-        String message = "Your OTP for Gyalsung Registration is " + otp;
+//        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByMobileNo(notificationRequestDto.getMobileNo());
+//        if (userInfoDB.isPresent()) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
+//        }
+//        Random random = new Random();
+//        int number = random.nextInt(999999);//max upto 999999
+//        String otp = String.format("%06d", number);
+//
+        String otp = generateOtp();
+
+        String message = "Your OTP for Gyalsung Registration is " + otp+" Please use this within 3 minutes.";
         SignupSmsOtp signupSmsOtp = new SignupSmsOtp();
         signupSmsOtp.setMobileNo(notificationRequestDto.getMobileNo());
         signupSmsOtp.setOtp(otp);
+        signupSmsOtp.setDate(new Date());
+        signupSmsOtp.setExpiryTime(180);//seconds
         iSignupSmsOtpRepository.save(signupSmsOtp);
 
         EventBus eventBusSms = EventBus.withId(null, null, null, message, null, notificationRequestDto.getMobileNo());
 
-        //todo get value from properties
         addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(signupSmsOtp);
     }
@@ -127,24 +131,31 @@ public class SignupService implements ISignupService {
 
     @Override
     public ResponseEntity<?> receiveEmailVcode(NotificationRequestDto notificationRequestDto) throws Exception {
-        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByEmail(notificationRequestDto.getEmail());
-        if (userInfoDB.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("The email address you have entered is already in use. Please try different one."));
-        }
-        String verificationCode = generateVerificationCode(6);
+//        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByEmail(notificationRequestDto.getEmail());
+//        if (userInfoDB.isPresent()) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("The email address you have entered is already in use. Please try different one."));
+//        }
+        String verificationCode = generateOtp();
 
         String subject = "Email verification";
         String message = "Dear, Your verification code for Gyalsung system is " + verificationCode;
 
         EventBus eventBusEmail = EventBus.withId(notificationRequestDto.getEmail(), null, null, message, subject, null);
-        //todo get value from properties
-        addToQueue.addToQueue("email", eventBusEmail);
+         addToQueue.addToQueue("email", eventBusEmail);
 
         SignupEmailVerificationCode signupEmailVerificationCode = new SignupEmailVerificationCode();
         signupEmailVerificationCode.setEmail(notificationRequestDto.getEmail());
         signupEmailVerificationCode.setVerificationCode(verificationCode);
+        signupEmailVerificationCode.setDate(new Date());
+        signupEmailVerificationCode.setExpiryTime(180);//seconds
         iSignupEmailVerificationCodeRepository.save(signupEmailVerificationCode);
         return ResponseEntity.ok(signupEmailVerificationCode);
+    }
+
+    private String generateOtp() {
+        Random random = new Random();
+        int number = random.nextInt(999999);//max upto 999999
+        return String.format("%d", number);
     }
 
     @Override
@@ -221,25 +232,30 @@ public class SignupService implements ISignupService {
             ResponseEntity<?> responseEntity = verifyOtp(notificationRequestDto);
             if (responseEntity.getStatusCode().value() != HttpStatus.OK.value()) {
                 return ResponseEntity.badRequest().body(new MessageResponse("The OTP didn't match."));
+            }else {
+                iSignupSmsOtpRepository.deleteById(notificationRequestDto.getMobileNo());//delete OTP after validation
             }
         }
-        Optional<UserInfo> userInfoMobileNo = iUserInfoRepository.findByMobileNo(notificationRequestDto.getMobileNo());
-        if (userInfoMobileNo.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
-        }
+//        Optional<UserInfo> userInfoMobileNo = iUserInfoRepository.findByMobileNo(notificationRequestDto.getMobileNo());
+//        if (userInfoMobileNo.isPresent()) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
+//        }
         //Email verification code received from dto must be equal to backend
         notificationRequestDto.setEmail(signupRequestDto.getEmail());
         notificationRequestDto.setVerificationCode(signupRequestDto.getVerificationCode());
         ResponseEntity<?> responseEntityEmail = verifyEmailVcode(notificationRequestDto);
         if (responseEntityEmail.getStatusCode().value() != HttpStatus.OK.value()) {
             return ResponseEntity.badRequest().body(new MessageResponse("The email verification code didn't match."));
+        }else{
+            iSignupEmailVerificationCodeRepository.deleteById(signupRequestDto.getEmail());
         }
+//
+//        //To check if the email is already in use or not
+//        Optional<UserInfo> userInfoEmail = iUserInfoRepository.findByEmail(signupRequestDto.getEmail());
+//        if (userInfoEmail.isPresent()) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("The email address you have entered is already in use."));
+//        }
 
-        //To check if the email is already in use or not
-        Optional<UserInfo> userInfoEmail = iUserInfoRepository.findByEmail(signupRequestDto.getEmail());
-        if (userInfoEmail.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("The email address you have entered is already in use."));
-        }
         //Password must be equal to confirm password
         if (!Objects.equals(signupRequestDto.getPassword(), signupRequestDto.getConfirmPassword())) {
             return ResponseEntity.badRequest().body(new MessageResponse("The password didn't match."));

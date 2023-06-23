@@ -167,7 +167,20 @@ public class UserInfo extends Auditable<BigInteger, Long> implements UserDetails
     @Column(name = "signup_user", columnDefinition = "char(1)")
     private Character signupUser;
 
+    @Column(name = "helper_required", columnDefinition = "char(1)")
+    private Character helperRequired;
 
+    @Column(name = "helper_name", columnDefinition = "varchar(255)")
+    private String helperName;
+
+    @Column(name = "helper_mobile_no", columnDefinition = "varchar(255)")
+    private String helperMobileNo;
+
+    @Column(name = "helper_email", columnDefinition = "varchar(255)")
+    private String helperEmail;
+
+    @Column(name = "helper_relation", columnDefinition = "varchar(255)")
+    private String helperRelation;
 
     @JsonIgnore
     private boolean enabled;
@@ -221,6 +234,45 @@ public class UserInfo extends Auditable<BigInteger, Long> implements UserDetails
         this.enabled = enabled;
     }
 
+    public Character getHelperRequired() {
+        return helperRequired;
+    }
+
+    public void setHelperRequired(Character helperRequired) {
+        this.helperRequired = helperRequired;
+    }
+
+    public String getHelperName() {
+        return helperName;
+    }
+
+    public void setHelperName(String helperName) {
+        this.helperName = helperName;
+    }
+
+    public String getHelperMobileNo() {
+        return helperMobileNo;
+    }
+
+    public void setHelperMobileNo(String helperMobileNo) {
+        this.helperMobileNo = helperMobileNo;
+    }
+
+    public String getHelperEmail() {
+        return helperEmail;
+    }
+
+    public void setHelperEmail(String helperEmail) {
+        this.helperEmail = helperEmail;
+    }
+
+    public String getHelperRelation() {
+        return helperRelation;
+    }
+
+    public void setHelperRelation(String helperRelation) {
+        this.helperRelation = helperRelation;
+    }
 
     public void setUsername(String username) {
         this.username = username;
