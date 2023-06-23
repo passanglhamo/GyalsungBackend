@@ -2,7 +2,6 @@ package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dto.DefermentDto;
 import com.microservice.erp.domain.dto.DefermentListDto;
-import com.microservice.erp.domain.dto.EnrolmentListDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
@@ -10,8 +9,11 @@ import com.microservice.erp.domain.mapper.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.IReadDefermentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -24,6 +26,10 @@ public class ReadDefermentService implements IReadDefermentService {
     private final DefermentMapper mapper;
     private final DefermentExemptionValidation defermentExemptionValidation;
     private final UserInformationService userInformationService;
+
+    @Autowired
+    @Qualifier("trainingManagementTemplate")
+    RestTemplate restTemplate;
 
     @Override
     public List<DefermentDto> getAllDefermentList(String authHeader) {
@@ -62,8 +68,8 @@ public class ReadDefermentService implements IReadDefermentService {
 
     @Override
     public List<DefermentListDto> getDefermentListByDefermentYearReasonStatus(String authHeader, String defermentYear,
-                                                                          BigInteger reasonId, Character status,
-                                                                          Character gender, String cid) {
+                                                                              BigInteger reasonId, Character status,
+                                                                              Character gender, String cid) {
 
         defermentYear = defermentYear.isEmpty() ? null : defermentYear;
         cid = cid.isEmpty() ? null : cid;
@@ -129,7 +135,7 @@ public class ReadDefermentService implements IReadDefermentService {
     @Override
     public ResponseEntity<?> getDefermentValidation(BigInteger userId) {
         return defermentExemptionValidation
-                .getDefermentAndExemptValidation(userId,'D',"");
+                .getDefermentAndExemptValidation(userId, 'D', "");
     }
 
     @Override

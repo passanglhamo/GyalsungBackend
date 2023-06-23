@@ -51,4 +51,7 @@ public class ApplicationProperties {
     @Value("${user.service.operator}")
     private String operatorUsers;
 
+    @Value("${training.management.getAllReasonById}")
+    private String reasonById;
+
 }

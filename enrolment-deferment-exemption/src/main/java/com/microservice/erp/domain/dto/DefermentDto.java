@@ -36,6 +36,7 @@ public class DefermentDto {
     private Date dob;
     private Character gender;
     private Date applicationDate;
+    private String caseNumber;
 
     public static DefermentDto withId(
             BigInteger id,
@@ -52,7 +53,8 @@ public class DefermentDto {
             String cid,
             Date dob,
             Character gender,
-            Date applicationDate) {
+            Date applicationDate,
+            String caseNumber) {
         return new DefermentDto(
                 id,
                 defermentYear,
@@ -68,7 +70,8 @@ public class DefermentDto {
                 cid,
                 dob,
                 gender,
-                applicationDate);
+                applicationDate,
+                caseNumber);
     }
 
 

@@ -36,6 +36,9 @@ public interface IDefermentInfoRepository extends JpaRepository<DefermentInfo, B
 
     DefermentInfo findByDefermentYearAndStatusAndUserId(String year, Character status,BigInteger userId);
 
+    DefermentInfo findByReasonIdOrderByIdDesc(BigInteger reasonId);
+
+
 
 
 }

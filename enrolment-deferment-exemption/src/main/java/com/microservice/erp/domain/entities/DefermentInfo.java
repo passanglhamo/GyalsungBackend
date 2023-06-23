@@ -24,6 +24,11 @@ public class DefermentInfo extends Auditable<BigInteger, Long> {
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "case_number", columnDefinition = "varchar(20) ")
+    private String caseNumber;
+
     @Column(name = "gender", columnDefinition = "char(1)")
     private Character gender;
 
@@ -61,6 +66,15 @@ public class DefermentInfo extends Auditable<BigInteger, Long> {
     )
     private Set<DefermentFileInfo> files;
     //endregion
+
+
+    public String getCaseNumber() {
+        return caseNumber;
+    }
+
+    public void setCaseNumber(String caseNumber) {
+        this.caseNumber = caseNumber;
+    }
 
     public BigInteger getUserId() {
         return userId;

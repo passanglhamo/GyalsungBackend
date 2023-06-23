@@ -20,6 +20,11 @@ public class Reason extends Auditable<BigInteger, Long> {
     @Column(name = "reason_name", columnDefinition = "varchar(255)")
     private String reasonName;
 
+    @Basic(optional = false)
+    @NotNull(message = "Code cannot be null")
+    @Column(name = "code", columnDefinition = "varchar(3)")
+    private String code;
+
     @NotNull
     @Basic(optional = false)
     @Column(name = "defer_exempt", columnDefinition = "char(1)")
@@ -42,6 +47,14 @@ public class Reason extends Auditable<BigInteger, Long> {
 
     public void setReasonName(String reasonName) {
         this.reasonName = reasonName;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Character getDefermentExemption() {

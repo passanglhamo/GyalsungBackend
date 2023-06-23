@@ -107,7 +107,7 @@ public class CreateExemptionService implements ICreateExemptionService {
         addToQueue.addToQueue("email", eventBus);
         addToQueue.addToQueue("sms", eventBus);
 
-        mailToOperator.sendMailToOperator(fullName,cid,properties,httpRequest,"deferment");
+        mailToOperator.sendMailToOperator(fullName,cid,properties,httpRequest,"exemption","");
 
     }
 }

@@ -28,8 +28,8 @@ public class MailToOperator {
     RestTemplate restTemplate;
 
     public void sendMailToOperator(String fullName, String cid, ApplicationProperties properties,
-                                   HttpEntity<String> httpRequest, String messageContent) throws JsonProcessingException {
-        String messageGHQ = fullName+" with cid " +cid+ " has successfully applied for "+messageContent+". \n";
+                                   HttpEntity<String> httpRequest, String messageContent,String caseNumber) throws JsonProcessingException {
+        String messageGHQ = fullName+" with cid " +cid+ " has successfully applied for "+messageContent+". The case number for the application is "+caseNumber+".\n";
         String subjectGHQ = "Gyalsung Registration Pending Approval";
 
         String operatorUsers = properties.getOperatorUsers();

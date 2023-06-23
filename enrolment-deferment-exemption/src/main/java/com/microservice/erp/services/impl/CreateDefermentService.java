@@ -40,6 +40,8 @@ public class CreateDefermentService implements ICreateDefermentService {
     private final MailToOperator mailToOperator;
     private final DefermentExemptionValidation defermentExemptionValidation;
     Integer fileLength = 5;
+    private final CaseNumberGenerator caseNumberGenerator;
+
 
     @Autowired
     @Qualifier("userProfileTemplate")
@@ -64,24 +66,26 @@ public class CreateDefermentService implements ICreateDefermentService {
             }
         }
 
+        String caseNumber = caseNumberGenerator.caseNumberGenerator(authTokenHeader,command.getReasonId());
+
         var deferment = repository.save(
                 mapper.mapToEntity(
-                        request, command
+                        request, command,caseNumber
                 )
         );
 
         repository.save(deferment);
 
         try {
-            sendEmailAndSms(authTokenHeader, deferment.getUserId());
+            sendEmailAndSms(authTokenHeader, deferment.getUserId(),caseNumber);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        return ResponseEntity.ok(new MessageResponse("Deferment is successfully saved"));
+        return ResponseEntity.ok(caseNumber);
     }
 
-    private void sendEmailAndSms(String authTokenHeader, BigInteger userId) throws Exception {
+    private void sendEmailAndSms(String authTokenHeader, BigInteger userId, String caseNumber) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
@@ -96,7 +100,7 @@ public class CreateDefermentService implements ICreateDefermentService {
 
         String emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
                 "\n" +
-                "This is to acknowledge the receipt of your deferment application. Your deferment application will be reviewed and the outcome of the deferment will be sent to you through your email within 10 days of the submission of your application. If you are not approved for deferment, you will have to complete the Gyalsung pre-enlistment procedure. \n";
+                "This is to acknowledge the receipt of your deferment application. Case number for your application is "+caseNumber+". Your deferment application will be reviewed and the outcome of the deferment will be sent to you through your email within 10 days of the submission of your application. If you are not approved for deferment, you will have to complete the Gyalsung pre-enlistment procedure. \n";
 
 
         EventBus eventBus = EventBus.withId(
@@ -113,7 +117,7 @@ public class CreateDefermentService implements ICreateDefermentService {
         addToQueue.addToQueue("email", eventBus);
         addToQueue.addToQueue("sms", eventBus);
 
-        mailToOperator.sendMailToOperator(fullName,cid,properties,httpRequest,"deferment");
+        mailToOperator.sendMailToOperator(fullName,cid,properties,httpRequest,"deferment",caseNumber);
 
 
     }

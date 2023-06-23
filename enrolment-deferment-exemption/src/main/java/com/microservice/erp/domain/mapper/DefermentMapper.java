@@ -23,11 +23,14 @@ import java.util.stream.Collectors;
 
 @Component
 public class DefermentMapper {
-    public DefermentInfo mapToEntity(HttpServletRequest request, ICreateDefermentService.CreateDefermentCommand command) {
+
+    public DefermentInfo mapToEntity(HttpServletRequest request, ICreateDefermentService.CreateDefermentCommand command,
+                                     String caseNumber) {
 
         DefermentInfo deferment = new ModelMapper().map(command, DefermentInfo.class);
         deferment.setStatus(ApprovalStatus.PENDING.value());
         deferment.setApplicationDate(new Date());
+        deferment.setCaseNumber(caseNumber);
         if (!Objects.isNull(command.getProofDocuments())) {
             deferment.setFiles(
                     Arrays.stream(command.getProofDocuments())
@@ -83,24 +86,25 @@ public class DefermentMapper {
                 deferment.getStatus(),
                 deferment.getRemarks(),
                 null,
-                deferment.getFiles().size()==0?null:
-                deferment.getFiles()
-                        .stream()
-                        .map(ta ->
-                                DefermentFileDto.withId(
-                                        ta.getId(),
-                                        ta.getFilePath(),
-                                        ta.getFileSize(),
-                                        ta.getFileName()
+                deferment.getFiles().size() == 0 ? null :
+                        deferment.getFiles()
+                                .stream()
+                                .map(ta ->
+                                        DefermentFileDto.withId(
+                                                ta.getId(),
+                                                ta.getFilePath(),
+                                                ta.getFileSize(),
+                                                ta.getFileName()
+                                        )
                                 )
-                        )
-                        .collect(Collectors.toUnmodifiableSet())
+                                .collect(Collectors.toUnmodifiableSet())
                 ,
                 null,
                 null,
                 null,
                 deferment.getGender(),
-                deferment.getApplicationDate()
+                deferment.getApplicationDate(),
+                deferment.getCaseNumber()
         );
     }
 }
