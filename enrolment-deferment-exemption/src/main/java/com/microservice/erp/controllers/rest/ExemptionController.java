@@ -99,8 +99,9 @@ public class ExemptionController {
             , @RequestParam("reasonId") BigInteger reasonId
             , @RequestParam("status") Character status
             , @RequestParam("gender") Character gender
-            , @RequestParam("cid") String cid) {
-        return readService.getExemptionListByCriteria(authHeader,exemptionYear, status,reasonId,gender,cid);
+            , @RequestParam("cid") String cid
+            , @RequestParam("caseNumber") String caseNumber) {
+        return readService.getExemptionListByCriteria(authHeader, exemptionYear, status, reasonId, gender, cid,caseNumber);
     }
 
     @GetMapping(value = "/getExemptionByUserId")

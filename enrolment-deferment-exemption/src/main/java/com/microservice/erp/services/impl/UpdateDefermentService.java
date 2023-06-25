@@ -98,18 +98,9 @@ public class UpdateDefermentService implements IUpdateDefermentService {
     @Override
     public ResponseEntity<?> saveToDraft(String authHeader, UpdateDefermentCommand command) {
         repository.findAllById(command.getDefermentIds()).forEach(d -> {
-            if (d.getStatus().equals(ApprovalStatus.PENDING.value())) {
                 d.setStatus(command.getStatus());
                 d.setApprovalRemarks(command.getRemarks());
                 repository.save(d);
-                try {
-                    sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.APPROVED.value());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-
         });
 
         return ResponseEntity.ok(new MessageResponse("Saved successfully"));
