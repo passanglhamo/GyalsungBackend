@@ -13,16 +13,17 @@ public class UserProfileDto {
     //region private variables
     private BigInteger id;
     private Integer age;
+     private BigInteger userId;
     private String username;
-    private String full_name;
     private String fullName;
+    private String full_name;
     private Character gender;
     private String cid;
     private String studentCode;
     private String birthDate;
     private Date dob;
-    private String mobile_no;
     private String mobileNo;
+    private String mobile_no;
     private String otp;
     private String email;
     private String verificationCode;
@@ -44,12 +45,12 @@ public class UserProfileDto {
     private String motherMobileNo;
     private String motherEmail;
     private String motherOccupation;
-    private String guardianName;
-    private String guardianCid;
-    private String guardianMobileNo;
-    private String guardianEmail;
-    private String guardianOccupation;
-    private String relationToGuardian;
+    //    private String guardianName;
+//    private String guardianCid;
+//    private String guardianMobileNo;
+//    private String guardianEmail;
+//    private String guardianOccupation;
+//    private String relationToGuardian;
     private String socialMediaLink1;
     private String socialMediaLink2;
     private String socialMediaLink3;
@@ -59,7 +60,22 @@ public class UserProfileDto {
     private String presentGeogName;
     private String presentPlaceName;
     private String presentCountry;
+    private String profilePictureUrl;
     private MultipartFile profilePicture;
     private byte[] profilePhoto;
+    private Object roles;
+    private Character status;
+    private String guardianNameFirst;
+    private String guardianCidFirst;
+    private String guardianMobileNoFirst;
+    private String guardianOccupationFirst;
+    private String guardianEmailFirst;
+    private String relationToGuardianFirst;
+    private String guardianNameSecond;
+    private String guardianCidSecond;
+    private String guardianMobileNoSecond;
+    private String guardianOccupationSecond;
+    private String guardianEmailSecond;
+    private String relationToGuardianSecond;
     //endregion
 }
