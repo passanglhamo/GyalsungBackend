@@ -31,6 +31,7 @@ public class DefermentListDto {
     private Date dob;
     private Character gender;
     private Date applicationDate;
+    private String caseNumber;
     private Collection<DefermentDto> defermentList;
 
 
@@ -50,6 +51,7 @@ public class DefermentListDto {
             Date dob,
             Character gender,
             Date applicationDate,
+            String caseNumber,
             Collection<DefermentDto> defermentList) {
         return new DefermentListDto(
                 id,
@@ -67,6 +69,7 @@ public class DefermentListDto {
                 dob,
                 gender,
                 applicationDate,
+                caseNumber,
                 defermentList);
     }
 }

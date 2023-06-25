@@ -10,7 +10,7 @@ import java.util.List;
 public interface IReadDefermentService {
     List<DefermentDto> getAllDefermentList(String authHeader);
 
-    List<DefermentListDto> getDefermentListByDefermentYearReasonStatus(String authHeader, String defermentYear, BigInteger reasonId, Character status, Character gender, String cid);
+    List<DefermentListDto> getDefermentListByDefermentYearReasonStatus(String authHeader, String defermentYear, BigInteger reasonId, Character status, Character gender, String cid, String caseNumber);
 
     ResponseEntity<?> getDefermentByUserId(BigInteger userId);
 

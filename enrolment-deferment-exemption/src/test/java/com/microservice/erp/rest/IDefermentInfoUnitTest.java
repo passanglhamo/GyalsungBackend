@@ -74,7 +74,6 @@ public class IDefermentInfoUnitTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8))
                 //.andExpect(status().isOk())
                 .andReturn();
-        String str = "Status: " + result.getResponse().getStatus();
         System.out.println(str);
         //
 

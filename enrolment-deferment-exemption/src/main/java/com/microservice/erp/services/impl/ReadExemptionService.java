@@ -62,7 +62,6 @@ public class ReadExemptionService implements IReadExemptionService {
     public List<ExemptionListDto> getExemptionListByCriteria(String authHeader, String exemptionYear, Character status,
                                                          BigInteger reasonId, Character gender, String cid) {
 
-        exemptionYear = exemptionYear.isEmpty() ? null : exemptionYear;
         cid = cid.isEmpty() ? null : cid;
 
         List<ExemptionDto> exemptionDtoList = repository.getExemptionListByToDateStatus(status,gender, reasonId)
@@ -109,6 +108,7 @@ public class ReadExemptionService implements IReadExemptionService {
                 exemptionData.setReasonId(exemptionDto.getReasonId());
                 exemptionData.setApplicationDate(exemptionDto.getApplicationDate());
                 exemptionData.setUserId(exemptionDto.getUserId());
+                exemptionData.setCaseNumber(exemptionDto.getCaseNumber());
                 exemptionData.setExemptionList(exemptionDtoList1);
 
             }
