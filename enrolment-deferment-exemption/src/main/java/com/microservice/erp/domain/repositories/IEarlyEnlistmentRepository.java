@@ -9,4 +9,5 @@ import java.math.BigInteger;
 public interface IEarlyEnlistmentRepository extends JpaRepository<EarlyEnlistment, BigInteger> {
     EarlyEnlistment findFirstByOrderByEnlistmentIdDesc();
 
+    EarlyEnlistment findFirstByUserIdOrderByApplicationDateDesc(BigInteger userId);
 }

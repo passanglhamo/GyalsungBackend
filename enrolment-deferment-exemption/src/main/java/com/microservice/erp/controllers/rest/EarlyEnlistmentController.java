@@ -36,4 +36,8 @@ public class EarlyEnlistmentController {
         return iEarlyEnlistmentService.applyEarlyEnlistment(authHeader, earlyEnlistmentDto);
     }
 
+    @RequestMapping(value = "/getEarlyEnlistmentStatus", method = RequestMethod.GET)
+    public ResponseEntity<?> getEarlyEnlistmentStatus(@RequestParam("userId") BigInteger userId) {
+        return iEarlyEnlistmentService.getEarlyEnlistmentStatus(userId);
+    }
 }

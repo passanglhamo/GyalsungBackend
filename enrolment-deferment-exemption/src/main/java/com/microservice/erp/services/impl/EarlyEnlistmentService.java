@@ -149,15 +149,25 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         String subject = "Early Enlistment";
         String messageEmail = "Dear " + fullName + ",<br></br> You have successfully registered as early enlistment for Training. The Gyalsung " +
                 "Head Office will inform you aboutthe medical screeninng and training academy. <br></br><br></br>" +
-                 "<small>***This is a system-generated email. Please do not respond to this email.***</small>";
+                "<small>***This is a system-generated email. Please do not respond to this email.***</small>";
 
         String messageSms = "Dear " + fullName + ", You have successfully registered as early enlistment for Training. The Gyalsung " +
-                "Head Office will inform you aboutthe medical screeninng and training academy.";
+                "Head Office will inform you about the medical screeninng and training academy.";
 
         EventBus eventBusEmail = EventBus.withId(email, null, null, messageEmail, subject, mobileNo, null, null);
         EventBus eventBusSms = EventBus.withId(null, null, null, messageSms, null, mobileNo, null, null);
         addToQueue.addToQueue("email", eventBusEmail);
         addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("Guardian consent requested successfully."));
+    }
+
+    @Override
+    public ResponseEntity<?> getEarlyEnlistmentStatus(BigInteger userId) {
+        EarlyEnlistment earlyEnlistmentDb = iEarlyEnlistmentRepository.findFirstByUserIdOrderByApplicationDateDesc(userId);
+        if (earlyEnlistmentDb != null) {
+            return ResponseEntity.ok(earlyEnlistmentDb);
+        } else {
+            return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
+        }
     }
 }
