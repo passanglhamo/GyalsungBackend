@@ -103,8 +103,9 @@ public class DefermentController {
             , @RequestParam("reasonId") BigInteger reasonId
             , @RequestParam("status") Character status
             , @RequestParam("gender") Character gender
-            , @RequestParam("cid") String cid) {
-        return readService.getDefermentListByDefermentYearReasonStatus(authHeader, defermentYear, reasonId, status, gender, cid);
+            , @RequestParam("cid") String cid
+            , @RequestParam("caseNumber") String caseNumber) {
+        return readService.getDefermentListByDefermentYearReasonStatus(authHeader, defermentYear, reasonId, status, gender, cid,caseNumber);
     }
 
     @GetMapping(value = "/getDefermentByUserId")

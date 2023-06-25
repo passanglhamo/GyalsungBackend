@@ -69,14 +69,15 @@ public class ReadDefermentService implements IReadDefermentService {
     @Override
     public List<DefermentListDto> getDefermentListByDefermentYearReasonStatus(String authHeader, String defermentYear,
                                                                               BigInteger reasonId, Character status,
-                                                                              Character gender, String cid) {
+                                                                              Character gender, String cid, String caseNumber) {
 
         defermentYear = defermentYear.isEmpty() ? null : defermentYear;
         cid = cid.isEmpty() ? null : cid;
+        caseNumber = caseNumber.isEmpty() ? null : caseNumber;
 
         List<UserProfileDto> userProfileDtos;
 
-        List<DefermentDto> defermentDtoList = repository.getDefermentListByToDateStatus(defermentYear, status, gender, reasonId)
+        List<DefermentDto> defermentDtoList = repository.getDefermentListByToDateStatus(defermentYear, status, gender, reasonId,caseNumber)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
@@ -118,6 +119,7 @@ public class ReadDefermentService implements IReadDefermentService {
                 defermentData.setReasonId(defermentDto.getReasonId());
                 defermentData.setApplicationDate(defermentDto.getApplicationDate());
                 defermentData.setUserId(defermentDto.getUserId());
+                defermentData.setCaseNumber(defermentDto.getCaseNumber());
                 defermentData.setDefermentList(defermentList);
             }
             defermentDtos.add(defermentData);
