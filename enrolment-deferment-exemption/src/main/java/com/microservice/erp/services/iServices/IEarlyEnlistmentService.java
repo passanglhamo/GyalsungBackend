@@ -8,4 +8,6 @@ import java.math.BigInteger;
 
 public interface IEarlyEnlistmentService {
     ResponseEntity<?> requestGuardianConsent(String authHeader, GuardianConsentRequestDto guardianConsentRequestDto) throws JsonProcessingException;
+
+    ResponseEntity<?> getGuardianConsentStatus(BigInteger userId);
 }

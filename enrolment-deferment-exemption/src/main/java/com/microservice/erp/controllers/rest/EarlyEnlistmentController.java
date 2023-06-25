@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigInteger;
+
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -18,9 +20,13 @@ public class EarlyEnlistmentController {
 
     @RequestMapping(value = "/requestGuardianConsent", method = RequestMethod.POST)
     public ResponseEntity<?> requestGuardianConsent(@RequestHeader("Authorization") String authHeader
-            ,@RequestBody GuardianConsentRequestDto guardianConsentRequestDto) throws JsonProcessingException {
+            , @RequestBody GuardianConsentRequestDto guardianConsentRequestDto) throws JsonProcessingException {
         return iEarlyEnlistmentService.requestGuardianConsent(authHeader, guardianConsentRequestDto);
     }
 
+    @RequestMapping(value = "/getGuardianConsentStatus", method = RequestMethod.GET)
+    public ResponseEntity<?> getGuardianConsentStatus(@RequestParam("userId") BigInteger userId) {
+        return iEarlyEnlistmentService.getGuardianConsentStatus(userId);
+    }
 
 }

@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class EarlyEnlistmentService implements IEarlyEnlistmentService {
@@ -92,13 +93,22 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         String messageSms = "Dear " + guardianName + ", We would like to request that " +
                 SalutationGenerator.getSalutation(gender) + fullName + " has submitted" +
                 " a request for your consent regarding " + SalutationGenerator.getPronoun(gender) + " early enlistment in the National Service Training." +
-                " To provide your consent, please click here:" +consentUrl;
+                " To provide your consent, please click here:" + consentUrl;
 
         EventBus eventBusEmail = EventBus.withId(guardianEmail, null, null, messageEmail, subject, guardianMobileNo, null, null);
         EventBus eventBusSms = EventBus.withId(null, null, null, messageSms, null, guardianMobileNo, null, null);
         addToQueue.addToQueue("email", eventBusEmail);
         addToQueue.addToQueue("sms", eventBusSms);
-
         return ResponseEntity.ok(new MessageResponse("Guardian consent requested successfully."));
+    }
+
+    @Override
+    public ResponseEntity<?> getGuardianConsentStatus(BigInteger userId) {
+        GuardianConsent guardianConsent = iGuardianConsentRepository.findFirstByUserIdOrderByConsentRequestDateDesc(userId);
+        if (guardianConsent != null) {
+            return ResponseEntity.ok(guardianConsent);
+        } else {
+            return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
+        }
     }
 }
