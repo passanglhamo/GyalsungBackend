@@ -1,7 +1,6 @@
 package com.microservice.erp.services.impl;
 
 import com.microservice.erp.domain.dto.*;
-import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.mapper.ExemptionMapper;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
@@ -60,11 +59,13 @@ public class ReadExemptionService implements IReadExemptionService {
 
     @Override
     public List<ExemptionListDto> getExemptionListByCriteria(String authHeader, String exemptionYear, Character status,
-                                                         BigInteger reasonId, Character gender, String cid) {
+                                                             BigInteger reasonId, Character gender, String cid, String caseNumber) {
 
         cid = cid.isEmpty() ? null : cid;
+        caseNumber = caseNumber.isEmpty() ? null : caseNumber;
 
-        List<ExemptionDto> exemptionDtoList = repository.getExemptionListByToDateStatus(status,gender, reasonId)
+
+        List<ExemptionDto> exemptionDtoList = repository.getExemptionListByToDateStatus(status,gender, reasonId,caseNumber)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());

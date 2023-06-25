@@ -50,12 +50,9 @@ public class UpdateExemptionService implements IUpdateExemptionService {
         }
 
         repository.findAllById(command.getExemptionIds()).forEach(d -> {
-            if (d.getStatus().equals(ApprovalStatus.PENDING.value())) {
                 d.setStatus(ApprovalStatus.APPROVED.value());
                 d.setApprovalRemarks(command.getRemarks());
                 repository.save(d);
-            }
-
             try {
                 sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.APPROVED.value());
             } catch (Exception e) {
@@ -96,17 +93,9 @@ public class UpdateExemptionService implements IUpdateExemptionService {
     @Override
     public ResponseEntity<?> saveToDraft(String authHeader, UpdateExemptionCommand command) {
         repository.findAllById(command.getExemptionIds()).forEach(d -> {
-            if (d.getStatus().equals(ApprovalStatus.PENDING.value())) {
                 d.setStatus(command.getStatus());
                 d.setApprovalRemarks(command.getRemarks());
                 repository.save(d);
-                try {
-                    sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.APPROVED.value());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
 
         });
 

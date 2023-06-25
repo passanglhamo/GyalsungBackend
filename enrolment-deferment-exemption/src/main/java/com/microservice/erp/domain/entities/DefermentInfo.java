@@ -39,8 +39,8 @@ public class DefermentInfo extends Auditable<BigInteger, Long> {
 
     @CreatedDate
     @Column(name = "application_date")
+    @Temporal(TemporalType.DATE)
     private Date applicationDate;
-
 
     @Basic(optional = false)
     @NotNull(message = "Reasons cannot be null")
