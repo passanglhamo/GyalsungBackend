@@ -8,4 +8,5 @@ import java.math.BigInteger;
 public interface IGuardianConsentRepository extends JpaRepository<GuardianConsent, BigInteger> {
     GuardianConsent findFirstByOrderByConsentIdDesc();
 
+    GuardianConsent findFirstByUserIdOrderByConsentRequestDateDesc(BigInteger userId);
 }
