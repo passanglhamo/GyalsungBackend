@@ -44,7 +44,7 @@ public class UserProfileDto {
     private String motherMobileNo;
     private String motherEmail;
     private String motherOccupation;
-//    private String guardianName;
+    //    private String guardianName;
 //    private String guardianCid;
 //    private String guardianMobileNo;
 //    private String guardianEmail;
@@ -67,7 +67,7 @@ public class UserProfileDto {
     private String guardianNameFirst;
     private String guardianCidFirst;
     private String guardianMobileNoFirst;
-        private String guardianOccupationFirst;
+    private String guardianOccupationFirst;
     private String guardianEmailFirst;
     private String relationToGuardianFirst;
     private String guardianNameSecond;
