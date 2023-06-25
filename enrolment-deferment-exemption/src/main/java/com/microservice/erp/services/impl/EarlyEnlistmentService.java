@@ -35,6 +35,10 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
     @Qualifier("userProfileTemplate")
     RestTemplate userRestTemplate;
 
+    @Autowired
+    @Qualifier("trainingManagementTemplate")
+    RestTemplate trainingRestTemplate;
+
     private final AddToQueue addToQueue;
     private final IGuardianConsentRepository iGuardianConsentRepository;
     private final IEarlyEnlistmentRepository iEarlyEnlistmentRepository;
@@ -59,10 +63,13 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
         Date birthDate = Objects.requireNonNull(userResponse.getBody()).getDob();
 
+        String registrationDateUrl = properties.getActiveRegistrationDate();
+        ResponseEntity<RegistrationDateDto> registrationDateResponse = trainingRestTemplate.exchange(registrationDateUrl, HttpMethod.GET, request, RegistrationDateDto.class);
+        Date registrationDate = Objects.requireNonNull(registrationDateResponse.getBody()).getTrainingDate();
 
-        GuardianConsent guardianConsent = iGuardianConsentRepository.findFirstByUserIdOrderByConsentRequestDateDesc(userId);
-        Date registrationDate = guardianConsent.getConsentRequestDate();//todo: get registration date,
-        //todo: if active registration date is null, return error message
+//        GuardianConsent guardianConsent = iGuardianConsentRepository.findFirstByUserIdOrderByConsentRequestDateDesc(userId);
+//        Date registrationDate = guardianConsent.getConsentRequestDate();//todo: get registration date,
+//        //todo: if active registration date is null, return error message
 
 
         AgeDto ageDto = AgeCalculator.getAge(birthDate, registrationDate);

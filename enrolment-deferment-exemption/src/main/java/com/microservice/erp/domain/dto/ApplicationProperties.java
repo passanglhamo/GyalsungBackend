@@ -54,4 +54,7 @@ public class ApplicationProperties {
     @Value("${training.management.getAllReasonById}")
     private String reasonById;
 
+    @Value("${training.management.activeRegistrationDate}")
+    private String activeRegistrationDate;
+
 }
