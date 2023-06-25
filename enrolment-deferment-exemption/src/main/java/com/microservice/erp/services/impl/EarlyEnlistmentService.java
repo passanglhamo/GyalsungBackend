@@ -5,9 +5,11 @@ import com.microservice.erp.domain.dto.ApplicationProperties;
 import com.microservice.erp.domain.dto.EventBus;
 import com.microservice.erp.domain.dto.GuardianConsentRequestDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
+import com.microservice.erp.domain.entities.EarlyEnlistment;
 import com.microservice.erp.domain.entities.GuardianConsent;
 import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.helper.SalutationGenerator;
+import com.microservice.erp.domain.repositories.IEarlyEnlistmentRepository;
 import com.microservice.erp.domain.repositories.IGuardianConsentRepository;
 import com.microservice.erp.services.iServices.IEarlyEnlistmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,6 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class EarlyEnlistmentService implements IEarlyEnlistmentService {
@@ -34,11 +35,13 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
 
     private final AddToQueue addToQueue;
     private final IGuardianConsentRepository iGuardianConsentRepository;
+    private final IEarlyEnlistmentRepository iEarlyEnlistmentRepository;
 
 
-    public EarlyEnlistmentService(AddToQueue addToQueue, IGuardianConsentRepository iGuardianConsentRepository) {
+    public EarlyEnlistmentService(AddToQueue addToQueue, IGuardianConsentRepository iGuardianConsentRepository, IEarlyEnlistmentRepository iEarlyEnlistmentRepository) {
         this.addToQueue = addToQueue;
         this.iGuardianConsentRepository = iGuardianConsentRepository;
+        this.iEarlyEnlistmentRepository = iEarlyEnlistmentRepository;
     }
 
     @Override
@@ -110,5 +113,53 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
         }
+    }
+
+    @Override
+    public ResponseEntity<?> applyEarlyEnlistment(String authHeader, BigInteger userId) throws JsonProcessingException {
+
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        String userUrl = properties.getUserProfileById() + userId;
+        ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
+        String fullName = Objects.requireNonNull(userResponse.getBody()).getFullName().trim();
+        String email = Objects.requireNonNull(userResponse.getBody()).getEmail().trim();
+        String mobileNo = Objects.requireNonNull(userResponse.getBody()).getMobileNo().trim();
+        Character gender = Objects.requireNonNull(userResponse.getBody()).getGender();
+
+
+        EarlyEnlistment earlyEnlistment = new EarlyEnlistment();
+
+        EarlyEnlistment earlyEnlistmentDb = iEarlyEnlistmentRepository.findFirstByOrderByEnlistmentIdDesc();
+        BigInteger enlistmentId = earlyEnlistmentDb == null ? BigInteger.ONE : earlyEnlistmentDb.getEnlistmentId().add(BigInteger.ONE);
+
+        earlyEnlistment.setEnlistmentId(enlistmentId);
+        earlyEnlistment.setUserId(userId);
+
+        earlyEnlistment.setApplicationDate(new Date());
+        earlyEnlistment.setStatus('P');//P=Pending, A=Approved, R=Rejected
+        earlyEnlistment.setCreatedBy(userId);
+        earlyEnlistment.setCreatedDate(new Date());
+        iEarlyEnlistmentRepository.save(earlyEnlistment);
+
+
+        String subject = "Early Enlistment";
+        String messageEmail = "Dear " + fullName + ",<br></br> You have successfully registered as early enlistment for Training. The Gyalsung " +
+                "Head Office will inform you aboutthe medical screeninng and training academy. <br></br><br></br>" +
+                 "<small>***This is a system-generated email. Please do not respond to this email.***</small>";
+
+        String messageSms = "Dear " + fullName + ", You have successfully registered as early enlistment for Training. The Gyalsung " +
+                "Head Office will inform you aboutthe medical screeninng and training academy.";
+
+        EventBus eventBusEmail = EventBus.withId(email, null, null, messageEmail, subject, mobileNo, null, null);
+        EventBus eventBusSms = EventBus.withId(null, null, null, messageSms, null, mobileNo, null, null);
+        addToQueue.addToQueue("email", eventBusEmail);
+        addToQueue.addToQueue("sms", eventBusSms);
+        return ResponseEntity.ok(new MessageResponse("Guardian consent requested successfully."));
     }
 }

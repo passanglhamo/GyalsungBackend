@@ -10,4 +10,6 @@ public interface IEarlyEnlistmentService {
     ResponseEntity<?> requestGuardianConsent(String authHeader, GuardianConsentRequestDto guardianConsentRequestDto) throws JsonProcessingException;
 
     ResponseEntity<?> getGuardianConsentStatus(BigInteger userId);
+
+    ResponseEntity<?> applyEarlyEnlistment(String authHeader, BigInteger userId) throws JsonProcessingException;
 }

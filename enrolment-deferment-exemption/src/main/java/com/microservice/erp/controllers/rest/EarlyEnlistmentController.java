@@ -29,4 +29,9 @@ public class EarlyEnlistmentController {
         return iEarlyEnlistmentService.getGuardianConsentStatus(userId);
     }
 
+    @RequestMapping(value = "/applyEarlyEnlistment", method = RequestMethod.POST)
+    public ResponseEntity<?> applyEarlyEnlistment(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") BigInteger userId) throws JsonProcessingException {
+        return iEarlyEnlistmentService.applyEarlyEnlistment(authHeader, userId);
+    }
+
 }
