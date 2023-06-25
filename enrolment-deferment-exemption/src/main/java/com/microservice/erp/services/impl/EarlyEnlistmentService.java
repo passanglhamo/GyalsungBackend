@@ -1,10 +1,7 @@
 package com.microservice.erp.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.microservice.erp.domain.dto.ApplicationProperties;
-import com.microservice.erp.domain.dto.EventBus;
-import com.microservice.erp.domain.dto.GuardianConsentRequestDto;
-import com.microservice.erp.domain.dto.UserProfileDto;
+import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.EarlyEnlistment;
 import com.microservice.erp.domain.entities.GuardianConsent;
 import com.microservice.erp.domain.helper.MessageResponse;
@@ -116,11 +113,12 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
     }
 
     @Override
-    public ResponseEntity<?> applyEarlyEnlistment(String authHeader, BigInteger userId) throws JsonProcessingException {
+    public ResponseEntity<?> applyEarlyEnlistment(String authHeader, EarlyEnlistmentDto earlyEnlistmentDto) throws JsonProcessingException {
 
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
+        BigInteger userId = earlyEnlistmentDto.getUserId();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);

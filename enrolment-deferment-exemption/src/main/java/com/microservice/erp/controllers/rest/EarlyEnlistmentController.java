@@ -1,6 +1,7 @@
 package com.microservice.erp.controllers.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.microservice.erp.domain.dto.EarlyEnlistmentDto;
 import com.microservice.erp.domain.dto.GuardianConsentRequestDto;
 import com.microservice.erp.services.iServices.IEarlyEnlistmentService;
 import lombok.AllArgsConstructor;
@@ -30,8 +31,9 @@ public class EarlyEnlistmentController {
     }
 
     @RequestMapping(value = "/applyEarlyEnlistment", method = RequestMethod.POST)
-    public ResponseEntity<?> applyEarlyEnlistment(@RequestHeader("Authorization") String authHeader, @RequestParam("userId") BigInteger userId) throws JsonProcessingException {
-        return iEarlyEnlistmentService.applyEarlyEnlistment(authHeader, userId);
+    public ResponseEntity<?> applyEarlyEnlistment(@RequestHeader("Authorization") String authHeader,
+                                                  @RequestBody EarlyEnlistmentDto earlyEnlistmentDto) throws JsonProcessingException {
+        return iEarlyEnlistmentService.applyEarlyEnlistment(authHeader, earlyEnlistmentDto);
     }
 
 }

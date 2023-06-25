@@ -1,6 +1,7 @@
 package com.microservice.erp.services.iServices;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.microservice.erp.domain.dto.EarlyEnlistmentDto;
 import com.microservice.erp.domain.dto.GuardianConsentRequestDto;
 import org.springframework.http.ResponseEntity;
 
@@ -11,5 +12,5 @@ public interface IEarlyEnlistmentService {
 
     ResponseEntity<?> getGuardianConsentStatus(BigInteger userId);
 
-    ResponseEntity<?> applyEarlyEnlistment(String authHeader, BigInteger userId) throws JsonProcessingException;
+    ResponseEntity<?> applyEarlyEnlistment(String authHeader, EarlyEnlistmentDto earlyEnlistmentDto) throws JsonProcessingException;
 }
