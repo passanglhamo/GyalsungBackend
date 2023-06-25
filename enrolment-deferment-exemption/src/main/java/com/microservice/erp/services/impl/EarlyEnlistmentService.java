@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.EarlyEnlistment;
 import com.microservice.erp.domain.entities.GuardianConsent;
+import com.microservice.erp.domain.helper.AgeCalculator;
+import com.microservice.erp.domain.helper.AgeDto;
 import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.helper.SalutationGenerator;
 import com.microservice.erp.domain.repositories.IEarlyEnlistmentRepository;
@@ -21,6 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
@@ -39,6 +44,69 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         this.addToQueue = addToQueue;
         this.iGuardianConsentRepository = iGuardianConsentRepository;
         this.iEarlyEnlistmentRepository = iEarlyEnlistmentRepository;
+    }
+
+    @Override
+    public ResponseEntity<?> checkAgeValidation(String authHeader, EarlyEnlistmentDto earlyEnlistmentDto) {
+        BigInteger userId = earlyEnlistmentDto.getUserId();
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        String userUrl = properties.getUserProfileById() + userId;
+        ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
+        Date birthDate = Objects.requireNonNull(userResponse.getBody()).getDob();
+
+
+        GuardianConsent guardianConsent = iGuardianConsentRepository.findFirstByUserIdOrderByConsentRequestDateDesc(userId);
+        Date registrationDate = guardianConsent.getConsentRequestDate();//todo: get registration date,
+        //todo: if active registration date is null, return error message
+
+
+        AgeDto ageDto = AgeCalculator.getAge(birthDate, registrationDate);
+
+//        Calendar birthCalendar = Calendar.getInstance();
+//        birthCalendar.setTime(birthDate);
+//        int birthYear = birthCalendar.get(Calendar.YEAR);
+//        int birthMonth = birthCalendar.get(Calendar.MONTH);
+//        int birthDay = birthCalendar.get(Calendar.DAY_OF_MONTH);
+//
+//        Calendar currentCalendar = Calendar.getInstance();
+//        currentCalendar.setTime(registrationDate);
+//        int currentYear = currentCalendar.get(Calendar.YEAR);
+//        int currentMonth = currentCalendar.get(Calendar.MONTH);
+//        int currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH);
+//
+//        int ageYears = currentYear - birthYear;
+//        int ageMonths = currentMonth - birthMonth;
+//        int ageDays = currentDay - birthDay;
+//
+//        if (currentMonth < birthMonth || (currentMonth == birthMonth && currentDay < birthDay)) {
+//            ageYears--;
+//            if (currentMonth < birthMonth) {
+//                ageMonths += 12 - birthMonth + currentMonth;
+//            } else {
+//                ageMonths = 12 - birthMonth + currentMonth;
+//            }
+//            if (currentDay < birthDay) {
+//                ageMonths--;
+//                int lastMonthMaxDays = getLastDayOfMonth(currentMonth - 1, currentYear);
+//                ageDays = lastMonthMaxDays - birthDay + currentDay;
+//            }
+//        }
+//        System.out.println("Age: " + ageYears + " years, " + ageMonths + " months, and " + ageDays + " days");
+
+
+        return ResponseEntity.ok((ageDto));
+    }
+
+
+    private static int getLastDayOfMonth(int month, int year) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, 1);
+        return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
     @Override

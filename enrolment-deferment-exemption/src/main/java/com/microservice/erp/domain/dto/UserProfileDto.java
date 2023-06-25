@@ -13,7 +13,7 @@ public class UserProfileDto {
     //region private variables
     private BigInteger id;
     private Integer age;
-     private BigInteger userId;
+    private BigInteger userId;
     private String username;
     private String fullName;
     private String full_name;

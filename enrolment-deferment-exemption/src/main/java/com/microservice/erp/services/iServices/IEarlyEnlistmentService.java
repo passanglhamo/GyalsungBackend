@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import java.math.BigInteger;
 
 public interface IEarlyEnlistmentService {
+    ResponseEntity<?> checkAgeValidation(String authHeader, EarlyEnlistmentDto earlyEnlistmentDto);
+
     ResponseEntity<?> requestGuardianConsent(String authHeader, GuardianConsentRequestDto guardianConsentRequestDto) throws JsonProcessingException;
 
     ResponseEntity<?> getGuardianConsentStatus(BigInteger userId);

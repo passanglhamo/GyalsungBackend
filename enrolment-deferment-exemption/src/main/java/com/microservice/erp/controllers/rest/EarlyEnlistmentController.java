@@ -19,6 +19,12 @@ public class EarlyEnlistmentController {
 
     private final IEarlyEnlistmentService iEarlyEnlistmentService;
 
+    @RequestMapping(value = "/checkAgeValidation", method = RequestMethod.POST)
+    public ResponseEntity<?> checkAgeValidation(@RequestHeader("Authorization") String authHeader
+            , @RequestBody EarlyEnlistmentDto earlyEnlistmentDto)  {
+        return iEarlyEnlistmentService.checkAgeValidation(authHeader, earlyEnlistmentDto);
+    }
+
     @RequestMapping(value = "/requestGuardianConsent", method = RequestMethod.POST)
     public ResponseEntity<?> requestGuardianConsent(@RequestHeader("Authorization") String authHeader
             , @RequestBody GuardianConsentRequestDto guardianConsentRequestDto) throws JsonProcessingException {
