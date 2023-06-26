@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -244,5 +245,10 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
         }
+    }
+
+    @Override
+    public List<DefermentListDto> getEarlyEnlistmentListByCriteria(String authHeader, Character status, Character gender, String cid) {
+        return null;
     }
 }
