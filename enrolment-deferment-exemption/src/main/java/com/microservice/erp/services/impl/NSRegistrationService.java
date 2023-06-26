@@ -25,7 +25,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -35,7 +39,7 @@ public class NSRegistrationService implements INSRegistrationService {
     private final INSRegistrationRepository repository;
     private final AddToQueue addToQueue;
     private final NSRegistrationMapper mapper;
-
+    private final UserInformationService userInformationService;
 
     @Autowired
     @Qualifier("userProfileTemplate")
@@ -100,5 +104,51 @@ public class NSRegistrationService implements INSRegistrationService {
         } else {
             return ResponseEntity.badRequest().body("Information not found.");
         }
+    }
+
+    @Override
+    public List<NSRegistrationDto> getRegistrationListByCriteria(String authHeader, String enlistmentYear,Character status, Character gender, String cid) {
+        cid = cid.isEmpty() ? null : cid;
+        enlistmentYear = enlistmentYear.isEmpty() ? null : enlistmentYear;
+
+        List<NSRegistrationDto> nsRegistrationDtos = repository.getRegistrationListByStatus(enlistmentYear,status, gender)
+                .stream()
+                .map(mapper::mapToDomain)
+                .collect(Collectors.toUnmodifiableList());
+
+        List<UserProfileDto> userProfileDtos;
+        List<BigInteger> userIdsVal;
+        List<NSRegistrationDto> nsRegistrationDtoList = new ArrayList<>();
+
+        if (!Objects.isNull(cid)) {
+            userProfileDtos = userInformationService.getUserInformationByPartialCid(cid, authHeader);
+        } else {
+            userIdsVal = nsRegistrationDtos
+                    .stream()
+                    .map(NSRegistrationDto::getUserId)
+                    .collect(Collectors.toList());
+            userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsVal, authHeader);
+
+        }
+        nsRegistrationDtos.forEach(item -> {
+            UserProfileDto userProfileDto = userProfileDtos.stream()
+                    .filter(userProfileDto1 -> item.getUserId().equals(userProfileDto1.getId()))
+                    .findFirst()
+                    .orElse(null);
+            if(!Objects.isNull(userProfileDto)){
+                NSRegistrationDto nsRegistrationDto = new NSRegistrationDto();
+                nsRegistrationDto.setId(item.getId());
+                nsRegistrationDto.setUserId(item.getUserId());
+                nsRegistrationDto.setYear(item.getYear());
+                nsRegistrationDto.setGender(item.getGender());
+                nsRegistrationDto.setRegistrationOn(item.getRegistrationOn());
+                nsRegistrationDto.setCid(userProfileDto.getCid());
+                nsRegistrationDto.setFullName(userProfileDto.getFullName());
+                nsRegistrationDto.setId(item.getId());
+                nsRegistrationDtoList.add(nsRegistrationDto);
+            }
+
+        });
+        return nsRegistrationDtoList;
     }
 }

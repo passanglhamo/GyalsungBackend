@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -20,8 +21,8 @@ public class NSRegistrationController {
 
     @PostMapping
     public ResponseEntity<?> save(@RequestHeader("Authorization") String authHeader,
-                                           @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                           @RequestBody NSRegistrationDto nsRegistrationDto) throws Exception {
+                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                  @RequestBody NSRegistrationDto nsRegistrationDto) throws Exception {
         SpringSecurityAuditorAware.setToken(token);
         return insRegistrationService.save(authHeader, nsRegistrationDto);
     }
@@ -29,6 +30,15 @@ public class NSRegistrationController {
     @RequestMapping(value = "/getMyRegistrationInfo", method = RequestMethod.GET)
     public ResponseEntity<?> getMyRegistrationInfo(@RequestParam("userId") BigInteger userId) {
         return insRegistrationService.getMyRegistrationInfo(userId);
+    }
+
+    @GetMapping(value = "/getRegistrationListByCriteria")
+    public List<NSRegistrationDto> getRegistrationListByCriteria(@RequestHeader("Authorization") String authHeader
+            , @RequestParam("enlistmentYear") String enlistmentYear
+            , @RequestParam("status") Character status
+            , @RequestParam("gender") Character gender
+            , @RequestParam("cid") String cid) {
+        return insRegistrationService.getRegistrationListByCriteria(authHeader,enlistmentYear, status, gender, cid);
     }
 
 }

@@ -12,4 +12,5 @@ public class HospitalBookingDetailsDto {
     private Date appointmentDate;
     private Character amPm;
     private BigInteger userId;
+    private String hospitalName;
 }

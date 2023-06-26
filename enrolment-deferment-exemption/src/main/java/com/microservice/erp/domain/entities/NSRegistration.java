@@ -15,15 +15,21 @@ public class NSRegistration extends Auditable<BigInteger, Long> {
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
+    @NotNull(message = "Gender cannot be null")
     @Column(name = "gender", columnDefinition = "char(1)")
     private Character gender;
 
+    @NotNull(message = "Year cannot be null")
     @Column(name = "year", columnDefinition = "char(4)")
     private String year;
 
     @NotNull(message = "Enrolled on cannot be null")
     @Column(name = "registration_on")
     private Date registrationOn;
+
+    @NotNull
+    @Column(name = "status", columnDefinition = "char(1)")
+    private Character status;
 
     public BigInteger getUserId() {
         return userId;
@@ -57,4 +63,11 @@ public class NSRegistration extends Auditable<BigInteger, Long> {
         this.registrationOn = registrationOn;
     }
 
+    public Character getStatus() {
+        return status;
+    }
+
+    public void setStatus(Character status) {
+        this.status = status;
+    }
 }

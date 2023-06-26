@@ -1,5 +1,6 @@
 package com.microservice.erp.services.iServices;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.HospitalBookingDetailsDto;
 import com.microservice.erp.domain.dto.MedicalBookingDto;
 import org.springframework.http.ResponseEntity;
@@ -18,5 +19,5 @@ public interface IMedicalBookingService {
 
     ResponseEntity<?> resubmitSelfDeclaration(MedicalBookingDto medicalBookingDto);
 
-    ResponseEntity<?> bookHospitalAppointment(String authHeader, HospitalBookingDetailsDto hospitalBookingDetailsDto);
+    ResponseEntity<?> bookHospitalAppointment(String authHeader, HospitalBookingDetailsDto hospitalBookingDetailsDto) throws JsonProcessingException;
 }

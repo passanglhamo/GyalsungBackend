@@ -13,20 +13,29 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NSRegistrationDto {
+    private BigInteger id;
     private BigInteger userId;
     private Character gender;
     private String year;
     private Date registrationOn;
+    private String cid;
+    private String fullName;
     public static NSRegistrationDto withId(
+            BigInteger id,
             BigInteger userId,
             Character gender,
             String year,
-            Date registrationOn) {
+            Date registrationOn,
+            String cid,
+            String fullName) {
         return new NSRegistrationDto(
+                id,
                 userId,
                 gender,
                 year,
-                registrationOn);
+                registrationOn,
+                cid,
+                fullName);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.microservice.erp.services.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.*;
 import com.microservice.erp.domain.helper.MessageResponse;
@@ -227,7 +228,14 @@ public class MedicalBookingService implements IMedicalBookingService {
     }
 
     @Override
-    public ResponseEntity<?> bookHospitalAppointment(String authHeader, HospitalBookingDetailsDto hospitalBookingDetailsDto) {
+    public ResponseEntity<?> bookHospitalAppointment(String authHeader, HospitalBookingDetailsDto hospitalBookingDetailsDto) throws JsonProcessingException {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        String url = properties.getUserProfileById() + hospitalBookingDetailsDto.getUserId();
+        ResponseEntity<UserInfoDto> userInfoDtoResponse = userRestTemplate.exchange(url, HttpMethod.GET, request, UserInfoDto.class);
         HospitalBookingDate hospitalBookingDate = iHospitalBookingDateRepository.findByHospitalIdAndAppointmentDate(hospitalBookingDetailsDto.getHospitalId(),
                 hospitalBookingDetailsDto.getAppointmentDate());
         HospitalBookingDetail hospitalBookingDetail = new HospitalBookingDetail();
@@ -235,6 +243,22 @@ public class MedicalBookingService implements IMedicalBookingService {
         hospitalBookingDetail.setAmPm(hospitalBookingDetailsDto.getAmPm());
         hospitalBookingDetail.setUserId(hospitalBookingDetailsDto.getUserId());
         iHospitalBookingDetailsRepository.save(hospitalBookingDetail);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+        String formattedDate = dateFormat.format( hospitalBookingDetailsDto.getAppointmentDate());
+        String message = "Dear " + Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName() + ", " + "You have booked medical screening appointment for Gyalsung at " + hospitalBookingDetailsDto.getHospitalName() + ", " + "on " + formattedDate + ". " + "Please report before 30 minutes on " + formattedDate;
+        String subject = "Medical Appointment";
+
+        MailSenderDto eventBus = MailSenderDto.withId(
+                Objects.requireNonNull(userInfoDtoResponse.getBody()).getEmail(),
+                null,
+                null,
+                message,
+                subject,
+                Objects.requireNonNull(userInfoDtoResponse.getBody()).getMobileNo());
+
+        addToQueue.addToQueue("email", eventBus);
+        addToQueue.addToQueue("sms", eventBus);
         return ResponseEntity.ok("Booked successfully.");
     }
 
