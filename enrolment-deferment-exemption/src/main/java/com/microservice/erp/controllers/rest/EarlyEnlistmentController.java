@@ -1,6 +1,7 @@
 package com.microservice.erp.controllers.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.microservice.erp.domain.dto.DefermentListDto;
 import com.microservice.erp.domain.dto.EarlyEnlistmentDto;
 import com.microservice.erp.domain.dto.GuardianConsentRequestDto;
 import com.microservice.erp.services.iServices.IEarlyEnlistmentService;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
+import java.util.List;
 
 
 @CrossOrigin(origins = "*")
@@ -46,4 +48,14 @@ public class EarlyEnlistmentController {
     public ResponseEntity<?> getEarlyEnlistmentStatus(@RequestParam("userId") BigInteger userId) {
         return iEarlyEnlistmentService.getEarlyEnlistmentStatus(userId);
     }
+
+    @GetMapping(value = "/getEarlyEnlistmentListByCriteria")
+    public List<DefermentListDto> getEarlyEnlistmentListByCriteria(@RequestHeader("Authorization") String authHeader
+            , @RequestParam("status") Character status
+            , @RequestParam("gender") Character gender
+            , @RequestParam("cid") String cid) {
+        return iEarlyEnlistmentService.getEarlyEnlistmentListByCriteria(authHeader, status, gender, cid);
+    }
+
+
 }

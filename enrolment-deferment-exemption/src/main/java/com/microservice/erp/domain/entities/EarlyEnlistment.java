@@ -2,6 +2,7 @@ package com.microservice.erp.domain.entities;
 
 import com.microservice.erp.domain.helper.BaseEntity;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -26,8 +27,16 @@ import java.util.Date;
     private Date applicationDate;
 
     @NotNull
+    @Basic(optional = false)
+    @Column(name = "enlistment_year", columnDefinition = "char(4) ")
+    private String enlistmentYear;
+
+    @NotNull
     @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
+
+    @Column(name = "remarks", columnDefinition = "varchar(255)")
+    private String remarks;
     //endregion
 
 
@@ -63,6 +72,22 @@ import java.util.Date;
 
     public void setStatus(Character status) {
         this.status = status;
+    }
+
+    public String getEnlistmentYear() {
+        return enlistmentYear;
+    }
+
+    public void setEnlistmentYear(String enlistmentYear) {
+        this.enlistmentYear = enlistmentYear;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
     }
 
     //endregion
