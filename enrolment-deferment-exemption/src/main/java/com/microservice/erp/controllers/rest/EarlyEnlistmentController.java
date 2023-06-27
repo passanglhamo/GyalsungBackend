@@ -1,11 +1,11 @@
 package com.microservice.erp.controllers.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.microservice.erp.domain.dto.DefermentListDto;
 import com.microservice.erp.domain.dto.EarlyEnlistmentDto;
 import com.microservice.erp.domain.dto.GuardianConsentRequestDto;
 import com.microservice.erp.services.iServices.IEarlyEnlistmentService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +23,7 @@ public class EarlyEnlistmentController {
 
     @RequestMapping(value = "/checkAgeValidation", method = RequestMethod.POST)
     public ResponseEntity<?> checkAgeValidation(@RequestHeader("Authorization") String authHeader
-            , @RequestBody EarlyEnlistmentDto earlyEnlistmentDto)  {
+            , @RequestBody EarlyEnlistmentDto earlyEnlistmentDto) {
         return iEarlyEnlistmentService.checkAgeValidation(authHeader, earlyEnlistmentDto);
     }
 
@@ -51,12 +51,18 @@ public class EarlyEnlistmentController {
 
 
     @GetMapping(value = "/getEarlyEnlistmentListByCriteria")
-    public List<DefermentListDto> getEarlyEnlistmentListByCriteria(@RequestHeader("Authorization") String authHeader
+    public List<EarlyEnlistmentDto> getEarlyEnlistmentListByCriteria(@RequestHeader("Authorization") String authHeader
+            , @RequestParam("enlistmentYear") String enlistmentYear
             , @RequestParam("status") Character status
             , @RequestParam("gender") Character gender
             , @RequestParam("cid") String cid) {
-        return iEarlyEnlistmentService.getEarlyEnlistmentListByCriteria(authHeader, status, gender, cid);
+        return iEarlyEnlistmentService.getEarlyEnlistmentListByCriteria(authHeader, enlistmentYear, status, gender, cid);
     }
 
-
+    @PostMapping(value = "/approveById")
+    public ResponseEntity<?> approveByIds(@RequestHeader("Authorization") String authHeader,
+                                          @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                          @RequestBody IEarlyEnlistmentService.UpdateEarlyEnlistmentCommand command) {
+        return iEarlyEnlistmentService.approveRejectById(authHeader, command);
+    }
 }

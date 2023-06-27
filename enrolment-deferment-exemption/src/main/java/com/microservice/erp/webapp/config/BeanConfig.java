@@ -32,4 +32,11 @@ public class BeanConfig {
                 .build();
     }
 
+    @Bean("medicalTemplate") @LoadBalanced
+    public RestTemplate getMedicalTemplate(@Value("${medical.service.url}") String url) {
+        return new RestTemplateBuilder()
+                .rootUri(url)
+                .build();
+    }
+
 }
