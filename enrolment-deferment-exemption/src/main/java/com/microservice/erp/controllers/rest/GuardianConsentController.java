@@ -37,4 +37,14 @@ public class GuardianConsentController {
         return iGuardianConsentService.verifyOtp(guardianConsentDto);
     }
 
+    @RequestMapping(value = "/grantGuardianConsent", method = RequestMethod.POST)
+    public ResponseEntity<?> grantGuardianConsent(@RequestBody GuardianConsentDto guardianConsentDto) throws JsonProcessingException {
+        return iGuardianConsentService.grantGuardianConsent(guardianConsentDto);
+    }
+
+    @RequestMapping(value = "/denyGuardianConsent", method = RequestMethod.POST)
+    public ResponseEntity<?> denyGuardianConsent(@RequestBody GuardianConsentDto guardianConsentDto) throws JsonProcessingException {
+        return iGuardianConsentService.denyGuardianConsent(guardianConsentDto);
+    }
+
 }

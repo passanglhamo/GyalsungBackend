@@ -12,4 +12,8 @@ public interface IGuardianConsentService {
     ResponseEntity<?> receiveOtp(GuardianConsentDto guardianConsentDto) throws JsonProcessingException;
 
     ResponseEntity<?> verifyOtp(GuardianConsentDto guardianConsentDto);
+
+    ResponseEntity<?> grantGuardianConsent(GuardianConsentDto guardianConsentDto) throws JsonProcessingException;
+
+    ResponseEntity<?> denyGuardianConsent(GuardianConsentDto guardianConsentDto) throws JsonProcessingException;
 }

@@ -11,7 +11,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 @Entity(name = "ede_guardian_consent")
- public class GuardianConsent extends BaseEntity {
+public class GuardianConsent extends BaseEntity {
 
     //region private variables
     @Id
@@ -24,6 +24,12 @@ import java.util.Date;
 
     @Column(name = "full_name", columnDefinition = "varchar(255)")
     private String fullName;
+
+    @Column(name = "email", columnDefinition = "varchar(255)")
+    private String email;
+
+    @Column(name = "mobile_no", columnDefinition = "varchar(255)")
+    private String mobileNo;
 
     @Column(name = "guardian_name", columnDefinition = "varchar(255)")
     private String guardianName;
@@ -44,6 +50,9 @@ import java.util.Date;
     @Column(name = "consent_request_date")
     private Date consentRequestDate;
 
+    @Column(name = "consent_date")//date entered when guardian consent or deny
+    private Date consentDate;
+
     @NotNull
     @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
@@ -51,14 +60,6 @@ import java.util.Date;
 
 
     //region setters and getters
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
 
     public BigInteger getConsentId() {
         return consentId;
@@ -76,6 +77,14 @@ import java.util.Date;
         this.userId = userId;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     public String getGuardianName() {
         return guardianName;
     }
@@ -86,6 +95,22 @@ import java.util.Date;
 
     public String getGuardianCid() {
         return guardianCid;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
     }
 
     public void setGuardianCid(String guardianCid) {
@@ -124,6 +149,14 @@ import java.util.Date;
         this.consentRequestDate = consentRequestDate;
     }
 
+    public Date getConsentDate() {
+        return consentDate;
+    }
+
+    public void setConsentDate(Date consentDate) {
+        this.consentDate = consentDate;
+    }
+
     public Character getStatus() {
         return status;
     }
@@ -131,5 +164,6 @@ import java.util.Date;
     public void setStatus(Character status) {
         this.status = status;
     }
+
     //endregion
 }

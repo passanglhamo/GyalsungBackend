@@ -85,13 +85,6 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         return ResponseEntity.ok((ageDto));
     }
 
-
-    private static int getLastDayOfMonth(int month, int year) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, 1);
-        return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-    }
-
     @Override
     public ResponseEntity<?> requestGuardianConsent(String authTokenHeader, GuardianConsentRequestDto guardianConsentRequestDto) throws JsonProcessingException {
 
@@ -108,6 +101,8 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
         String fullName = Objects.requireNonNull(userResponse.getBody()).getFullName().trim();
         Character gender = Objects.requireNonNull(userResponse.getBody()).getGender();
+        String mobileNo = Objects.requireNonNull(userResponse.getBody()).getMobileNo().trim();
+        String email = Objects.requireNonNull(userResponse.getBody()).getEmail().trim();
         String guardianName = Objects.requireNonNull(userResponse.getBody()).getGuardianNameFirst().trim();
         String guardianCid = Objects.requireNonNull(userResponse.getBody()).getGuardianCidFirst().trim();
         String guardianMobileNo = Objects.requireNonNull(userResponse.getBody()).getGuardianMobileNoFirst().trim();
@@ -122,20 +117,20 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         guardianConsent.setConsentId(consentId);
         guardianConsent.setUserId(userId);
         guardianConsent.setFullName(fullName);
+        guardianConsent.setMobileNo(mobileNo);
+        guardianConsent.setEmail(email);
         guardianConsent.setGuardianName(guardianName);
         guardianConsent.setGuardianCid(guardianCid);
         guardianConsent.setGuardianMobileNo(guardianMobileNo);
         guardianConsent.setGuardianEmail(guardianEmail);
         guardianConsent.setRelationToGuardian(relationToGuardian);
         guardianConsent.setConsentRequestDate(new Date());
-        guardianConsent.setStatus('P');//P=Pending, A=Approved, R=Rejected
+        guardianConsent.setStatus('P');//P=Pending, A=Approved, R=Denied
         guardianConsent.setCreatedBy(userId);
         guardianConsent.setCreatedDate(new Date());
         iGuardianConsentRepository.save(guardianConsent);
 
         String consentUrl = domainName + "/guardianConsent?consentId=" + consentId + "&randomId=" + guardianCid;
-
-//        String consentUrl = domainName + "/guardianConsent?consentId=" + consentId+;
 
         String subject = "Request for Parent or Guardian Consent";
         String messageEmail = "Dear " + guardianName + ",<br></br> We would like to request that " +
