@@ -1,11 +1,15 @@
 package com.microservice.erp.services.iServices;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.microservice.erp.domain.dto.DefermentListDto;
 import com.microservice.erp.domain.dto.EarlyEnlistmentDto;
 import com.microservice.erp.domain.dto.GuardianConsentRequestDto;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.ResponseEntity;
 
+import javax.validation.Valid;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -20,5 +24,18 @@ public interface IEarlyEnlistmentService {
 
     ResponseEntity<?> getEarlyEnlistmentStatus(BigInteger userId);
 
-    List<DefermentListDto> getEarlyEnlistmentListByCriteria(String authHeader, Character status, Character gender, String cid);
+    List<EarlyEnlistmentDto> getEarlyEnlistmentListByCriteria(String authHeader, String enlistmentYear, Character status, Character gender, String cid);
+
+    ResponseEntity<?> approveRejectById(String authHeader, @Valid UpdateEarlyEnlistmentCommand command);
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    class UpdateEarlyEnlistmentCommand {
+        private String enlistmentYear;
+        private String remarks;
+        private String status;
+        private BigInteger enlistmentId;
+    }
 }

@@ -8,6 +8,7 @@ import com.microservice.erp.domain.helper.AgeCalculator;
 import com.microservice.erp.domain.helper.AgeDto;
 import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.helper.SalutationGenerator;
+import com.microservice.erp.domain.mapper.EarlyEnlistmentMapper;
 import com.microservice.erp.domain.repositories.IEarlyEnlistmentRepository;
 import com.microservice.erp.domain.repositories.IGuardianConsentRepository;
 import com.microservice.erp.services.iServices.IEarlyEnlistmentService;
@@ -22,13 +23,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.validation.Valid;
 import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class EarlyEnlistmentService implements IEarlyEnlistmentService {
@@ -40,15 +38,24 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
     @Qualifier("trainingManagementTemplate")
     RestTemplate trainingRestTemplate;
 
+    @Autowired
+    @Qualifier("medicalTemplate")
+    RestTemplate medicalTemplate;
+
     private final AddToQueue addToQueue;
     private final IGuardianConsentRepository iGuardianConsentRepository;
     private final IEarlyEnlistmentRepository iEarlyEnlistmentRepository;
+    private final EarlyEnlistmentMapper mapper;
+    private final UserInformationService userInformationService;
 
 
-    public EarlyEnlistmentService(AddToQueue addToQueue, IGuardianConsentRepository iGuardianConsentRepository, IEarlyEnlistmentRepository iEarlyEnlistmentRepository) {
+    public EarlyEnlistmentService(AddToQueue addToQueue, IGuardianConsentRepository iGuardianConsentRepository, IEarlyEnlistmentRepository iEarlyEnlistmentRepository, EarlyEnlistmentMapper mapper,
+                                  UserInformationService userInformationService) {
         this.addToQueue = addToQueue;
         this.iGuardianConsentRepository = iGuardianConsentRepository;
         this.iEarlyEnlistmentRepository = iEarlyEnlistmentRepository;
+        this.mapper = mapper;
+        this.userInformationService = userInformationService;
     }
 
     @Override
@@ -248,7 +255,77 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
     }
 
     @Override
-    public List<DefermentListDto> getEarlyEnlistmentListByCriteria(String authHeader, Character status, Character gender, String cid) {
-        return null;
+    public List<EarlyEnlistmentDto> getEarlyEnlistmentListByCriteria(String authHeader, String enlistmentYear, Character status, Character gender, String cid) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        enlistmentYear = enlistmentYear.isEmpty() ? null : enlistmentYear;
+        cid = cid.isEmpty() ? null : cid;
+        List<UserProfileDto> userProfileDtos;
+        List<BigInteger> userIdsVal;
+
+        List<EarlyEnlistmentDto> earlyEnlistmentDtoList = iEarlyEnlistmentRepository.getEarlyEnlistmentByEnlistmentYearAndStatus(enlistmentYear, status)
+                .stream()
+                .map(mapper::mapToDomain)
+                .collect(Collectors.toUnmodifiableList());
+
+        if (!Objects.isNull(cid)) {
+            userProfileDtos = userInformationService.getUserInformationByPartialCid(cid, authHeader);
+        } else {
+            userIdsVal = earlyEnlistmentDtoList
+                    .stream()
+                    .map(EarlyEnlistmentDto::getUserId)
+                    .collect(Collectors.toList());
+            userProfileDtos = userInformationService.getUserInformationByListOfIds(userIdsVal, authHeader);
+
+        }
+
+        List<EarlyEnlistmentDto> earlyEnlistmentDtos = new ArrayList<>();
+
+
+        earlyEnlistmentDtoList.forEach(item -> {
+            UserProfileDto userProfileDto = userProfileDtos.stream()
+                    .filter(userProfileDto1 -> item.getUserId().equals(userProfileDto1.getId()))
+                    .findFirst()
+                    .orElse(null);
+            GuardianConsent guardianConsent = iGuardianConsentRepository.findFirstByUserIdOrderByConsentRequestDateDesc(item.getUserId());
+            String url = properties.getEnlistmentMedBookingByUserIdAndId() + item.getUserId() + "&earlyEnlistmentId=" + item.getEnlistmentId();
+            ResponseEntity<EarlyEnlistmentMedBookingDto> medicalBooking = medicalTemplate.exchange(url, HttpMethod.GET, request, EarlyEnlistmentMedBookingDto.class);
+
+            if (!Objects.isNull(userProfileDto)) {
+                EarlyEnlistmentDto earlyEnlistmentDto = new EarlyEnlistmentDto();
+                earlyEnlistmentDto.setEnlistmentId(item.getEnlistmentId());
+                earlyEnlistmentDto.setUserId(item.getUserId());
+                earlyEnlistmentDto.setEnlistmentYear(item.getEnlistmentYear());
+                //earlyEnlistmentDto.setGender(item.getGender());
+                earlyEnlistmentDto.setApplicationDate(item.getApplicationDate());
+                earlyEnlistmentDto.setCid(userProfileDto.getCid());
+                earlyEnlistmentDto.setFullName(userProfileDto.getFullName());
+                earlyEnlistmentDto.setStatus(item.getStatus());
+                earlyEnlistmentDto.setDzongkhagId(userProfileDto.getPresentDzongkhagId());
+                earlyEnlistmentDto.setHospitalBookingId(Objects.isNull(medicalBooking.getBody()) ? null : medicalBooking.getBody().getHospitalBookingId());
+                if (!Objects.isNull(guardianConsent)) {
+                    earlyEnlistmentDto.setParentConsentStatus(guardianConsent.getStatus());
+                }
+                earlyEnlistmentDtos.add(earlyEnlistmentDto);
+            }
+
+        });
+        return earlyEnlistmentDtos;
+    }
+
+    @Override
+    public ResponseEntity<?> approveRejectById(String authHeader, @Valid UpdateEarlyEnlistmentCommand command) {
+        iEarlyEnlistmentRepository.findById(command.getEnlistmentId()).ifPresent(d -> {
+            d.setStatus(command.getStatus().charAt(0));
+            d.setEnlistmentYear(command.getEnlistmentYear());
+            d.setRemarks(command.getRemarks());
+            iEarlyEnlistmentRepository.save(d);
+        });
+
+        return ResponseEntity.ok(new MessageResponse(" Saved successfully"));
     }
 }

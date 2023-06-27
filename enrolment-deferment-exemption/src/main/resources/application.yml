@@ -76,3 +76,7 @@ training.management.trainingAcademyCapacities: /trainingAcademyCapacities
 training.management.activeRegistrationDate: /trainingDate/getActiveTrainingDate
 
 training.management.getAllReasonById: /reasons/getAllReasonById?id=
+
+
+medical.service.url: http://MEDICAL-SCREENING/api/medical/screening
+medical.service.getEarlyEnlistMedBookingByUserId: /earlyEnlistmentMedBooking/getEarlyEnlistMedBookingByUserId?userId=

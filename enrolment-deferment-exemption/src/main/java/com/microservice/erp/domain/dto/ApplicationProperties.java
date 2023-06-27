@@ -57,4 +57,7 @@ public class ApplicationProperties {
     @Value("${training.management.activeRegistrationDate}")
     private String activeRegistrationDate;
 
+    @Value("${medical.service.getEarlyEnlistMedBookingByUserId}")
+    private String enlistmentMedBookingByUserIdAndId;
+
 }
