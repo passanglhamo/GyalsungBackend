@@ -29,4 +29,20 @@ public class GuardianConsentService implements IGuardianConsentService {
             return ResponseEntity.ok(guardianConsentDb);
         }
     }
+
+    @Override
+    public ResponseEntity<?> validateGuardian(GuardianConsentDto guardianConsentDto) {
+        BigInteger consentId = guardianConsentDto.getConsentId();
+        String guardianCid = guardianConsentDto.getGuardianCid();
+        GuardianConsent guardianConsentDb = iGuardianConsentRepository.findByConsentIdAndGuardianCid(consentId, guardianCid);
+        if (guardianConsentDb == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
+        } else {
+            if (guardianConsentDb.getStatus() != 'P') {
+                return ResponseEntity.badRequest().body(new MessageResponse("Something went wrong. You have already consented or denied."));
+            } else {
+                return ResponseEntity.ok(guardianConsentDb);
+            }
+        }
+    }
 }

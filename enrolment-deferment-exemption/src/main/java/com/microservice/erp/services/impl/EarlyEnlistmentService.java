@@ -121,6 +121,7 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
 
         guardianConsent.setConsentId(consentId);
         guardianConsent.setUserId(userId);
+        guardianConsent.setFullName(fullName);
         guardianConsent.setGuardianName(guardianName);
         guardianConsent.setGuardianCid(guardianCid);
         guardianConsent.setGuardianMobileNo(guardianMobileNo);

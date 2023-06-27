@@ -11,7 +11,9 @@ import java.util.Date;
 @Getter
 public class GuardianConsentDto {
     //region private variables
+    private BigInteger consentId;
     private BigInteger consentIdIdFromUrl;
     private String guardianCidFromUrl;
+    private String guardianCid;
     //endregion
 }

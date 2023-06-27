@@ -22,6 +22,9 @@ import java.util.Date;
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
+    @Column(name = "full_name", columnDefinition = "varchar(255)")
+    private String fullName;
+
     @Column(name = "guardian_name", columnDefinition = "varchar(255)")
     private String guardianName;
 
@@ -48,6 +51,15 @@ import java.util.Date;
 
 
     //region setters and getters
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     public BigInteger getConsentId() {
         return consentId;
     }

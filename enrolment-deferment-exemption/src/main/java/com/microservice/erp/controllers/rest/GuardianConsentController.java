@@ -22,4 +22,9 @@ public class GuardianConsentController {
         return iGuardianConsentService.validateGuardianConsentLink(guardianConsentDto);
     }
 
+    @RequestMapping(value = "/validateGuardian", method = RequestMethod.POST)
+    public ResponseEntity<?> validateGuardian(@RequestBody GuardianConsentDto guardianConsentDto) {
+        return iGuardianConsentService.validateGuardian(guardianConsentDto);
+    }
+
 }
