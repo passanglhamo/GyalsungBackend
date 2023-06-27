@@ -22,12 +22,13 @@ import java.util.Date;
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
+    @Column(name = "gender", columnDefinition = "char(1)")
+    private Character gender;
+
     @NotNull(message = "Application date cannot be null")
     @Column(name = "application_date")
     private Date applicationDate;
 
-    @NotNull
-    @Basic(optional = false)
     @Column(name = "enlistment_year", columnDefinition = "char(4) ")
     private String enlistmentYear;
 
@@ -58,6 +59,14 @@ import java.util.Date;
         this.userId = userId;
     }
 
+    public Character getGender() {
+        return gender;
+    }
+
+    public void setGender(Character gender) {
+        this.gender = gender;
+    }
+
     public Date getApplicationDate() {
         return applicationDate;
     }
@@ -66,20 +75,20 @@ import java.util.Date;
         this.applicationDate = applicationDate;
     }
 
-    public Character getStatus() {
-        return status;
-    }
-
-    public void setStatus(Character status) {
-        this.status = status;
-    }
-
     public String getEnlistmentYear() {
         return enlistmentYear;
     }
 
     public void setEnlistmentYear(String enlistmentYear) {
         this.enlistmentYear = enlistmentYear;
+    }
+
+    public Character getStatus() {
+        return status;
+    }
+
+    public void setStatus(Character status) {
+        this.status = status;
     }
 
     public String getRemarks() {

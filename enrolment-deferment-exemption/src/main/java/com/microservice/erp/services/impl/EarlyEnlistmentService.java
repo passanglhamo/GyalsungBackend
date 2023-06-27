@@ -34,9 +34,9 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
     @Qualifier("userProfileTemplate")
     RestTemplate userRestTemplate;
 
-    @Autowired
-    @Qualifier("trainingManagementTemplate")
-    RestTemplate trainingRestTemplate;
+//    @Autowired
+//    @Qualifier("trainingManagementTemplate")
+//    RestTemplate trainingRestTemplate;
 
     @Autowired
     @Qualifier("medicalTemplate")
@@ -71,49 +71,17 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, request, UserProfileDto.class);
         Date birthDate = Objects.requireNonNull(userResponse.getBody()).getDob();
 
-        String registrationDateUrl = properties.getActiveRegistrationDate();
-        ResponseEntity<RegistrationDateDto> registrationDateResponse = trainingRestTemplate.exchange(registrationDateUrl, HttpMethod.GET, request, RegistrationDateDto.class);
-        Date registrationDate = Objects.requireNonNull(registrationDateResponse.getBody()).getTrainingDate();
-
-//        GuardianConsent guardianConsent = iGuardianConsentRepository.findFirstByUserIdOrderByConsentRequestDateDesc(userId);
-//        Date registrationDate = guardianConsent.getConsentRequestDate();//todo: get registration date,
-//        //todo: if active registration date is null, return error message
-
-
-        AgeDto ageDto = AgeCalculator.getAge(birthDate, registrationDate);
-
-//        Calendar birthCalendar = Calendar.getInstance();
-//        birthCalendar.setTime(birthDate);
-//        int birthYear = birthCalendar.get(Calendar.YEAR);
-//        int birthMonth = birthCalendar.get(Calendar.MONTH);
-//        int birthDay = birthCalendar.get(Calendar.DAY_OF_MONTH);
+//        String registrationDateUrl = properties.getActiveRegistrationDate();
+//        ResponseEntity<RegistrationDateDto> registrationDateResponse = trainingRestTemplate.exchange(registrationDateUrl, HttpMethod.GET, request, RegistrationDateDto.class);
+//        Date registrationDate = Objects.requireNonNull(registrationDateResponse.getBody()).getTrainingDate();
 //
-//        Calendar currentCalendar = Calendar.getInstance();
-//        currentCalendar.setTime(registrationDate);
-//        int currentYear = currentCalendar.get(Calendar.YEAR);
-//        int currentMonth = currentCalendar.get(Calendar.MONTH);
-//        int currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH);
+//        if (registrationDate == null) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("Registration cut-off date not found."));
+//        }else {
 //
-//        int ageYears = currentYear - birthYear;
-//        int ageMonths = currentMonth - birthMonth;
-//        int ageDays = currentDay - birthDay;
-//
-//        if (currentMonth < birthMonth || (currentMonth == birthMonth && currentDay < birthDay)) {
-//            ageYears--;
-//            if (currentMonth < birthMonth) {
-//                ageMonths += 12 - birthMonth + currentMonth;
-//            } else {
-//                ageMonths = 12 - birthMonth + currentMonth;
-//            }
-//            if (currentDay < birthDay) {
-//                ageMonths--;
-//                int lastMonthMaxDays = getLastDayOfMonth(currentMonth - 1, currentYear);
-//                ageDays = lastMonthMaxDays - birthDay + currentDay;
-//            }
 //        }
-//        System.out.println("Age: " + ageYears + " years, " + ageMonths + " months, and " + ageDays + " days");
-
-
+        Date currentDate = new Date();
+        AgeDto ageDto = AgeCalculator.getAge(birthDate, currentDate);
         return ResponseEntity.ok((ageDto));
     }
 
@@ -164,7 +132,9 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         guardianConsent.setCreatedDate(new Date());
         iGuardianConsentRepository.save(guardianConsent);
 
-        String consentUrl = domainName + "/guardianConsent?consentId=" + consentId;
+        String consentUrl = domainName + "/guardianConsent?consentId=" + consentId + "&randomId=" + guardianCid;
+
+//        String consentUrl = domainName + "/guardianConsent?consentId=" + consentId+;
 
         String subject = "Request for Parent or Guardian Consent";
         String messageEmail = "Dear " + guardianName + ",<br></br> We would like to request that " +
@@ -223,6 +193,7 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         earlyEnlistment.setUserId(userId);
 
         earlyEnlistment.setApplicationDate(new Date());
+        earlyEnlistment.setGender(gender);
         earlyEnlistment.setStatus('P');//P=Pending, A=Approved, R=Rejected
         earlyEnlistment.setCreatedBy(userId);
         earlyEnlistment.setCreatedDate(new Date());

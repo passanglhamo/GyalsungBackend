@@ -11,7 +11,6 @@ import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.mapper.EnrolmentMapper;
 import com.microservice.erp.domain.repositories.IEnrolmentInfoRepository;
 import com.microservice.erp.domain.repositories.IRegistrationDateInfoRepository;
-import com.microservice.erp.domain.repositories.ParentConsentRepository;
 import com.microservice.erp.services.iServices.IEnrolmentInfoService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,6 @@ public class EnrolmentInfoService implements IEnrolmentInfoService {
     private final DefermentExemptionValidation defermentExemptionValidation;
     private final UserInformationService userInformationService;
     private final AllocationAlgorithm allocationAlgorithm;
-    private final ParentConsentRepository parentConsentRepository;
 
     @Autowired
     @Qualifier("userProfileTemplate")

@@ -73,7 +73,7 @@ training.management.mappedHospital.by.hospitalId: /common/getHospitalMappingByHo
 training.management.trainingCapacitites.by.trainingId: /trainingAcademyCapacities/getAllTrainingAcaCapByAcademyId?year=
 training.management.changeAllocateCapacities: /trainingAcademyCapacities/changeAllocateCapacities
 training.management.trainingAcademyCapacities: /trainingAcademyCapacities
-training.management.activeRegistrationDate: /trainingDate/getActiveTrainingDate
+#training.management.activeRegistrationDate: /trainingDate/getActiveTrainingDate
 
 training.management.getAllReasonById: /reasons/getAllReasonById?id=
 
