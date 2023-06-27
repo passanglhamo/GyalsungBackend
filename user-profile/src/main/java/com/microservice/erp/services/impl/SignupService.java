@@ -456,7 +456,7 @@ public class SignupService implements ISignupService {
     }
 
 
-    private ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, ApiException, IOException {
+    public ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, ApiException, IOException {
         CitizenDetailDto citizenDetailDto = new CitizenDetailDto();
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);

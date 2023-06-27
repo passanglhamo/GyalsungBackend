@@ -27,7 +27,6 @@ public class SignupController {
         this.iSignupService = iSignupService;
     }
 
-
     @GetMapping(value = "/getAgeCriteria")
     public ResponseEntity<?> getAgeCriteria() {
         return iAgeCriteriaService.getAgeCriteria();
@@ -36,6 +35,11 @@ public class SignupController {
     @GetMapping("/getCitizenDetails")
     public ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException {
         return iSignupService.getCitizenDetails(cid, dob);
+    }
+
+    @GetMapping("/validateCitizenDetails")
+    public ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException {
+        return iSignupService.validateCitizenDetails(cid, dob);
     }
 
     @PostMapping("/receiveOtp")

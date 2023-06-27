@@ -49,6 +49,7 @@ public class EarlyEnlistmentController {
         return iEarlyEnlistmentService.getEarlyEnlistmentStatus(userId);
     }
 
+
     @GetMapping(value = "/getEarlyEnlistmentListByCriteria")
     public List<DefermentListDto> getEarlyEnlistmentListByCriteria(@RequestHeader("Authorization") String authHeader
             , @RequestParam("status") Character status

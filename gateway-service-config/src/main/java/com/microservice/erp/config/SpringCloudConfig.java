@@ -171,6 +171,11 @@ public class SpringCloudConfig {
                                         .dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
                                 .uri(trainingManagementURL))
                 .route("enrolmentDefermentExemption"
+                        , r -> r.path("/api/enrolment/deferment/exemption/guardianConsent/**")
+                                .filters(f -> f.dedupeResponseHeader("Access-Control-Allow-Origin", "RETAIN_UNIQUE"))
+                                .uri(enrolmentDefermentExemptionURL))
+
+                .route("enrolmentDefermentExemption"
                         , r -> r.path("/api/enrolment/deferment/exemption/**")
                                 .filters(f -> f.filter(authFilter)
                                         .filter(accessPermissionFilter)
@@ -222,22 +227,23 @@ public class SpringCloudConfig {
 
     /*@Bean
     public KeyResolver userKeyResolver() {
-        *//**
-         * RedisRateLimiter need a KeyResolver, without this limiter will not work.
-         *//*
+        */
+
+    /**
+     * RedisRateLimiter need a KeyResolver, without this limiter will not work.
+     *//*
         return exchange -> Mono.just("rate-limiter-key");
     }*/
-
     @Bean
-    public KeyResolver userKeyResolver(){
+    public KeyResolver userKeyResolver() {
         return (exchange) -> {
-            if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)){
+            if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                 System.out.println("No Authorization-Header");//FIXME
                 return Mono.just("rate-limiter-key");
             }
             String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             if (authHeader == null || authHeader.isEmpty()
-                    || !authHeader.startsWith("Bearer")){
+                    || !authHeader.startsWith("Bearer")) {
                 System.out.println("EmptyORNull Authorization-Header");//FIXME
                 return Mono.just("rate-limiter-key");
             }

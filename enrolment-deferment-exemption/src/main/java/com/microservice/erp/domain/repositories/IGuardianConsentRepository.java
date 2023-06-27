@@ -9,4 +9,7 @@ public interface IGuardianConsentRepository extends JpaRepository<GuardianConsen
     GuardianConsent findFirstByOrderByConsentIdDesc();
 
     GuardianConsent findFirstByUserIdOrderByConsentRequestDateDesc(BigInteger userId);
+
+    GuardianConsent findByConsentIdAndGuardianCid(BigInteger consentId, String guardianCid);
+
 }
