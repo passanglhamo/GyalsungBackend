@@ -15,5 +15,7 @@ public class GuardianConsentDto {
     private BigInteger consentIdIdFromUrl;
     private String guardianCidFromUrl;
     private String guardianCid;
+    private String mobileNo;
+    private String otp;
     //endregion
 }

@@ -102,7 +102,7 @@ public class SignupService implements ISignupService {
 //
         String otp = generateOtp();
 
-        String message = "Your OTP for Gyalsung Registration is " + otp+" Please use this within 3 minutes.";
+        String message = "Your OTP for Gyalsung Registration is " + otp + " Please use this within 3 minutes.";
         SignupSmsOtp signupSmsOtp = new SignupSmsOtp();
         signupSmsOtp.setMobileNo(notificationRequestDto.getMobileNo());
         signupSmsOtp.setOtp(otp);
@@ -141,7 +141,7 @@ public class SignupService implements ISignupService {
         String message = "Dear, Your verification code for Gyalsung system is " + verificationCode;
 
         EventBus eventBusEmail = EventBus.withId(notificationRequestDto.getEmail(), null, null, message, subject, null);
-         addToQueue.addToQueue("email", eventBusEmail);
+        addToQueue.addToQueue("email", eventBusEmail);
 
         SignupEmailVerificationCode signupEmailVerificationCode = new SignupEmailVerificationCode();
         signupEmailVerificationCode.setEmail(notificationRequestDto.getEmail());
@@ -232,7 +232,7 @@ public class SignupService implements ISignupService {
             ResponseEntity<?> responseEntity = verifyOtp(notificationRequestDto);
             if (responseEntity.getStatusCode().value() != HttpStatus.OK.value()) {
                 return ResponseEntity.badRequest().body(new MessageResponse("The OTP didn't match."));
-            }else {
+            } else {
                 iSignupSmsOtpRepository.deleteById(notificationRequestDto.getMobileNo());//delete OTP after validation
             }
         }
@@ -246,7 +246,7 @@ public class SignupService implements ISignupService {
         ResponseEntity<?> responseEntityEmail = verifyEmailVcode(notificationRequestDto);
         if (responseEntityEmail.getStatusCode().value() != HttpStatus.OK.value()) {
             return ResponseEntity.badRequest().body(new MessageResponse("The email verification code didn't match."));
-        }else{
+        } else {
             iSignupEmailVerificationCodeRepository.deleteById(signupRequestDto.getEmail());
         }
 //
