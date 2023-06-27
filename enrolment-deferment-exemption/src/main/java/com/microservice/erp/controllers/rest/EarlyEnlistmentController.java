@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.EarlyEnlistmentDto;
 import com.microservice.erp.domain.dto.GuardianConsentRequestDto;
 import com.microservice.erp.services.iServices.IEarlyEnlistmentService;
+import com.microservice.erp.services.iServices.IUpdateDefermentService;
+import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -54,8 +56,11 @@ public class EarlyEnlistmentController {
             , @RequestParam("enlistmentYear") String enlistmentYear
             , @RequestParam("status") Character status
             , @RequestParam("gender") Character gender
-            , @RequestParam("cid") String cid) {
-        return iEarlyEnlistmentService.getEarlyEnlistmentListByCriteria(authHeader, enlistmentYear, status, gender, cid);
+            , @RequestParam("cid") String cid
+            , @RequestParam("parentConsentStatus") Character parentConsentStatus
+            , @RequestParam("dzongkhagId") Integer dzongkhagId
+    ) {
+        return iEarlyEnlistmentService.getEarlyEnlistmentListByCriteria(authHeader, enlistmentYear, status, gender, cid,parentConsentStatus,dzongkhagId);
     }
 
     @PostMapping(value = "/approveById")
