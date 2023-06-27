@@ -14,6 +14,7 @@ import java.util.Date;
 
 public interface ISignupService {
     ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException;
+
     ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException;
 
     ResponseEntity<?> receiveOtp(NotificationRequestDto notificationRequestDto) throws JsonProcessingException;

@@ -36,7 +36,7 @@ public class GuardianConsentService implements IGuardianConsentService {
         String guardianCid = guardianConsentDto.getGuardianCid();
         GuardianConsent guardianConsentDb = iGuardianConsentRepository.findByConsentIdAndGuardianCid(consentId, guardianCid);
         if (guardianConsentDb == null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Data not found."));
+            return ResponseEntity.badRequest().body(new MessageResponse("Your CID or date of birth did not match the consent request data."));
         } else {
             if (guardianConsentDb.getStatus() != 'P') {
                 return ResponseEntity.badRequest().body(new MessageResponse("Something went wrong. You have already consented or denied."));
