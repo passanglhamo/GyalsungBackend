@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.*;
+import com.microservice.erp.domain.helper.OTPGenerator;
 import com.microservice.erp.domain.repositories.IAgeCriteriaRepository;
 import com.microservice.erp.domain.repositories.ISignupEmailVerificationCodeRepository;
 import com.microservice.erp.domain.repositories.ISignupSmsOtpRepository;
@@ -47,9 +48,7 @@ public class SignupService implements ISignupService {
     private final ISignupEmailVerificationCodeRepository iSignupEmailVerificationCodeRepository;
     private final IUserInfoRepository iUserInfoRepository;
     private final IAgeCriteriaRepository iAgeCriteriaRepository;
-
     private final AddToQueue addToQueue;
-    private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
 
     public SignupService(CitizenDetailApiService citizenDetailApiService, ISignupSmsOtpRepository iSignupSmsOtpRepository
             , ISignupEmailVerificationCodeRepository iSignupEmailVerificationCodeRepository, IUserInfoRepository iUserInfoRepository
@@ -96,12 +95,7 @@ public class SignupService implements ISignupService {
 //        if (userInfoDB.isPresent()) {
 //            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
 //        }
-//        Random random = new Random();
-//        int number = random.nextInt(999999);//max upto 999999
-//        String otp = String.format("%06d", number);
-//
-        String otp = generateOtp();
-
+        String otp = OTPGenerator.generateOtp();
         String message = "Your OTP for Gyalsung Registration is " + otp + " Please use this within 3 minutes.";
         SignupSmsOtp signupSmsOtp = new SignupSmsOtp();
         signupSmsOtp.setMobileNo(notificationRequestDto.getMobileNo());
@@ -135,7 +129,7 @@ public class SignupService implements ISignupService {
 //        if (userInfoDB.isPresent()) {
 //            return ResponseEntity.badRequest().body(new MessageResponse("The email address you have entered is already in use. Please try different one."));
 //        }
-        String verificationCode = generateOtp();
+        String verificationCode = OTPGenerator.generateOtp();
 
         String subject = "Email verification";
         String message = "Dear, Your verification code for Gyalsung system is " + verificationCode;
@@ -152,11 +146,6 @@ public class SignupService implements ISignupService {
         return ResponseEntity.ok(signupEmailVerificationCode);
     }
 
-    private String generateOtp() {
-        Random random = new Random();
-        int number = random.nextInt(999999);//max upto 999999
-        return String.format("%d", number);
-    }
 
     @Override
     public ResponseEntity<?> verifyEmailVcode(NotificationRequestDto notificationRequestDto) {
@@ -445,16 +434,6 @@ public class SignupService implements ISignupService {
         List<UserInfo> saUsers = iUserInfoRepository.getAllUserTillDate('Y', date);
         return ResponseEntity.ok(saUsers);
     }
-
-    public static String generateVerificationCode(int count) {
-        StringBuilder builder = new StringBuilder();
-        while (count-- != 0) {
-            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
-            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
-        }
-        return builder.toString();
-    }
-
 
     public ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, ApiException, IOException {
         CitizenDetailDto citizenDetailDto = new CitizenDetailDto();
