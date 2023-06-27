@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.Date;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -18,14 +20,28 @@ public class EarlyEnlistmentMedicalBookingService implements IEarlyEnlistmentMed
 
     @Override
     public ResponseEntity<?> save(EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto) {
-        var earlyEnlistmentMedicalBooking = repository.save(
-                mapper.mapToEntity(
-                        earlyEnlistmentMedBookingDto
-                )
-        );
+        if(Objects.isNull(earlyEnlistmentMedBookingDto.getHospitalBookingId())){
+            var earlyEnlistmentMedicalBooking = repository.save(
+                    mapper.mapToEntity(
+                            earlyEnlistmentMedBookingDto
+                    )
+            );
 
-        var medicalBooking = repository.save(earlyEnlistmentMedicalBooking);
-        return ResponseEntity.ok(medicalBooking.getHospitalBookingId());
+            var medicalBooking = repository.save(earlyEnlistmentMedicalBooking);
+            return ResponseEntity.ok(medicalBooking.getHospitalBookingId());
+        }
+
+        repository.findById(earlyEnlistmentMedBookingDto.getHospitalBookingId()).ifPresent(d -> {
+            d.setHospitalId(earlyEnlistmentMedBookingDto.getHospitalId());
+            d.setAppointmentDate(earlyEnlistmentMedBookingDto.getAppointmentDate());
+            d.setAmPm(earlyEnlistmentMedBookingDto.getAmPm());
+            d.setCreatedBy(earlyEnlistmentMedBookingDto.getUserId());
+            d.setCreatedDate(new Date());
+            repository.save(d);
+        });
+
+        return ResponseEntity.ok("Medical Booking updated successfully.");
+
     }
 
     @Override

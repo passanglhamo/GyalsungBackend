@@ -227,7 +227,7 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
     }
 
     @Override
-    public List<EarlyEnlistmentDto> getEarlyEnlistmentListByCriteria(String authHeader, String enlistmentYear, Character status, Character gender, String cid) {
+    public List<EarlyEnlistmentDto> getEarlyEnlistmentListByCriteria(String authHeader, String enlistmentYear, Character status, Character gender, String cid, Character parentConsentStatus, Integer dzongkhagId) {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
         HttpHeaders headers = new HttpHeaders();
@@ -258,6 +258,7 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         List<EarlyEnlistmentDto> earlyEnlistmentDtos = new ArrayList<>();
 
 
+        List<EarlyEnlistmentDto> finalEarlyEnlistmentDtos = earlyEnlistmentDtos;
         earlyEnlistmentDtoList.forEach(item -> {
             UserProfileDto userProfileDto = userProfileDtos.stream()
                     .filter(userProfileDto1 -> item.getUserId().equals(userProfileDto1.getId()))
@@ -266,7 +267,6 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
             GuardianConsent guardianConsent = iGuardianConsentRepository.findFirstByUserIdOrderByConsentRequestDateDesc(item.getUserId());
             String url = properties.getEnlistmentMedBookingByUserIdAndId() + item.getUserId() + "&earlyEnlistmentId=" + item.getEnlistmentId();
             ResponseEntity<EarlyEnlistmentMedBookingDto> medicalBooking = medicalTemplate.exchange(url, HttpMethod.GET, request, EarlyEnlistmentMedBookingDto.class);
-
             if (!Objects.isNull(userProfileDto)) {
                 EarlyEnlistmentDto earlyEnlistmentDto = new EarlyEnlistmentDto();
                 earlyEnlistmentDto.setEnlistmentId(item.getEnlistmentId());
@@ -278,15 +278,27 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
                 earlyEnlistmentDto.setFullName(userProfileDto.getFullName());
                 earlyEnlistmentDto.setStatus(item.getStatus());
                 earlyEnlistmentDto.setDzongkhagId(userProfileDto.getPresentDzongkhagId());
-                earlyEnlistmentDto.setHospitalBookingId(Objects.isNull(medicalBooking.getBody()) ? null : medicalBooking.getBody().getHospitalBookingId());
+                earlyEnlistmentDto.setEarlyEnlistmentMedBookingDto(medicalBooking.getBody());
                 if (!Objects.isNull(guardianConsent)) {
                     earlyEnlistmentDto.setParentConsentStatus(guardianConsent.getStatus());
                 }
-                earlyEnlistmentDtos.add(earlyEnlistmentDto);
+                finalEarlyEnlistmentDtos.add(earlyEnlistmentDto);
             }
 
         });
-        return earlyEnlistmentDtos;
+        earlyEnlistmentDtoList = finalEarlyEnlistmentDtos;
+        if(!Objects.isNull(parentConsentStatus)){
+            earlyEnlistmentDtoList =  finalEarlyEnlistmentDtos.stream()
+                    .filter(earlyEnlistmentDto -> earlyEnlistmentDto.getParentConsentStatus().equals(parentConsentStatus))
+                    .collect(Collectors.toList());
+        }
+        if(!Objects.isNull(dzongkhagId)){
+            earlyEnlistmentDtoList =  earlyEnlistmentDtoList.stream()
+                    .filter(earlyEnlistmentDto -> earlyEnlistmentDto.getDzongkhagId().equals(dzongkhagId))
+                    .collect(Collectors.toList());
+        }
+
+        return earlyEnlistmentDtoList;
     }
 
     @Override

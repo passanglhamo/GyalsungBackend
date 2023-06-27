@@ -24,7 +24,7 @@ public interface IEarlyEnlistmentService {
 
     ResponseEntity<?> getEarlyEnlistmentStatus(BigInteger userId);
 
-    List<EarlyEnlistmentDto> getEarlyEnlistmentListByCriteria(String authHeader, String enlistmentYear, Character status, Character gender, String cid);
+    List<EarlyEnlistmentDto> getEarlyEnlistmentListByCriteria(String authHeader, String enlistmentYear, Character status, Character gender, String cid, Character parentConsentStatus, Integer dzongkhagId);
 
     ResponseEntity<?> approveRejectById(String authHeader, @Valid UpdateEarlyEnlistmentCommand command);
 
