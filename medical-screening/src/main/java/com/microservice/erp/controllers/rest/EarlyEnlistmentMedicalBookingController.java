@@ -20,11 +20,12 @@ public class EarlyEnlistmentMedicalBookingController {
     private final IEarlyEnlistmentMedicalBookingService service;
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+    public ResponseEntity<?> save(@RequestHeader("Authorization") String authHeader,
+                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                   @RequestBody EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto)
             throws IOException {
         SpringSecurityAuditorAware.setToken(token);
-        return service.save(earlyEnlistmentMedBookingDto);
+        return service.save(authHeader,earlyEnlistmentMedBookingDto);
     }
 
     @GetMapping("/getEarlyEnlistMedBookingByUserId")

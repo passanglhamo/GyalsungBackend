@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.math.BigInteger;
 
 public interface IEarlyEnlistmentMedicalBookingService {
-    ResponseEntity<?> save(EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto);
+    ResponseEntity<?> save(String authHeader,EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto);
 
     ResponseEntity<?> getEarlyEnlistMedBookingByUserId(BigInteger userId, BigInteger earlyEnlistmentId);
 }

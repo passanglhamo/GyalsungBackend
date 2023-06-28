@@ -12,6 +12,7 @@ public interface IEarlyEnlistmentRepository extends JpaRepository<EarlyEnlistmen
 
     EarlyEnlistment findFirstByUserIdOrderByApplicationDateDesc(BigInteger userId);
     @Query(value = "SELECT e.* FROM ede_early_enlistment e " +
-            "WHERE (:enlistmentYear IS NULL OR (CAST(e.enlistment_year AS CHAR(4)) = CAST(:enlistmentYear AS CHAR(4)))) AND  (:status IS NULL OR (CAST(e.status AS CHAR(1)) = CAST(:status AS CHAR(1))))", nativeQuery = true)
-    List<EarlyEnlistment> getEarlyEnlistmentByEnlistmentYearAndStatus(String enlistmentYear, Character status);
+            "WHERE (:enlistmentYear IS NULL OR (CAST(e.enlistment_year AS CHAR(4)) = CAST(:enlistmentYear AS CHAR(4)))) " +
+            "AND  (:status IS NULL OR (CAST(e.status AS CHAR(1)) = CAST(:status AS CHAR(1)))) AND (:gender IS NULL OR CAST(e.gender AS CHAR(1))=CAST(:gender AS CHAR(1)))", nativeQuery = true)
+    List<EarlyEnlistment> getEarlyEnlistmentByEnlistmentYearAndStatusAndGender(String enlistmentYear, Character status,Character gender);
 }

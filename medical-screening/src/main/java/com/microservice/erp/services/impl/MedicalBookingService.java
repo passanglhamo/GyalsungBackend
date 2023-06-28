@@ -35,7 +35,7 @@ public class MedicalBookingService implements IMedicalBookingService {
     private final IHospitalBookingDetailsRepository iHospitalBookingDetailsRepository;
     private final IHospitalScheduleTimeRepository iHospitalScheduleTimeRepository;
     private final IMedicalSelfDeclarationRepository iMedicalSelfDeclarationRepository;
-    private final AddToQueue addToQueue;
+    private final AddToQueueMail addToQueue;
 
     @Autowired
     @Qualifier("userProfileTemplate")

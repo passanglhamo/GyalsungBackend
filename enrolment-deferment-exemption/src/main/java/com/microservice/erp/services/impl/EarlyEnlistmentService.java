@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.EarlyEnlistment;
 import com.microservice.erp.domain.entities.GuardianConsent;
-import com.microservice.erp.domain.helper.AgeCalculator;
-import com.microservice.erp.domain.helper.AgeDto;
-import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.helper.SalutationGenerator;
+import com.microservice.erp.domain.helper.*;
 import com.microservice.erp.domain.mapper.EarlyEnlistmentMapper;
 import com.microservice.erp.domain.repositories.IEarlyEnlistmentRepository;
 import com.microservice.erp.domain.repositories.IGuardianConsentRepository;
@@ -25,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,28 +32,27 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
     @Qualifier("userProfileTemplate")
     RestTemplate userRestTemplate;
 
-//    @Autowired
-//    @Qualifier("trainingManagementTemplate")
-//    RestTemplate trainingRestTemplate;
-
     @Autowired
     @Qualifier("medicalTemplate")
     RestTemplate medicalTemplate;
+
 
     private final AddToQueue addToQueue;
     private final IGuardianConsentRepository iGuardianConsentRepository;
     private final IEarlyEnlistmentRepository iEarlyEnlistmentRepository;
     private final EarlyEnlistmentMapper mapper;
     private final UserInformationService userInformationService;
+    private final HeaderToken headerToken;
 
 
     public EarlyEnlistmentService(AddToQueue addToQueue, IGuardianConsentRepository iGuardianConsentRepository, IEarlyEnlistmentRepository iEarlyEnlistmentRepository, EarlyEnlistmentMapper mapper,
-                                  UserInformationService userInformationService) {
+                                  UserInformationService userInformationService,HeaderToken headerToken) {
         this.addToQueue = addToQueue;
         this.iGuardianConsentRepository = iGuardianConsentRepository;
         this.iEarlyEnlistmentRepository = iEarlyEnlistmentRepository;
         this.mapper = mapper;
         this.userInformationService = userInformationService;
+        this.headerToken = headerToken;
     }
 
     @Override
@@ -234,7 +231,7 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         List<UserProfileDto> userProfileDtos;
         List<BigInteger> userIdsVal;
 
-        List<EarlyEnlistmentDto> earlyEnlistmentDtoList = iEarlyEnlistmentRepository.getEarlyEnlistmentByEnlistmentYearAndStatus(enlistmentYear, status)
+        List<EarlyEnlistmentDto> earlyEnlistmentDtoList = iEarlyEnlistmentRepository.getEarlyEnlistmentByEnlistmentYearAndStatusAndGender(enlistmentYear, status,gender)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
@@ -268,11 +265,15 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
                 earlyEnlistmentDto.setUserId(item.getUserId());
                 earlyEnlistmentDto.setEnlistmentYear(item.getEnlistmentYear());
                 //earlyEnlistmentDto.setGender(item.getGender());
+                earlyEnlistmentDto.setGender(item.getGender());
                 earlyEnlistmentDto.setApplicationDate(item.getApplicationDate());
                 earlyEnlistmentDto.setCid(userProfileDto.getCid());
                 earlyEnlistmentDto.setFullName(userProfileDto.getFullName());
                 earlyEnlistmentDto.setStatus(item.getStatus());
                 earlyEnlistmentDto.setDzongkhagId(userProfileDto.getPresentDzongkhagId());
+                if(!Objects.isNull(medicalBooking.getBody())){
+                    earlyEnlistmentDto.setHospitalBookingId(Objects.requireNonNull(medicalBooking.getBody()).getHospitalBookingId());
+                }
                 earlyEnlistmentDto.setEarlyEnlistmentMedBookingDto(medicalBooking.getBody());
                 if (!Objects.isNull(guardianConsent)) {
                     earlyEnlistmentDto.setParentConsentStatus(guardianConsent.getStatus());
@@ -284,7 +285,7 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         earlyEnlistmentDtoList = finalEarlyEnlistmentDtos;
         if(!Objects.isNull(parentConsentStatus)){
             earlyEnlistmentDtoList =  finalEarlyEnlistmentDtos.stream()
-                    .filter(earlyEnlistmentDto -> earlyEnlistmentDto.getParentConsentStatus().equals(parentConsentStatus))
+                    .filter(earlyEnlistmentDto -> !Objects.isNull(earlyEnlistmentDto.getParentConsentStatus()) && earlyEnlistmentDto.getParentConsentStatus().equals(parentConsentStatus))
                     .collect(Collectors.toList());
         }
         if(!Objects.isNull(dzongkhagId)){
@@ -304,7 +305,115 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
             d.setRemarks(command.getRemarks());
             iEarlyEnlistmentRepository.save(d);
         });
+       EarlyEnlistment earlyEnlistment = iEarlyEnlistmentRepository.findById(command.getEnlistmentId()).get();
+        try {
+            sendEmailAndSms(authHeader, earlyEnlistment.getUserId(), command.getStatus().charAt(0),earlyEnlistment.getApplicationDate());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
+        GuardianConsent guardianConsent = iGuardianConsentRepository.findFirstByUserIdOrderByConsentRequestDateDesc(earlyEnlistment.getUserId());
+        try {
+            sendGuardianEmailAndSms(authHeader, earlyEnlistment.getUserId(), command.getStatus().charAt(0),earlyEnlistment.getApplicationDate(),
+                    guardianConsent.getGuardianName(),guardianConsent.getEmail(),guardianConsent.getMobileNo());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(new MessageResponse(" Saved successfully"));
+    }
+
+    private void sendEmailAndSms(String authHeader, BigInteger userId, Character status,Date applicationDate) throws Exception {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
+        HttpEntity<String> httpRequest = headerToken.tokenHeader(authHeader);
+
+        String userUrl = properties.getUserProfileById() + userId;
+        ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
+        String emailMessage = "";
+        String subject = "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+        String formattedDate = dateFormat.format(applicationDate);
+
+        if (status.equals(ApprovalStatus.APPROVED.value())) {
+            subject = "Approved for Early Enlistment";
+            emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
+                    "\n" +
+                    "In continuation of your early enlistment application submitted on "+formattedDate+", the Gyalsung Head Office is pleased to inform you that your application for early enlistment has been approved.\n" +
+                    " Warm Regards, \n" +
+                    "\n" +
+                    " Gyalsung HQ \n";
+
+        } else {
+            subject = "Rejected for Early Enlistment";
+            emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
+                    "\n" +
+                    "In continuation of your early enlistment application submitted on "+formattedDate+", the Gyalsung Head Office is pleased to inform you that your application for early enlistment has been rejected.\n" +
+                    " Warm Regards, \n" +
+                    "\n" +
+                    " Gyalsung HQ \n";
+        }
+
+        EventBus eventBus = EventBus.withId(
+                Objects.requireNonNull(userResponse.getBody()).getEmail(),
+                null,
+                null,
+                emailMessage,
+                subject,
+                Objects.requireNonNull(userResponse.getBody()).getMobileNo(),
+                null,
+                null);
+
+        //todo get data from properties
+        addToQueue.addToQueue("email", eventBus);
+        addToQueue.addToQueue("sms", eventBus);
+    }
+
+    private void sendGuardianEmailAndSms(String authHeader, BigInteger userId, Character status,Date applicationDate,
+                                         String guardianName,String email,String mobileNo) throws Exception {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
+        HttpEntity<String> httpRequest = headerToken.tokenHeader(authHeader);
+
+        String userUrl = properties.getUserProfileById() + userId;
+        ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
+        String emailMessage = "";
+        String subject = "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
+        String formattedDate = dateFormat.format(applicationDate);
+
+        if (status.equals(ApprovalStatus.APPROVED.value())) {
+            subject = "Approved for Early Enlistment";
+            emailMessage = "Dear " + guardianName + ",\n" +
+                    "\n" +
+                    "In continuation of your early enlistment application submitted on "+formattedDate+",by your children,"+Objects.requireNonNull(userResponse.getBody()).getFullName()+",the Gyalsung Head Office is pleased to inform you that your application for early enlistment has been approved.\n" +
+                    " Warm Regards, \n" +
+                    "\n" +
+                    " Gyalsung HQ \n";
+
+        } else {
+            subject = "Rejected for Early Enlistment";
+            emailMessage = "Dear " + guardianName + ",\n" +
+                    "\n" +
+                    "In continuation of your early enlistment application submitted on "+formattedDate+",by your children,"+Objects.requireNonNull(userResponse.getBody()).getFullName()+",the Gyalsung Head Office is pleased to inform you that your application for early enlistment has been rejected.\n" +
+                    " Warm Regards, \n" +
+                    "\n" +
+                    " Gyalsung HQ \n";
+        }
+
+        EventBus eventBus = EventBus.withId(
+                email,
+                null,
+                null,
+                emailMessage,
+                subject,
+                mobileNo,
+                null,
+                null);
+
+        //todo get data from properties
+        addToQueue.addToQueue("email", eventBus);
+        addToQueue.addToQueue("sms", eventBus);
     }
 }

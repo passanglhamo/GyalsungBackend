@@ -1,8 +1,8 @@
-package com.microservice.erp.services.impl;
+package com.microservice.erp.services.impl.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microservice.erp.domain.dto.MailSenderDto;
+import com.microservice.erp.domain.dto.EventBusDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AddToQueue {
     private final KafkaTemplate<?, ?> kafkaTemplate;
-    public void addToQueue(String topic,MailSenderDto mailSenderDto) throws JsonProcessingException {
+    public void addToQueue(String topic, EventBusDto eventBus) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message<String> message = MessageBuilder
                 .withPayload( mapper.writeValueAsString(
-                        mailSenderDto
+                        eventBus
                 ))
                 .setHeader(KafkaHeaders.TOPIC,topic)
                 .build();

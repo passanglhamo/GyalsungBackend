@@ -25,6 +25,7 @@ public class EarlyEnlistmentDto {
     private String fullName;
     private Character parentConsentStatus;
     private Integer dzongkhagId;
+    private BigInteger hospitalBookingId;
     private EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto;
     //endregion
 
@@ -39,6 +40,7 @@ public class EarlyEnlistmentDto {
             String fullName,
             Character parentConsentStatus,
             Integer dzongkhagId,
+            BigInteger hospitalBookingId,
             EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto) {
         return new EarlyEnlistmentDto(
                 enlistmentId,
@@ -51,6 +53,7 @@ public class EarlyEnlistmentDto {
                 fullName,
                 parentConsentStatus,
                 dzongkhagId,
+                hospitalBookingId,
                 earlyEnlistmentMedBookingDto
         );
     }

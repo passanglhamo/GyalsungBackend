@@ -18,6 +18,7 @@ public class EarlyEnlistmentMapper {
                 null,
                 null,
                 null,
+                null,
                 null
         );
     }
