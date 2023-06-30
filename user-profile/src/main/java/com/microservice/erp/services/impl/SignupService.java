@@ -107,7 +107,7 @@ public class SignupService implements ISignupService {
         EventBus eventBusSms = EventBus.withId(null, null, null, message, null, notificationRequestDto.getMobileNo());
 
         addToQueue.addToQueue("sms", eventBusSms);
-        return ResponseEntity.ok(signupSmsOtp);
+        return ResponseEntity.ok("Received otp");
     }
 
     @Override
@@ -143,7 +143,7 @@ public class SignupService implements ISignupService {
         signupEmailVerificationCode.setDate(new Date());
         signupEmailVerificationCode.setExpiryTime(180);//seconds
         iSignupEmailVerificationCodeRepository.save(signupEmailVerificationCode);
-        return ResponseEntity.ok(signupEmailVerificationCode);
+        return ResponseEntity.ok("Receive email");
     }
 
 

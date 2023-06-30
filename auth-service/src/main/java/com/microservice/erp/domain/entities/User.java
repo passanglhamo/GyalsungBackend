@@ -34,7 +34,7 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
     private String password;
 
 
-    @Column(length = 200, unique = true)
+    @Column(length = 200)
     private String email;
 
     @Column(length = 200, unique = true)
