@@ -47,20 +47,23 @@ public class EarlyEnlistmentMedicalBookingService implements IEarlyEnlistmentMed
             );
 
             var medicalBooking = repository.save(earlyEnlistmentMedicalBooking);
+            earlyEnlistmentMedBookingDto.setHospitalBookingId(medicalBooking.getHospitalBookingId());
             try {
                 sendEmailAndSms(authHeader, earlyEnlistmentMedBookingDto.getUserId(), earlyEnlistmentMedBookingDto.getAppointmentDate(),
                         earlyEnlistmentMedBookingDto.getHospitalName(),new Date());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            return ResponseEntity.ok(medicalBooking.getHospitalBookingId());
+            return ResponseEntity.ok(earlyEnlistmentMedBookingDto);
         }else{
+
             repository.findById(earlyEnlistmentMedBookingDto.getHospitalBookingId()).ifPresent(d -> {
                 d.setHospitalId(earlyEnlistmentMedBookingDto.getHospitalId());
                 d.setAppointmentDate(earlyEnlistmentMedBookingDto.getAppointmentDate());
                 d.setAmPm(earlyEnlistmentMedBookingDto.getAmPm());
                 d.setCreatedBy(earlyEnlistmentMedBookingDto.getUserId());
                 d.setCreatedDate(new Date());
+                earlyEnlistmentMedBookingDto.setHospitalBookingId(d.getHospitalBookingId());
                 repository.save(d);
             });
         }
@@ -72,7 +75,7 @@ public class EarlyEnlistmentMedicalBookingService implements IEarlyEnlistmentMed
             throw new RuntimeException(e);
         }
 
-        return ResponseEntity.ok("Medical Booking updated successfully.");
+        return ResponseEntity.ok(earlyEnlistmentMedBookingDto);
 
     }
 
