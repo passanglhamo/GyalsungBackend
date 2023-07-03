@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.ws.rs.DELETE;
 import java.math.BigInteger;
 
 @CrossOrigin(origins = "*")
@@ -41,6 +42,12 @@ public class ScreenController {
     @PutMapping
     public ResponseEntity<?> updateScreen(@Valid @RequestBody Screen saScreen) {
         return iSaScreenService.updateScreen(saScreen);
+    }
+
+    @DeleteMapping("/remove")
+    public ResponseEntity<?> remove(@RequestParam("id") BigInteger id) {
+
+        return iSaScreenService.removeById(id);
     }
 }
 

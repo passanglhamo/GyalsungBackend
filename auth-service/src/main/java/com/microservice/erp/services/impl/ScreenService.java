@@ -78,5 +78,11 @@ public class ScreenService implements IScreenService {
         });
         return ResponseEntity.ok("Data updated successfully.");
     }
+
+    @Override
+    public ResponseEntity<?> removeById(BigInteger id) {
+        saScreenRepository.deleteById(id);
+        return  ResponseEntity.ok("Deleted successfully.");
+    }
 }
 

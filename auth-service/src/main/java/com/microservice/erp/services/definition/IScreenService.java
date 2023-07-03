@@ -17,4 +17,5 @@ public interface IScreenService {
 
     ResponseEntity<?> updateScreen(Screen saScreen);
 
+    ResponseEntity<?> removeById(BigInteger id);
 }
