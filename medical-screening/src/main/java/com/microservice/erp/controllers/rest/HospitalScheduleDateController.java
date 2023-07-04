@@ -1,8 +1,10 @@
 package com.microservice.erp.controllers.rest;
 
+import com.microservice.erp.domain.dto.HospitalBookingDateDto;
+import com.microservice.erp.domain.dto.HospitalBookingDetailsDto;
 import com.microservice.erp.domain.dto.HospitalScheduleDateDto;
 import com.microservice.erp.domain.dto.HospitalScheduleTimeDto;
-import com.microservice.erp.domain.entities.HospitalBookingDate;
+import com.microservice.erp.domain.entities.HospitalBookingDetail;
 import com.microservice.erp.services.iServices.ICreateHospitalScheduleDateService;
 import com.microservice.erp.services.iServices.IReadHospitalScheduleDateService;
 import com.microservice.erp.services.iServices.IUpdateHospitalScheduleTimeService;
@@ -57,17 +59,22 @@ public class HospitalScheduleDateController {
     }
 
     @GetMapping(value = "/getAllAppointmentDateByHospitalId", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<HospitalBookingDate> getAllAppointmentDateByHospitalId(@RequestParam("hospitalId") BigInteger hospitalId) {
+    public List<HospitalBookingDateDto> getAllAppointmentDateByHospitalId(@RequestParam("hospitalId") BigInteger hospitalId) {
         return readService.getAllAppointmentDateByHospitalId(hospitalId);
     }
 
     @GetMapping(value = "/getHospitalBookingDetailByBookingId")
-    public HospitalBookingDate getHospitalBookingDetailByBookingId(@RequestHeader("Authorization") String authHeader,
-                                                                         @RequestParam("hospitalId") BigInteger hospitalId,
-                                                                         @RequestParam("appointmentDate") Date appointmentDate) {
+    public HospitalBookingDateDto getHospitalBookingDetailByBookingId(@RequestHeader("Authorization") String authHeader,
+                                                                      @RequestParam("hospitalId") BigInteger hospitalId,
+                                                                      @RequestParam("appointmentDate") Date appointmentDate) {
         return readService.getHospitalBookingDetailByBookingId(authHeader, hospitalId, appointmentDate);
     }
 
+    @GetMapping(value = "/getHospitalBookingDetailByUserId")
+    public HospitalBookingDetailsDto getHospitalBookingDetailByUserId(@RequestHeader("Authorization") String authHeader,
+                                                                      @RequestParam("userId") BigInteger userId) {
+        return readService.getHospitalBookingDetailByUserId(authHeader, userId);
+    }
 
 
 }
