@@ -33,4 +33,7 @@ public interface IUserInfoRepository extends JpaRepository<UserInfo, BigInteger>
     List<UserInfo> findAllByCidStartsWith(String cid);
 
     Optional<UserInfo> findByMobileNo(String mobileNo);
+
+    UserInfo findFirstByOrderByUserIdDesc();
+
 }

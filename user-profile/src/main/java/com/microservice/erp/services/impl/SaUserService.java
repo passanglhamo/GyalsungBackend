@@ -139,9 +139,9 @@ public class SaUserService implements ISaUserService {
             headers.add("Authorization", authHeader);
             HttpEntity<String> request = new HttpEntity<>(headers);
 
-            String url = properties.getAuthServiceToGetUserById() + item.getId();
+            String url = properties.getAuthServiceToGetUserById() + item.getUserId();
             ResponseEntity<AuthUserDto> response = restTemplate.exchange(url, HttpMethod.GET, request, AuthUserDto.class);
-            userProfileDto.setUserId(item.getId());
+            userProfileDto.setUserId(item.getUserId());
             userProfileDto.setFullName(item.getFullName());
             userProfileDto.setCid(item.getCid());
             userProfileDto.setMobileNo(item.getMobileNo());
@@ -170,11 +170,11 @@ public class SaUserService implements ISaUserService {
         List<UserProfileDto> userProfileDtos = new ArrayList<>();
         saUsers.forEach(item -> {
             UserProfileDto userProfileDto = new UserProfileDto();
-            String url = properties.getAuthServiceToGetUserById() + item.getId();
+            String url = properties.getAuthServiceToGetUserById() + item.getUserId();
             ResponseEntity<AuthUserDto> response = restTemplate.exchange(url, HttpMethod.GET, request, AuthUserDto.class);
             if(new JSONArray("[" + Objects.requireNonNull(response.getBody()).getRoles().toString().substring(1, Objects.requireNonNull(response.getBody()).getRoles().toString().length() - 1).replaceAll("=", ":") + "]")
                     .getJSONObject(0).getString("userType").equals("O")){
-                userProfileDto.setUserId(item.getId());
+                userProfileDto.setUserId(item.getUserId());
                 userProfileDto.setFullName(item.getFullName());
                 userProfileDto.setCid(item.getCid());
                 userProfileDto.setMobileNo(item.getMobileNo());
@@ -218,7 +218,7 @@ public class SaUserService implements ISaUserService {
 
 //todo remove static code
         saUser.setSignupUser('N');
-        BigInteger userId = iUserInfoRepository.save(saUser).getId();
+        BigInteger userId = iUserInfoRepository.save(saUser).getUserId();
         EventBusUser eventBusUser = EventBusUser.withId(userId, userDto.getStatus(), saUser.getCid(), saUser.getEmail()
                 , saUser.getUsername(), password, saUser.getSignupUser(), userDto.getRoles());
         addToQueue.addToUserQueue("addUser", eventBusUser);
@@ -256,7 +256,7 @@ public class SaUserService implements ISaUserService {
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
-        BigInteger userId = iUserInfoRepository.save(saUser).getId();
+        BigInteger userId = iUserInfoRepository.save(saUser).getUserId();
         EventBusUser eventBusUser = EventBusUser.withId(userId, userDto.getStatus(), saUser.getCid(), saUser.getEmail()
                 , saUser.getUsername(), null, saUser.getSignupUser(), userDto.getRoles());
         addToQueue.addToUserQueue("addUser", eventBusUser);
