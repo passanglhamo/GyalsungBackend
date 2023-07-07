@@ -216,7 +216,7 @@ public class SignupService implements ISignupService {
 
         boolean motherExpired = false;
         if (motherName.toUpperCase().contains("LATE") || motherName.toUpperCase().contains("LT.")) {
-            fatherExpired = true;
+            motherExpired = true;
         }
 
         if (fatherExpired) {
