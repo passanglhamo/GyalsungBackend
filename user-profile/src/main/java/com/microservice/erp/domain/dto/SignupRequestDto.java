@@ -17,6 +17,7 @@ public class SignupRequestDto {
     private String cid;
     private String birthDate;
 //    private Date dob;
+    private String phoneOrEmailVerification;
     private String mobileNo;
     private String otp;
     private String email;

@@ -14,13 +14,13 @@ import java.util.Date;
 public class BaseEntity {
 
     //region private variables
-    @Column(name = "updated_by")
+    @Column(name = "updated_by", columnDefinition = "bigint")
     private BigInteger updatedBy;
 
     @Column(name = "updated_date")
     private Date updatedDate;
 
-    @Column(name = "created_by")
+    @Column(name = "created_by", columnDefinition = "bigint")
     private BigInteger createdBy;
 
     @Column(name = "created_date")

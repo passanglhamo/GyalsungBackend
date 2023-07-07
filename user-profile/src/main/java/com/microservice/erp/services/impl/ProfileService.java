@@ -62,7 +62,7 @@ public class ProfileService implements IProfileService {
     @Override
     public ResponseEntity<?> getProfileInfo(String authHeader, BigInteger userId) {
         UserInfo userInfo = iUserInfoRepository.findById(userId).get();
-        return profileInfo(authHeader,userInfo);
+        return profileInfo(authHeader, userInfo);
     }
 
     private ResponseEntity<?> profileInfo(String authHeader, UserInfo userInfo) {
@@ -91,7 +91,7 @@ public class ProfileService implements IProfileService {
     @Override
     public ResponseEntity<?> getProfileInfoByCid(String authHeader, String cid) {
         UserInfo userInfo = iUserInfoRepository.findByCid(cid).get();
-        return profileInfo(authHeader,userInfo);
+        return profileInfo(authHeader, userInfo);
     }
 
     @Override
@@ -173,7 +173,7 @@ public class ProfileService implements IProfileService {
 
         userInfoObject.setMobileNo(userProfileDto.getMobileNo());
         iUserInfoRepository.save(userInfoDb);
-         iChangeMobileNoSmsOtpRepository.deleteById(userInfoDb.getId());
+        iChangeMobileNoSmsOtpRepository.deleteById(userInfoDb.getUserId());
         return ResponseEntity.ok(new MessageResponse("Mobile number changed successfully."));
     }
 
@@ -195,10 +195,10 @@ public class ProfileService implements IProfileService {
         userInfoDb.setEmail(userProfileDto.getEmail());
         iUserInfoRepository.save(userInfoDb);
 
-        iChangeEmailVerificationCodeRepository.deleteById(userInfoDb.getId());
+        iChangeEmailVerificationCodeRepository.deleteById(userInfoDb.getUserId());
 
         //add to queue to update email in auth microservices
-        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, null, userInfo.getEmail()
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getUserId(), null, null, userInfo.getEmail()
                 , null, null, null, null);
 
         //todo Get from properties file
@@ -217,7 +217,7 @@ public class ProfileService implements IProfileService {
         userInfo.setUsername(userProfileDto.getUsername());
         iUserInfoRepository.save(userInfo);
         //add to queue to update username in auth microservices
-        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getId(), null, null, null
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getUserId(), null, null, null
                 , userInfo.getUsername(), null, null, null);
         addToQueue.addToUserQueue("changeUsername", eventBusUser);
         return ResponseEntity.ok(new MessageResponse("Username updated successfully."));
@@ -241,7 +241,10 @@ public class ProfileService implements IProfileService {
         }
         String verificationCode = generateVerificationCode(6);
         String subject = "Email verification";
-        String message = "Dear, The verification code to change email for Gyalsung system is " + verificationCode;
+        String message = "Dear,<br></br>" +
+                " The verification code to change email for Gyalsung system is " + verificationCode + ".<br></br><br></br>" +
+                "<small>***This is a system-generated email. Please do not respond to this email.***</small>";
+
         EventBus eventBusEmail = EventBus.withId(userProfileDto.getEmail(), null, null, message, subject, null);
 
         //todo Get from properties file

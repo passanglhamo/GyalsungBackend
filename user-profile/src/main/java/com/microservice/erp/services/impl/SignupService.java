@@ -132,7 +132,9 @@ public class SignupService implements ISignupService {
         String verificationCode = OTPGenerator.generateOtp();
 
         String subject = "Email verification";
-        String message = "Dear, Your verification code for Gyalsung system is " + verificationCode;
+        String message = "Dear,<br></br>" +
+                " The verification code for Gyalsung system is " + verificationCode + ".<br></br><br></br>" +
+                "<small>***This is a system-generated email. Please do not respond to this email.***</small>";
 
         EventBus eventBusEmail = EventBus.withId(notificationRequestDto.getEmail(), null, null, message, subject, null);
         addToQueue.addToQueue("email", eventBusEmail);
@@ -173,7 +175,6 @@ public class SignupService implements ISignupService {
 
 //  to save guardian info, both the parents need will be guardian by default. If Parents are expired, then the separate guardian need to add from profile
         UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
-
         ResponseEntity<CitizenDetailDto> validateCitizenDetails = (ResponseEntity<CitizenDetailDto>) validateCitizenDetails(signupRequestDto.getCid(), signupRequestDto.getBirthDate());
         Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(validateCitizenDetails.getBody().getDob());
         Calendar calendar = Calendar.getInstance();
@@ -205,60 +206,81 @@ public class SignupService implements ISignupService {
         userInfo.setPermanentGeog(validateCitizenDetails.getBody().getGeogName());
         userInfo.setPermanentDzongkhag(validateCitizenDetails.getBody().getDzongkhagName());
 
-        userInfo.setGuardianNameFirst(validateCitizenDetails.getBody().getGuardianNameFirst());
-        userInfo.setGuardianCidFirst(validateCitizenDetails.getBody().getGuardianCidFirst());
-        userInfo.setRelationToGuardianFirst("Father");
-        userInfo.setGuardianNameSecond(validateCitizenDetails.getBody().getGuardianNameSecond());
-        userInfo.setGuardianCidSecond(validateCitizenDetails.getBody().getGuardianCidSecond());
-        userInfo.setRelationToGuardianSecond("Mother");
+        String fatherName = validateCitizenDetails.getBody().getFatherName();
+        String motherName = validateCitizenDetails.getBody().getMotherName();
+
+        boolean fatherExpired = false;
+        if (fatherName.toUpperCase().contains("LATE") || fatherName.toUpperCase().contains("LT.")) {
+            fatherExpired = true;
+        }
+
+        boolean motherExpired = false;
+        if (motherName.toUpperCase().contains("LATE") || motherName.toUpperCase().contains("LT.")) {
+            fatherExpired = true;
+        }
+
+        if (fatherExpired) {
+            if (!motherExpired) {
+                userInfo.setGuardianNameFirst(validateCitizenDetails.getBody().getMotherName());
+                userInfo.setGuardianCidFirst(validateCitizenDetails.getBody().getMotherCid());
+                userInfo.setRelationToGuardianFirst("Mother");
+            }
+        } else {
+            userInfo.setGuardianNameFirst(validateCitizenDetails.getBody().getFatherName());
+            userInfo.setGuardianCidFirst(validateCitizenDetails.getBody().getFatherCid());
+            userInfo.setRelationToGuardianFirst("Father");
+            if (!motherExpired) {
+                userInfo.setGuardianNameSecond(validateCitizenDetails.getBody().getMotherName());
+                userInfo.setGuardianCidSecond(validateCitizenDetails.getBody().getMotherCid());
+                userInfo.setRelationToGuardianSecond("Mother");
+            }
+        }
 
         //Mobile number verification OTP received from dto must be equal to backend
+        String phoneOrEmailVerification = signupRequestDto.getPhoneOrEmailVerification();
         NotificationRequestDto notificationRequestDto = new NotificationRequestDto();
-        notificationRequestDto.setMobileNo(signupRequestDto.getMobileNo());
-        notificationRequestDto.setOtp(signupRequestDto.getOtp());
 
-        if (signupRequestDto.getPresentCountry().equals("Bhutan")) {
+        if (phoneOrEmailVerification.equals("phone")) {
+            userInfo.setEmail(null);
+            notificationRequestDto.setMobileNo(signupRequestDto.getMobileNo());
+            notificationRequestDto.setOtp(signupRequestDto.getOtp());
             ResponseEntity<?> responseEntity = verifyOtp(notificationRequestDto);
             if (responseEntity.getStatusCode().value() != HttpStatus.OK.value()) {
                 return ResponseEntity.badRequest().body(new MessageResponse("The OTP didn't match."));
             } else {
                 iSignupSmsOtpRepository.deleteById(notificationRequestDto.getMobileNo());//delete OTP after validation
             }
-        }
-//        Optional<UserInfo> userInfoMobileNo = iUserInfoRepository.findByMobileNo(notificationRequestDto.getMobileNo());
-//        if (userInfoMobileNo.isPresent()) {
-//            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
-//        }
-        //Email verification code received from dto must be equal to backend
-        notificationRequestDto.setEmail(signupRequestDto.getEmail());
-        notificationRequestDto.setVerificationCode(signupRequestDto.getVerificationCode());
-        ResponseEntity<?> responseEntityEmail = verifyEmailVcode(notificationRequestDto);
-        if (responseEntityEmail.getStatusCode().value() != HttpStatus.OK.value()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("The email verification code didn't match."));
         } else {
-            iSignupEmailVerificationCodeRepository.deleteById(signupRequestDto.getEmail());
+            //Email verification code received from dto must be equal to backend
+            userInfo.setMobileNo(null);
+            notificationRequestDto.setEmail(signupRequestDto.getEmail());
+            notificationRequestDto.setVerificationCode(signupRequestDto.getVerificationCode());
+            ResponseEntity<?> responseEntityEmail = verifyEmailVcode(notificationRequestDto);
+            if (responseEntityEmail.getStatusCode().value() != HttpStatus.OK.value()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("The email verification code didn't match."));
+            } else {
+                iSignupEmailVerificationCodeRepository.deleteById(signupRequestDto.getEmail());
+            }
         }
-//
-//        //To check if the email is already in use or not
-//        Optional<UserInfo> userInfoEmail = iUserInfoRepository.findByEmail(signupRequestDto.getEmail());
-//        if (userInfoEmail.isPresent()) {
-//            return ResponseEntity.badRequest().body(new MessageResponse("The email address you have entered is already in use."));
-//        }
 
         //Password must be equal to confirm password
         if (!Objects.equals(signupRequestDto.getPassword(), signupRequestDto.getConfirmPassword())) {
             return ResponseEntity.badRequest().body(new MessageResponse("The password didn't match."));
         }
-
         userInfo.setPresentCountry(signupRequestDto.getPresentCountry());
-        BigInteger userId = iUserInfoRepository.save(userInfo).getId();
-//        to queue following data: password, roles, email, username, userId in auth microservices
+        UserInfo userInfoDb = iUserInfoRepository.findFirstByOrderByUserIdDesc();
+        BigInteger userId = userInfoDb == null ? BigInteger.ONE : userInfoDb.getUserId().add(BigInteger.ONE);
+        userInfo.setUserId(userId);
+        userInfo.setCreatedDate(new Date());
+        userInfo.setCreatedBy(userId);
+        iUserInfoRepository.save(userInfo);
+
+//         queue following data: password, roles, email, username, userId in auth microservices
         EventBusUser eventBusSms = EventBusUser.withId(userId, 'A', userInfo.getCid(), userInfo.getEmail()
                 , userInfo.getUsername(), signupRequestDto.getPassword(), userInfo.getSignupUser(), null);
         addToQueue.addToUserQueue("addUser", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));
     }
-
 
     @Override
     public ResponseEntity<?> getEligiblePopulationByYearAndAge(String dateString) throws IOException, ParseException, UnirestException {
@@ -483,10 +505,10 @@ public class SignupService implements ISignupService {
             citizenDetailDto.setThramNo(citizendetailsObj.getThramNo());
 
             //set father name and father cid as guardian 1 name and guardian 1 cid, and mother name and cid as guardian 2 name and guardian 2 cid respectively
-            citizenDetailDto.setGuardianNameFirst(citizendetailsObj.getFatherName());
-            citizenDetailDto.setGuardianCidFirst(parentdetailObj.getFatherCID());
-            citizenDetailDto.setGuardianNameSecond(citizendetailsObj.getMotherName());
-            citizenDetailDto.setGuardianCidSecond(parentdetailObj.getMotherCID());
+//            citizenDetailDto.setGuardianNameFirst(citizendetailsObj.getFatherName());
+//            citizenDetailDto.setGuardianCidFirst(parentdetailObj.getFatherCID());
+//            citizenDetailDto.setGuardianNameSecond(citizendetailsObj.getMotherName());
+//            citizenDetailDto.setGuardianCidSecond(parentdetailObj.getMotherCID());
         } else {
             return ResponseEntity.badRequest().body(new MessageResponse("CID or date of birth is incorrect."));
         }

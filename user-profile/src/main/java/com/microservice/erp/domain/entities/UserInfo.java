@@ -1,6 +1,7 @@
 package com.microservice.erp.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.microservice.erp.domain.helper.BaseEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,8 +16,13 @@ import java.util.Objects;
 
 @AllArgsConstructor
 @Entity(name = "user_info")
-@AttributeOverride(name = "id", column = @Column(name = "user_id", columnDefinition = "bigint"))
-public class UserInfo extends Auditable<BigInteger, Long> implements UserDetails {
+//@AttributeOverride(name = "id", column = @Column(name = "user_id", columnDefinition = "bigint"))
+//public class UserInfo extends Auditable<BigInteger, Long> implements UserDetails {
+public class UserInfo extends BaseEntity implements UserDetails {
+
+    @Id
+    @Column(name = "user_id", columnDefinition = "bigint")
+    private BigInteger userId;
 
     @NotNull(message = "Username must not be null.")
     @Basic(optional = false)
@@ -28,7 +34,7 @@ public class UserInfo extends Auditable<BigInteger, Long> implements UserDetails
     @Column(name = "full_name", columnDefinition = "varchar(255)")
     private String fullName;
 
-    @NotNull(message = "Email cannot be null")
+    //    @NotNull(message = "Email cannot be null")
     @Column(name = "email", columnDefinition = "varchar(255)")
     private String email;
 
@@ -41,8 +47,8 @@ public class UserInfo extends Auditable<BigInteger, Long> implements UserDetails
     @Column(name = "cid", columnDefinition = "varchar(255)")
     private String cid;
 
-    @NotNull(message = "Mobile no cannot be null")
-    @Basic(optional = false)
+    //    @NotNull(message = "Mobile no cannot be null")
+//    @Basic(optional = false)
     @Column(name = "mobile_no", columnDefinition = "varchar(255)")
     private String mobileNo;
 
@@ -646,20 +652,26 @@ public class UserInfo extends Auditable<BigInteger, Long> implements UserDetails
         this.signupUser = signupUser;
     }
 
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserInfo user = (UserInfo) o;
-        return getId().equals(user.getId()) && username.equals(user.username);
+    public BigInteger getUserId() {
+        return userId;
     }
 
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), username);
+    public void setUserId(BigInteger userId) {
+        this.userId = userId;
     }
+//
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        UserInfo user = (UserInfo) o;
+//        return getId().equals(user.getId()) && username.equals(user.username);
+//    }
+//
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(getId(), username);
+//    }
 
 }
