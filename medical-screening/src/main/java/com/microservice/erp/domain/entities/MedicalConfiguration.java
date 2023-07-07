@@ -1,5 +1,6 @@
 package com.microservice.erp.domain.entities;
 
+import com.opencsv.bean.CsvDate;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -10,13 +11,13 @@ import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "tms_hospital_booking_date")
-@AttributeOverride(name = "id", column = @Column(name = "hospital_booking_date_id", columnDefinition = "bigint"))
-public class HospitalBookingDate extends Auditable<BigInteger, Long>{
+@Entity(name = "med_medical_configuration")
+@AttributeOverride(name = "id", column = @Column(name = "medical_configuration_id", columnDefinition = "bigint"))
+public class MedicalConfiguration extends Auditable<BigInteger, Long> {
     @NotNull
     @Basic(optional = false)
-    @Column(name = "hospital_id" , columnDefinition = "bigint")
-    private BigInteger hospitalId;
+    @Column(name = "hospital_id", columnDefinition = "bigint")
+    private Integer hospitalId;
 
     @NotNull(message = "Appointment date cannot be null")
     @Basic(optional = false)
@@ -26,24 +27,24 @@ public class HospitalBookingDate extends Auditable<BigInteger, Long>{
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "am_slots",columnDefinition = "int")
+    @Column(name = "am_slots", columnDefinition = "int")
     private Integer amSlots;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "pm_slots",columnDefinition = "int")
+    @Column(name = "pm_slots", columnDefinition = "int")
     private Integer pmSlots;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "status",columnDefinition = "char(1)")
+    @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
 
-    public BigInteger getHospitalId() {
+    public Integer getHospitalId() {
         return hospitalId;
     }
 
-    public void setHospitalId(BigInteger hospitalId) {
+    public void setHospitalId(Integer hospitalId) {
         this.hospitalId = hospitalId;
     }
 

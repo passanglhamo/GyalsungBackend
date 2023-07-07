@@ -93,9 +93,9 @@ public class Login extends TokenizerTask {
         if (!exist.isPresent()) {
             exist = repository.findByCid(request.getUsername());
         }
-        if (!exist.isPresent()) {
-            exist = repository.findByEmail(request.getUsername());
-        }
+//        if (!exist.isPresent()) {
+//            exist = repository.findByEmail(request.getUsername());
+//        }
         if (exist.isPresent()) {
             //PasswordEncoder::matches(RawPassword, EncodedPassword) == will return true/false
             if (!isNDILogin) {

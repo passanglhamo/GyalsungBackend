@@ -1,7 +1,7 @@
 package com.microservice.erp.services.impl.mapper;
 
-import com.microservice.erp.domain.dto.HospitalBookingDateDto;
-import com.microservice.erp.domain.entities.HospitalBookingDate;
+import com.microservice.erp.domain.dto.MedicalConfigurationDto;
+import com.microservice.erp.domain.entities.MedicalConfiguration;
 import com.microservice.erp.domain.entities.HospitalBookingDetail;
 import com.microservice.erp.domain.repositories.IHospitalBookingDetailsRepository;
 import lombok.AllArgsConstructor;
@@ -14,26 +14,27 @@ import java.util.Objects;
 @AllArgsConstructor
 public class HospitalBookingDateMapper {
     private final IHospitalBookingDetailsRepository iHospitalBookingDetailsRepository;
-    public HospitalBookingDateDto mapToDomain(HospitalBookingDate hospitalBookingDate) {
+    public MedicalConfigurationDto mapToDomain(MedicalConfiguration medicalConfiguration) {
         List<HospitalBookingDetail> getBookedUserAm = iHospitalBookingDetailsRepository.findAllByHospitalBookingIdAndAmPm(
-                hospitalBookingDate.getId(),'A'
+                medicalConfiguration.getId(),'A'
         );
         Integer countAmBooked = Objects.isNull(getBookedUserAm)?0:getBookedUserAm.size();
 
         List<HospitalBookingDetail> getBookedUserPm = iHospitalBookingDetailsRepository.findAllByHospitalBookingIdAndAmPm(
-                hospitalBookingDate.getId(),'P'
+                medicalConfiguration.getId(),'P'
         );
         Integer countPmBooked = Objects.isNull(getBookedUserPm)?0:getBookedUserPm.size();
 
-        return HospitalBookingDateDto.withId(
-                hospitalBookingDate.getId(),
-                hospitalBookingDate.getHospitalId(),
-                hospitalBookingDate.getAppointmentDate(),
-                hospitalBookingDate.getAmSlots(),
-                (hospitalBookingDate.getAmSlots()-countAmBooked),
-                hospitalBookingDate.getPmSlots(),
-                (hospitalBookingDate.getPmSlots()-countPmBooked),
-                hospitalBookingDate.getStatus()
+        return MedicalConfigurationDto.withId(
+                medicalConfiguration.getId(),
+                medicalConfiguration.getHospitalId(),
+                medicalConfiguration.getAppointmentDate(),
+                medicalConfiguration.getAmSlots(),
+                (medicalConfiguration.getAmSlots()-countAmBooked),
+                medicalConfiguration.getPmSlots(),
+                (medicalConfiguration.getPmSlots()-countPmBooked),
+                medicalConfiguration.getStatus(),
+                null
 
         );
     }

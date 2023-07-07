@@ -113,33 +113,33 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) throws IOException {
         //Check login-retry-count: if exceed then refuse login action:
-        LoginRetryCount count = cache.read(request.getUsername());
-        if (count != null) {
-            if (count.isMaxTryExceed()) {
-                if (count.isTimePassed(blockDurationInMillis)) {
-                    count.resetFailedCount();
-                } else {
-                    long timeRemain = (blockDurationInMillis - count.timeElapsed()) / 1000;
-                    Response response = new Response()
-                            .setStatus(HttpStatus.FORBIDDEN.value())
-                            .setMessage("Please wait and try again " + timeRemain + " seconds later.");
-//                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response.toString());
-                    return ResponseEntity.badRequest().body(new MessageResponse("You have exceeded maximum attempts. Please wait and try again after " + timeRemain + " seconds."));
-                }
-            }
-        }
+//        LoginRetryCount count = cache.read(request.getUsername());
+//        if (count != null) {
+//            if (count.isMaxTryExceed()) {
+//                if (count.isTimePassed(blockDurationInMillis)) {
+//                    count.resetFailedCount();
+//                } else {
+//                    long timeRemain = (blockDurationInMillis - count.timeElapsed()) / 1000;
+//                    Response response = new Response()
+//                            .setStatus(HttpStatus.FORBIDDEN.value())
+//                            .setMessage("Please wait and try again " + timeRemain + " seconds later.");
+////                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response.toString());
+//                    return ResponseEntity.badRequest().body(new MessageResponse("You have exceeded maximum attempts. Please wait and try again after " + timeRemain + " seconds."));
+//                }
+//            }
+//        }
 
-        ResponseEntity<?> response = login.doLogin(request, false);
+        return login.doLogin(request, false);
         //If-Login Failed: then track-login-failed-count:
-        if (response.getStatusCodeValue() == HttpStatus.OK.value()) {
-            if (count != null) cache.remove(request.getUsername());
-            return response;
-        } else {
-            if (count == null) count = new LoginRetryCount(loginMaxRetryCount);
-            count.incrementFailedCount();
-            cache.put(request.getUsername(), count);
-            return response;
-        }
+//        if (response.getStatusCodeValue() == HttpStatus.OK.value()) {
+//            if (count != null) cache.remove(request.getUsername());
+//            return response;
+//        } else {
+//            if (count == null) count = new LoginRetryCount(loginMaxRetryCount);
+//            count.incrementFailedCount();
+//            cache.put(request.getUsername(), count);
+//            return response;
+//        }
     }
 
     @GetMapping("/forget")

@@ -236,21 +236,21 @@ public class MedicalBookingService implements IMedicalBookingService {
         HttpEntity<String> request = new HttpEntity<>(headers);
         String url = properties.getUserProfileById() + hospitalBookingDetailsDto.getUserId();
         ResponseEntity<UserInfoDto> userInfoDtoResponse = userRestTemplate.exchange(url, HttpMethod.GET, request, UserInfoDto.class);
-        HospitalBookingDate hospitalBookingDate = iHospitalBookingDateRepository.findByHospitalIdAndAppointmentDate(hospitalBookingDetailsDto.getHospitalId(),
+        MedicalConfiguration medicalConfiguration = iHospitalBookingDateRepository.findByHospitalIdAndAppointmentDate(hospitalBookingDetailsDto.getHospitalId(),
                 hospitalBookingDetailsDto.getAppointmentDate());
         HospitalBookingDetail hospitalBookingDetailBooked = iHospitalBookingDetailsRepository.findByUserId(hospitalBookingDetailsDto.getUserId()
         );
         if(!Objects.isNull(hospitalBookingDetailBooked)){
 
             iHospitalBookingDetailsRepository.findById(hospitalBookingDetailBooked.getId()).ifPresent(d -> {
-                d.setHospitalBookingId(hospitalBookingDate.getId());
+                d.setHospitalBookingId(medicalConfiguration.getId());
                 d.setAmPm(hospitalBookingDetailsDto.getAmPm());
                 iHospitalBookingDetailsRepository.save(d);
             });
 
         }else{
             HospitalBookingDetail hospitalBookingDetail = new HospitalBookingDetail();
-            hospitalBookingDetail.setHospitalBookingId(hospitalBookingDate.getId());
+            hospitalBookingDetail.setHospitalBookingId(medicalConfiguration.getId());
             hospitalBookingDetail.setAmPm(hospitalBookingDetailsDto.getAmPm());
             hospitalBookingDetail.setUserId(hospitalBookingDetailsDto.getUserId());
             iHospitalBookingDetailsRepository.save(hospitalBookingDetail);

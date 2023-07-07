@@ -32,7 +32,7 @@ public abstract class TokenizerTask extends AbstractTask<Response, Response> {
                 .setIat(new Date().getTime())
                 .setExp(timeToLive.getTimeInMillis())
                 //.addData("mobile", exist.getMobile())
-                .addData("email", exist.getEmail());
+                .addData("email", Objects.isNull(exist.getEmail())?"":exist.getEmail());
         //Adding Roles to Claim:
         if (exist.getAuthorities().size() > 0){
             String[] roles = AuthorityUtils.authorityListToSet(exist.getAuthorities()).toArray(new String[0]);

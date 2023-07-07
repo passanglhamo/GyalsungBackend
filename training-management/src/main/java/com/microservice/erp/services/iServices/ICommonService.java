@@ -23,4 +23,5 @@ public interface ICommonService {
 
     ResponseEntity<?> getAllActiveHospital();
 
+    ResponseEntity<?> getHospitalByName(String hospitalName);
 }

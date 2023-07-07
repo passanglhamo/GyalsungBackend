@@ -53,9 +53,9 @@ public class CheckUserExist extends AbstractTask<Message, Response> {
             if (!optUser.isPresent()) {
                 optUser = repository.findByCid(username);
             }
-            if (!optUser.isPresent()) {
-                optUser = repository.findByEmail(username);
-            }
+//            if (!optUser.isPresent()) {
+//                optUser = repository.findByEmail(username);
+//            }
             if (optUser.isPresent()) {
                 return new Response().setStatus(200).setMessage(username + " exist.");
             } else {

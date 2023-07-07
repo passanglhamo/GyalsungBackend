@@ -14,7 +14,7 @@ import java.util.Date;
 public class HospitalBookingDetailsDto {
     private BigInteger id;
     private BigInteger hospitalBookingId;
-    private BigInteger hospitalId;
+    private Integer hospitalId;
     private Date appointmentDate;
     private Character amPm;
     private BigInteger userId;
@@ -23,7 +23,7 @@ public class HospitalBookingDetailsDto {
     public static HospitalBookingDetailsDto withId(
             BigInteger id,
             BigInteger hospitalBookingId,
-            BigInteger hospitalId,
+            Integer hospitalId,
             Date appointmentDate,
             Character amPm,
             BigInteger userId,

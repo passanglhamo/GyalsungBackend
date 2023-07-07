@@ -63,4 +63,10 @@ public class CommonController {
         return iCommonService.getAllActiveHospital();
     }
 
+    @GetMapping("/getHospitalByName")
+    public ResponseEntity<?> getHospitalByName(@RequestParam("hospitalName") String hospitalName) {
+        return iCommonService.getHospitalByName(hospitalName);
+    }
+
+
 }

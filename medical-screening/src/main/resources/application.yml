@@ -39,3 +39,4 @@ user.service.profile.by.userId: /userProfile/getProfileInfo?userId=
 training.management.service.url: http://TRAINING-MANAGEMENT/api/training/management
 training.management.hospital.by.hospitalId: /common/getHospitalById?hospitalId=
 training.management.mappedHospital.by.hospitalId: /common/getHospitalMappingByHospitalId?hospitalId=
+training.management.hospital.by.hospitalName: /common/getHospitalByName?hospitalName=

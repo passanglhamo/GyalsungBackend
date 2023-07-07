@@ -1,10 +1,8 @@
 package com.microservice.erp.services.iServices;
 
-import com.microservice.erp.domain.dto.HospitalBookingDateDto;
+import com.microservice.erp.domain.dto.MedicalConfigurationDto;
 import com.microservice.erp.domain.dto.HospitalBookingDetailsDto;
 import com.microservice.erp.domain.dto.HospitalScheduleDateDto;
-import com.microservice.erp.domain.entities.HospitalBookingDate;
-import com.microservice.erp.domain.entities.HospitalBookingDetail;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigInteger;
@@ -17,10 +15,10 @@ public interface IReadHospitalScheduleDateService {
 
     ResponseEntity<?> getAllAvailableAppointmentDateByHospitalId(BigInteger hospitalId);
 
-    List<HospitalBookingDateDto> getAllAppointmentDateByHospitalId(BigInteger hospitalId);
+    List<MedicalConfigurationDto> getAllAppointmentDateByHospitalId(BigInteger hospitalId);
 
-    HospitalBookingDateDto getHospitalBookingDetailByBookingId(String authHeader, BigInteger hospitalId,
-                                                            Date appointmentDate);
+    MedicalConfigurationDto getHospitalBookingDetailByBookingId(String authHeader, Integer hospitalId,
+                                                                Date appointmentDate);
 
     HospitalBookingDetailsDto getHospitalBookingDetailByUserId(String authHeader, BigInteger userId);
 }
