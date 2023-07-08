@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.math.BigInteger;
+import java.util.Date;
 
 
 @Entity(name = "change_email_verification_code")
@@ -18,9 +19,16 @@ public class ChangeEmailVerificationCode {
 
     @Column(name = "verification_code", columnDefinition = "varchar(6)")
     private String verificationCode;
+
+    @Column(name = "date")
+    private Date date;
+
+    @Column(name = "expiry_time")//180 seconds
+    private Integer expiryTime;
     //endregion
 
     //region setters and getters
+
     public BigInteger getUserId() {
         return userId;
     }
@@ -44,5 +52,22 @@ public class ChangeEmailVerificationCode {
     public void setVerificationCode(String verificationCode) {
         this.verificationCode = verificationCode;
     }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public Integer getExpiryTime() {
+        return expiryTime;
+    }
+
+    public void setExpiryTime(Integer expiryTime) {
+        this.expiryTime = expiryTime;
+    }
+
     //endregion
 }

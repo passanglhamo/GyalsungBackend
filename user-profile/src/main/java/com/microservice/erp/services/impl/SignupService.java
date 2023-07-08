@@ -131,9 +131,9 @@ public class SignupService implements ISignupService {
 //        }
         String verificationCode = OTPGenerator.generateOtp();
 
-        String subject = "Email verification";
-        String message = "Dear,<br></br>" +
-                " The verification code for Gyalsung system is " + verificationCode + ".<br></br><br></br>" +
+        String subject = "Email Verification";
+        String message = "Dear User,<br></br>" +
+                " The verification code for Gyalsung System is " + verificationCode + ".<br></br><br></br>" +
                 "<small>***This is a system-generated email. Please do not respond to this email.***</small>";
 
         EventBus eventBusEmail = EventBus.withId(notificationRequestDto.getEmail(), null, null, message, subject, null);

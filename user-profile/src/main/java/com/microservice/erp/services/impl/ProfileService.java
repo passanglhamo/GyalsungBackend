@@ -8,6 +8,7 @@ import com.microservice.erp.domain.entities.ChangeMobileNoSmsOtp;
 import com.microservice.erp.domain.entities.UserInfo;
 import com.microservice.erp.domain.helper.FileUploadDTO;
 import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
+import com.microservice.erp.domain.helper.OTPGenerator;
 import com.microservice.erp.domain.helper.ResponseMessage;
 import com.microservice.erp.domain.repositories.IChangeEmailVerificationCodeRepository;
 import com.microservice.erp.domain.repositories.IChangeMobileNoSmsOtpRepository;
@@ -123,23 +124,23 @@ public class ProfileService implements IProfileService {
     }
 
     public ResponseEntity<?> receiveOtp(UserProfileDto userProfileDto) throws JsonProcessingException {
-        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByMobileNo(userProfileDto.getMobileNo());
-        if (userInfoDB.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
-        }
-        Random random = new Random();
-        int number = random.nextInt(9999);//max upto 9999
-        String otp = String.format("%04d", number);
+//        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByMobileNo(userProfileDto.getMobileNo());
+//        if (userInfoDB.isPresent()) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
+//        }
 
-        String message = "Your OTP for Gyalsung System is " + otp;
+        String otp = OTPGenerator.generateOtp();
+
+        String message = "Your OTP to change mobile number in Gyalsung System is " + otp + " Please use this within 3 minutes.";
         EventBus eventBusSms = EventBus.withId(null, null, null, message, null, userProfileDto.getMobileNo());
 
-        //todo Get from properties file
         addToQueue.addToQueue("sms", eventBusSms);
         ChangeMobileNoSmsOtp changeMobileNoSmsOtp = new ChangeMobileNoSmsOtp();
         changeMobileNoSmsOtp.setUserId(userProfileDto.getUserId());
         changeMobileNoSmsOtp.setMobileNo(userProfileDto.getMobileNo());
         changeMobileNoSmsOtp.setOtp(otp);
+        changeMobileNoSmsOtp.setDate(new Date());
+        changeMobileNoSmsOtp.setExpiryTime(180);//180 seconds
         iChangeMobileNoSmsOtpRepository.save(changeMobileNoSmsOtp);
         return ResponseEntity.ok(changeMobileNoSmsOtp);
     }
@@ -159,10 +160,10 @@ public class ProfileService implements IProfileService {
     public ResponseEntity<?> changeMobileNo(UserProfileDto userProfileDto) {
         UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
 
-        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByMobileNo(userProfileDto.getMobileNo());
-        if (userInfoDB.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
-        }
+//        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByMobileNo(userProfileDto.getMobileNo());
+//        if (userInfoDB.isPresent()) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("The mobile number you have entered is already in use. Please try a different one."));
+//        }
 
         //verify otp
         ResponseEntity<?> responseEntity = verifyOtp(userProfileDto);
@@ -235,28 +236,28 @@ public class ProfileService implements IProfileService {
 
     @Override
     public ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto) throws Exception {
-        Optional<UserInfo> userInfoDb = iUserInfoRepository.findByEmail(userProfileDto.getEmail());
-        if (userInfoDb.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
-        }
-        String verificationCode = generateVerificationCode(6);
-        String subject = "Email verification";
-        String message = "Dear,<br></br>" +
-                " The verification code to change email for Gyalsung system is " + verificationCode + ".<br></br><br></br>" +
+//        Optional<UserInfo> userInfoDb = iUserInfoRepository.findByEmail(userProfileDto.getEmail());
+//        if (userInfoDb.isPresent()) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
+//        }
+        String verificationCode = OTPGenerator.generateOtp();
+        String subject = "Email Verification";
+        String message = "Dear User,<br></br>" +
+                " The verification code to change email in Gyalsung System is " + verificationCode + ".<br></br><br></br>" +
                 "<small>***This is a system-generated email. Please do not respond to this email.***</small>";
 
         EventBus eventBusEmail = EventBus.withId(userProfileDto.getEmail(), null, null, message, subject, null);
 
-        //todo Get from properties file
         addToQueue.addToQueue("email", eventBusEmail);
         ChangeEmailVerificationCode changeEmailVerificationCode = new ChangeEmailVerificationCode();
         changeEmailVerificationCode.setUserId(userProfileDto.getUserId());
         changeEmailVerificationCode.setEmail(userProfileDto.getEmail());
         changeEmailVerificationCode.setVerificationCode(verificationCode);
+        changeEmailVerificationCode.setDate(new Date());
+        changeEmailVerificationCode.setExpiryTime(180);//1880 seconds
         iChangeEmailVerificationCodeRepository.save(changeEmailVerificationCode);
         return ResponseEntity.ok(changeEmailVerificationCode);
     }
-
 
     @Override
     public ResponseEntity<?> changeParentInfo(UserProfileDto userProfileDto) {
@@ -414,14 +415,6 @@ public class ProfileService implements IProfileService {
         }
     }
 
-    public static String generateVerificationCode(int count) {
-        StringBuilder builder = new StringBuilder();
-        while (count-- != 0) {
-            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
-            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
-        }
-        return builder.toString();
-    }
 
     @Override
     public ResponseEntity<?> getRegisteredUsers() {
