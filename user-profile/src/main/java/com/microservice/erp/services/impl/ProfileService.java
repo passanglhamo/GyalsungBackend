@@ -134,7 +134,6 @@ public class ProfileService implements IProfileService {
         String message = "Your OTP to change mobile number in Gyalsung System is " + otp + " Please use this within 3 minutes.";
         EventBus eventBusSms = EventBus.withId(null, null, null, message, null, userProfileDto.getMobileNo());
 
-        addToQueue.addToQueue("sms", eventBusSms);
         ChangeMobileNoSmsOtp changeMobileNoSmsOtp = new ChangeMobileNoSmsOtp();
         changeMobileNoSmsOtp.setUserId(userProfileDto.getUserId());
         changeMobileNoSmsOtp.setMobileNo(userProfileDto.getMobileNo());
@@ -142,6 +141,7 @@ public class ProfileService implements IProfileService {
         changeMobileNoSmsOtp.setDate(new Date());
         changeMobileNoSmsOtp.setExpiryTime(180);//180 seconds
         iChangeMobileNoSmsOtpRepository.save(changeMobileNoSmsOtp);
+        addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(changeMobileNoSmsOtp);
     }
 
@@ -248,7 +248,6 @@ public class ProfileService implements IProfileService {
 
         EventBus eventBusEmail = EventBus.withId(userProfileDto.getEmail(), null, null, message, subject, null);
 
-        addToQueue.addToQueue("email", eventBusEmail);
         ChangeEmailVerificationCode changeEmailVerificationCode = new ChangeEmailVerificationCode();
         changeEmailVerificationCode.setUserId(userProfileDto.getUserId());
         changeEmailVerificationCode.setEmail(userProfileDto.getEmail());
@@ -256,6 +255,7 @@ public class ProfileService implements IProfileService {
         changeEmailVerificationCode.setDate(new Date());
         changeEmailVerificationCode.setExpiryTime(180);//1880 seconds
         iChangeEmailVerificationCodeRepository.save(changeEmailVerificationCode);
+        addToQueue.addToQueue("email", eventBusEmail);
         return ResponseEntity.ok(changeEmailVerificationCode);
     }
 
