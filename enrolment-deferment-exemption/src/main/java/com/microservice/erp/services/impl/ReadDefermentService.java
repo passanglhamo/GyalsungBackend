@@ -97,7 +97,7 @@ public class ReadDefermentService implements IReadDefermentService {
         }
         userProfileDtos.forEach(item -> {
             DefermentDto defermentDto = defermentDtoList.stream()
-                    .filter(deferment -> item.getId().equals(deferment.getUserId()))
+                    .filter(deferment -> item.getUserId().equals(deferment.getUserId()))
                     .max(Comparator.comparing(DefermentDto::getId))
                     .orElse(null);
             List<DefermentDto> defermentList = repository.findAllByUserIdOrderByIdDesc(item.getId())
