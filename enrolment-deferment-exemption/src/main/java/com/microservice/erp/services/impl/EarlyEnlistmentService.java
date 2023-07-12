@@ -253,7 +253,7 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
         List<EarlyEnlistmentDto> finalEarlyEnlistmentDtos = earlyEnlistmentDtos;
         earlyEnlistmentDtoList.forEach(item -> {
             UserProfileDto userProfileDto = userProfileDtos.stream()
-                    .filter(userProfileDto1 -> item.getUserId().equals(userProfileDto1.getId()))
+                    .filter(userProfileDto1 -> item.getUserId().equals(userProfileDto1.getUserId()))
                     .findFirst()
                     .orElse(null);
             GuardianConsent guardianConsent = iGuardianConsentRepository.findFirstByUserIdOrderByConsentRequestDateDesc(item.getUserId());
