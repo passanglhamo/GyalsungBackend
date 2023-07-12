@@ -88,7 +88,7 @@ public class ReadExemptionService implements IReadExemptionService {
         userProfileDtos.forEach(item -> {
             ExemptionDto exemptionDto = exemptionDtoList
                     .stream()
-                    .filter(exemption -> item.getId().equals(exemption.getUserId()))
+                    .filter(exemption -> item.getUserId().equals(exemption.getUserId()))
                     .max(Comparator.comparing(ExemptionDto::getId))
                     .orElse(null);
             List<ExemptionDto> exemptionDtoList1 = repository.findAllByUserIdOrderByIdDesc(item.getId())

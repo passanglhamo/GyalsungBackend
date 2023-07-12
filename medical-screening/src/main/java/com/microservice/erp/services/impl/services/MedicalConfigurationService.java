@@ -1,7 +1,9 @@
 package com.microservice.erp.services.impl.services;
 
 import com.microservice.erp.domain.dto.*;
+import com.microservice.erp.domain.entities.MedicalConfiguration;
 import com.microservice.erp.domain.helper.MessageResponse;
+import com.microservice.erp.domain.repositories.IMedicalConfigurationRepository;
 import com.microservice.erp.services.iServices.IMedicalConfigurationService;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -25,6 +27,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -33,6 +36,9 @@ public class MedicalConfigurationService implements IMedicalConfigurationService
     @Autowired
     @Qualifier("trainingManagementTemplate")
     RestTemplate restTemplate;
+
+
+    private final IMedicalConfigurationRepository medicalConfigurationRepository;
 
     @Override
     public ResponseEntity<?> readFile(String authHeader, MedicalExcelCommand command) {
@@ -54,8 +60,14 @@ public class MedicalConfigurationService implements IMedicalConfigurationService
 
         final BigInteger[] excelId = {BigInteger.ZERO};
         medicalConfigurationExList.forEach(medical -> {
+
             String hospitalUrl = properties.getHospitalByName() + medical.getHospitalName();
             ResponseEntity<HospitalDto> hospitalDtoResponse = restTemplate.exchange(hospitalUrl, HttpMethod.GET, request, HospitalDto.class);
+
+//            String hospitalUrl = "http://172.30.84.134:8086/api/training/management/common/getHospitalByName?hospitalName=" + medical.getHospitalName();
+//            String hospitalUrl = "http://172.30.84.134:8086/api/training/management/common/getHospitalByName?hospitalName=" + medical.getHospitalName();
+//
+
             if (!Objects.isNull(hospitalDtoResponse.getBody())) {
                 MedicalConfigurationDto medicalConfigurationDto = new MedicalConfigurationDto();
                 excelId[0] = excelId[0].add(BigInteger.ONE);
@@ -72,4 +84,59 @@ public class MedicalConfigurationService implements IMedicalConfigurationService
 
         return ResponseEntity.ok(medicalConfigurationList);
     }
+
+    @Override
+    public ResponseEntity<?> bulkSave(MedicalConfigurationBulkDto medicalConfigurationBulkDto) {
+        medicalConfigurationBulkDto.getMedicalConfigurationDtos().forEach(
+                medicalConfigurationDto -> {
+                    Optional<MedicalConfiguration> medicalConfiguration = medicalConfigurationRepository.findByHospitalIdAndAppointmentDate(medicalConfigurationDto.getHospitalId(),
+                            medicalConfigurationDto.getAppointmentDate());
+                    if (medicalConfiguration.isPresent()) {
+                        update(medicalConfiguration.get().getId(), medicalConfigurationDto.getAmSlots(),
+                                medicalConfigurationDto.getPmSlots());
+                    } else {
+                        save(medicalConfigurationDto);
+                    }
+                }
+        );
+        return ResponseEntity.ok("Data saved successfully.");
+    }
+
+    @Override
+    public List<MedicalConfiguration> getAllMedicalConfigurationList() {
+        return medicalConfigurationRepository.findAll();
+    }
+
+    @Override
+    public ResponseEntity<?> updateMedicalConfiguration(MedicalConfiguration medicalConfiguration) {
+
+        update(medicalConfiguration.getId(), medicalConfiguration.getAmSlots(), medicalConfiguration.getPmSlots());
+
+        return ResponseEntity.ok("Data updated successfully.");
+    }
+
+    @Override
+    public MedicalConfiguration save(MedicalConfiguration medicalConfiguration) {
+        return medicalConfigurationRepository.save(medicalConfiguration);
+    }
+
+    private void save(MedicalConfigurationDto medicalConfigurationDto) {
+        MedicalConfiguration medicalConfiguration = new MedicalConfiguration();
+        medicalConfiguration.setHospitalId(medicalConfigurationDto.getHospitalId());
+        medicalConfiguration.setAppointmentDate(medicalConfigurationDto.getAppointmentDate());
+        medicalConfiguration.setAmSlots(medicalConfigurationDto.getAmSlots());
+        medicalConfiguration.setPmSlots(medicalConfigurationDto.getPmSlots());
+        medicalConfiguration.setStatus('A');
+        medicalConfigurationRepository.save(medicalConfiguration);
+    }
+
+    private void update(BigInteger id, Integer amSlots, Integer pmSlots) {
+        medicalConfigurationRepository.findById(id).ifPresent(d -> {
+            d.setAmSlots(amSlots);
+            d.setPmSlots(pmSlots);
+            medicalConfigurationRepository.save(d);
+        });
+    }
+
+
 }
