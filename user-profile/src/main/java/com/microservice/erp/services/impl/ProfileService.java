@@ -175,6 +175,7 @@ public class ProfileService implements IProfileService {
         userInfoObject.setMobileNo(userProfileDto.getMobileNo());
         iUserInfoRepository.save(userInfoDb);
         iChangeMobileNoSmsOtpRepository.deleteById(userInfoDb.getUserId());
+        //todo: need to add to queue to cahnge email in auth service
         return ResponseEntity.ok(new MessageResponse("Mobile number changed successfully."));
     }
 
@@ -199,10 +200,9 @@ public class ProfileService implements IProfileService {
         iChangeEmailVerificationCodeRepository.deleteById(userInfoDb.getUserId());
 
         //add to queue to update email in auth microservices
-        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getUserId(), null, null, userInfo.getEmail()
-                , null, null, null, null);
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getUserId(), null, null, null, userInfo.getEmail()
+                , null, null, null, null, null);
 
-        //todo Get from properties file
         addToQueue.addToUserQueue("changeEmail", eventBusUser);
         return ResponseEntity.ok(new MessageResponse("Email changed successfully."));
     }
@@ -218,7 +218,7 @@ public class ProfileService implements IProfileService {
         userInfo.setUsername(userProfileDto.getUsername());
         iUserInfoRepository.save(userInfo);
         //add to queue to update username in auth microservices
-        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getUserId(), null, null, null
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getUserId(), null, null, null, null, null
                 , userInfo.getUsername(), null, null, null);
         addToQueue.addToUserQueue("changeUsername", eventBusUser);
         return ResponseEntity.ok(new MessageResponse("Username updated successfully."));

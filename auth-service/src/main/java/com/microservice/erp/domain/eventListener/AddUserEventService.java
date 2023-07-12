@@ -14,10 +14,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,12 +34,18 @@ public class AddUserEventService {
         Optional<User> userDb = repository.findByUserId(userEventInfo.getUserId());
 
         if (!userDb.isPresent()) {
+
+            String dob = userEventInfo.getDob();
+            Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(dob);
+
             userInfo.setUserId(userEventInfo.getUserId());
             userInfo.setUsername(Objects.isNull(userEventInfo.getCid()) ? userEventInfo.getEmail() :
                     userEventInfo.getCid());
             userInfo.setEmail(userEventInfo.getEmail());
+            userInfo.setMobileNo(userEventInfo.getMobileNo());
             userInfo.setStatus(userEventInfo.getStatus());
             userInfo.setCid(userEventInfo.getCid());
+            userInfo.setDob(birthDate);
             userInfo.setPassword(encoder.encode(userEventInfo.getPassword()));
             userInfo.setSecrets(User.createRandomMapOfSecret());
             Set<Role> saRoles = new HashSet<>();
@@ -79,8 +83,6 @@ public class AddUserEventService {
                 repository.save(user);
             });
         }
-
-
     }
 
     @KafkaListener(topics = {"${topic.changeEmail}"}, concurrency = "1")
@@ -102,6 +104,5 @@ public class AddUserEventService {
         userInfo.setUsername(userEventInfo.username);
         repository.save(userInfo);
     }
-
 
 }

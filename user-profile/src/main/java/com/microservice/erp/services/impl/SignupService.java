@@ -177,6 +177,7 @@ public class SignupService implements ISignupService {
         UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
         ResponseEntity<CitizenDetailDto> validateCitizenDetails = (ResponseEntity<CitizenDetailDto>) validateCitizenDetails(signupRequestDto.getCid(), signupRequestDto.getBirthDate());
         Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(validateCitizenDetails.getBody().getDob());
+        String birthDateString = validateCitizenDetails.getBody().getDob();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(birthDate);
         Calendar now = Calendar.getInstance();
@@ -276,7 +277,7 @@ public class SignupService implements ISignupService {
         iUserInfoRepository.save(userInfo);
 
 //         queue following data: password, roles, email, username, userId in auth microservices
-        EventBusUser eventBusSms = EventBusUser.withId(userId, 'A', userInfo.getCid(), userInfo.getEmail()
+        EventBusUser eventBusSms = EventBusUser.withId(userId, 'A', userInfo.getCid(), birthDateString, userInfo.getEmail(), userInfo.getMobileNo()
                 , userInfo.getUsername(), signupRequestDto.getPassword(), userInfo.getSignupUser(), null);
         addToQueue.addToUserQueue("addUser", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));
