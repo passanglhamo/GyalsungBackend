@@ -7,31 +7,41 @@ import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.FileUploadDTO;
 import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
+import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
 import com.microservice.erp.services.iServices.ICreateExemptionService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class ExemptionMapper {
+    private final IExemptionInfoRepository repository;
+
     public ExemptionInfo mapToEntity(HttpServletRequest request, ICreateExemptionService.CreateExemptionCommand command, String caseNumber) {
 
         ExemptionInfo exemption = new ModelMapper().map(command, ExemptionInfo.class);
         exemption.setStatus(ApprovalStatus.PENDING.value());
+        ExemptionInfo exemptionDb = repository.findFirstByOrderByExemptionIdDesc();
+        BigInteger exemptionId = exemptionDb == null ? BigInteger.ONE : exemptionDb.getExemptionId().add(BigInteger.ONE);
+        exemption.setExemptionId(exemptionId);
         LocalDate currentDate = LocalDate.now();
         exemption.setApplicationDate(new Date());
         exemption.setCaseNumber(caseNumber);
         exemption.setExemptionYear(String.valueOf(currentDate.getYear()));
+        exemption.setCreatedBy(command.getUserId());
+        exemption.setCreatedDate(new Date());
         if (!Objects.isNull(command.getProofDocuments())) {
             exemption.setFiles(
                     Arrays.stream(command.getProofDocuments())
@@ -79,7 +89,7 @@ public class ExemptionMapper {
     public ExemptionDto mapToDomain(ExemptionInfo exemption) {
         return ExemptionDto.withId(
                 exemption.getExemptionYear(),
-                exemption.getId(),
+                exemption.getExemptionId(),
                 exemption.getUserId(),
                 exemption.getReasonId(),
                 exemption.getApprovalRemarks(),

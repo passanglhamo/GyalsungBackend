@@ -1,5 +1,6 @@
 package com.microservice.erp.domain.entities;
 
+import com.microservice.erp.domain.helper.BaseEntity;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -15,10 +16,14 @@ import java.util.Set;
 @Builder
 @EqualsAndHashCode
 @Entity(name = "ede_exemption_info")
-@AttributeOverride(name = "id", column = @Column(name = "exemption_id", columnDefinition = "bigint"))
-public class ExemptionInfo extends Auditable<BigInteger, Long> {
+//@AttributeOverride(name = "id", column = @Column(name = "exemption_id", columnDefinition = "bigint"))
+public class ExemptionInfo extends BaseEntity {
 
     //region private variables
+    @Id
+    @Column(name = "exemption_id", columnDefinition = "bigint")
+    private BigInteger exemptionId;
+
     @NotNull(message = "User id cannot be null")
     @Basic(optional = false)
     @Column(name = "user_id", columnDefinition = "bigint")
@@ -68,6 +73,15 @@ public class ExemptionInfo extends Auditable<BigInteger, Long> {
     //endregion
 
     //region setters and getters
+
+    public BigInteger getExemptionId() {
+        return exemptionId;
+    }
+
+    public void setExemptionId(BigInteger exemptionId) {
+        this.exemptionId = exemptionId;
+    }
+
     public BigInteger getUserId() {
         return userId;
     }

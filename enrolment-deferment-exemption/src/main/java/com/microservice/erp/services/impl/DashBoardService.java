@@ -90,7 +90,7 @@ public class DashBoardService implements IDashBoardService {
                 defermentDto.setDob(userProfileDto.getDob());
                 defermentDto.setGender(userProfileDto.getGender());
                 defermentDto.setDefermentYear(defermentInfo.getDefermentYear());
-                defermentDto.setId(defermentInfo.getId());
+                defermentDto.setId(defermentInfo.getDefermentId());
                 defermentDtoList.add(defermentDto);
             }
 
@@ -124,7 +124,7 @@ public class DashBoardService implements IDashBoardService {
                 exemptionDto.setDob(userProfileDto.getDob());
                 exemptionDto.setGender(userProfileDto.getGender());
                 exemptionDto.setExemptionYear(exemptionInfo.getExemptionYear());
-                exemptionDto.setId(exemptionInfo.getId());
+                exemptionDto.setId(exemptionInfo.getExemptionId());
                 exemptionDtoList.add(exemptionDto);
             }
 

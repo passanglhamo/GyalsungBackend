@@ -23,6 +23,7 @@ public interface IUpdateExemptionService {
     @NoArgsConstructor
     class UpdateExemptionCommand {
 
+        private BigInteger userId;
         private String remarks;
         private Character status;
         private List<BigInteger> exemptionIds;

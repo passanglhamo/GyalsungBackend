@@ -22,7 +22,7 @@ public interface IUpdateDefermentService {
     @AllArgsConstructor
     @NoArgsConstructor
     class UpdateDefermentCommand {
-
+        private BigInteger userId;
         private String remarks;
         private Character status;
         private List<BigInteger> defermentIds;

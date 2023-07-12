@@ -1,24 +1,27 @@
 package com.microservice.erp.domain.entities;
 
-import lombok.*;
+import com.microservice.erp.domain.helper.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "ede_deferment_info")
-@AttributeOverride(name = "id", column = @Column(name = "deferment_id", columnDefinition = "bigint"))
-public class DefermentInfo extends Auditable<BigInteger, Long> {
+//@AttributeOverride(name = "id", column = @Column(name = "deferment_id", columnDefinition = "bigint"))
+public class DefermentInfo extends BaseEntity {
 
     //region private variables
+    @Id
+    @Column(name = "deferment_id", columnDefinition = "bigint")
+    private BigInteger defermentId;
+
     @NotNull(message = "User id cannot be null")
     @Basic(optional = false)
     @Column(name = "user_id", columnDefinition = "bigint")
@@ -67,6 +70,14 @@ public class DefermentInfo extends Auditable<BigInteger, Long> {
     private Set<DefermentFileInfo> files;
     //endregion
 
+
+    public BigInteger getDefermentId() {
+        return defermentId;
+    }
+
+    public void setDefermentId(BigInteger defermentId) {
+        this.defermentId = defermentId;
+    }
 
     public String getCaseNumber() {
         return caseNumber;

@@ -100,7 +100,7 @@ public class ReadDefermentService implements IReadDefermentService {
                     .filter(deferment -> item.getUserId().equals(deferment.getUserId()))
                     .max(Comparator.comparing(DefermentDto::getId))
                     .orElse(null);
-            List<DefermentDto> defermentList = repository.findAllByUserIdOrderByIdDesc(item.getId())
+            List<DefermentDto> defermentList = repository.findAllByUserIdOrderByDefermentIdDesc(item.getId())
                     .stream()
                     .map(mapper::mapToDomain)
                     .collect(Collectors.toUnmodifiableList());
@@ -153,7 +153,7 @@ public class ReadDefermentService implements IReadDefermentService {
 
     @Override
     public ResponseEntity<?> getDefermentListByUserId(BigInteger userId) {
-        return ResponseEntity.ok(repository.findAllByUserIdOrderByIdDesc(userId)
+        return ResponseEntity.ok(repository.findAllByUserIdOrderByDefermentIdDesc(userId)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList()));

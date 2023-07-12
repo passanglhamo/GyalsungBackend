@@ -1,6 +1,8 @@
 package com.microservice.erp.services.impl;
 
-import com.microservice.erp.domain.dto.*;
+import com.microservice.erp.domain.dto.ExemptionDto;
+import com.microservice.erp.domain.dto.ExemptionListDto;
+import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.mapper.ExemptionMapper;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
@@ -65,7 +67,7 @@ public class ReadExemptionService implements IReadExemptionService {
         caseNumber = caseNumber.isEmpty() ? null : caseNumber;
 
 
-        List<ExemptionDto> exemptionDtoList = repository.getExemptionListByToDateStatus(status,gender, reasonId,caseNumber)
+        List<ExemptionDto> exemptionDtoList = repository.getExemptionListByToDateStatus(status, gender, reasonId, caseNumber)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
@@ -91,7 +93,7 @@ public class ReadExemptionService implements IReadExemptionService {
                     .filter(exemption -> item.getUserId().equals(exemption.getUserId()))
                     .max(Comparator.comparing(ExemptionDto::getId))
                     .orElse(null);
-            List<ExemptionDto> exemptionDtoList1 = repository.findAllByUserIdOrderByIdDesc(item.getId())
+            List<ExemptionDto> exemptionDtoList1 = repository.findAllByUserIdOrderByExemptionIdDesc(item.getId())
                     .stream()
                     .map(mapper::mapToDomain)
                     .collect(Collectors.toUnmodifiableList());
@@ -128,12 +130,12 @@ public class ReadExemptionService implements IReadExemptionService {
 
     @Override
     public ResponseEntity<?> getExemptionValidation(BigInteger userId) {
-        return defermentExemptionValidation.getDefermentAndExemptValidation(userId,'E',"");
+        return defermentExemptionValidation.getDefermentAndExemptValidation(userId, 'E', "");
     }
 
     @Override
     public ResponseEntity<?> getExemptionListByUserId(BigInteger userId) {
-        return ResponseEntity.ok(repository.findAllByUserIdOrderByIdDesc(userId)
+        return ResponseEntity.ok(repository.findAllByUserIdOrderByExemptionIdDesc(userId)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList()));

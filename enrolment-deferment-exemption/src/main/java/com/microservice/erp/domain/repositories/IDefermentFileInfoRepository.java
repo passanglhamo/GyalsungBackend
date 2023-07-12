@@ -14,6 +14,6 @@ import java.util.List;
 @Repository
 public interface IDefermentFileInfoRepository extends JpaRepository<DefermentFileInfo, BigInteger> {
 
-    List<DefermentFileInfo> findAllByDefermentId(BigInteger defermentId);
+    List<DefermentFileInfo> findAllByDeferment(BigInteger defermentId);
 
 }

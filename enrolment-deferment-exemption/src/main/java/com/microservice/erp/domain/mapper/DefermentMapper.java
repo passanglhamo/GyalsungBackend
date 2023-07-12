@@ -8,13 +8,16 @@ import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.FileUploadDTO;
 import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
+import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -22,15 +25,22 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class DefermentMapper {
+    private final IDefermentInfoRepository repository;
 
     public DefermentInfo mapToEntity(HttpServletRequest request, ICreateDefermentService.CreateDefermentCommand command,
                                      String caseNumber) {
 
         DefermentInfo deferment = new ModelMapper().map(command, DefermentInfo.class);
+        DefermentInfo defermentDb = repository.findFirstByOrderByDefermentIdDesc();
+        BigInteger defermentId = defermentDb == null ? BigInteger.ONE : defermentDb.getDefermentId().add(BigInteger.ONE);
+        deferment.setDefermentId(defermentId);
         deferment.setStatus(ApprovalStatus.PENDING.value());
         deferment.setApplicationDate(new Date());
         deferment.setCaseNumber(caseNumber);
+        deferment.setCreatedBy(command.getUserId());
+        deferment.setCreatedDate(new Date());
         if (!Objects.isNull(command.getProofDocuments())) {
             deferment.setFiles(
                     Arrays.stream(command.getProofDocuments())
@@ -77,7 +87,7 @@ public class DefermentMapper {
 
     public DefermentDto mapToDomain(DefermentInfo deferment) {
         return DefermentDto.withId(
-                deferment.getId(),
+                deferment.getDefermentId(),
                 deferment.getDefermentYear(),
                 deferment.getUserId(),
                 deferment.getReasonId(),

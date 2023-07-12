@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.Objects;
 
 @Service
@@ -38,7 +39,7 @@ public class UpdateExemptionService implements IUpdateExemptionService {
     @Override
     public ResponseEntity<?> approveByIds(String authHeader, UpdateExemptionCommand command) {
 
-        ExemptionInfo exemptionInfo = repository.findAllById(command.getExemptionIds())
+        ExemptionInfo exemptionInfo = repository.findAllByExemptionId(command.getExemptionIds())
                 .stream()
                 .filter(d -> (d.getStatus().equals(ApprovalStatus.APPROVED.value()) ||
                         d.getStatus().equals(ApprovalStatus.REJECTED.value()))
@@ -50,9 +51,11 @@ public class UpdateExemptionService implements IUpdateExemptionService {
         }
 
         repository.findAllById(command.getExemptionIds()).forEach(d -> {
-                d.setStatus(ApprovalStatus.APPROVED.value());
-                d.setApprovalRemarks(command.getRemarks());
-                repository.save(d);
+            d.setStatus(ApprovalStatus.APPROVED.value());
+            d.setApprovalRemarks(command.getRemarks());
+            d.setUpdatedBy(command.getUserId());
+            d.setUpdatedDate(new Date());
+            repository.save(d);
             try {
                 sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.APPROVED.value());
             } catch (Exception e) {
@@ -75,9 +78,11 @@ public class UpdateExemptionService implements IUpdateExemptionService {
 
         }
         repository.findAllById(command.getExemptionIds()).forEach(d -> {
-                d.setStatus(ApprovalStatus.REJECTED.value());
-                d.setApprovalRemarks(command.getRemarks());
-                repository.save(d);
+            d.setStatus(ApprovalStatus.REJECTED.value());
+            d.setApprovalRemarks(command.getRemarks());
+            d.setUpdatedBy(command.getUserId());
+            d.setUpdatedDate(new Date());
+            repository.save(d);
             try {
                 sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.REJECTED.value());
             } catch (Exception e) {
@@ -93,13 +98,16 @@ public class UpdateExemptionService implements IUpdateExemptionService {
     @Override
     public ResponseEntity<?> saveToDraft(String authHeader, UpdateExemptionCommand command) {
         repository.findAllById(command.getExemptionIds()).forEach(d -> {
-                d.setStatus(command.getStatus());
-                d.setApprovalRemarks(command.getRemarks());
-                repository.save(d);
+            d.setStatus(command.getStatus());
+            d.setApprovalRemarks(command.getRemarks());
+            d.setUpdatedBy(command.getUserId());
+            d.setUpdatedDate(new Date());
+            repository.save(d);
 
         });
 
-        return ResponseEntity.ok(new MessageResponse("Saved successfully"));    }
+        return ResponseEntity.ok(new MessageResponse("Saved successfully"));
+    }
 
     private void sendEmailAndSms(String authHeader, BigInteger userId, Character status) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
