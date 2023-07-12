@@ -193,10 +193,10 @@ public class SaUserService implements ISaUserService {
 
 
     private ResponseEntity<?> addNewUser(UserDto userDto) throws JsonProcessingException {
-        Optional<UserInfo> saUserEmail = iUserInfoRepository.findByEmail(userDto.getEmail());
-        if (saUserEmail.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
-        }
+//        Optional<UserInfo> saUserEmail = iUserInfoRepository.findByEmail(userDto.getEmail());
+//        if (saUserEmail.isPresent()) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
+//        }
 
         if (!userDto.getCid().isEmpty()) {
             Optional<UserInfo> saUserCid = iUserInfoRepository.findByCid(userDto.getCid());
@@ -208,7 +208,7 @@ public class SaUserService implements ISaUserService {
         UserInfo saUser = new ModelMapper().map(userDto, UserInfo.class);
         saUser.setUsername(userDto.getEmail());
 
-        //todo remove static code
+
         saUser.setSignupUser('N');
         String password = generatePassword(8); //to generate password and send email
         List<BigInteger> saRoleDtos = userDto.getRoles();
@@ -216,10 +216,11 @@ public class SaUserService implements ISaUserService {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
 
-//todo remove static code
         saUser.setSignupUser('N');
         BigInteger userId = iUserInfoRepository.save(saUser).getUserId();
-        EventBusUser eventBusUser = EventBusUser.withId(userId, userDto.getStatus(), saUser.getCid(), saUser.getEmail()
+
+        //todo: need to pass dob in string format
+        EventBusUser eventBusUser = EventBusUser.withId(userId, userDto.getStatus(), saUser.getCid(), null, saUser.getEmail(), saUser.getMobileNo()
                 , saUser.getUsername(), password, saUser.getSignupUser(), userDto.getRoles());
         addToQueue.addToUserQueue("addUser", eventBusUser);
 
@@ -229,17 +230,16 @@ public class SaUserService implements ISaUserService {
         String smsBody = "Dear " + userDto.getFullName() + ", " + " Your information has been added to Gyalsung MIS against this your email. " + "Please check your email " + userDto.getEmail() + " to see login credentials.";
         EventBus eventBusSms = EventBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
 
-        //todo:need to get topic name from properties file
-        addToQueue.addToQueue("email", eventBusEmail);
+         addToQueue.addToQueue("email", eventBusEmail);
         addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("User added successfully!"));
     }
 
     private ResponseEntity<?> editUser(UserDto userDto) throws JsonProcessingException {
-        String isEmailAlreadyInUse = userDao.isEmailAlreadyInUse(userDto.getEmail(), userDto.getUserId());
-        if (isEmailAlreadyInUse != null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
-        }
+//        String isEmailAlreadyInUse = userDao.isEmailAlreadyInUse(userDto.getEmail(), userDto.getUserId());
+//        if (isEmailAlreadyInUse != null) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
+//        }
         String isCidAlreadyInUse = userDao.isCidAlreadyInUse(userDto.getCid(), userDto.getUserId());
         if (isCidAlreadyInUse != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("CID " + userDto.getCid() + " already in use."));
@@ -256,8 +256,11 @@ public class SaUserService implements ISaUserService {
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
+
         BigInteger userId = iUserInfoRepository.save(saUser).getUserId();
-        EventBusUser eventBusUser = EventBusUser.withId(userId, userDto.getStatus(), saUser.getCid(), saUser.getEmail()
+
+        //todo: need to pass dob in string format
+        EventBusUser eventBusUser = EventBusUser.withId(userId, userDto.getStatus(), saUser.getCid(),null, saUser.getEmail(), saUser.getMobileNo()
                 , saUser.getUsername(), null, saUser.getSignupUser(), userDto.getRoles());
         addToQueue.addToUserQueue("addUser", eventBusUser);
 
@@ -268,7 +271,6 @@ public class SaUserService implements ISaUserService {
         String smsBody = "Dear " + saUser.getFullName() + ", " + " Your information in Gyalsung MIS has been updated. " + "Please check your email " + saUser.getEmail() + " to see login credentials.";
         EventBus eventBusSms = EventBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
 
-        //todo:need to get topic name from properties file
         addToQueue.addToQueue("email", eventBusEmail);
         addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("User updated successfully!"));

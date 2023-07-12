@@ -16,11 +16,10 @@ import static java.util.stream.Collectors.toList;
 @Entity
 //@Table(name = "users", indexes = {@Index(name = "idx_username", columnList = "username")
 //        , @Index(name = "idx_email", columnList = "email")})
-@Table(name="users")
+@Table(name = "users")
 @AttributeOverride(name = "id", column = @Column(name = "id", columnDefinition = "bigint"))
 public class User extends Auditable<BigInteger, Long> implements UserDetails {
-//todo:Added user id for time being
-    @Column(name = "user_id",  columnDefinition = "bigint")
+    @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
     @Column(name = "status", columnDefinition = "char(1)")
@@ -33,19 +32,23 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
     @JsonIgnore
     private String password;
 
-
-    @Column(length = 200)
+    @Column(name = "email", columnDefinition = "varchar(255)")
     private String email;
 
     @Column(length = 200, unique = true)
     private String cid;
+
+    @Column(name = "dob")
+    private Date dob;
+
+    @Column(name = "mobile_no", columnDefinition = "varchar(255)")
+    private String mobileNo;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "users_secrets")
     @Column(name = "secrets")
     @JsonIgnore
     private Map<Integer, String> secrets;
-
 
     @JsonIgnore
     private boolean enabled;
@@ -67,7 +70,7 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
     @Transient
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (roles == null) return new ArrayList<>();
-        return this.roles.stream().map(role -> new CustomGrantedAuthority(role.getRoleName(),role.getUserType())).collect(toList());
+        return this.roles.stream().map(role -> new CustomGrantedAuthority(role.getRoleName(), role.getUserType())).collect(toList());
     }
 
     public BigInteger getUserId() {
@@ -151,6 +154,21 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
         this.roles = roles;
     }
 
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+
+    public String getMobileNo() {
+        return mobileNo;
+    }
+
+    public void setMobileNo(String mobileNo) {
+        this.mobileNo = mobileNo;
+    }
 //    public void addRoles(Role... roles) {
 //        if (getRoles() == null) {
 //            setRoles(new HashSet<>());
@@ -197,8 +215,8 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
         this.policies = policies;
     }
 
-    public User addRoles(Role...roles){
-        if (getRoles() == null){
+    public User addRoles(Role... roles) {
+        if (getRoles() == null) {
             setRoles(new HashSet<>());
         }
         getRoles().addAll(Arrays.asList(roles));

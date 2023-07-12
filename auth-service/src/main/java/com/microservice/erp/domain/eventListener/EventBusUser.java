@@ -7,6 +7,7 @@ import lombok.Setter;
 import scala.Char;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 @Setter
@@ -18,7 +19,9 @@ public class EventBusUser {
     BigInteger userId;
     Character status;
     String cid;
+    String dob;
     String email;
+    String mobileNo;
     String username;
     String password;
     Character userType;
@@ -28,7 +31,9 @@ public class EventBusUser {
             BigInteger userId,
             Character status,
             String cid,
+            String dob,
             String email,
+            String mobileNo,
             String username,
             String password,
             Character userType,
@@ -37,7 +42,9 @@ public class EventBusUser {
                 userId,
                 status,
                 cid,
+                dob,
                 email,
+                mobileNo,
                 username,
                 password,
                 userType,
