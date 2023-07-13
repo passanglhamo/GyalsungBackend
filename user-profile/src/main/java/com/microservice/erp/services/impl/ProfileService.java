@@ -157,7 +157,7 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public ResponseEntity<?> changeMobileNo(UserProfileDto userProfileDto) {
+    public ResponseEntity<?> changeMobileNo(UserProfileDto userProfileDto) throws JsonProcessingException {
         UserInfo userInfoDb = iUserInfoRepository.findById(userProfileDto.getUserId()).get();
 
 //        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByMobileNo(userProfileDto.getMobileNo());
@@ -175,7 +175,11 @@ public class ProfileService implements IProfileService {
         userInfoObject.setMobileNo(userProfileDto.getMobileNo());
         iUserInfoRepository.save(userInfoDb);
         iChangeMobileNoSmsOtpRepository.deleteById(userInfoDb.getUserId());
-        //todo: need to add to queue to cahnge email in auth service
+
+        EventBusUser eventBusUser = EventBusUser.withId(userInfoDb.getUserId(), null, null, null, null
+                , userInfoDb.getMobileNo(), null, null, null, null);
+
+        addToQueue.addToUserQueue("changeMobileNo", eventBusUser);
         return ResponseEntity.ok(new MessageResponse("Mobile number changed successfully."));
     }
 

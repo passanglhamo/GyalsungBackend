@@ -68,7 +68,7 @@ public class UserProfileController {
     }
 
     @PostMapping("/changeMobileNo")
-    public ResponseEntity<?> changeMobileNo(@RequestBody UserProfileDto userProfileDto) {
+    public ResponseEntity<?> changeMobileNo(@RequestBody UserProfileDto userProfileDto) throws JsonProcessingException {
         return iProfileService.changeMobileNo(userProfileDto);
     }
 
