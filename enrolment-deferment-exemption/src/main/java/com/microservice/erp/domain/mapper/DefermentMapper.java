@@ -8,6 +8,7 @@ import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.FileUploadDTO;
 import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
+import com.microservice.erp.domain.repositories.IDefermentFileInfoRepository;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import lombok.RequiredArgsConstructor;

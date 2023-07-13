@@ -7,6 +7,7 @@ import com.microservice.erp.domain.entities.ApiAccessToken;
 import com.microservice.erp.domain.entities.UserInfo;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISaUserService;
+import com.microservice.erp.services.iServices.ISignupService;
 import com.squareup.okhttp.OkHttpClient;
 import lombok.AllArgsConstructor;
 import org.json.JSONArray;
@@ -34,6 +35,7 @@ import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -43,6 +45,7 @@ import java.util.stream.Collectors;
 public class SaUserService implements ISaUserService {
     private final CitizenDetailApiService citizenDetailApiService;
     private final IUserInfoRepository iUserInfoRepository;
+    private final ISignupService iSignupService;
     private final UserDao userDao;
     private final AddToQueue addToQueue;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvxyz0123456789";
@@ -114,7 +117,7 @@ public class SaUserService implements ISaUserService {
 
 
     @Override
-    public ResponseEntity<?> saveUser(UserDto userDto) throws JsonProcessingException {
+    public ResponseEntity<?> saveUser(UserDto userDto) throws IOException, ParseException, ApiException {
         ResponseEntity<?> responseEntity;
         if (userDto.getUserId() == null) {
             responseEntity = addNewUser(userDto);
@@ -147,6 +150,7 @@ public class SaUserService implements ISaUserService {
             userProfileDto.setMobileNo(item.getMobileNo());
             userProfileDto.setEmail(item.getEmail());
             userProfileDto.setGender(item.getGender());
+            userProfileDto.setDob(item.getDob());
             userProfileDto.setStatus(Objects.requireNonNull(response.getBody()).getStatus());
             userProfileDto.setRoles(Objects.requireNonNull(response.getBody()).getRoles());
             userProfileDtos.add(userProfileDto);
@@ -192,7 +196,7 @@ public class SaUserService implements ISaUserService {
     }
 
 
-    private ResponseEntity<?> addNewUser(UserDto userDto) throws JsonProcessingException {
+    private ResponseEntity<?> addNewUser(UserDto userDto) throws IOException, ParseException, ApiException {
 //        Optional<UserInfo> saUserEmail = iUserInfoRepository.findByEmail(userDto.getEmail());
 //        if (saUserEmail.isPresent()) {
 //            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
@@ -206,32 +210,42 @@ public class SaUserService implements ISaUserService {
         }
 
         UserInfo saUser = new ModelMapper().map(userDto, UserInfo.class);
-        saUser.setUsername(userDto.getEmail());
+        saUser.setUsername(userDto.getCid());
 
 
         saUser.setSignupUser('N');
-        String password = generatePassword(8); //to generate password and send email
+        //String password = generatePassword(8); //to generate password and send email
         List<BigInteger> saRoleDtos = userDto.getRoles();
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
         }
 
+        ResponseEntity<CitizenDetailDto> validateCitizenDetails = (ResponseEntity<CitizenDetailDto>) iSignupService.validateCitizenDetails(userDto.getCid(), userDto.getDateOfBirth());
+        Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(validateCitizenDetails.getBody().getDob());
+
+        String birthDateString = validateCitizenDetails.getBody().getDob();
+        saUser.setDob(birthDate);
+
         saUser.setSignupUser('N');
+        UserInfo userInfoDb = iUserInfoRepository.findFirstByOrderByUserIdDesc();
+        BigInteger userIdNew = userInfoDb == null ? BigInteger.ONE : userInfoDb.getUserId().add(BigInteger.ONE);
+        saUser.setUserId(userIdNew);
+
         BigInteger userId = iUserInfoRepository.save(saUser).getUserId();
 
         //todo: need to pass dob in string format
-        EventBusUser eventBusUser = EventBusUser.withId(userId, userDto.getStatus(), saUser.getCid(), null, saUser.getEmail(), saUser.getMobileNo()
-                , saUser.getUsername(), password, saUser.getSignupUser(), userDto.getRoles());
+        EventBusUser eventBusUser = EventBusUser.withId(userId, userDto.getStatus(), saUser.getCid(), birthDateString, saUser.getEmail(), saUser.getMobileNo()
+                , saUser.getUsername(), userDto.getPassword(), saUser.getSignupUser(), userDto.getRoles());
         addToQueue.addToUserQueue("addUser", eventBusUser);
 
-        String emailBody = "Dear " + userDto.getFullName() + ", " + "Your information has been added to Gyalsung MIS against this your email. " + "Please login in using email: " + userDto.getEmail() + " and password " + password;
-        String subject = "User Added to Gyalsung System";
-        EventBus eventBusEmail = EventBus.withId(userDto.getEmail(), null, null, emailBody, subject, null);
-        String smsBody = "Dear " + userDto.getFullName() + ", " + " Your information has been added to Gyalsung MIS against this your email. " + "Please check your email " + userDto.getEmail() + " to see login credentials.";
-        EventBus eventBusSms = EventBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
-
-         addToQueue.addToQueue("email", eventBusEmail);
-        addToQueue.addToQueue("sms", eventBusSms);
+//        String emailBody = "Dear " + userDto.getFullName() + ", " + "Your information has been added to Gyalsung MIS against this your email. " + "Please login in using email: " + userDto.getEmail() + " and password " + password;
+//        String subject = "User Added to Gyalsung System";
+//        EventBus eventBusEmail = EventBus.withId(userDto.getEmail(), null, null, emailBody, subject, null);
+//        String smsBody = "Dear " + userDto.getFullName() + ", " + " Your information has been added to Gyalsung MIS against this your email. " + "Please check your email " + userDto.getEmail() + " to see login credentials.";
+//        EventBus eventBusSms = EventBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
+//
+//         addToQueue.addToQueue("email", eventBusEmail);
+//        addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("User added successfully!"));
     }
 

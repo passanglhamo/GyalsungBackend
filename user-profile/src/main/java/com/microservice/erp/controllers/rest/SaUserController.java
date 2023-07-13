@@ -29,14 +29,14 @@ public class SaUserController {
 
     @PostMapping("/addUser")
     public ResponseEntity<?> addUser(@RequestBody UserDto userDto,
-                                     @RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws JsonProcessingException {
+                                     @RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws IOException, ParseException, ApiException {
         SpringSecurityAuditorAware.setToken(token);
         return iSaUserService.saveUser(userDto);
     }
 
     @PostMapping("/editUser")
     public ResponseEntity<?> editUser(@RequestBody UserDto userDto,
-                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws JsonProcessingException {
+                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws IOException, ParseException, ApiException {
         SpringSecurityAuditorAware.setToken(token);
         return iSaUserService.saveUser(userDto);
     }

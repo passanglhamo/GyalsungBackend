@@ -12,7 +12,7 @@ public interface ISaUserService {
 
     ResponseEntity<?> getCensusDetailByCid(String cid) throws IOException, ParseException, ApiException;
 
-    ResponseEntity<?> saveUser(UserDto userDto) throws JsonProcessingException;
+    ResponseEntity<?> saveUser(UserDto userDto) throws IOException, ParseException, ApiException;
 
     ResponseEntity<?> getUsers(String authHeader);
 

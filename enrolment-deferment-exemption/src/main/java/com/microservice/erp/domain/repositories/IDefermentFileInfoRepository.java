@@ -15,5 +15,4 @@ import java.util.List;
 public interface IDefermentFileInfoRepository extends JpaRepository<DefermentFileInfo, BigInteger> {
 
     List<DefermentFileInfo> findAllByDeferment(BigInteger defermentId);
-
 }
