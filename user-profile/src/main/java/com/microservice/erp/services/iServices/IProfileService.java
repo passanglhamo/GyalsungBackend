@@ -22,7 +22,7 @@ public interface IProfileService {
 
     ResponseEntity<?> getProfilePictureByCid(String cid) throws IOException;
 
-    ResponseEntity<?> changeMobileNo(UserProfileDto userProfileDto);
+    ResponseEntity<?> changeMobileNo(UserProfileDto userProfileDto) throws JsonProcessingException;
 
     ResponseEntity<?> checkEmailExistOrNot(String email);
 

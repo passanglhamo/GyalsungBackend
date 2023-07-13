@@ -17,7 +17,7 @@ public class ChangeMobileNoSmsOtp {
     @Column(name = "mobile_no", columnDefinition = "varchar(50)")
     private String mobileNo;
 
-    @Column(name = "otp", columnDefinition = "varchar(4)")
+    @Column(name = "otp", columnDefinition = "varchar(6)")
     private String otp;
 
     @Column(name = "date")
