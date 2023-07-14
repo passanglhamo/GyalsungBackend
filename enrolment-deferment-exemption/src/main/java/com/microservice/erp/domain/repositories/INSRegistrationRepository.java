@@ -13,4 +13,6 @@ public interface INSRegistrationRepository extends JpaRepository<NSRegistration,
             "WHERE (:enlistmentYear IS NULL OR (CAST(r.year AS CHAR(4)) = CAST(:enlistmentYear AS CHAR(4)))) AND (r.status=:status)" +
             "AND (:gender IS NULL OR CAST(r.gender AS CHAR(1))=CAST(:gender AS CHAR(1)))", nativeQuery = true)
     List<NSRegistration> getRegistrationListByStatus(String enlistmentYear, Character status, Character gender);
+
+    NSRegistration findFirstByOrderByRegistrationIdDesc();
 }

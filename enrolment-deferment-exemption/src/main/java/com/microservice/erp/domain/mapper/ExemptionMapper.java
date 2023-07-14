@@ -7,6 +7,7 @@ import com.microservice.erp.domain.entities.ExemptionInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.FileUploadDTO;
 import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
+import com.microservice.erp.domain.repositories.IExemptionFileInfoRepository;
 import com.microservice.erp.domain.repositories.IExemptionInfoRepository;
 import com.microservice.erp.services.iServices.ICreateExemptionService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ExemptionMapper {
     private final IExemptionInfoRepository repository;
+    private final IExemptionFileInfoRepository fileInfoRepository;
 
     public ExemptionInfo mapToEntity(HttpServletRequest request, ICreateExemptionService.CreateExemptionCommand command, String caseNumber) {
 
@@ -42,11 +44,17 @@ public class ExemptionMapper {
         exemption.setExemptionYear(String.valueOf(currentDate.getYear()));
         exemption.setCreatedBy(command.getUserId());
         exemption.setCreatedDate(new Date());
+
+        ExemptionFileInfo exemptionFileDb = fileInfoRepository.findFirstByOrderByExemptionFileIdDesc();
+        BigInteger exemptionFileId = exemptionFileDb == null ? BigInteger.ZERO : exemptionFileDb.getExemptionFileId();
+        final BigInteger[] initialNo = {BigInteger.ZERO};
+
         if (!Objects.isNull(command.getProofDocuments())) {
             exemption.setFiles(
                     Arrays.stream(command.getProofDocuments())
                             .map(t ->
                             {
+                                initialNo[0] = initialNo[0].add(BigInteger.ONE);
 
                                 try {
                                     String filename = t.getOriginalFilename();
@@ -67,6 +75,7 @@ public class ExemptionMapper {
                                         finalSize = df.format(size).toString() + "MB";
                                     }
                                     return new ExemptionFileInfo(
+                                            exemptionFileId.add(initialNo[0]),
                                             fileUrl,
                                             finalSize,
                                             filename,
@@ -100,7 +109,7 @@ public class ExemptionMapper {
                         .stream()
                         .map(ta ->
                                 ExemptionFileDto.withId(
-                                        ta.getId(),
+                                        ta.getExemptionFileId(),
                                         ta.getFilePath(),
                                         ta.getFileSize(),
                                         ta.getFileName()

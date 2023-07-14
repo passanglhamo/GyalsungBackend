@@ -1,16 +1,23 @@
 package com.microservice.erp.domain.entities;
 
+import com.microservice.erp.domain.helper.BaseEntity;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 import java.util.Date;
 
 @Entity(name = "ede_ns_registration")
-@AttributeOverride(name = "id", column = @Column(name = "registration_id", columnDefinition = "bigint"))
-public class NSRegistration extends Auditable<BigInteger, Long> {
+//@AttributeOverride(name = "id", column = @Column(name = "registration_id", columnDefinition = "bigint"))
+public class NSRegistration extends BaseEntity {
     //region private variables
+    @Id
+    @Column(name = "registration_id", columnDefinition = "bigint")
+    private BigInteger registrationId;
+
     @NotNull(message = "User id cannot be null")
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
@@ -69,5 +76,13 @@ public class NSRegistration extends Auditable<BigInteger, Long> {
 
     public void setStatus(Character status) {
         this.status = status;
+    }
+
+    public BigInteger getRegistrationId() {
+        return registrationId;
+    }
+
+    public void setRegistrationId(BigInteger registrationId) {
+        this.registrationId = registrationId;
     }
 }

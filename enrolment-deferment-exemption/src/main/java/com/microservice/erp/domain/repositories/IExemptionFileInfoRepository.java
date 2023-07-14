@@ -12,4 +12,5 @@ import java.math.BigInteger;
 
 @Repository
 public interface IExemptionFileInfoRepository extends JpaRepository<ExemptionFileInfo, BigInteger> {
+    ExemptionFileInfo findFirstByOrderByExemptionFileIdDesc();
 }

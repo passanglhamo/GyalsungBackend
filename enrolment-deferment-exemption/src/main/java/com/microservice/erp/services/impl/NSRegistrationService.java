@@ -132,7 +132,7 @@ public class NSRegistrationService implements INSRegistrationService {
         }
         nsRegistrationDtos.forEach(item -> {
             UserProfileDto userProfileDto = userProfileDtos.stream()
-                    .filter(userProfileDto1 -> item.getUserId().equals(userProfileDto1.getId()))
+                    .filter(userProfileDto1 -> item.getUserId().equals(userProfileDto1.getUserId()))
                     .findFirst()
                     .orElse(null);
             if(!Objects.isNull(userProfileDto)){

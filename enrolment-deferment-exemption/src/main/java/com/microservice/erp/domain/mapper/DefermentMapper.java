@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DefermentMapper {
     private final IDefermentInfoRepository repository;
+    private final IDefermentFileInfoRepository fileInfoRepository;
 
     public DefermentInfo mapToEntity(HttpServletRequest request, ICreateDefermentService.CreateDefermentCommand command,
                                      String caseNumber) {
@@ -42,11 +43,18 @@ public class DefermentMapper {
         deferment.setCaseNumber(caseNumber);
         deferment.setCreatedBy(command.getUserId());
         deferment.setCreatedDate(new Date());
+
+        DefermentFileInfo defermentFileDb = fileInfoRepository.findFirstByOrderByDefermentFileIdDesc();
+        BigInteger defermentFileId = defermentFileDb == null ? BigInteger.ZERO : defermentFileDb.getDefermentFileId();
+        final BigInteger[] initialNo = {BigInteger.ZERO};
+
         if (!Objects.isNull(command.getProofDocuments())) {
             deferment.setFiles(
                     Arrays.stream(command.getProofDocuments())
                             .map(t ->
                             {
+
+                                initialNo[0] = initialNo[0].add(BigInteger.ONE);
 
                                 try {
                                     String filename = t.getOriginalFilename();
@@ -66,6 +74,7 @@ public class DefermentMapper {
                                         finalSize = df.format(size).toString() + "MB";
                                     }
                                     return new DefermentFileInfo(
+                                            defermentFileId.add(initialNo[0]),
                                             fileUrl,
                                             finalSize,
                                             filename,
@@ -102,7 +111,7 @@ public class DefermentMapper {
                                 .stream()
                                 .map(ta ->
                                         DefermentFileDto.withId(
-                                                ta.getId(),
+                                                ta.getDefermentFileId(),
                                                 ta.getFilePath(),
                                                 ta.getFileSize(),
                                                 ta.getFileName()

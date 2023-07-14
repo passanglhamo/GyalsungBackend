@@ -1,5 +1,6 @@
 package com.microservice.erp.domain.entities;
 
+import com.microservice.erp.domain.helper.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,8 +12,12 @@ import java.math.BigInteger;
 @Getter
 @Setter
 @Entity(name = "ede_deferment_file_info")
-@AttributeOverride(name = "id", column = @Column(name = "deferment_file_id", columnDefinition = "bigint"))
-public class DefermentFileInfo extends Auditable<BigInteger, Long> {
+//@AttributeOverride(name = "id", column = @Column(name = "deferment_file_id", columnDefinition = "bigint"))
+public class DefermentFileInfo extends BaseEntity {
+
+    @Id
+    @Column(name = "deferment_file_id", columnDefinition = "bigint")
+    private BigInteger defermentFileId;
 
     @Basic(optional = false)
     @NotNull(message = "File path cannot be null")
