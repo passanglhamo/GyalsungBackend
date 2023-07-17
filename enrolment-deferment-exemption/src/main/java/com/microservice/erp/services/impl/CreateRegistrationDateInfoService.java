@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+
 @Service
 @RequiredArgsConstructor
 public class CreateRegistrationDateInfoService implements ICreateRegistrationDateInfoService {
@@ -21,6 +23,9 @@ public class CreateRegistrationDateInfoService implements ICreateRegistrationDat
             return new ResponseEntity<>("There should be only one active registration year.", HttpStatus.ALREADY_REPORTED);
         }
 
+        RegistrationDateInfo registrationDateInfoId = repository.findFirstByOrderByRegistrationDateIdDesc();
+        BigInteger registrationDateId = registrationDateInfoId == null ? BigInteger.ONE : registrationDateInfoId.getRegistrationDateId().add(BigInteger.ONE);
+        registrationDateInfo.setRegistrationDateId(registrationDateId);
         repository.save(registrationDateInfo);
 
         return ResponseEntity.ok("Registration Date saved successfully.");

@@ -1,8 +1,6 @@
 package com.microservice.erp.domain.dao;
 
 import com.microservice.erp.domain.dto.BookHospitalDto;
-import com.microservice.erp.domain.dto.EnrolmentListDto;
-import com.microservice.erp.domain.entities.HospitalBooking;
 import com.microservice.erp.domain.helper.BaseDao;
 import org.hibernate.query.NativeQuery;
 import org.springframework.core.env.Environment;

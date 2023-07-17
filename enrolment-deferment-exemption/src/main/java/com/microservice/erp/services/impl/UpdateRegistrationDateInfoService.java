@@ -18,19 +18,18 @@ public class UpdateRegistrationDateInfoService implements IUpdateRegistrationDat
     public ResponseEntity<?> updateRegistrationDateInfo(RegistrationDateInfo registrationDateInfo) {
 
         //todo remove static code
-        if (repository.existsByStatusAndIdNot('A', registrationDateInfo.getId())) {
+        if (repository.existsByStatusAndRegistrationDateIdNot('A', registrationDateInfo.getRegistrationDateId())) {
             return new ResponseEntity<>("There should be only one active registration year.", HttpStatus.ALREADY_REPORTED);
         }
-        if (repository.existsByRegistrationYearAndIdNot(registrationDateInfo.getRegistrationYear(), registrationDateInfo.getId())) {
+        if (repository.existsByRegistrationYearAndRegistrationDateIdNot(registrationDateInfo.getRegistrationYear(), registrationDateInfo.getRegistrationDateId())) {
             return new ResponseEntity<>("Registration date is already added for given year.", HttpStatus.ALREADY_REPORTED);
         }
-        repository.findById(registrationDateInfo.getId()).map(d -> {
+        repository.findByRegistrationDateId(registrationDateInfo.getRegistrationDateId()).ifPresent(d -> {
             d.setRegistrationYear(registrationDateInfo.getRegistrationYear());
             d.setFromDate(registrationDateInfo.getFromDate());
             d.setToDate(registrationDateInfo.getToDate());
             d.setStatus(registrationDateInfo.getStatus());
             repository.save(d);
-            return d;
         });
 
         return ResponseEntity.ok("Registration Date updated successfully.");

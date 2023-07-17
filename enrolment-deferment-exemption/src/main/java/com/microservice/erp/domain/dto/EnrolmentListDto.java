@@ -1,6 +1,5 @@
 package com.microservice.erp.domain.dto;
 
-import com.microservice.erp.domain.entities.EnrolmentInfo;
 import lombok.Getter;
 import lombok.Setter;
 

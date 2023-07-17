@@ -1,5 +1,6 @@
 package com.microservice.erp.domain.entities;
 
+import com.microservice.erp.domain.helper.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -11,10 +12,14 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "ede_registration_date_info")
-@AttributeOverride(name = "id", column = @Column(name = "registration_date_id", columnDefinition = "bigint"))
-public class RegistrationDateInfo extends Auditable<BigInteger, Long> {
+//@AttributeOverride(name = "id", column = @Column(name = "registration_date_id", columnDefinition = "bigint"))
+public class RegistrationDateInfo extends BaseEntity {
 
     //region private variables
+    @Id
+    @Column(name = "registration_date_id", columnDefinition = "bigint")
+    private BigInteger registrationDateId;
+
     @NotNull
     @Basic(optional = false)
     @Column(name = "registration_year", columnDefinition = "char(4)")
@@ -37,6 +42,15 @@ public class RegistrationDateInfo extends Auditable<BigInteger, Long> {
     //endregion
 
     //region setters and getters
+
+    public BigInteger getRegistrationDateId() {
+        return registrationDateId;
+    }
+
+    public void setRegistrationDateId(BigInteger registrationDateId) {
+        this.registrationDateId = registrationDateId;
+    }
+
     public String getRegistrationYear() {
         return registrationYear;
     }

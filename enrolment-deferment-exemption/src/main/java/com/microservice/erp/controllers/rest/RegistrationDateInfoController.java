@@ -40,4 +40,9 @@ public class RegistrationDateInfoController {
         SpringSecurityAuditorAware.setToken(token);
         return updateService.updateRegistrationDateInfo(registrationDateInfo);
     }
+
+    @RequestMapping(value = "/getRegistrationDateInfo", method = RequestMethod.GET)
+    public ResponseEntity<?> getRegistrationDateInfo() {
+        return readService.getRegistrationDateInfo();
+    }
 }
