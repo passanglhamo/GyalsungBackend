@@ -42,7 +42,7 @@ public class GuardianConsentService implements IGuardianConsentService {
     public ResponseEntity<?> validateGuardianConsentLink(GuardianConsentDto guardianConsentDto) {
         BigInteger consentIdFromUrl = guardianConsentDto.getConsentIdIdFromUrl();
         String guardianCidFromUrl = guardianConsentDto.getGuardianCidFromUrl();
-        GuardianConsent guardianConsentDb = iGuardianConsentRepository.findByConsentIdAndGuardianCid(consentIdFromUrl, guardianCidFromUrl);
+         GuardianConsent guardianConsentDb = iGuardianConsentRepository.findByConsentIdAndGuardianCid(consentIdFromUrl, guardianCidFromUrl);
         if (guardianConsentDb == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Data not found"));
         } else {

@@ -2,6 +2,7 @@ package com.microservice.erp.domain.repositories;
 
 import com.microservice.erp.domain.entities.GuardianConsent;
 import org.springframework.data.jpa.repository.JpaRepository;
+import scala.Char;
 
 import java.math.BigInteger;
 
@@ -12,4 +13,5 @@ public interface IGuardianConsentRepository extends JpaRepository<GuardianConsen
 
     GuardianConsent findByConsentIdAndGuardianCid(BigInteger consentId, String guardianCid);
 
+    GuardianConsent findByUserIdAndStatus(BigInteger userId, Character status);
 }

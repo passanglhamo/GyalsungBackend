@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigInteger;
 import java.util.List;
 
-
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/earlyEnlistment")
@@ -61,7 +60,7 @@ public class EarlyEnlistmentController {
             , @RequestParam("parentConsentStatus") Character parentConsentStatus
             , @RequestParam("dzongkhagId") Integer dzongkhagId
     ) {
-        return iEarlyEnlistmentService.getEarlyEnlistmentListByCriteria(authHeader, enlistmentYear, status, gender, cid,parentConsentStatus,dzongkhagId);
+        return iEarlyEnlistmentService.getEarlyEnlistmentListByCriteria(authHeader, enlistmentYear, status, gender, cid, parentConsentStatus, dzongkhagId);
     }
 
     @PostMapping(value = "/approveById")
