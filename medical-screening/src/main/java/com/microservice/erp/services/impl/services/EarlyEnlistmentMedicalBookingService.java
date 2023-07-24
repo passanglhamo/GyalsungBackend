@@ -56,7 +56,6 @@ public class EarlyEnlistmentMedicalBookingService implements IEarlyEnlistmentMed
             }
             return ResponseEntity.ok(earlyEnlistmentMedBookingDto);
         }else{
-
             repository.findById(earlyEnlistmentMedBookingDto.getHospitalBookingId()).ifPresent(d -> {
                 d.setHospitalId(earlyEnlistmentMedBookingDto.getHospitalId());
                 d.setAppointmentDate(earlyEnlistmentMedBookingDto.getAppointmentDate());

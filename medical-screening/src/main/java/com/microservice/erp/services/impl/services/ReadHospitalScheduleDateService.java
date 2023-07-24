@@ -1,15 +1,14 @@
 package com.microservice.erp.services.impl.services;
 
-import com.microservice.erp.domain.dto.MedicalConfigurationDto;
-import com.microservice.erp.domain.dto.HospitalBookingDetailsDto;
 import com.microservice.erp.domain.dto.HospitalScheduleDateDto;
-import com.microservice.erp.domain.entities.MedicalConfiguration;
+import com.microservice.erp.domain.dto.MedicalConfigurationDto;
 import com.microservice.erp.domain.entities.HospitalBookingDetail;
 import com.microservice.erp.domain.entities.HospitalScheduleDate;
+import com.microservice.erp.domain.entities.MedicalConfiguration;
 import com.microservice.erp.domain.helper.MessageResponse;
-import com.microservice.erp.domain.repositories.IHospitalBookingDateRepository;
 import com.microservice.erp.domain.repositories.IHospitalBookingDetailsRepository;
 import com.microservice.erp.domain.repositories.IHospitalScheduleDateRepository;
+import com.microservice.erp.domain.repositories.IMedicalConfigurationRepository;
 import com.microservice.erp.services.iServices.IReadHospitalScheduleDateService;
 import com.microservice.erp.services.impl.mapper.HospitalBookingDateMapper;
 import com.microservice.erp.services.impl.mapper.HospitalScheduleTimeMapper;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 public class ReadHospitalScheduleDateService implements IReadHospitalScheduleDateService {
 
     private final IHospitalScheduleDateRepository repository;
-    private final IHospitalBookingDateRepository bookingDateRepository;
+    private final IMedicalConfigurationRepository iMedicalConfigurationRepository;
     private final HospitalScheduleTimeMapper mapper;
     private final HospitalBookingDateMapper hospitalBookingDateMapper;
     private final IHospitalBookingDetailsRepository iHospitalBookingDetailsRepository;
@@ -55,8 +54,8 @@ public class ReadHospitalScheduleDateService implements IReadHospitalScheduleDat
     }
 
     @Override
-    public List<MedicalConfigurationDto> getAllAppointmentDateByHospitalId(BigInteger hospitalId) {
-        return bookingDateRepository.findAllByHospitalId(hospitalId)
+    public List<MedicalConfigurationDto> getAllAppointmentDateByHospitalId(Integer hospitalId) {
+        return iMedicalConfigurationRepository.findAllByHospitalId(hospitalId)
                 .stream()
                 .map(hospitalBookingDateMapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
@@ -65,7 +64,7 @@ public class ReadHospitalScheduleDateService implements IReadHospitalScheduleDat
     @Override
     public MedicalConfigurationDto getHospitalBookingDetailByBookingId(String authHeader, Integer hospitalId,
                                                                        Date appointmentDate) {
-        MedicalConfiguration medicalConfiguration = bookingDateRepository.findByHospitalIdAndAppointmentDate(hospitalId, appointmentDate);
+        MedicalConfiguration medicalConfiguration = iMedicalConfigurationRepository.findByHospitalIdAndAppointmentDate(hospitalId, appointmentDate).get();
 
         List<HospitalBookingDetail> getBookedUserAm = iHospitalBookingDetailsRepository.findAllByHospitalBookingIdAndAmPm(
                 medicalConfiguration.getId(), 'A'
@@ -90,21 +89,4 @@ public class ReadHospitalScheduleDateService implements IReadHospitalScheduleDat
         );
     }
 
-    @Override
-    public HospitalBookingDetailsDto getHospitalBookingDetailByUserId(String authHeader, BigInteger userId) {
-        HospitalBookingDetail hospitalBookingDetail = iHospitalBookingDetailsRepository.findByUserId(userId);
-        MedicalConfiguration medicalConfiguration = bookingDateRepository.findById(hospitalBookingDetail.getHospitalBookingId()).get();
-
-        return HospitalBookingDetailsDto.withId(
-                hospitalBookingDetail.getId(),
-                hospitalBookingDetail.getHospitalBookingId(),
-                medicalConfiguration.getHospitalId(),
-                medicalConfiguration.getAppointmentDate(),
-                hospitalBookingDetail.getAmPm(),
-                hospitalBookingDetail.getUserId(),
-                null
-
-        );
-
-    }
 }

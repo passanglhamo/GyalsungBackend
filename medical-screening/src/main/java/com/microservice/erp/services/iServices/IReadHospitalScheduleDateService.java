@@ -15,10 +15,8 @@ public interface IReadHospitalScheduleDateService {
 
     ResponseEntity<?> getAllAvailableAppointmentDateByHospitalId(BigInteger hospitalId);
 
-    List<MedicalConfigurationDto> getAllAppointmentDateByHospitalId(BigInteger hospitalId);
+    List<MedicalConfigurationDto> getAllAppointmentDateByHospitalId(Integer hospitalId);
 
     MedicalConfigurationDto getHospitalBookingDetailByBookingId(String authHeader, Integer hospitalId,
                                                                 Date appointmentDate);
-
-    HospitalBookingDetailsDto getHospitalBookingDetailByUserId(String authHeader, BigInteger userId);
 }

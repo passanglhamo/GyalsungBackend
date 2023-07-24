@@ -31,8 +31,6 @@ import java.util.Objects;
 @AllArgsConstructor
 public class MedicalBookingService implements IMedicalBookingService {
     private final IHospitalScheduleDateRepository iHospitalScheduleDateRepository;
-    private final IHospitalBookingDateRepository iHospitalBookingDateRepository;
-    private final IHospitalBookingDetailsRepository iHospitalBookingDetailsRepository;
     private final IHospitalScheduleTimeRepository iHospitalScheduleTimeRepository;
     private final IMedicalSelfDeclarationRepository iMedicalSelfDeclarationRepository;
     private final AddToQueueMail addToQueue;
@@ -227,51 +225,5 @@ public class MedicalBookingService implements IMedicalBookingService {
         return ResponseEntity.ok("Resubmitted successfully.");
     }
 
-    @Override
-    public ResponseEntity<?> bookHospitalAppointment(String authHeader, HospitalBookingDetailsDto hospitalBookingDetailsDto) throws JsonProcessingException {
-        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
-        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", authHeader);
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        String url = properties.getUserProfileById() + hospitalBookingDetailsDto.getUserId();
-        ResponseEntity<UserInfoDto> userInfoDtoResponse = userRestTemplate.exchange(url, HttpMethod.GET, request, UserInfoDto.class);
-        MedicalConfiguration medicalConfiguration = iHospitalBookingDateRepository.findByHospitalIdAndAppointmentDate(hospitalBookingDetailsDto.getHospitalId(),
-                hospitalBookingDetailsDto.getAppointmentDate());
-        HospitalBookingDetail hospitalBookingDetailBooked = iHospitalBookingDetailsRepository.findByUserId(hospitalBookingDetailsDto.getUserId()
-        );
-        if(!Objects.isNull(hospitalBookingDetailBooked)){
-
-            iHospitalBookingDetailsRepository.findById(hospitalBookingDetailBooked.getId()).ifPresent(d -> {
-                d.setHospitalBookingId(medicalConfiguration.getId());
-                d.setAmPm(hospitalBookingDetailsDto.getAmPm());
-                iHospitalBookingDetailsRepository.save(d);
-            });
-
-        }else{
-            HospitalBookingDetail hospitalBookingDetail = new HospitalBookingDetail();
-            hospitalBookingDetail.setHospitalBookingId(medicalConfiguration.getId());
-            hospitalBookingDetail.setAmPm(hospitalBookingDetailsDto.getAmPm());
-            hospitalBookingDetail.setUserId(hospitalBookingDetailsDto.getUserId());
-            iHospitalBookingDetailsRepository.save(hospitalBookingDetail);
-        }
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
-        String formattedDate = dateFormat.format( hospitalBookingDetailsDto.getAppointmentDate());
-        String message = "Dear " + Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName() + ", " + "You have booked medical screening appointment for Gyalsung at " + hospitalBookingDetailsDto.getHospitalName() + ", " + "on " + formattedDate + ". " + "Please report before 30 minutes on " + formattedDate;
-        String subject = "Medical Appointment";
-
-        MailSenderDto eventBus = MailSenderDto.withId(
-                Objects.requireNonNull(userInfoDtoResponse.getBody()).getEmail(),
-                null,
-                null,
-                message,
-                subject,
-                Objects.requireNonNull(userInfoDtoResponse.getBody()).getMobileNo());
-
-        addToQueue.addToQueue("email", eventBus);
-        addToQueue.addToQueue("sms", eventBus);
-        return ResponseEntity.ok("Booked successfully.");
-    }
 
 }

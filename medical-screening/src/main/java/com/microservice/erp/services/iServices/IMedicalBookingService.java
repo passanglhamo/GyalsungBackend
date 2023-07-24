@@ -18,6 +18,4 @@ public interface IMedicalBookingService {
     ResponseEntity<?> getPreviousSelfDeclaration(String authHeader, BigInteger userId);
 
     ResponseEntity<?> resubmitSelfDeclaration(MedicalBookingDto medicalBookingDto);
-
-    ResponseEntity<?> bookHospitalAppointment(String authHeader, HospitalBookingDetailsDto hospitalBookingDetailsDto) throws JsonProcessingException;
 }

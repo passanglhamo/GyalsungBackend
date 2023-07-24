@@ -1,12 +1,10 @@
 package com.microservice.erp.domain.entities;
 
+import com.microservice.erp.domain.helper.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
 
@@ -14,21 +12,41 @@ import java.math.BigInteger;
 @AllArgsConstructor
 @Entity(name = "tms_hospital_booking_details")
 @AttributeOverride(name = "id", column = @Column(name = "hospital_booking_details_id", columnDefinition = "bigint"))
-public class HospitalBookingDetail extends Auditable<BigInteger, Long>{
+public class HospitalBookingDetail extends BaseEntity {
+
+    @Id
     @NotNull
     @Basic(optional = false)
-    @Column(name = "hospital_booking_id" , columnDefinition = "bigint")
+    @Column(name = "hospital_booking_details_id", columnDefinition = "bigint")
+    private BigInteger hospitalBookingDetailId;
+
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "hospital_booking_id", columnDefinition = "bigint")
     private BigInteger hospitalBookingId;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "am_pm" , columnDefinition = "char(1)")
+    @Column(name = "am_pm", columnDefinition = "char(1)")
     private Character amPm;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "user_id" , columnDefinition = "bigint")
+    @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
+
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "status", columnDefinition = "char(1)")
+    private Character status;
+
+    public BigInteger getHospitalBookingDetailId() {
+        return hospitalBookingDetailId;
+    }
+
+    public void setHospitalBookingDetailId(BigInteger hospitalBookingDetailId) {
+        this.hospitalBookingDetailId = hospitalBookingDetailId;
+    }
 
     public BigInteger getHospitalBookingId() {
         return hospitalBookingId;
@@ -52,5 +70,13 @@ public class HospitalBookingDetail extends Auditable<BigInteger, Long>{
 
     public void setUserId(BigInteger userId) {
         this.userId = userId;
+    }
+
+    public Character getStatus() {
+        return status;
+    }
+
+    public void setStatus(Character status) {
+        this.status = status;
     }
 }
