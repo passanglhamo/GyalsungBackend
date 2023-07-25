@@ -1,6 +1,6 @@
 #!/bin/bash
 
-AppVersion="v1.0.31"
+AppVersion="v1.0.28"
 DockerHubUser="engrajibkumerghosh"
 DockerHubRepoName="ms-training-repo-v1"
 DockerHubRepository="${DockerHubUser}/${DockerHubRepoName}"
@@ -56,23 +56,23 @@ docker login --password "Hema@2020" --username ${DockerHubUser}
 #
 
 ###
-EnrolmentDefermentExemptionDir="enrolment-deferment-exemption"
-EnrolmentDefermentExemptionName="enrolment-deferment-exemption"
-echo "Creating ${EnrolmentDefermentExemptionName} Image"
-mvn -pl ${EnrolmentDefermentExemptionDir} -am clean package -DskipTests
-docker image build -f ${EnrolmentDefermentExemptionName}/Dockerfile -t ${EnrolmentDefermentExemptionName}:${AppVersion} ./${EnrolmentDefermentExemptionDir}
-docker image tag ${EnrolmentDefermentExemptionName}:${AppVersion} ${DockerHubRepository}:${EnrolmentDefermentExemptionName}-${AppVersion}
-docker push ${DockerHubRepository}:${EnrolmentDefermentExemptionName}-${AppVersion}
+#EnrolmentDefermentExemptionDir="enrolment-deferment-exemption"
+#EnrolmentDefermentExemptionName="enrolment-deferment-exemption"
+#echo "Creating ${EnrolmentDefermentExemptionName} Image"
+#mvn -pl ${EnrolmentDefermentExemptionDir} -am clean package -DskipTests
+#docker image build -f ${EnrolmentDefermentExemptionName}/Dockerfile -t ${EnrolmentDefermentExemptionName}:${AppVersion} ./${EnrolmentDefermentExemptionDir}
+#docker image tag ${EnrolmentDefermentExemptionName}:${AppVersion} ${DockerHubRepository}:${EnrolmentDefermentExemptionName}-${AppVersion}
+#docker push ${DockerHubRepository}:${EnrolmentDefermentExemptionName}-${AppVersion}
 #
 
 ###
-#MedicalScreeningDir="medical-screening"
-#MedicalScreeningName="medical-screening"
-#echo "Creating ${MedicalScreeningName} Image"
-#mvn -pl ${MedicalScreeningDir} -am clean package -DskipTests
-#docker image build -f ${MedicalScreeningName}/Dockerfile -t ${MedicalScreeningName}:${AppVersion} ./${MedicalScreeningDir}
-#docker image tag ${MedicalScreeningName}:${AppVersion} ${DockerHubRepository}:${MedicalScreeningName}-${AppVersion}
-#docker push ${DockerHubRepository}:${MedicalScreeningName}-${AppVersion}
+MedicalScreeningDir="medical-screening"
+MedicalScreeningName="medical-screening"
+echo "Creating ${MedicalScreeningName} Image"
+mvn -pl ${MedicalScreeningDir} -am clean package -DskipTests
+docker image build -f ${MedicalScreeningName}/Dockerfile -t ${MedicalScreeningName}:${AppVersion} ./${MedicalScreeningDir}
+docker image tag ${MedicalScreeningName}:${AppVersion} ${DockerHubRepository}:${MedicalScreeningName}-${AppVersion}
+docker push ${DockerHubRepository}:${MedicalScreeningName}-${AppVersion}
 #
 
 ###

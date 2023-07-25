@@ -1,4 +1,4 @@
-package com.microservice.erp.services.impl.mapper;
+package com.microservice.erp.domain.mapper;
 
 import com.microservice.erp.domain.dto.MedicalConfigurationDto;
 import com.microservice.erp.domain.entities.MedicalConfiguration;
@@ -12,7 +12,7 @@ import java.util.Objects;
 
 @Component
 @AllArgsConstructor
-public class HospitalBookingDateMapper {
+public class MedicalConfigurationMapper {
     private final IHospitalBookingDetailsRepository iHospitalBookingDetailsRepository;
     public MedicalConfigurationDto mapToDomain(MedicalConfiguration medicalConfiguration) {
         List<HospitalBookingDetail> getBookedUserAm = iHospitalBookingDetailsRepository.findAllByHospitalBookingIdAndAmPm(

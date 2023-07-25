@@ -1,8 +1,11 @@
 package com.microservice.erp.services.impl.services;
 
 import com.microservice.erp.domain.dto.*;
+import com.microservice.erp.domain.entities.HospitalBookingDetail;
 import com.microservice.erp.domain.entities.MedicalConfiguration;
 import com.microservice.erp.domain.helper.MessageResponse;
+import com.microservice.erp.domain.mapper.MedicalConfigurationMapper;
+import com.microservice.erp.domain.repositories.IHospitalBookingDetailsRepository;
 import com.microservice.erp.domain.repositories.IMedicalConfigurationRepository;
 import com.microservice.erp.services.iServices.IMedicalConfigurationService;
 import com.opencsv.bean.CsvToBean;
@@ -24,10 +27,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -37,8 +38,9 @@ public class MedicalConfigurationService implements IMedicalConfigurationService
     @Qualifier("trainingManagementTemplate")
     RestTemplate restTemplate;
 
-
     private final IMedicalConfigurationRepository medicalConfigurationRepository;
+    private final IHospitalBookingDetailsRepository hospitalBookingDetailsRepository;
+    private final MedicalConfigurationMapper medicalConfigurationMapper;
 
     @Override
     public ResponseEntity<?> readFile(String authHeader, MedicalExcelCommand command) {
@@ -136,6 +138,42 @@ public class MedicalConfigurationService implements IMedicalConfigurationService
             d.setPmSlots(pmSlots);
             medicalConfigurationRepository.save(d);
         });
+    }
+
+    @Override
+    public MedicalConfigurationDto getHospitalBookingDetailByBookingId(String authHeader, Integer hospitalId,
+                                                                       Date appointmentDate) {
+        MedicalConfiguration medicalConfiguration = medicalConfigurationRepository.findByHospitalIdAndAppointmentDate(hospitalId, appointmentDate).get();
+
+        List<HospitalBookingDetail> getBookedUserAm = hospitalBookingDetailsRepository.findAllByHospitalBookingIdAndAmPm(
+                medicalConfiguration.getId(), 'A'
+        );
+        Integer countAmBooked = Objects.isNull(getBookedUserAm) ? 0 : getBookedUserAm.size();
+
+        List<HospitalBookingDetail> getBookedUserPm = hospitalBookingDetailsRepository.findAllByHospitalBookingIdAndAmPm(
+                medicalConfiguration.getId(), 'P'
+        );
+        Integer countPmBooked = Objects.isNull(getBookedUserPm) ? 0 : getBookedUserPm.size();
+
+        return MedicalConfigurationDto.withId(
+                medicalConfiguration.getId(),
+                medicalConfiguration.getHospitalId(),
+                medicalConfiguration.getAppointmentDate(),
+                medicalConfiguration.getAmSlots(),
+                (medicalConfiguration.getAmSlots() - countAmBooked),
+                medicalConfiguration.getPmSlots(),
+                (medicalConfiguration.getPmSlots() - countPmBooked),
+                medicalConfiguration.getStatus(),
+                null
+        );
+    }
+
+    @Override
+    public List<MedicalConfigurationDto> getAllAppointmentDateByHospitalId(Integer hospitalId) {
+        return medicalConfigurationRepository.findAllByHospitalId(hospitalId)
+                .stream()
+                .map(medicalConfigurationMapper::mapToDomain)
+                .collect(Collectors.toUnmodifiableList());
     }
 
 

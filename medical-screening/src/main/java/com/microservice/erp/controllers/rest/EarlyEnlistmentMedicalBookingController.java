@@ -1,7 +1,6 @@
 package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.EarlyEnlistmentMedBookingDto;
-import com.microservice.erp.domain.entities.MedicalQuestionCategory;
 import com.microservice.erp.services.iServices.IEarlyEnlistmentMedicalBookingService;
 import com.microservice.erp.services.impl.services.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;

@@ -1,11 +1,8 @@
 package com.microservice.erp.domain.dao;
 
 import com.microservice.erp.domain.dto.MedicalBookingListDto;
-import com.microservice.erp.domain.entities.HospitalScheduleDate;
 import com.microservice.erp.domain.helper.BaseDao;
-import org.hibernate.SQLQuery;
 import org.hibernate.query.NativeQuery;
-import org.hibernate.transform.Transformers;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

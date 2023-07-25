@@ -1,15 +1,18 @@
 package com.microservice.erp.controllers.rest;
 
 import com.microservice.erp.domain.dto.MedicalConfigurationBulkDto;
+import com.microservice.erp.domain.dto.MedicalConfigurationDto;
 import com.microservice.erp.domain.entities.MedicalConfiguration;
 import com.microservice.erp.services.iServices.IMedicalConfigurationService;
 import com.microservice.erp.services.impl.services.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -53,4 +56,15 @@ public class MedicalConfigurationController {
         return iMedicalConfigurationService.save(medicalConfiguration);
     }
 
+    @GetMapping(value = "/getHospitalBookingDetailByBookingId")
+    public MedicalConfigurationDto getHospitalBookingDetailByBookingId(@RequestHeader("Authorization") String authHeader,
+                                                                       @RequestParam("hospitalId") Integer hospitalId,
+                                                                       @RequestParam("appointmentDate") Date appointmentDate) {
+        return iMedicalConfigurationService.getHospitalBookingDetailByBookingId(authHeader, hospitalId, appointmentDate);
+    }
+
+    @GetMapping(value = "/getAllAppointmentDateByHospitalId", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<MedicalConfigurationDto> getAllAppointmentDateByHospitalId(@RequestParam("hospitalId") Integer hospitalId) {
+        return iMedicalConfigurationService.getAllAppointmentDateByHospitalId(hospitalId);
+    }
 }

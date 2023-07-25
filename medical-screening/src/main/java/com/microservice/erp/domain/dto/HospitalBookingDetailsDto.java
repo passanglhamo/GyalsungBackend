@@ -19,6 +19,8 @@ public class HospitalBookingDetailsDto {
     private Character amPm;
     private BigInteger userId;
     private String hospitalName;
+    private Character status;
+    private Date bookingDate;
 
     public static HospitalBookingDetailsDto withId(
             BigInteger id,
@@ -27,7 +29,9 @@ public class HospitalBookingDetailsDto {
             Date appointmentDate,
             Character amPm,
             BigInteger userId,
-            String hospitalName) {
+            String hospitalName,
+            Character status,
+            Date bookingDate) {
         return new HospitalBookingDetailsDto(
                 id,
                 hospitalBookingId,
@@ -35,7 +39,9 @@ public class HospitalBookingDetailsDto {
                 appointmentDate,
                 amPm,
                 userId,
-                hospitalName
+                hospitalName,
+                status,
+                bookingDate
         );
     }
 }
