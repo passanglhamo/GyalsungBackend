@@ -19,4 +19,6 @@ public interface IHospitalBookingDetailsRepository extends JpaRepository<Hospita
     Optional<HospitalBookingDetail> findByHospitalBookingDetailId(BigInteger hospitalBookingDetailId);
 
     void deleteByHospitalBookingDetailId(BigInteger hospitalBookingDetailId);
+
+    List<HospitalBookingDetail> findAllByHospitalBookingId(BigInteger id);
 }

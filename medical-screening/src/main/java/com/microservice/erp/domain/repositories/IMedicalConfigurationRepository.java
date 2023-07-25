@@ -16,4 +16,7 @@ public interface IMedicalConfigurationRepository extends JpaRepository<MedicalCo
     Optional<MedicalConfiguration> findByHospitalIdAndAppointmentDate(Integer hospitalId, Date appointmentDate);
 
     List<MedicalConfiguration> findAllByHospitalId(Integer hospitalId);
+
+
+    boolean existsByHospitalIdAndAppointmentDateAndIdNot(Integer hospitalId, Date appointmentDate, BigInteger id);
 }

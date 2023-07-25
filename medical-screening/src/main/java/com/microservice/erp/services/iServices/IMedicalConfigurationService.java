@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -21,12 +22,14 @@ public interface IMedicalConfigurationService {
 
     ResponseEntity<?> updateMedicalConfiguration(MedicalConfiguration medicalConfiguration);
 
-    MedicalConfiguration save(MedicalConfiguration medicalConfiguration);
+    ResponseEntity<?> save(MedicalConfiguration medicalConfiguration);
 
     MedicalConfigurationDto getHospitalBookingDetailByBookingId(String authHeader, Integer hospitalId,
                                                                        Date appointmentDate);
 
     List<MedicalConfigurationDto> getAllAppointmentDateByHospitalId(Integer hospitalId);
+
+    ResponseEntity<?> removeById(BigInteger id);
 
 
     @Getter

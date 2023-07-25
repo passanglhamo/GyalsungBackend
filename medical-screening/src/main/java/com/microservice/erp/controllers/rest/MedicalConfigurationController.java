@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class MedicalConfigurationController {
     }
 
     @PostMapping
-    public MedicalConfiguration save(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+    public ResponseEntity<?> save(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                      @Valid @RequestBody MedicalConfiguration medicalConfiguration) {
         SpringSecurityAuditorAware.setToken(token);
         return iMedicalConfigurationService.save(medicalConfiguration);
@@ -66,5 +67,11 @@ public class MedicalConfigurationController {
     @GetMapping(value = "/getAllAppointmentDateByHospitalId", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<MedicalConfigurationDto> getAllAppointmentDateByHospitalId(@RequestParam("hospitalId") Integer hospitalId) {
         return iMedicalConfigurationService.getAllAppointmentDateByHospitalId(hospitalId);
+    }
+
+    @DeleteMapping("/remove")
+    public ResponseEntity<?> remove(@RequestParam("id") BigInteger id) {
+
+        return iMedicalConfigurationService.removeById(id);
     }
 }

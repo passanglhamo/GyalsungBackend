@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,10 +63,6 @@ public class MedicalConfigurationService implements IMedicalConfigurationService
             String hospitalUrl = properties.getHospitalByName() + medical.getHospitalName();
             ResponseEntity<HospitalDto> hospitalDtoResponse = restTemplate.exchange(hospitalUrl, HttpMethod.GET, request, HospitalDto.class);
 
-//            String hospitalUrl = "http://172.30.84.134:8086/api/training/management/common/getHospitalByName?hospitalName=" + medical.getHospitalName();
-//            String hospitalUrl = "http://172.30.84.134:8086/api/training/management/common/getHospitalByName?hospitalName=" + medical.getHospitalName();
-//
-
             if (!Objects.isNull(hospitalDtoResponse.getBody())) {
                 MedicalConfigurationDto medicalConfigurationDto = new MedicalConfigurationDto();
                 excelId[0] = excelId[0].add(BigInteger.ONE);
@@ -111,15 +104,30 @@ public class MedicalConfigurationService implements IMedicalConfigurationService
 
     @Override
     public ResponseEntity<?> updateMedicalConfiguration(MedicalConfiguration medicalConfiguration) {
+        if(medicalConfigurationRepository.existsByHospitalIdAndAppointmentDateAndIdNot(medicalConfiguration.getHospitalId(),
+                medicalConfiguration.getAppointmentDate(), medicalConfiguration.getId())){
+            return new ResponseEntity<>("Selected hospital and appointment date is already added.", HttpStatus.ALREADY_REPORTED);
+        }
+        if(hospitalBookingDetailsRepository.findAllByHospitalBookingId(medicalConfiguration.getId()).size()!=0){
+            return new ResponseEntity<>("Due to the presence of booked users, the information cannot be updated at this time.", HttpStatus.ALREADY_REPORTED);
 
+        }
         update(medicalConfiguration.getId(), medicalConfiguration.getAmSlots(), medicalConfiguration.getPmSlots());
 
         return ResponseEntity.ok("Data updated successfully.");
     }
 
     @Override
-    public MedicalConfiguration save(MedicalConfiguration medicalConfiguration) {
-        return medicalConfigurationRepository.save(medicalConfiguration);
+    public ResponseEntity<?> save(MedicalConfiguration medicalConfiguration) {
+        if(medicalConfigurationRepository.findByHospitalIdAndAppointmentDate(medicalConfiguration.getHospitalId(),
+                medicalConfiguration.getAppointmentDate()).isPresent()){
+                return new ResponseEntity<>("Selected hospital and appointment date is already added.", HttpStatus.ALREADY_REPORTED);
+        }
+
+        medicalConfigurationRepository.save(medicalConfiguration);
+
+        return ResponseEntity.ok("Medical Configuration saved successfully.");
+
     }
 
     private void save(MedicalConfigurationDto medicalConfigurationDto) {
@@ -174,6 +182,16 @@ public class MedicalConfigurationService implements IMedicalConfigurationService
                 .stream()
                 .map(medicalConfigurationMapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public ResponseEntity<?> removeById(BigInteger id) {
+        if(hospitalBookingDetailsRepository.findAllByHospitalBookingId(id).size()!=0){
+            return new ResponseEntity<>("Due to the presence of booked users, the information cannot be deleted at this time.", HttpStatus.ALREADY_REPORTED);
+
+        }
+        medicalConfigurationRepository.deleteById(id);
+        return  ResponseEntity.ok("Deleted successfully.");
     }
 
 
