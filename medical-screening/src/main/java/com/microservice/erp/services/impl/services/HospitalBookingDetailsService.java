@@ -65,7 +65,7 @@ public class HospitalBookingDetailsService implements IHospitalBookingDetailsSer
                 existingTask.cancel(true);
             }
 
-            ScheduledFuture<?> newTask = scheduler.schedule(() -> bookHospitalAppointment(authHeader, BookHospitalCommand.withId(bookingDetailId, null, null, null, null, null, null), 'M'), 1, TimeUnit.MINUTES);
+            ScheduledFuture<?> newTask = scheduler.schedule(() -> bookHospitalAppointment(authHeader, BookHospitalCommand.withId(bookingDetailId, null, null, null, null, null, null), 'M'), 2, TimeUnit.MINUTES);
             scheduledTasksMap.put(bookingDetailId, newTask);
 
         } else {
@@ -83,7 +83,7 @@ public class HospitalBookingDetailsService implements IHospitalBookingDetailsSer
             hospitalBookingDetail.setCreatedBy(hospitalBookingDetailsDto.getUserId());
             hospitalBookingDetail.setCreatedDate(new Date());
             iHospitalBookingDetailsRepository.save(hospitalBookingDetail);
-            ScheduledFuture<?> newTask = scheduler.schedule(() -> bookHospitalAppointment(authHeader, BookHospitalCommand.withId(bookingDetailId, null, null, null, null, null, null), 'S'), 1, TimeUnit.MINUTES);
+            ScheduledFuture<?> newTask = scheduler.schedule(() -> bookHospitalAppointment(authHeader, BookHospitalCommand.withId(bookingDetailId, null, null, null, null, null, null), 'S'), 2, TimeUnit.MINUTES);
             scheduledTasksMap.put(bookingDetailId, newTask);
 
         }
