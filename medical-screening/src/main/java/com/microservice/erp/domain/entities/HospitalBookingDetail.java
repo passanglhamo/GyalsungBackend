@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
+import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,6 +35,7 @@ public class HospitalBookingDetail extends BaseEntity {
     @Basic(optional = false)
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
+
 
     @NotNull
     @Basic(optional = false)
@@ -79,4 +81,5 @@ public class HospitalBookingDetail extends BaseEntity {
     public void setStatus(Character status) {
         this.status = status;
     }
+
 }
