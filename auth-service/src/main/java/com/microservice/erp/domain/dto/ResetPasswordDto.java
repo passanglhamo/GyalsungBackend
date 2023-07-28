@@ -11,11 +11,9 @@ import java.math.BigInteger;
 @Getter
 public class ResetPasswordDto {
     //region private variables
+    private BigInteger userId;
     private String email;
     private String domainName;
-    private BigInteger requestId;
-    @PasswordRule(mixLengthRule = 8, maxLengthRule = 20)
-    @NotEmpty(message = "Password must not null or empty!")
     private String password;
     private BigInteger requestIdFromUrl;
     private String emailFromUrl;

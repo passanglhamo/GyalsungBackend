@@ -47,6 +47,7 @@ public class UserProfileDto {
     private String guardianName;
     private String guardianCid;
     private String guardianMobileNo;
+    private String enteredMobileNumber;
     private String guardianEmail;
     private String guardianOccupation;
     private String relationToGuardian;
