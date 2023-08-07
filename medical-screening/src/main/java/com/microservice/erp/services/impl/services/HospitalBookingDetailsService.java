@@ -161,7 +161,7 @@ public class HospitalBookingDetailsService implements IHospitalBookingDetailsSer
                 String formattedDate = dateFormat.format(command.getAppointmentDate());
 
                 String message = "Dear " + Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName() + ", " + "You have booked a medical screening appointment for Gyalsung at " + command.getHospitalName() + ", " + "on " + formattedDate + ". "+
-                        "Please report "+ (command.getAmPm().equals('Y')?"before":"after") +" 12 p.m. for medical screening. If you want to change the booking date, then please do so 10 days before the appointment date.";
+                        "Please report "+ (command.getAmPm().equals('A')?"before":"after") +" 12 p.m. for medical screening. If you want to change the booking date, then please do so 10 days before the appointment date.";
                 String subject = "Medical Appointment";
 
                 MailSenderDto eventBus = MailSenderDto.withId(

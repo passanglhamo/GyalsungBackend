@@ -1,6 +1,6 @@
 #!/bin/bash
 
-AppVersion="v1.0.28"
+AppVersion="v1.0.31"
 DockerHubUser="engrajibkumerghosh"
 DockerHubRepoName="ms-training-repo-v1"
 DockerHubRepository="${DockerHubUser}/${DockerHubRepoName}"
@@ -26,13 +26,13 @@ docker login --password "Hema@2020" --username ${DockerHubUser}
 #
 
 ###
-#AuthServiceDir="auth-service"
-#AuthServiceName="auth-service"
-#echo "Creating ${AuthServiceName} Image"
-#mvn -pl ${AuthServiceDir} -am clean package -DskipTests
-#docker image build -f ${AuthServiceName}/Dockerfile -t ${AuthServiceName}:${AppVersion} ./${AuthServiceDir}
-#docker image tag ${AuthServiceName}:${AppVersion} ${DockerHubRepository}:${AuthServiceName}-${AppVersion}
-#docker push ${DockerHubRepository}:${AuthServiceName}-${AppVersion}
+AuthServiceDir="auth-service"
+AuthServiceName="auth-service"
+echo "Creating ${AuthServiceName} Image"
+mvn -pl ${AuthServiceDir} -am clean package -DskipTests
+docker image build -f ${AuthServiceName}/Dockerfile -t ${AuthServiceName}:${AppVersion} ./${AuthServiceDir}
+docker image tag ${AuthServiceName}:${AppVersion} ${DockerHubRepository}:${AuthServiceName}-${AppVersion}
+docker push ${DockerHubRepository}:${AuthServiceName}-${AppVersion}
 #
 
 ####
@@ -66,13 +66,13 @@ docker login --password "Hema@2020" --username ${DockerHubUser}
 #
 
 ###
-MedicalScreeningDir="medical-screening"
-MedicalScreeningName="medical-screening"
-echo "Creating ${MedicalScreeningName} Image"
-mvn -pl ${MedicalScreeningDir} -am clean package -DskipTests
-docker image build -f ${MedicalScreeningName}/Dockerfile -t ${MedicalScreeningName}:${AppVersion} ./${MedicalScreeningDir}
-docker image tag ${MedicalScreeningName}:${AppVersion} ${DockerHubRepository}:${MedicalScreeningName}-${AppVersion}
-docker push ${DockerHubRepository}:${MedicalScreeningName}-${AppVersion}
+#MedicalScreeningDir="medical-screening"
+#MedicalScreeningName="medical-screening"
+#echo "Creating ${MedicalScreeningName} Image"
+#mvn -pl ${MedicalScreeningDir} -am clean package -DskipTests
+#docker image build -f ${MedicalScreeningName}/Dockerfile -t ${MedicalScreeningName}:${AppVersion} ./${MedicalScreeningDir}
+#docker image tag ${MedicalScreeningName}:${AppVersion} ${DockerHubRepository}:${MedicalScreeningName}-${AppVersion}
+#docker push ${DockerHubRepository}:${MedicalScreeningName}-${AppVersion}
 #
 
 ###
