@@ -13,12 +13,14 @@ import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "ede_deferment_info")
-//@AttributeOverride(name = "id", column = @Column(name = "deferment_id", columnDefinition = "bigint"))
-public class DefermentInfo extends BaseEntity {
-
+@Entity(name = "ede_deferment_info_a")
+public class DefermentInfoAudit extends BaseEntity {
     //region private variables
     @Id
+    @Column(name = "deferment_audit_id", columnDefinition = "bigint")
+    private BigInteger defermentAuditId;
+
+    @NotNull(message = "Deferment id cannot be null")
     @Column(name = "deferment_id", columnDefinition = "bigint")
     private BigInteger defermentId;
 
@@ -67,46 +69,34 @@ public class DefermentInfo extends BaseEntity {
     @Column(name = "mail_status", columnDefinition = "char(1)")
     private Character mailStatus;
 
+    @Column(name = "reviewer_id", columnDefinition = "bigint")
+    private BigInteger reviewerId;
+
+    @Column(name = "approver_id", columnDefinition = "bigint")
+    private BigInteger approverId;
+
     @OneToMany(
-            mappedBy = "deferment",
+            mappedBy = "defermentAudit",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )
-    private Set<DefermentFileInfo> files;
-    //endregion
+    private Set<DefermentFileInfoAudit> files;
 
-
-    public String getReviewerRemarks() {
-        return reviewerRemarks;
+    public Set<DefermentFileInfoAudit> getFiles() {
+        return files;
     }
 
-    public void setReviewerRemarks(String reviewerRemarks) {
-        this.reviewerRemarks = reviewerRemarks;
+    public void setFiles(Set<DefermentFileInfoAudit> files) {
+        this.files = files;
     }
 
-    public Character getMailStatus() {
-        return mailStatus;
+    public BigInteger getDefermentAuditId() {
+        return defermentAuditId;
     }
 
-    public void setMailStatus(Character mailStatus) {
-        this.mailStatus = mailStatus;
-    }
-
-    public BigInteger getDefermentId() {
-        return defermentId;
-    }
-
-    public void setDefermentId(BigInteger defermentId) {
-        this.defermentId = defermentId;
-    }
-
-    public String getCaseNumber() {
-        return caseNumber;
-    }
-
-    public void setCaseNumber(String caseNumber) {
-        this.caseNumber = caseNumber;
+    public void setDefermentAuditId(BigInteger defermentAuditId) {
+        this.defermentAuditId = defermentAuditId;
     }
 
     public BigInteger getUserId() {
@@ -115,6 +105,14 @@ public class DefermentInfo extends BaseEntity {
 
     public void setUserId(BigInteger userId) {
         this.userId = userId;
+    }
+
+    public String getCaseNumber() {
+        return caseNumber;
+    }
+
+    public void setCaseNumber(String caseNumber) {
+        this.caseNumber = caseNumber;
     }
 
     public Character getGender() {
@@ -149,6 +147,14 @@ public class DefermentInfo extends BaseEntity {
         this.reasonId = reasonId;
     }
 
+    public String getReviewerRemarks() {
+        return reviewerRemarks;
+    }
+
+    public void setReviewerRemarks(String reviewerRemarks) {
+        this.reviewerRemarks = reviewerRemarks;
+    }
+
     public String getApprovalRemarks() {
         return approvalRemarks;
     }
@@ -173,11 +179,35 @@ public class DefermentInfo extends BaseEntity {
         this.status = status;
     }
 
-    public Set<DefermentFileInfo> getFiles() {
-        return files;
+    public Character getMailStatus() {
+        return mailStatus;
     }
 
-    public void setFiles(Set<DefermentFileInfo> files) {
-        this.files = files;
+    public void setMailStatus(Character mailStatus) {
+        this.mailStatus = mailStatus;
+    }
+
+    public BigInteger getReviewerId() {
+        return reviewerId;
+    }
+
+    public void setReviewerId(BigInteger reviewerId) {
+        this.reviewerId = reviewerId;
+    }
+
+    public BigInteger getApproverId() {
+        return approverId;
+    }
+
+    public void setApproverId(BigInteger approverId) {
+        this.approverId = approverId;
+    }
+
+    public BigInteger getDefermentId() {
+        return defermentId;
+    }
+
+    public void setDefermentId(BigInteger defermentId) {
+        this.defermentId = defermentId;
     }
 }

@@ -1,5 +1,6 @@
 package com.microservice.erp.controllers.rest;
 
+import com.jcraft.jsch.SftpException;
 import com.microservice.erp.domain.dto.DefermentDto;
 import com.microservice.erp.domain.dto.DefermentListDto;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
@@ -64,37 +66,9 @@ public class DefermentController {
     }
 
     @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
-    public ResponseEntity<?> downloadFile(@RequestParam("url") String url) {
-        File file = new File(url);
-        String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+    public ResponseEntity<?> downloadFile(@RequestParam("url") String url) throws IOException, URISyntaxException, SftpException {
+       return readService.downloadFile(url);
 
-        if (file.exists()) {
-            FileSystemResource resource = new FileSystemResource(file);
-            contentType = determineContentType(file.getName());
-            return ResponseEntity
-                    .ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .body(resource);
-        } else {
-            // Handle file not found scenario
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    private String determineContentType(String fileName) {
-        String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
-        switch (extension.toLowerCase()) {
-            case "pdf":
-                return "application/pdf";
-            case "jpg":
-            case "jpeg":
-                return "image/jpeg";
-            case "png":
-                return "image/png";
-            default:
-                return MediaType.APPLICATION_OCTET_STREAM_VALUE;
-        }
     }
 
     @GetMapping(value = "/getDefermentListByDefermentYearReasonStatus")
@@ -138,5 +112,8 @@ public class DefermentController {
         return updateService.saveToDraft(authHeader, command);
     }
 
-
+    @GetMapping(value = "/getDefermentAuditListByDefermentId")
+    public List<DefermentDto> getDefermentAuditListByDefermentId(@RequestHeader("Authorization") String authHeader,@RequestParam("defermentId") BigInteger defermentId) {
+        return readService.getDefermentAuditListByDefermentId(authHeader,defermentId);
+    }
 }

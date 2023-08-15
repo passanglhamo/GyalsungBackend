@@ -7,6 +7,7 @@ import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
 import com.microservice.erp.domain.helper.StatusResponse;
 import com.microservice.erp.domain.mapper.DefermentMapper;
+import com.microservice.erp.domain.repositories.IDefermentInfoAuditRepository;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -25,15 +25,14 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.math.BigInteger;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CreateDefermentService implements ICreateDefermentService {
 
     private final IDefermentInfoRepository repository;
+    private final IDefermentInfoAuditRepository auditRepository;
     private final DefermentMapper mapper;
     private final HeaderToken headerToken;
     private final AddToQueue addToQueue;
@@ -58,7 +57,7 @@ public class CreateDefermentService implements ICreateDefermentService {
             }
         }
         StatusResponse responseMessage = (StatusResponse) defermentExemptionValidation
-                .getDefermentAndExemptValidation(command.getUserId(),'D',command.getDefermentYear()).getBody();
+                .getDefermentAndExemptValidation(command.getUserId(), 'D', command.getDefermentYear()).getBody();
         if (!Objects.isNull(responseMessage)) {
             if (responseMessage.getStatus().equals(ApprovalStatus.APPROVED.value())) {
                 return new ResponseEntity<>(new MessageResponse(responseMessage.getMessage()), HttpStatus.ALREADY_REPORTED);
@@ -66,18 +65,20 @@ public class CreateDefermentService implements ICreateDefermentService {
             }
         }
 
-        String caseNumber = caseNumberGenerator.caseNumberGenerator(authTokenHeader,command.getReasonId(),'D');
+        String caseNumber = caseNumberGenerator.caseNumberGenerator(authTokenHeader, command.getReasonId(), 'D');
 
         var deferment = repository.save(
                 mapper.mapToEntity(
-                        request, command,caseNumber
+                        request, command, caseNumber
                 )
         );
 
-        repository.save(deferment);
+        var defermentAudit = auditRepository.save(
+                mapper.mapToEntityAudit(deferment)
+        );
 
         try {
-            sendEmailAndSms(authTokenHeader, deferment.getUserId(),caseNumber);
+            sendEmailAndSms(authTokenHeader, deferment.getUserId(), caseNumber);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -100,7 +101,7 @@ public class CreateDefermentService implements ICreateDefermentService {
 
         String emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
                 "\n" +
-                "This is to acknowledge the receipt of your deferment application. Case number for your application is "+caseNumber+". Your deferment application will be reviewed and the outcome of the deferment will be sent to you through your email within 10 days of the submission of your application. If you are not approved for deferment, you will have to complete the Gyalsung pre-enlistment procedure. \n";
+                "This is to acknowledge the receipt of your deferment application. Case number for your application is " + caseNumber + ". Your deferment application will be reviewed and the outcome of the deferment will be sent to you through your email within 10 days of the submission of your application. If you are not approved for deferment, you will have to complete the Gyalsung pre-enlistment procedure. \n";
 
 
         EventBus eventBus = EventBus.withId(
@@ -117,7 +118,7 @@ public class CreateDefermentService implements ICreateDefermentService {
         addToQueue.addToQueue("email", eventBus);
         addToQueue.addToQueue("sms", eventBus);
 
-        mailToOperator.sendMailToOperator(fullName,cid,properties,httpRequest,"deferment",caseNumber);
+        mailToOperator.sendMailToOperator(fullName, cid, properties, httpRequest, "deferment", caseNumber);
 
 
     }

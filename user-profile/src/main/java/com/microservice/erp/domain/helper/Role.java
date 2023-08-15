@@ -2,18 +2,14 @@ package com.microservice.erp.domain.helper;
 
 import javax.validation.constraints.NotNull;
 
-public enum ApprovalStatus {
-    APPROVED('A'),
-    REJECTED('R'),
-    PENDING('P'),
-    PENDING_APPROVAL('N'),
-    PENDING_REJECTION('S'),
-    REVIEWED('T'),
-    REVERTED('V');
+public enum Role {
+    STUDENT('S'),
+    MEDICAL_DEFERMENT_OFFICER('M'),
+    NON_MEDICAL_DEFERMENT_OFFICER('N');
 
     private final char value;
 
-    private ApprovalStatus(char value) {
+    private Role(char value) {
         this.value = value;
     }
 

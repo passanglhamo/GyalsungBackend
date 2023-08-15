@@ -4,6 +4,11 @@ import com.microservice.erp.domain.entities.Reason;
 import com.microservice.erp.domain.repository.IReasonRepository;
 import com.microservice.erp.services.iServices.IReadReasonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;

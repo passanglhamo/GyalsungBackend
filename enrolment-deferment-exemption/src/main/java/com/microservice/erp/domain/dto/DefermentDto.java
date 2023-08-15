@@ -27,6 +27,7 @@ public class DefermentDto {
     private String approvalRemarks;
     private Date toDate;
     private Character status;
+    private Character mailStatus;
     private String remarks;
     private MultipartFile[] proofDocuments;
     private Collection<DefermentFileDto> defermentFileDtos;
@@ -37,6 +38,7 @@ public class DefermentDto {
     private Character gender;
     private Date applicationDate;
     private String caseNumber;
+    private Date createdDate;
 
     public static DefermentDto withId(
             BigInteger id,
@@ -46,6 +48,7 @@ public class DefermentDto {
             String approvalRemarks,
             Date toDate,
             Character status,
+            Character mailStatus,
             String remarks,
             MultipartFile[] proofDocuments,
             Collection<DefermentFileDto> defermentFileDtos,
@@ -54,7 +57,8 @@ public class DefermentDto {
             Date dob,
             Character gender,
             Date applicationDate,
-            String caseNumber) {
+            String caseNumber,
+            Date createdDate) {
         return new DefermentDto(
                 id,
                 defermentYear,
@@ -63,6 +67,7 @@ public class DefermentDto {
                 approvalRemarks,
                 null,
                 status,
+                mailStatus,
                 remarks,
                 proofDocuments,
                 defermentFileDtos,
@@ -71,7 +76,8 @@ public class DefermentDto {
                 dob,
                 gender,
                 applicationDate,
-                caseNumber);
+                caseNumber,
+                createdDate);
     }
 
 

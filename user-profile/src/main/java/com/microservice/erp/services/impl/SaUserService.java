@@ -5,6 +5,7 @@ import com.microservice.erp.domain.dao.UserDao;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.ApiAccessToken;
 import com.microservice.erp.domain.entities.UserInfo;
+import com.microservice.erp.domain.helper.Role;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISaUserService;
 import com.microservice.erp.services.iServices.ISignupService;
@@ -176,8 +177,10 @@ public class SaUserService implements ISaUserService {
             UserProfileDto userProfileDto = new UserProfileDto();
             String url = properties.getAuthServiceToGetUserById() + item.getUserId();
             ResponseEntity<AuthUserDto> response = restTemplate.exchange(url, HttpMethod.GET, request, AuthUserDto.class);
-            if(new JSONArray("[" + Objects.requireNonNull(response.getBody()).getRoles().toString().substring(1, Objects.requireNonNull(response.getBody()).getRoles().toString().length() - 1).replaceAll("=", ":") + "]")
-                    .getJSONObject(0).getString("userType").equals("O")){
+            String userType = new JSONArray("[" + Objects.requireNonNull(response.getBody()).getRoles().toString().substring(1, Objects.requireNonNull(response.getBody()).getRoles().toString().length() - 1).replaceAll("=", ":") + "]")
+                    .getJSONObject(0).getString("userType");
+            if(userType.equals(Role.MEDICAL_DEFERMENT_OFFICER.value().toString())||
+                    userType.equals(Role.NON_MEDICAL_DEFERMENT_OFFICER.value().toString())){
                 userProfileDto.setUserId(item.getUserId());
                 userProfileDto.setFullName(item.getFullName());
                 userProfileDto.setCid(item.getCid());

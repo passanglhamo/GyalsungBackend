@@ -92,12 +92,37 @@ public class FileUploadToExternalLocation {
 
         FileUploadDTO fileUploadDTO = fileUploadPathRetrieverDemo(request);
         String uploadedDirectory = fileUploadDTO.getUploadFilePath();
-//        String username = "sysadmin";
-//        String password = "Sys@2023";
-//        String host = "172.30.84.147";
-//        int port = 22;
-//        String uploadFileName = fileName;
-//        String originalFileName = attachedFile.getOriginalFilename();
+        String username = "sysadmin";
+        String password = "Sys@2023";
+        String server = "172.30.84.147";
+        int port = 22;
+        try {
+            JSch jsch = new JSch();
+            Session session = jsch.getSession(username, server, port);
+            session.setPassword(password);
+            session.setConfig("StrictHostKeyChecking", "no"); // Skip host key checking (can be dangerous in production)
+            session.connect();
+
+            ChannelSftp channelSftp = (ChannelSftp) session.openChannel("sftp");
+            channelSftp.connect();
+
+            // Change to the desired upload directory on the server
+            channelSftp.cd(uploadedDirectory);
+
+            // Upload the file to the server
+            try (InputStream inputStream = attachedFile.getInputStream()) {
+                channelSftp.put(inputStream, uploadFileName);
+            }
+
+            channelSftp.disconnect();
+            session.disconnect();
+
+            responseMessage.setStatus(SystemDataInt.MESSAGE_STATUS_SUCCESSFUL.value());
+            responseMessage.setText("File uploaded successfully.");
+        } catch (JSchException | SftpException | IOException e) {
+            responseMessage.setStatus(SystemDataInt.MESSAGE_STATUS_UNSUCCESSFUL.value());
+            responseMessage.setText("Failed to upload file: " + e.getMessage());
+        }
 //
 //        try {
 //            JSch jsch = new JSch();
@@ -130,8 +155,8 @@ public class FileUploadToExternalLocation {
 //            e.printStackTrace();
 //        }
 
-        responseMessage.setStatus(SystemDataInt.MESSAGE_STATUS_SUCCESSFUL.value());
-        return null;
+       responseMessage.setStatus(SystemDataInt.MESSAGE_STATUS_SUCCESSFUL.value());
+        return responseMessage;
     }
 
     public static FileUploadDTO fileUploadPathRetriever(HttpServletRequest request) throws IOException {

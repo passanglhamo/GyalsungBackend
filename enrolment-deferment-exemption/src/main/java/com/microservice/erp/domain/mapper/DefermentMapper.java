@@ -4,11 +4,15 @@ package com.microservice.erp.domain.mapper;
 import com.microservice.erp.domain.dto.DefermentDto;
 import com.microservice.erp.domain.dto.DefermentFileDto;
 import com.microservice.erp.domain.entities.DefermentFileInfo;
+import com.microservice.erp.domain.entities.DefermentFileInfoAudit;
 import com.microservice.erp.domain.entities.DefermentInfo;
+import com.microservice.erp.domain.entities.DefermentInfoAudit;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.FileUploadDTO;
 import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
+import com.microservice.erp.domain.repositories.IDefermentFileInfoAuditRepository;
 import com.microservice.erp.domain.repositories.IDefermentFileInfoRepository;
+import com.microservice.erp.domain.repositories.IDefermentInfoAuditRepository;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +33,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DefermentMapper {
     private final IDefermentInfoRepository repository;
+    private final IDefermentInfoAuditRepository auditRepository;
     private final IDefermentFileInfoRepository fileInfoRepository;
+    private final IDefermentFileInfoAuditRepository fileAuditInfoRepository;
 
     public DefermentInfo mapToEntity(HttpServletRequest request, ICreateDefermentService.CreateDefermentCommand command,
                                      String caseNumber) {
@@ -78,7 +84,9 @@ public class DefermentMapper {
                                             fileUrl,
                                             finalSize,
                                             filename,
-                                            deferment
+                                            deferment,
+                                            command.getUserId(),
+                                            new Date()
                                     );
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
@@ -95,6 +103,44 @@ public class DefermentMapper {
         return deferment;
     }
 
+    public DefermentInfoAudit mapToEntityAudit(DefermentInfo defermentInfo) {
+
+        DefermentInfoAudit defermentAudit = new ModelMapper().map(defermentInfo, DefermentInfoAudit.class);
+        DefermentInfoAudit defermentAuditDb = auditRepository.findFirstByOrderByDefermentAuditIdDesc();
+        BigInteger defermentAuditId = defermentAuditDb == null ? BigInteger.ONE : defermentAuditDb.getDefermentAuditId().add(BigInteger.ONE);
+        defermentAudit.setDefermentAuditId(defermentAuditId);
+        DefermentFileInfoAudit defermentAuditFileDb = fileAuditInfoRepository.findFirstByOrderByDefermentFileAuditIdDesc();
+        BigInteger defermentAuditFileId = defermentAuditFileDb == null ? BigInteger.ZERO : defermentAuditFileDb.getDefermentFileAuditId();
+        final BigInteger[] initialNo = {BigInteger.ZERO};
+
+        if (!Objects.isNull(defermentInfo.getFiles())) {
+            defermentAudit.setFiles(
+                    defermentInfo.getFiles().stream().map(t ->
+                    {
+
+                        initialNo[0] = initialNo[0].add(BigInteger.ONE);
+
+                        return new DefermentFileInfoAudit(
+                                defermentAuditFileId.add(initialNo[0]),
+                                t.getFilePath(),
+                                t.getFileSize(),
+                                t.getFileName(),
+                                defermentAudit,
+                                defermentInfo.getCreatedBy(),
+                                defermentInfo.getCreatedDate()
+                        );
+
+
+                    }).collect(Collectors.toSet())
+
+
+            );
+        }
+
+
+        return defermentAudit;
+    }
+
     public DefermentDto mapToDomain(DefermentInfo deferment) {
         return DefermentDto.withId(
                 deferment.getDefermentId(),
@@ -104,6 +150,7 @@ public class DefermentMapper {
                 deferment.getApprovalRemarks(),
                 deferment.getApplicationDate(),
                 deferment.getStatus(),
+                deferment.getMailStatus(),
                 deferment.getRemarks(),
                 null,
                 deferment.getFiles().size() == 0 ? null :
@@ -124,7 +171,43 @@ public class DefermentMapper {
                 null,
                 deferment.getGender(),
                 deferment.getApplicationDate(),
-                deferment.getCaseNumber()
+                deferment.getCaseNumber(),
+                deferment.getCreatedDate()
+        );
+    }
+
+    public DefermentDto mapToAuditDomain(DefermentInfoAudit defermentInfoAudit) {
+        return DefermentDto.withId(
+                defermentInfoAudit.getDefermentId(),
+                defermentInfoAudit.getDefermentYear(),
+                defermentInfoAudit.getUserId(),
+                defermentInfoAudit.getReasonId(),
+                defermentInfoAudit.getApprovalRemarks(),
+                defermentInfoAudit.getApplicationDate(),
+                defermentInfoAudit.getStatus(),
+                defermentInfoAudit.getMailStatus(),
+                defermentInfoAudit.getRemarks(),
+                null,
+                defermentInfoAudit.getFiles().size() == 0 ? null :
+                        defermentInfoAudit.getFiles()
+                                .stream()
+                                .map(ta ->
+                                        DefermentFileDto.withId(
+                                                ta.getDefermentFileAuditId(),
+                                                ta.getFilePath(),
+                                                ta.getFileSize(),
+                                                ta.getFileName()
+                                        )
+                                )
+                                .collect(Collectors.toUnmodifiableSet())
+                ,
+                null,
+                null,
+                null,
+                defermentInfoAudit.getGender(),
+                defermentInfoAudit.getApplicationDate(),
+                defermentInfoAudit.getCaseNumber(),
+                defermentInfoAudit.getCreatedDate()
         );
     }
 }
