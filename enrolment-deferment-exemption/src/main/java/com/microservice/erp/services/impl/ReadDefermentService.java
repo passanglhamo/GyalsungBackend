@@ -4,6 +4,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+import com.microservice.erp.domain.dto.ApplicationProperties;
 import com.microservice.erp.domain.dto.DefermentDto;
 import com.microservice.erp.domain.dto.DefermentListDto;
 import com.microservice.erp.domain.dto.UserProfileDto;
@@ -16,6 +17,10 @@ import com.microservice.erp.services.iServices.IReadDefermentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,10 +40,15 @@ public class ReadDefermentService implements IReadDefermentService {
     private final DefermentMapper mapper;
     private final DefermentExemptionValidation defermentExemptionValidation;
     private final UserInformationService userInformationService;
+    private final HeaderToken headerToken;
 
     @Autowired
     @Qualifier("trainingManagementTemplate")
     RestTemplate restTemplate;
+
+    @Autowired
+    @Qualifier("userProfileTemplate")
+    RestTemplate userRestTemplate;
 
     @Override
     public List<DefermentDto> getAllDefermentList(String authHeader) {
@@ -79,6 +89,11 @@ public class ReadDefermentService implements IReadDefermentService {
     public List<DefermentListDto> getDefermentListByDefermentYearReasonStatus(String authHeader, String defermentYear,
                                                                               BigInteger reasonId, Character status,
                                                                               Character gender, String cid, String caseNumber) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
+        HttpEntity<String> httpRequest = headerToken.tokenHeader(authHeader);
+
 
         defermentYear = defermentYear.isEmpty() ? null : defermentYear;
         cid = cid.isEmpty() ? null : cid;
@@ -115,6 +130,8 @@ public class ReadDefermentService implements IReadDefermentService {
                     .collect(Collectors.toUnmodifiableList());
             DefermentListDto defermentData = new DefermentListDto();
             if (!Objects.isNull(defermentDto)) {
+
+
                 defermentData.setId(defermentDto.getId());
                 defermentData.setRemarks(defermentDto.getRemarks());
                 defermentData.setApprovalRemarks(defermentDto.getApprovalRemarks());
@@ -129,7 +146,20 @@ public class ReadDefermentService implements IReadDefermentService {
                 defermentData.setApplicationDate(defermentDto.getApplicationDate());
                 defermentData.setUserId(defermentDto.getUserId());
                 defermentData.setCaseNumber(defermentDto.getCaseNumber());
+                defermentData.setMailStatus(defermentDto.getMailStatus());
                 defermentData.setDefermentList(defermentList);
+                if(!Objects.isNull(defermentDto.getReviewerId())){
+                    String userUrl = properties.getUserProfileById() + defermentDto.getReviewerId();
+                    ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
+                    defermentData.setReviewerFullName(Objects.requireNonNull(Objects.requireNonNull(userResponse).getBody()).getFullName());
+                }
+
+                if(!Objects.isNull(defermentDto.getApproverId())){
+                    String userUrl = properties.getUserProfileById() + defermentDto.getApproverId();
+                    ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
+                    defermentData.setApproverFullName(Objects.requireNonNull(Objects.requireNonNull(userResponse).getBody()).getFullName());
+                }
+
             }
             defermentDtos.add(defermentData);
         });
@@ -309,12 +339,12 @@ public class ReadDefermentService implements IReadDefermentService {
 //        } else {
 //            // Handle file not found scenario
 //            return ResponseEntity.notFound().build();
-//        }
+//        }.
     }
 
     @Override
     public List<DefermentDto> getDefermentAuditListByDefermentId(String authHeader, BigInteger defermentId) {
-        List<DefermentDto> defermentDtoList = auditRepository.findByDefermentId(defermentId)
+        List<DefermentDto> defermentDtoList = auditRepository.findAllByDefermentIdOrderByDefermentAuditIdDesc(defermentId)
                 .stream()
                 .map(mapper::mapToAuditDomain)
                 .collect(Collectors.toUnmodifiableList());

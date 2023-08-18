@@ -27,9 +27,8 @@ public class EarlyEnlistmentMedicalBookingController {
         return service.save(authHeader,earlyEnlistmentMedBookingDto);
     }
 
-    @GetMapping("/getEarlyEnlistMedBookingByUserId")
-    public ResponseEntity<?> getEarlyEnlistMedBookingByUserId(@RequestParam("userId") BigInteger userId,
-                                                                         @RequestParam("earlyEnlistmentId") BigInteger earlyEnlistmentId) {
-        return service.getEarlyEnlistMedBookingByUserId(userId,earlyEnlistmentId);
+    @GetMapping("/getEarlyEnlistMedBookingById")
+    public ResponseEntity<?> getEarlyEnlistMedBookingById(@RequestParam("earlyEnlistmentId") BigInteger earlyEnlistmentId) {
+        return service.getEarlyEnlistMedBookingById(earlyEnlistmentId);
     }
 }

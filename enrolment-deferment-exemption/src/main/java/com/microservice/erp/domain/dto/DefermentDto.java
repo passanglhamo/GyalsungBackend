@@ -25,7 +25,7 @@ public class DefermentDto {
     private BigInteger userId;
     private BigInteger reasonId;
     private String approvalRemarks;
-    private Date toDate;
+    private String reviewerRemarks;
     private Character status;
     private Character mailStatus;
     private String remarks;
@@ -39,6 +39,10 @@ public class DefermentDto {
     private Date applicationDate;
     private String caseNumber;
     private Date createdDate;
+    private BigInteger reviewerId;
+    private BigInteger approverId;
+    private String reviewerFullName;
+
 
     public static DefermentDto withId(
             BigInteger id,
@@ -46,7 +50,7 @@ public class DefermentDto {
             BigInteger userId,
             BigInteger reasonId,
             String approvalRemarks,
-            Date toDate,
+            String reviewerRemarks,
             Character status,
             Character mailStatus,
             String remarks,
@@ -58,14 +62,17 @@ public class DefermentDto {
             Character gender,
             Date applicationDate,
             String caseNumber,
-            Date createdDate) {
+            Date createdDate,
+            BigInteger reviewerId,
+            BigInteger approverId,
+            String reviewerFullName) {
         return new DefermentDto(
                 id,
                 defermentYear,
                 userId,
                 reasonId,
                 approvalRemarks,
-                null,
+                reviewerRemarks,
                 status,
                 mailStatus,
                 remarks,
@@ -77,7 +84,10 @@ public class DefermentDto {
                 gender,
                 applicationDate,
                 caseNumber,
-                createdDate);
+                createdDate,
+                reviewerId,
+                approverId,
+                reviewerFullName);
     }
 
 

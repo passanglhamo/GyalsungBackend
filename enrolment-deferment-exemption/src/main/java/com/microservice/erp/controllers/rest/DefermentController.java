@@ -8,20 +8,14 @@ import com.microservice.erp.services.iServices.IReadDefermentService;
 import com.microservice.erp.services.iServices.IUpdateDefermentService;
 import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import lombok.AllArgsConstructor;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -67,7 +61,7 @@ public class DefermentController {
 
     @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
     public ResponseEntity<?> downloadFile(@RequestParam("url") String url) throws IOException, URISyntaxException, SftpException {
-       return readService.downloadFile(url);
+        return readService.downloadFile(url);
 
     }
 
@@ -79,7 +73,7 @@ public class DefermentController {
             , @RequestParam("gender") Character gender
             , @RequestParam("cid") String cid
             , @RequestParam("caseNumber") String caseNumber) {
-        return readService.getDefermentListByDefermentYearReasonStatus(authHeader, defermentYear, reasonId, status, gender, cid,caseNumber);
+        return readService.getDefermentListByDefermentYearReasonStatus(authHeader, defermentYear, reasonId, status, gender, cid, caseNumber);
     }
 
     @GetMapping(value = "/getDefermentByUserId")
@@ -94,7 +88,7 @@ public class DefermentController {
 
     @GetMapping(value = "/getApprovedListByDefermentYearAndUserId")
     public List<DefermentDto> getApprovedListByDefermentYearAndUserId(@RequestHeader("Authorization") String authHeader,
-                                                                          @RequestParam("defermentYear") String defermentYear
+                                                                      @RequestParam("defermentYear") String defermentYear
             , @RequestParam("userId") BigInteger userId) {
         return readService.getApprovedListByDefermentYearAndUserId(authHeader, defermentYear, userId);
     }
@@ -106,14 +100,38 @@ public class DefermentController {
 
     @PostMapping(value = "/saveToDraft")
     public ResponseEntity<?> saveToDraft(@RequestHeader("Authorization") String authHeader,
-                                          @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                          @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
+                                         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                         @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
         SpringSecurityAuditorAware.setToken(token);
         return updateService.saveToDraft(authHeader, command);
     }
 
     @GetMapping(value = "/getDefermentAuditListByDefermentId")
-    public List<DefermentDto> getDefermentAuditListByDefermentId(@RequestHeader("Authorization") String authHeader,@RequestParam("defermentId") BigInteger defermentId) {
-        return readService.getDefermentAuditListByDefermentId(authHeader,defermentId);
+    public List<DefermentDto> getDefermentAuditListByDefermentId(@RequestHeader("Authorization") String authHeader, @RequestParam("defermentId") BigInteger defermentId) {
+        return readService.getDefermentAuditListByDefermentId(authHeader, defermentId);
+    }
+
+    @PostMapping(value = "/reviewRevertById")
+    public ResponseEntity<?> reviewRevertById(@RequestHeader("Authorization") String authHeader,
+                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                              @RequestBody IUpdateDefermentService.ReviewDefermentCommand command) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
+        return updateService.reviewRevertById(authHeader, command);
+    }
+
+    @PostMapping(value = "/approveRejectById")
+    public ResponseEntity<?> approveRejectById(@RequestHeader("Authorization") String authHeader,
+                                               @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                               @RequestBody IUpdateDefermentService.ReviewDefermentCommand command) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
+        return updateService.approveRejectById(authHeader, command);
+    }
+
+    @PostMapping(value = "/mailSendToApplicant")
+    public ResponseEntity<?> mailSendToApplicant(@RequestHeader("Authorization") String authHeader,
+                                               @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                               @RequestBody IUpdateDefermentService.ReviewDefermentCommand command) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
+        return updateService.mailSendToApplicant(authHeader, command);
     }
 }

@@ -1,6 +1,5 @@
 package com.microservice.erp.services.iServices;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.microservice.erp.domain.dto.UserDto;
 import org.springframework.http.ResponseEntity;
 import org.wso2.client.api.ApiException;
@@ -16,5 +15,7 @@ public interface ISaUserService {
 
     ResponseEntity<?> getUsers(String authHeader);
 
-    ResponseEntity<?> getOperatorUsers(String authHeader);
+    ResponseEntity<?> getOfficersByUserType(String authHeader, Character userTypeVal);
+
+
 }

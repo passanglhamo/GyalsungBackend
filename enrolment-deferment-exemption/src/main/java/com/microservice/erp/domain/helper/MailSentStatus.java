@@ -2,15 +2,12 @@ package com.microservice.erp.domain.helper;
 
 import javax.validation.constraints.NotNull;
 
-public enum Role {
-    STUDENT('S'),
-    MEDICAL_DEFERMENT_OFFICER('M'),
-    NON_MEDICAL_DEFERMENT_OFFICER('N'),
-    SENIOR_DEFERMENT_OFFICER('H');
-
+public enum MailSentStatus {
+    SENT('S'),
+    NOT_SENT('N');
     private final char value;
 
-    private Role(char value) {
+    private MailSentStatus(char value) {
         this.value = value;
     }
 

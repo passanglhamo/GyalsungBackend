@@ -17,6 +17,12 @@ public interface IUpdateDefermentService {
 
     ResponseEntity<?> saveToDraft(String authHeader, @Valid UpdateDefermentCommand command);
 
+    ResponseEntity<?> reviewRevertById(String authHeader, @Valid ReviewDefermentCommand command) throws Exception;
+
+    ResponseEntity<?> approveRejectById(String authHeader, @Valid ReviewDefermentCommand command) throws Exception;
+
+    ResponseEntity<?> mailSendToApplicant(String authHeader, ReviewDefermentCommand command);
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -27,4 +33,18 @@ public interface IUpdateDefermentService {
         private Character status;
         private List<BigInteger> defermentIds;
     }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    class ReviewDefermentCommand {
+        private BigInteger userId;
+        private String reviewRemarks;
+        private Character status;
+        private BigInteger defermentId;
+    }
+
+
+
 }

@@ -35,10 +35,6 @@ public class EarlyEnlistmentMedicalBooking extends BaseEntity {
     @Column(name = "am_pm" , columnDefinition = "char(1)")
     private Character amPm;
 
-    @NotNull
-    @Basic(optional = false)
-    @Column(name = "user_id" , columnDefinition = "bigint")
-    private BigInteger userId;
 
     public BigInteger getHospitalBookingId() {
         return hospitalBookingId;
@@ -72,13 +68,6 @@ public class EarlyEnlistmentMedicalBooking extends BaseEntity {
         this.amPm = amPm;
     }
 
-    public BigInteger getUserId() {
-        return userId;
-    }
-
-    public void setUserId(BigInteger userId) {
-        this.userId = userId;
-    }
 
     public BigInteger getEarlyEnlistmentId() {
         return earlyEnlistmentId;

@@ -19,6 +19,7 @@ public class EarlyEnlistmentMedBookingDto {
     private Date appointmentDate;
     private Character amPm;
     private BigInteger userId;
+    private BigInteger signupUserId;
     private String hospitalName;
 
     public static EarlyEnlistmentMedBookingDto withId(
@@ -28,6 +29,7 @@ public class EarlyEnlistmentMedBookingDto {
             Date appointmentDate,
             Character amPm,
             BigInteger userId,
+            BigInteger signupUserId,
             String hospitalName) {
         return new EarlyEnlistmentMedBookingDto(
                 hospitalBookingId,
@@ -36,6 +38,7 @@ public class EarlyEnlistmentMedBookingDto {
                 appointmentDate,
                 amPm,
                 userId,
+                signupUserId,
                 hospitalName
         );
     }

@@ -42,13 +42,21 @@ public class DefermentMapper {
 
         DefermentInfo deferment = new ModelMapper().map(command, DefermentInfo.class);
         DefermentInfo defermentDb = repository.findFirstByOrderByDefermentIdDesc();
-        BigInteger defermentId = defermentDb == null ? BigInteger.ONE : defermentDb.getDefermentId().add(BigInteger.ONE);
+        BigInteger defermentId = (!Objects.isNull(command.getId()))?command.getId():defermentDb == null ? BigInteger.ONE : defermentDb.getDefermentId().add(BigInteger.ONE);
         deferment.setDefermentId(defermentId);
         deferment.setStatus(ApprovalStatus.PENDING.value());
-        deferment.setApplicationDate(new Date());
-        deferment.setCaseNumber(caseNumber);
-        deferment.setCreatedBy(command.getUserId());
-        deferment.setCreatedDate(new Date());
+        deferment.setApplicationDate((!Objects.isNull(command.getId()))?defermentDb.getApplicationDate():new Date());
+        deferment.setCaseNumber((!Objects.isNull(command.getId()))?defermentDb.getCaseNumber():caseNumber);
+        deferment.setCreatedBy((!Objects.isNull(command.getId()))?defermentDb.getCreatedBy():command.getUserId());
+        deferment.setCreatedDate((!Objects.isNull(command.getId()))?defermentDb.getCreatedDate():new Date());
+        if(!Objects.isNull(command.getId())){
+            deferment.setReviewerRemarks(defermentDb.getReviewerRemarks());
+            deferment.setReviewerId(defermentDb.getReviewerId());
+            deferment.setApproverId(defermentDb.getApproverId());
+            deferment.setApprovalRemarks(defermentDb.getApprovalRemarks());
+            deferment.setUpdatedBy(command.getUserId());
+            deferment.setUpdatedDate(new Date());
+        }
 
         DefermentFileInfo defermentFileDb = fileInfoRepository.findFirstByOrderByDefermentFileIdDesc();
         BigInteger defermentFileId = defermentFileDb == null ? BigInteger.ZERO : defermentFileDb.getDefermentFileId();
@@ -103,12 +111,14 @@ public class DefermentMapper {
         return deferment;
     }
 
-    public DefermentInfoAudit mapToEntityAudit(DefermentInfo defermentInfo) {
+    public DefermentInfoAudit mapToEntityAudit(DefermentInfo defermentInfo,BigInteger userId) {
 
         DefermentInfoAudit defermentAudit = new ModelMapper().map(defermentInfo, DefermentInfoAudit.class);
         DefermentInfoAudit defermentAuditDb = auditRepository.findFirstByOrderByDefermentAuditIdDesc();
         BigInteger defermentAuditId = defermentAuditDb == null ? BigInteger.ONE : defermentAuditDb.getDefermentAuditId().add(BigInteger.ONE);
         defermentAudit.setDefermentAuditId(defermentAuditId);
+        defermentAudit.setCreatedBy(userId);
+        defermentAudit.setCreatedDate(new Date());
         DefermentFileInfoAudit defermentAuditFileDb = fileAuditInfoRepository.findFirstByOrderByDefermentFileAuditIdDesc();
         BigInteger defermentAuditFileId = defermentAuditFileDb == null ? BigInteger.ZERO : defermentAuditFileDb.getDefermentFileAuditId();
         final BigInteger[] initialNo = {BigInteger.ZERO};
@@ -126,8 +136,8 @@ public class DefermentMapper {
                                 t.getFileSize(),
                                 t.getFileName(),
                                 defermentAudit,
-                                defermentInfo.getCreatedBy(),
-                                defermentInfo.getCreatedDate()
+                                userId,
+                                new Date()
                         );
 
 
@@ -148,7 +158,7 @@ public class DefermentMapper {
                 deferment.getUserId(),
                 deferment.getReasonId(),
                 deferment.getApprovalRemarks(),
-                deferment.getApplicationDate(),
+                deferment.getReviewerRemarks(),
                 deferment.getStatus(),
                 deferment.getMailStatus(),
                 deferment.getRemarks(),
@@ -172,7 +182,10 @@ public class DefermentMapper {
                 deferment.getGender(),
                 deferment.getApplicationDate(),
                 deferment.getCaseNumber(),
-                deferment.getCreatedDate()
+                deferment.getCreatedDate(),
+                deferment.getReviewerId(),
+                deferment.getApproverId(),
+                null
         );
     }
 
@@ -180,10 +193,10 @@ public class DefermentMapper {
         return DefermentDto.withId(
                 defermentInfoAudit.getDefermentId(),
                 defermentInfoAudit.getDefermentYear(),
-                defermentInfoAudit.getUserId(),
+                defermentInfoAudit.getCreatedBy(),
                 defermentInfoAudit.getReasonId(),
                 defermentInfoAudit.getApprovalRemarks(),
-                defermentInfoAudit.getApplicationDate(),
+                defermentInfoAudit.getReviewerRemarks(),
                 defermentInfoAudit.getStatus(),
                 defermentInfoAudit.getMailStatus(),
                 defermentInfoAudit.getRemarks(),
@@ -207,7 +220,10 @@ public class DefermentMapper {
                 defermentInfoAudit.getGender(),
                 defermentInfoAudit.getApplicationDate(),
                 defermentInfoAudit.getCaseNumber(),
-                defermentInfoAudit.getCreatedDate()
+                defermentInfoAudit.getCreatedDate(),
+                defermentInfoAudit.getReviewerId(),
+                defermentInfoAudit.getApproverId(),
+                null
         );
     }
 }

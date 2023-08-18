@@ -59,7 +59,7 @@ user.service.check.under.age: /userProfile/checkUnderAge?userId=
 user.service.profile.by.userId: /userProfile/getProfileInfo?userId=
 user.service.profile.by.userIds: /userProfile/getProfileInfoByIds?userIds=
 user.service.profile.by.partial.cid: /userProfile/getUserInformationByPartialCid?cid=
-user.service.operator: /saUser/getOperatorUsers
+user.service.officer.by.users.type: /saUser/getOfficersByUserType?userTypeVal=
 
 
 
@@ -79,4 +79,4 @@ training.management.getAllReasonById: /reasons/getAllReasonById?id=
 
 
 medical.service.url: http://MEDICAL-SCREENING/api/medical/screening
-medical.service.getEarlyEnlistMedBookingByUserId: /earlyEnlistmentMedBooking/getEarlyEnlistMedBookingByUserId?userId=
+medical.service.getEarlyEnlistMedBookingById: /earlyEnlistmentMedBooking/getEarlyEnlistMedBookingById?earlyEnlistmentId=

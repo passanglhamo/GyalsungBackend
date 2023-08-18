@@ -48,16 +48,14 @@ public class ApplicationProperties {
     @Value("${training.management.trainingAcademyCapacities}")
     private String allTrainingCapacities;
 
-    @Value("${user.service.operator}")
-    private String operatorUsers;
+    @Value("${user.service.officer.by.users.type}")
+    private String officerByUserType;
 
     @Value("${training.management.getAllReasonById}")
     private String reasonById;
 
-//    @Value("${training.management.activeRegistrationDate}")
-//    private String activeRegistrationDate;
 
-    @Value("${medical.service.getEarlyEnlistMedBookingByUserId}")
-    private String enlistmentMedBookingByUserIdAndId;
+    @Value("${medical.service.getEarlyEnlistMedBookingById}")
+    private String enlistmentMedBookingById;
 
 }

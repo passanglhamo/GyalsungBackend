@@ -5,6 +5,7 @@ import com.microservice.erp.domain.dto.EventBus;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
+import com.microservice.erp.domain.helper.RoleStatus;
 import com.microservice.erp.domain.helper.StatusResponse;
 import com.microservice.erp.domain.mapper.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoAuditRepository;
@@ -73,12 +74,12 @@ public class CreateDefermentService implements ICreateDefermentService {
                 )
         );
 
-        var defermentAudit = auditRepository.save(
-                mapper.mapToEntityAudit(deferment)
+        auditRepository.save(
+                mapper.mapToEntityAudit(deferment, command.getUserId())
         );
 
         try {
-            sendEmailAndSms(authTokenHeader, deferment.getUserId(), caseNumber);
+            sendEmailAndSms(authTokenHeader, deferment.getUserId(), caseNumber, command.getIsMedicalReason());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -86,7 +87,7 @@ public class CreateDefermentService implements ICreateDefermentService {
         return ResponseEntity.ok(caseNumber);
     }
 
-    private void sendEmailAndSms(String authTokenHeader, BigInteger userId, String caseNumber) throws Exception {
+    private void sendEmailAndSms(String authTokenHeader, BigInteger userId, String caseNumber, Character isMedicalReason) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
@@ -118,7 +119,12 @@ public class CreateDefermentService implements ICreateDefermentService {
         addToQueue.addToQueue("email", eventBus);
         addToQueue.addToQueue("sms", eventBus);
 
-        mailToOperator.sendMailToOperator(fullName, cid, properties, httpRequest, "deferment", caseNumber);
+        Character userType = isMedicalReason.equals('Y') ? RoleStatus.MEDICAL_DEFERMENT_OFFICER.value() : RoleStatus.NON_MEDICAL_DEFERMENT_OFFICER.value();
+
+        String messageGHQ = fullName + " with cid " + cid + " has successfully applied for deferment. The case number for the application is " + caseNumber + ".\n";
+        String subjectGHQ = "Gyalsung Registration Pending Approval";
+
+        mailToOperator.sendMailToOperator(fullName, cid, properties, httpRequest, "deferment", caseNumber, userType, messageGHQ, subjectGHQ);
 
 
     }

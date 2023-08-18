@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface IDefermentInfoRepository extends JpaRepository<DefermentInfo, BigInteger> {
@@ -40,4 +41,6 @@ public interface IDefermentInfoRepository extends JpaRepository<DefermentInfo, B
     List<DefermentInfo> findAllByDefermentId(List<BigInteger> defermentIds);
 
     DefermentInfo findFirstByOrderByDefermentIdDesc();
+
+    Optional<DefermentInfo> findByDefermentId(BigInteger defermentId);
 }

@@ -2,7 +2,7 @@ package com.microservice.erp.domain.helper;
 
 import javax.validation.constraints.NotNull;
 
-public enum Role {
+public enum RoleStatus {
     STUDENT('S'),
     MEDICAL_DEFERMENT_OFFICER('M'),
     NON_MEDICAL_DEFERMENT_OFFICER('N'),
@@ -10,7 +10,7 @@ public enum Role {
 
     private final char value;
 
-    private Role(char value) {
+    private RoleStatus(char value) {
         this.value = value;
     }
 

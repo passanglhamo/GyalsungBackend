@@ -37,6 +37,7 @@ public interface ICreateDefermentService {
         private Character gender;
         private String remarks;
         private MultipartFile[] proofDocuments;
+        private Character isMedicalReason;
     }
 
 }

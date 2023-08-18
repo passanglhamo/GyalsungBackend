@@ -270,7 +270,7 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
                     .findFirst()
                     .orElse(null);
             GuardianConsent guardianConsent = iGuardianConsentRepository.findFirstByUserIdOrderByConsentRequestDateDesc(item.getUserId());
-            String url = properties.getEnlistmentMedBookingByUserIdAndId() + item.getUserId() + "&earlyEnlistmentId=" + item.getEnlistmentId();
+            String url = properties.getEnlistmentMedBookingById() + item.getEnlistmentId();
             ResponseEntity<EarlyEnlistmentMedBookingDto> medicalBooking = medicalTemplate.exchange(url, HttpMethod.GET, request, EarlyEnlistmentMedBookingDto.class);
             if (!Objects.isNull(userProfileDto)) {
                 EarlyEnlistmentDto earlyEnlistmentDto = new EarlyEnlistmentDto();

@@ -3,9 +3,12 @@ package com.microservice.erp.services.impl;
 import com.microservice.erp.domain.dto.ApplicationProperties;
 import com.microservice.erp.domain.dto.EventBus;
 import com.microservice.erp.domain.dto.UserProfileDto;
-import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
+import com.microservice.erp.domain.helper.MailSentStatus;
 import com.microservice.erp.domain.helper.MessageResponse;
+import com.microservice.erp.domain.helper.RoleStatus;
+import com.microservice.erp.domain.mapper.DefermentMapper;
+import com.microservice.erp.domain.repositories.IDefermentInfoAuditRepository;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.IUpdateDefermentService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +18,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -31,6 +33,9 @@ public class UpdateDefermentService implements IUpdateDefermentService {
     private final IDefermentInfoRepository repository;
     private final HeaderToken headerToken;
     private final AddToQueue addToQueue;
+    private final MailToOperator mailToOperator;
+    private final IDefermentInfoAuditRepository auditRepository;
+    private final DefermentMapper mapper;
 
     @Autowired
     @Qualifier("userProfileTemplate")
@@ -90,6 +95,79 @@ public class UpdateDefermentService implements IUpdateDefermentService {
         return ResponseEntity.ok(new MessageResponse("Saved successfully"));
     }
 
+    @Override
+    public ResponseEntity<?> reviewRevertById(String authHeader, @Valid ReviewDefermentCommand command) throws Exception {
+        final String[] caseNumber = {null};
+        final BigInteger[] userIdDB = {null};
+        repository.findByDefermentId(command.getDefermentId()).ifPresent(d -> {
+            if (d.getStatus().equals(ApprovalStatus.PENDING.value())) {
+                caseNumber[0] = d.getCaseNumber();
+                userIdDB[0] = d.getUserId();
+                d.setStatus(command.getStatus());
+                if (command.getStatus().equals(ApprovalStatus.REVIEWED.value())) {
+                    d.setMailStatus(MailSentStatus.NOT_SENT.value());
+                }
+                d.setReviewerRemarks(command.getReviewRemarks());
+                d.setReviewerId(command.getUserId());
+                d.setUpdatedBy(command.getUserId());
+                d.setUpdatedDate(new Date());
+                repository.save(d);
+            }
+        });
+
+        auditRepository.save(
+                mapper.mapToEntityAudit(repository.findByDefermentId(command.getDefermentId()).get(), command.getUserId())
+        );
+
+        sendReviewRevertEmailAndSms(authHeader, command.getUserId(), caseNumber[0], command.getStatus(), userIdDB[0], command.getReviewRemarks());
+
+        return ResponseEntity.ok(new MessageResponse("Reviewed/Reverted successfully"));
+    }
+
+    @Override
+    public ResponseEntity<?> approveRejectById(String authHeader, @Valid ReviewDefermentCommand command) throws Exception {
+        final BigInteger[] reviewerIdDB = {null};
+        final String[] caseNumber = {null};
+        repository.findByDefermentId(command.getDefermentId()).ifPresent(d -> {
+            if (d.getStatus().equals(ApprovalStatus.REVIEWED.value())) {
+                reviewerIdDB[0] = d.getReviewerId();
+                caseNumber[0] = d.getCaseNumber();
+                d.setStatus(command.getStatus());
+                d.setApprovalRemarks(command.getReviewRemarks());
+                d.setApproverId(command.getUserId());
+                d.setUpdatedBy(command.getUserId());
+                d.setUpdatedDate(new Date());
+                repository.save(d);
+            }
+        });
+
+        auditRepository.save(
+                mapper.mapToEntityAudit(repository.findByDefermentId(command.getDefermentId()).get(), command.getUserId())
+        );
+
+        sendReviewRevertEmailAndSms(authHeader, command.getUserId(), caseNumber[0], command.getStatus(), reviewerIdDB[0], command.getReviewRemarks());
+
+
+        return ResponseEntity.ok(new MessageResponse("Approved/Rejected successfully"));
+    }
+
+    @Override
+    public ResponseEntity<?> mailSendToApplicant(String authHeader, ReviewDefermentCommand command) {
+        repository.findByDefermentId(command.getDefermentId()).ifPresent(d -> {
+            if (d.getStatus().equals(ApprovalStatus.APPROVED.value())||d.getStatus().equals(ApprovalStatus.REJECTED.value())) {
+                d.setStatus(command.getStatus());
+                d.setApprovalRemarks(command.getReviewRemarks());
+                d.setApproverId(command.getUserId());
+                d.setUpdatedBy(command.getUserId());
+                d.setUpdatedDate(new Date());
+                repository.save(d);
+            }
+        });
+
+        return ResponseEntity.ok(new MessageResponse("Mail send successfully"));
+
+    }
+
     private void sendEmailAndSms(String authHeader, BigInteger userId, Character status) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
@@ -141,6 +219,61 @@ public class UpdateDefermentService implements IUpdateDefermentService {
         //todo get data from properties
         addToQueue.addToQueue("email", eventBus);
         addToQueue.addToQueue("sms", eventBus);
+    }
+
+    private void sendReviewRevertEmailAndSms(String authHeader, BigInteger userId, String caseNumber, Character status, BigInteger studentId, String reviewRemarks) throws Exception {
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+
+        HttpEntity<String> httpRequest = headerToken.tokenHeader(authHeader);
+
+        String userUrl = properties.getUserProfileById() + (status.equals(ApprovalStatus.REVIEWED.value()) ? userId : studentId);
+        ResponseEntity<UserProfileDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);
+        String fullName = Objects.requireNonNull(userResponse.getBody()).getFullName();
+        String cid = userResponse.getBody().getCid();
+        String emailMessage = "";
+        String subject = "";
+
+        if (status.equals(ApprovalStatus.REVIEWED.value())) {
+            subject = "Reviewed for Deferment";
+            emailMessage = "Please review the deferment application of " + Objects.requireNonNull(userResponse.getBody()).getFullName() + "\n" +
+                    " with case number " + caseNumber + "\n" +
+                    "\n" +
+                    "and proceed with either its approval or rejection.\n";
+            mailToOperator.sendMailToOperator(fullName, cid, properties, httpRequest, "deferment", caseNumber, RoleStatus.SENIOR_DEFERMENT_OFFICER.value(), emailMessage, subject);
+
+        } else {
+
+            if (status.equals(ApprovalStatus.APPROVED.value()) ) {
+                subject = "Deferment Approved";
+                emailMessage = "The deferment application bearing case number " + caseNumber + " has been granted approval. Kindly proceed with the required course of action.\n";
+            } else if(status.equals(ApprovalStatus.REJECTED.value())){
+                subject = "Deferment Rejected";
+                emailMessage = "The deferment application bearing case number " + caseNumber + " has been rejected. Kindly proceed with the required course of action.\n";
+            }else {
+                subject = "Request for Missing Document";
+                emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
+                        "\n" +
+                        "To continue processing your deferment application, we kindly request that you submit " + reviewRemarks + " document. Please add the required documents to the deferment page. Thank you.\n";
+            }
+
+
+            EventBus eventBus = EventBus.withId(
+                    Objects.requireNonNull(userResponse.getBody()).getEmail(),
+                    null,
+                    null,
+                    emailMessage,
+                    subject,
+                    Objects.requireNonNull(userResponse.getBody()).getMobileNo(),
+                    null,
+                    null);
+
+            //todo get from properties
+            addToQueue.addToQueue("email", eventBus);
+            addToQueue.addToQueue("sms", eventBus);
+        }
+
+
     }
 
 }

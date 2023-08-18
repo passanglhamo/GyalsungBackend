@@ -49,7 +49,7 @@ public class EarlyEnlistmentMedicalBookingService implements IEarlyEnlistmentMed
             var medicalBooking = repository.save(earlyEnlistmentMedicalBooking);
             earlyEnlistmentMedBookingDto.setHospitalBookingId(medicalBooking.getHospitalBookingId());
             try {
-                sendEmailAndSms(authHeader, earlyEnlistmentMedBookingDto.getUserId(), earlyEnlistmentMedBookingDto.getAppointmentDate(),
+                sendEmailAndSms(authHeader, earlyEnlistmentMedBookingDto.getSignupUserId(), earlyEnlistmentMedBookingDto.getAppointmentDate(),
                         earlyEnlistmentMedBookingDto.getHospitalName(),new Date());
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -60,15 +60,15 @@ public class EarlyEnlistmentMedicalBookingService implements IEarlyEnlistmentMed
                 d.setHospitalId(earlyEnlistmentMedBookingDto.getHospitalId());
                 d.setAppointmentDate(earlyEnlistmentMedBookingDto.getAppointmentDate());
                 d.setAmPm(earlyEnlistmentMedBookingDto.getAmPm());
-                d.setCreatedBy(earlyEnlistmentMedBookingDto.getUserId());
-                d.setCreatedDate(new Date());
+                d.setUpdatedBy(earlyEnlistmentMedBookingDto.getUserId());
+                d.setUpdatedDate(new Date());
                 earlyEnlistmentMedBookingDto.setHospitalBookingId(d.getHospitalBookingId());
                 repository.save(d);
             });
         }
 
         try {
-            sendEmailAndSms(authHeader, earlyEnlistmentMedBookingDto.getUserId(), earlyEnlistmentMedBookingDto.getAppointmentDate(),
+            sendEmailAndSms(authHeader, earlyEnlistmentMedBookingDto.getSignupUserId(), earlyEnlistmentMedBookingDto.getAppointmentDate(),
                     earlyEnlistmentMedBookingDto.getHospitalName(), new Date());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -79,8 +79,8 @@ public class EarlyEnlistmentMedicalBookingService implements IEarlyEnlistmentMed
     }
 
     @Override
-    public ResponseEntity<?> getEarlyEnlistMedBookingByUserId(BigInteger userId, BigInteger earlyEnlistmentId) {
-        return ResponseEntity.ok(repository.findByEarlyEnlistmentIdAndUserId(earlyEnlistmentId, userId));
+    public ResponseEntity<?> getEarlyEnlistMedBookingById(BigInteger earlyEnlistmentId) {
+        return ResponseEntity.ok(repository.findByEarlyEnlistmentId(earlyEnlistmentId));
     }
 
     private void sendEmailAndSms(String authHeader, BigInteger userId, Date appointmentDate, String hospitalName, Date date) throws Exception {

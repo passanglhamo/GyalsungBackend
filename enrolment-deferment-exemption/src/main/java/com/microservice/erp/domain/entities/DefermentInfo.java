@@ -67,6 +67,12 @@ public class DefermentInfo extends BaseEntity {
     @Column(name = "mail_status", columnDefinition = "char(1)")
     private Character mailStatus;
 
+    @Column(name = "reviewer_id", columnDefinition = "bigint")
+    private BigInteger reviewerId;
+
+    @Column(name = "approver_id", columnDefinition = "bigint")
+    private BigInteger approverId;
+
     @OneToMany(
             mappedBy = "deferment",
             cascade = CascadeType.ALL,
@@ -179,5 +185,21 @@ public class DefermentInfo extends BaseEntity {
 
     public void setFiles(Set<DefermentFileInfo> files) {
         this.files = files;
+    }
+
+    public BigInteger getReviewerId() {
+        return reviewerId;
+    }
+
+    public void setReviewerId(BigInteger reviewerId) {
+        this.reviewerId = reviewerId;
+    }
+
+    public BigInteger getApproverId() {
+        return approverId;
+    }
+
+    public void setApproverId(BigInteger approverId) {
+        this.approverId = approverId;
     }
 }

@@ -8,5 +8,5 @@ import java.math.BigInteger;
 public interface IEarlyEnlistmentMedicalBookingService {
     ResponseEntity<?> save(String authHeader,EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto);
 
-    ResponseEntity<?> getEarlyEnlistMedBookingByUserId(BigInteger userId, BigInteger earlyEnlistmentId);
+    ResponseEntity<?> getEarlyEnlistMedBookingById(BigInteger earlyEnlistmentId);
 }

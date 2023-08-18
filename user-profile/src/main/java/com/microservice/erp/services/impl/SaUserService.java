@@ -163,8 +163,11 @@ public class SaUserService implements ISaUserService {
         }
     }
 
+
+
     @Override
-    public ResponseEntity<?> getOperatorUsers(String authHeader) {
+    public ResponseEntity<?> getOfficersByUserType(String authHeader,Character userTypeVal) {
+
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
         HttpHeaders headers = new HttpHeaders();
@@ -179,8 +182,7 @@ public class SaUserService implements ISaUserService {
             ResponseEntity<AuthUserDto> response = restTemplate.exchange(url, HttpMethod.GET, request, AuthUserDto.class);
             String userType = new JSONArray("[" + Objects.requireNonNull(response.getBody()).getRoles().toString().substring(1, Objects.requireNonNull(response.getBody()).getRoles().toString().length() - 1).replaceAll("=", ":") + "]")
                     .getJSONObject(0).getString("userType");
-            if(userType.equals(Role.MEDICAL_DEFERMENT_OFFICER.value().toString())||
-                    userType.equals(Role.NON_MEDICAL_DEFERMENT_OFFICER.value().toString())){
+            if(userType.equals(userTypeVal.toString())){
                 userProfileDto.setUserId(item.getUserId());
                 userProfileDto.setFullName(item.getFullName());
                 userProfileDto.setCid(item.getCid());
@@ -194,9 +196,12 @@ public class SaUserService implements ISaUserService {
 
         });
 
-        return ResponseEntity.ok(userProfileDtos);
+        return  ResponseEntity.ok(userProfileDtos);
 
     }
+
+
+
 
 
     private ResponseEntity<?> addNewUser(UserDto userDto) throws IOException, ParseException, ApiException {
@@ -293,12 +298,5 @@ public class SaUserService implements ISaUserService {
         return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
     }
 
-    public static String generatePassword(int count) {
-        StringBuilder builder = new StringBuilder();
-        while (count-- != 0) {
-            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
-            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
-        }
-        return builder.toString();
-    }
+
 }

@@ -9,5 +9,5 @@ import java.util.List;
 public interface IDefermentInfoAuditRepository extends JpaRepository<DefermentInfoAudit, BigInteger> {
     DefermentInfoAudit findFirstByOrderByDefermentAuditIdDesc();
 
-    List<DefermentInfoAudit> findByDefermentId(BigInteger defermentId);
+    List<DefermentInfoAudit> findAllByDefermentIdOrderByDefermentAuditIdDesc(BigInteger defermentId);
 }
