@@ -23,6 +23,8 @@ public interface IUpdateDefermentService {
 
     ResponseEntity<?> mailSendToApplicant(String authHeader, ReviewDefermentCommand command);
 
+    ResponseEntity<?> saveDraftById(String authHeader, ReviewDefermentCommand command);
+
     @Getter
     @Setter
     @AllArgsConstructor

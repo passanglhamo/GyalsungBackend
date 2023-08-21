@@ -30,6 +30,7 @@ public class DefermentListDto {
     private String cid;
     private Date dob;
     private Character gender;
+    private String genderName;
     private Date applicationDate;
     private String caseNumber;
     private Collection<DefermentDto> defermentList;
@@ -38,6 +39,8 @@ public class DefermentListDto {
     private BigInteger approverId;
     private String reviewerFullName;
     private String approverFullName;
+    private String reasonName;
+    private Character isMedicalReason;
 
 
     public static DefermentListDto withId(
@@ -55,6 +58,7 @@ public class DefermentListDto {
             String cid,
             Date dob,
             Character gender,
+            String genderName,
             Date applicationDate,
             String caseNumber,
             Collection<DefermentDto> defermentList,
@@ -62,7 +66,9 @@ public class DefermentListDto {
             BigInteger reviewerId,
             BigInteger approverId,
             String reviewerFullName,
-            String approverFullName) {
+            String approverFullName,
+            String reasonName,
+            Character isMedicalReason) {
         return new DefermentListDto(
                 id,
                 defermentYear,
@@ -78,6 +84,7 @@ public class DefermentListDto {
                 cid,
                 dob,
                 gender,
+                genderName,
                 applicationDate,
                 caseNumber,
                 defermentList,
@@ -85,6 +92,8 @@ public class DefermentListDto {
                 reviewerId,
                 approverId,
                 reviewerFullName,
-                approverFullName);
+                approverFullName,
+                reasonName,
+                isMedicalReason);
     }
 }

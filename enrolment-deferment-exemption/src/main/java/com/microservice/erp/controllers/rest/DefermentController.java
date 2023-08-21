@@ -134,4 +134,12 @@ public class DefermentController {
         SpringSecurityAuditorAware.setToken(token);
         return updateService.mailSendToApplicant(authHeader, command);
     }
+
+    @PostMapping(value = "/saveDraftById")
+    public ResponseEntity<?> saveDraftById(@RequestHeader("Authorization") String authHeader,
+                                               @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                               @RequestBody IUpdateDefermentService.ReviewDefermentCommand command) throws Exception {
+        SpringSecurityAuditorAware.setToken(token);
+        return updateService.saveDraftById(authHeader, command);
+    }
 }

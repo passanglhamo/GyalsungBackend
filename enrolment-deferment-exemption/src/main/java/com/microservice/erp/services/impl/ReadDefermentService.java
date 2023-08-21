@@ -4,10 +4,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
-import com.microservice.erp.domain.dto.ApplicationProperties;
-import com.microservice.erp.domain.dto.DefermentDto;
-import com.microservice.erp.domain.dto.DefermentListDto;
-import com.microservice.erp.domain.dto.UserProfileDto;
+import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.mapper.DefermentMapper;
@@ -141,6 +138,7 @@ public class ReadDefermentService implements IReadDefermentService {
                 defermentData.setCid(Objects.requireNonNull(item).getCid());
                 defermentData.setDob(Objects.requireNonNull(item).getDob());
                 defermentData.setGender(Objects.requireNonNull(item).getGender());
+                defermentData.setGenderName(Objects.requireNonNull(item).getGender().equals('M')?"Male":"Female");
                 defermentData.setDefermentFileDtos(defermentDto.getDefermentFileDtos());
                 defermentData.setReasonId(defermentDto.getReasonId());
                 defermentData.setApplicationDate(defermentDto.getApplicationDate());
@@ -148,6 +146,10 @@ public class ReadDefermentService implements IReadDefermentService {
                 defermentData.setCaseNumber(defermentDto.getCaseNumber());
                 defermentData.setMailStatus(defermentDto.getMailStatus());
                 defermentData.setDefermentList(defermentList);
+                String reasonUrl = properties.getReasonById() + defermentDto.getReasonId();
+                ResponseEntity<ReasonDto> reasonDto = restTemplate.exchange(reasonUrl, HttpMethod.GET, httpRequest, ReasonDto.class);
+                defermentData.setReasonName(Objects.requireNonNull(reasonDto.getBody()).getReasonName());
+                defermentData.setIsMedicalReason(Objects.requireNonNull(reasonDto.getBody()).getIsMedicalReason());
                 if(!Objects.isNull(defermentDto.getReviewerId())){
                     String userUrl = properties.getUserProfileById() + defermentDto.getReviewerId();
                     ResponseEntity<UserProfileDto> userResponse = userRestTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserProfileDto.class);

@@ -129,7 +129,6 @@ public class UpdateDefermentService implements IUpdateDefermentService {
         final BigInteger[] reviewerIdDB = {null};
         final String[] caseNumber = {null};
         repository.findByDefermentId(command.getDefermentId()).ifPresent(d -> {
-            if (d.getStatus().equals(ApprovalStatus.REVIEWED.value())) {
                 reviewerIdDB[0] = d.getReviewerId();
                 caseNumber[0] = d.getCaseNumber();
                 d.setStatus(command.getStatus());
@@ -138,7 +137,6 @@ public class UpdateDefermentService implements IUpdateDefermentService {
                 d.setUpdatedBy(command.getUserId());
                 d.setUpdatedDate(new Date());
                 repository.save(d);
-            }
         });
 
         auditRepository.save(
@@ -155,17 +153,39 @@ public class UpdateDefermentService implements IUpdateDefermentService {
     public ResponseEntity<?> mailSendToApplicant(String authHeader, ReviewDefermentCommand command) {
         repository.findByDefermentId(command.getDefermentId()).ifPresent(d -> {
             if (d.getStatus().equals(ApprovalStatus.APPROVED.value())||d.getStatus().equals(ApprovalStatus.REJECTED.value())) {
-                d.setStatus(command.getStatus());
+                d.setMailStatus(MailSentStatus.SENT.value());
                 d.setApprovalRemarks(command.getReviewRemarks());
-                d.setApproverId(command.getUserId());
                 d.setUpdatedBy(command.getUserId());
                 d.setUpdatedDate(new Date());
                 repository.save(d);
+                try {
+                    sendEmailAndSms(authHeader, d.getUserId(), d.getStatus());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 
+        auditRepository.save(
+                mapper.mapToEntityAudit(repository.findByDefermentId(command.getDefermentId()).get(), command.getUserId())
+        );
         return ResponseEntity.ok(new MessageResponse("Mail send successfully"));
 
+    }
+
+    @Override
+    public ResponseEntity<?> saveDraftById(String authHeader, ReviewDefermentCommand command) {
+        repository.findByDefermentId(command.getDefermentId()).ifPresent(d -> {
+                d.setStatus(command.getStatus());
+                d.setUpdatedBy(command.getUserId());
+                d.setUpdatedDate(new Date());
+                repository.save(d);
+        });
+
+        auditRepository.save(
+                mapper.mapToEntityAudit(repository.findByDefermentId(command.getDefermentId()).get(), command.getUserId())
+        );
+        return ResponseEntity.ok(new MessageResponse("Draft saved successfully"));
     }
 
     private void sendEmailAndSms(String authHeader, BigInteger userId, Character status) throws Exception {

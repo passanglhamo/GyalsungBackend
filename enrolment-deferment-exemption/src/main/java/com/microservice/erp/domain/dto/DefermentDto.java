@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 
@@ -36,6 +35,7 @@ public class DefermentDto {
     private String cid;
     private Date dob;
     private Character gender;
+    private String genderName;
     private Date applicationDate;
     private String caseNumber;
     private Date createdDate;
@@ -60,6 +60,7 @@ public class DefermentDto {
             String cid,
             Date dob,
             Character gender,
+            String genderName,
             Date applicationDate,
             String caseNumber,
             Date createdDate,
@@ -82,6 +83,7 @@ public class DefermentDto {
                 cid,
                 dob,
                 gender,
+                genderName,
                 applicationDate,
                 caseNumber,
                 createdDate,

@@ -30,13 +30,12 @@ public interface ICreateDefermentService {
         private BigInteger userId;
         @NotNull(message = "Reason cannot be null")
         private BigInteger reasonId;
-        private String approvalRemarks;
         @NotNull(message = "Year cannot be null")
         private String defermentYear;
-        private Character status;
         private Character gender;
         private String remarks;
         private MultipartFile[] proofDocuments;
+        @NotNull(message = "Is medical Reason cannot be null")
         private Character isMedicalReason;
     }
 
