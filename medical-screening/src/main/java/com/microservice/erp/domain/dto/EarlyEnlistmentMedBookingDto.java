@@ -13,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EarlyEnlistmentMedBookingDto {
+    //region private variables
     private BigInteger hospitalBookingId;
     private BigInteger earlyEnlistmentId;
     private BigInteger hospitalId;
@@ -20,23 +21,24 @@ public class EarlyEnlistmentMedBookingDto {
     private Character amPm;
     private BigInteger userId;
     private String hospitalName;
-
-    public static EarlyEnlistmentMedBookingDto withId(
-            BigInteger hospitalBookingId,
-            BigInteger earlyEnlistmentId,
-            BigInteger hospitalId,
-            Date appointmentDate,
-            Character amPm,
-            BigInteger userId,
-            String hospitalName) {
-        return new EarlyEnlistmentMedBookingDto(
-                hospitalBookingId,
-                earlyEnlistmentId,
-                hospitalId,
-                appointmentDate,
-                amPm,
-                userId,
-                hospitalName
-        );
-    }
+    //endregion
+//
+//    public static EarlyEnlistmentMedBookingDto withId(
+//            BigInteger hospitalBookingId,
+//            BigInteger earlyEnlistmentId,
+//            BigInteger hospitalId,
+//            Date appointmentDate,
+//            Character amPm,
+//            BigInteger userId,
+//            String hospitalName) {
+//        return new EarlyEnlistmentMedBookingDto(
+//                hospitalBookingId,
+//                earlyEnlistmentId,
+//                hospitalId,
+//                appointmentDate,
+//                amPm,
+//                userId,
+//                hospitalName
+//        );
+//    }
 }

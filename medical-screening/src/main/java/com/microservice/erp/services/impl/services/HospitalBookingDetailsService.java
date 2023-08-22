@@ -87,9 +87,6 @@ public class HospitalBookingDetailsService implements IHospitalBookingDetailsSer
             scheduledTasksMap.put(bookingDetailId, newTask);
 
         }
-
-
-
         return ResponseEntity.ok(bookingDetailId);
     }
 

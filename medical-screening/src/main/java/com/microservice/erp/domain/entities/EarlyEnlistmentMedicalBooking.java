@@ -9,20 +9,21 @@ import java.util.Date;
 
 @Entity(name = "med_early_enlistment_medical_booking")
 public class EarlyEnlistmentMedicalBooking extends BaseEntity {
+    //region private variables
     @Id
     @NotNull
     @Basic(optional = false)
-    @Column(name = "hospital_booking_id" , columnDefinition = "bigint")
+    @Column(name = "hospital_booking_id", columnDefinition = "bigint")
     private BigInteger hospitalBookingId;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "early_enlistment_id" , columnDefinition = "bigint")
+    @Column(name = "early_enlistment_id", columnDefinition = "bigint")
     private BigInteger earlyEnlistmentId;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "hospital_id" , columnDefinition = "bigint")
+    @Column(name = "hospital_id", columnDefinition = "bigint")
     private BigInteger hospitalId;
 
     @NotNull(message = "Appointment date cannot be null")
@@ -32,20 +33,43 @@ public class EarlyEnlistmentMedicalBooking extends BaseEntity {
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "am_pm" , columnDefinition = "char(1)")
+    @Column(name = "am_pm", columnDefinition = "char(1)")
     private Character amPm;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "user_id" , columnDefinition = "bigint")
+    @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
+    @NotNull(message = "Full name cannot be null")
+    @Column(name = "full_name", columnDefinition = "varchar(255)")
+    private String fullName;
+
+    @Column(name = "cid", columnDefinition = "varchar(255)")
+    private String cid;
+
+    @Column(name = "gender", columnDefinition = "char(1)")
+    private Character gender;
+
+    @Column(name = "dob")
+    private Date dob;
+    //endregion
+
+    //region setters and getters
     public BigInteger getHospitalBookingId() {
         return hospitalBookingId;
     }
 
     public void setHospitalBookingId(BigInteger hospitalBookingId) {
         this.hospitalBookingId = hospitalBookingId;
+    }
+
+    public BigInteger getEarlyEnlistmentId() {
+        return earlyEnlistmentId;
+    }
+
+    public void setEarlyEnlistmentId(BigInteger earlyEnlistmentId) {
+        this.earlyEnlistmentId = earlyEnlistmentId;
     }
 
     public BigInteger getHospitalId() {
@@ -55,7 +79,6 @@ public class EarlyEnlistmentMedicalBooking extends BaseEntity {
     public void setHospitalId(BigInteger hospitalId) {
         this.hospitalId = hospitalId;
     }
-
     public Date getAppointmentDate() {
         return appointmentDate;
     }
@@ -80,11 +103,36 @@ public class EarlyEnlistmentMedicalBooking extends BaseEntity {
         this.userId = userId;
     }
 
-    public BigInteger getEarlyEnlistmentId() {
-        return earlyEnlistmentId;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setEarlyEnlistmentId(BigInteger earlyEnlistmentId) {
-        this.earlyEnlistmentId = earlyEnlistmentId;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
+
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
+
+    public Character getGender() {
+        return gender;
+    }
+
+    public void setGender(Character gender) {
+        this.gender = gender;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+    //endregion
 }
