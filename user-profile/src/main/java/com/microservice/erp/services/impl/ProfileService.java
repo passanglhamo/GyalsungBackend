@@ -194,10 +194,10 @@ public class ProfileService implements IProfileService {
         if (responseEntity.getStatusCode().value() != HttpStatus.OK.value()) {
             return ResponseEntity.badRequest().body(new MessageResponse("Verification code didn't match."));
         }
-        ResponseEntity<?> checkEmailExistOrNot = checkEmailExistOrNot(userProfileDto.getEmail());
-        if (checkEmailExistOrNot.getStatusCode().value() != HttpStatus.OK.value()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
-        }
+//        ResponseEntity<?> checkEmailExistOrNot = checkEmailExistOrNot(userProfileDto.getEmail());
+//        if (checkEmailExistOrNot.getStatusCode().value() != HttpStatus.OK.value()) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
+//        }
         userInfoDb.setEmail(userProfileDto.getEmail());
         iUserInfoRepository.save(userInfoDb);
 

@@ -1,6 +1,8 @@
 package com.microservice.erp.services.iServices;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
 import com.microservice.erp.domain.dto.UserProfileDto;
 import com.microservice.erp.domain.helper.ResponseMessage;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +36,6 @@ public interface IProfileService {
 
     ResponseEntity<?> receiveEmailVcode(UserProfileDto userProfileDto) throws Exception;
 
-
     ResponseEntity<?> changeParentInfo(UserProfileDto userProfileDto);
 
     ResponseEntity<?> changeGuardianInfo(UserProfileDto userProfileDto);
@@ -47,7 +48,7 @@ public interface IProfileService {
 
     ResponseEntity<?> searchUser(String searchKey);
 
-    ResponseEntity<?> changeProfilePic(HttpServletRequest request, UserProfileDto userProfileDto) throws IOException;
+    ResponseEntity<?> changeProfilePic(HttpServletRequest request, UserProfileDto userProfileDto) throws IOException, SftpException, JSchException;
 
     ResponseEntity<?> getRegisteredUsers();
 

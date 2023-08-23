@@ -1,6 +1,20 @@
 package com.microservice.erp.domain.helper;
 
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemOptions;
+import org.apache.commons.vfs2.impl.StandardFileSystemManager;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+
+import com.jcraft.jsch.*;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -82,8 +96,7 @@ public class FileUploadToExternalLocation {
 
         String year = currentYear.toString();
         String folderName = "/gyalsung/" + year + "/" + monthName + "/" + day + "/";
-//        String folderName = "/gyalsung/profilePic/";
-        FileUploadDTO fileUploadDTO = new FileUploadDTO();
+         FileUploadDTO fileUploadDTO = new FileUploadDTO();
         String fileUploadPath = url.concat(folderName);
         fileUploadDTO.setUploadFilePath(fileUploadPath);
         return fileUploadDTO;
@@ -199,4 +212,104 @@ public class FileUploadToExternalLocation {
         }
         return byteArrayOutputStream.toByteArray();
     }
+
+
+    public static ResponseMessage fileUploaderRemote(MultipartFile attachedFile, String fileName, String propertiesFileName,
+                                                       HttpServletRequest request) throws IOException, JSchException, SftpException {
+        ResponseMessage responseMessage = new ResponseMessage();
+
+        String uploadFileName = fileName;
+        if (attachedFile == null) {
+            responseMessage.setStatus(SystemDataInt.MESSAGE_STATUS_UNSUCCESSFUL.value());
+            responseMessage.setText("Please select the file.");
+            return responseMessage;
+        }
+
+        String originalFileName = attachedFile.getOriginalFilename();
+
+        FileUploadDTO fileUploadDTO = fileUploadPathRetrieverRemote(request);
+        String uploadedDirectory = fileUploadDTO.getUploadFilePath();
+        String username = "sysadmin";
+        String password = "Sys@2023";
+        String server = "172.30.84.147";
+        int port = 22;
+        try {
+            JSch jsch = new JSch();
+            Session session = jsch.getSession(username, server, port);
+            session.setPassword(password);
+            session.setConfig("StrictHostKeyChecking", "no"); // Skip host key checking (can be dangerous in production)
+            session.connect();
+
+            ChannelSftp channelSftp = (ChannelSftp) session.openChannel("sftp");
+            channelSftp.connect();
+
+            // Change to the desired upload directory on the server
+            channelSftp.cd(uploadedDirectory);
+
+            // Upload the file to the server
+            try (InputStream inputStream = attachedFile.getInputStream()) {
+                channelSftp.put(inputStream, uploadFileName);
+            }
+
+            channelSftp.disconnect();
+            session.disconnect();
+
+            responseMessage.setStatus(SystemDataInt.MESSAGE_STATUS_SUCCESSFUL.value());
+            responseMessage.setText("File uploaded successfully.");
+        } catch (JSchException | SftpException | IOException e) {
+            responseMessage.setStatus(SystemDataInt.MESSAGE_STATUS_UNSUCCESSFUL.value());
+            responseMessage.setText("Failed to upload file: " + e.getMessage());
+        }
+        responseMessage.setStatus(SystemDataInt.MESSAGE_STATUS_SUCCESSFUL.value());
+        return responseMessage;
+    }
+
+
+    public static FileUploadDTO fileUploadPathRetrieverRemote(HttpServletRequest request) throws IOException, SftpException, JSchException {
+        int port = 22;
+        String username = "sysadmin";
+        String password = "Sys@2023";
+        String serverAddress = "172.30.84.147"; // Replace with the server address
+        Calendar calendar = Calendar.getInstance();
+        Integer currentYear = calendar.get(Calendar.YEAR);
+        Integer currentMonth = calendar.get(Calendar.MONTH) + 1;
+        String monthName = new SimpleDateFormat("MMM").format(calendar.getTime());
+        Integer currentDay = calendar.get(Calendar.DATE);
+        String day = currentDay.toString().length() == 1 ? "0" + currentDay.toString() : currentDay.toString();
+        String year = currentYear.toString();
+        String remoteBaseDirectory = "opt/gyalsungDocument/profilePicture/" + year + "/" + monthName + "/" + day + "/";
+        String encodedPassword;
+        try {
+            // Initialize the VFS manager
+            StandardFileSystemManager manager = new StandardFileSystemManager();
+            manager.init();
+
+            // Create the options for the connection
+            FileSystemOptions opts = new FileSystemOptions();
+            SftpFileSystemConfigBuilder.getInstance().setStrictHostKeyChecking(opts, "no");
+            encodedPassword = URLEncoder.encode(password, "UTF-8");
+
+            // Create the remote URL for the directory
+            String remoteUrl = "sftp://" + username + ":" + encodedPassword + "@" + serverAddress + "/" + remoteBaseDirectory;
+
+            // Create the remote folder
+            FileObject remoteFolder = manager.resolveFile(remoteUrl, opts);
+            if (!remoteFolder.exists()) {
+                remoteFolder.createFolder();
+                System.out.println("Remote directory created successfully.");
+            } else {
+                System.out.println("Remote directory already exists.");
+            }
+
+            // Close the manager
+            manager.close();
+        } catch (FileSystemException e) {
+            e.printStackTrace();
+        }
+
+        FileUploadDTO fileUploadDTO = new FileUploadDTO();
+        fileUploadDTO.setUploadFilePath(remoteBaseDirectory);
+        return fileUploadDTO;
+    }
+
 }

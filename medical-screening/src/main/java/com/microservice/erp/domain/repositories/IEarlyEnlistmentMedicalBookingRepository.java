@@ -7,5 +7,8 @@ import java.math.BigInteger;
 
 public interface IEarlyEnlistmentMedicalBookingRepository extends JpaRepository<EarlyEnlistmentMedicalBooking, BigInteger> {
     EarlyEnlistmentMedicalBooking findFirstByOrderByHospitalBookingIdDesc();
-    EarlyEnlistmentMedicalBooking findByEarlyEnlistmentId(BigInteger earlyEnlistmentId);
+
+    EarlyEnlistmentMedicalBooking findByEarlyEnlistmentIdAndUserId(BigInteger earlyEnlistmentId, BigInteger userId);
+
+    EarlyEnlistmentMedicalBooking findByCid(String cid);
 }

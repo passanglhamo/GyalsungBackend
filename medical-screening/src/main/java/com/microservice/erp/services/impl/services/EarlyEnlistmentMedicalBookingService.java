@@ -4,11 +4,13 @@ import com.microservice.erp.domain.dto.ApplicationProperties;
 import com.microservice.erp.domain.dto.EarlyEnlistmentMedBookingDto;
 import com.microservice.erp.domain.dto.EventBusDto;
 import com.microservice.erp.domain.dto.UserInfoDto;
+import com.microservice.erp.domain.entities.EarlyEnlistmentMedicalBooking;
 import com.microservice.erp.domain.mapper.EarlyEnlistmentMedicalBookingMapper;
 import com.microservice.erp.domain.repositories.IEarlyEnlistmentMedicalBookingRepository;
 import com.microservice.erp.services.HeaderToken;
 import com.microservice.erp.services.iServices.IEarlyEnlistmentMedicalBookingService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -27,7 +29,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class EarlyEnlistmentMedicalBookingService implements IEarlyEnlistmentMedicalBookingService {
-    private final IEarlyEnlistmentMedicalBookingRepository repository;
+    private final IEarlyEnlistmentMedicalBookingRepository iEarlyEnlistmentMedicalBookingRepository;
     private final EarlyEnlistmentMedicalBookingMapper mapper;
     private final HeaderToken headerToken;
     private final AddToQueue addToQueue;
@@ -38,90 +40,90 @@ public class EarlyEnlistmentMedicalBookingService implements IEarlyEnlistmentMed
 
 
     @Override
-    public ResponseEntity<?> save(String authHeader, EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto) {
-        if (Objects.isNull(earlyEnlistmentMedBookingDto.getHospitalBookingId())) {
-            var earlyEnlistmentMedicalBooking = repository.save(
-                    mapper.mapToEntity(
-                            earlyEnlistmentMedBookingDto
-                    )
-            );
+    public ResponseEntity<?> bookMedicalAppointment(String authHeader, BigInteger currentUserId, EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto) throws Exception {
+        //todo: need to call user ms and save user details such as name, cid, gender and dob
+        BigInteger applicantUserId = earlyEnlistmentMedBookingDto.getUserId();
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+        HttpEntity<String> httpRequest = headerToken.tokenHeader(authHeader);
+        String userUrl = properties.getUserProfileById() + applicantUserId;
+        ResponseEntity<UserInfoDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserInfoDto.class);
 
-            var medicalBooking = repository.save(earlyEnlistmentMedicalBooking);
-            earlyEnlistmentMedBookingDto.setHospitalBookingId(medicalBooking.getHospitalBookingId());
-            try {
-                sendEmailAndSms(authHeader, earlyEnlistmentMedBookingDto.getSignupUserId(), earlyEnlistmentMedBookingDto.getAppointmentDate(),
-                        earlyEnlistmentMedBookingDto.getHospitalName(),new Date());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            return ResponseEntity.ok(earlyEnlistmentMedBookingDto);
-        }else{
-            repository.findById(earlyEnlistmentMedBookingDto.getHospitalBookingId()).ifPresent(d -> {
-                d.setHospitalId(earlyEnlistmentMedBookingDto.getHospitalId());
-                d.setAppointmentDate(earlyEnlistmentMedBookingDto.getAppointmentDate());
-                d.setAmPm(earlyEnlistmentMedBookingDto.getAmPm());
-                d.setUpdatedBy(earlyEnlistmentMedBookingDto.getUserId());
-                d.setUpdatedDate(new Date());
-                earlyEnlistmentMedBookingDto.setHospitalBookingId(d.getHospitalBookingId());
-                repository.save(d);
-            });
-        }
+        EarlyEnlistmentMedicalBooking earlyEnlistmentMedicalBookingDb = iEarlyEnlistmentMedicalBookingRepository.findByCid(Objects.requireNonNull(userResponse.getBody()).getCid());
 
-        try {
-            sendEmailAndSms(authHeader, earlyEnlistmentMedBookingDto.getSignupUserId(), earlyEnlistmentMedBookingDto.getAppointmentDate(),
-                    earlyEnlistmentMedBookingDto.getHospitalName(), new Date());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        EarlyEnlistmentMedicalBooking earlyEnlistmentMedicalBooking = new ModelMapper().map(earlyEnlistmentMedBookingDto, EarlyEnlistmentMedicalBooking.class);
+        earlyEnlistmentMedicalBooking.setFullName(Objects.requireNonNull(userResponse.getBody()).getFullName());
+        earlyEnlistmentMedicalBooking.setDob(Objects.requireNonNull(userResponse.getBody()).getDob());
+        earlyEnlistmentMedicalBooking.setCid(Objects.requireNonNull(userResponse.getBody()).getCid());
+        earlyEnlistmentMedicalBooking.setGender(Objects.requireNonNull(userResponse.getBody()).getGender());
+
+        if (earlyEnlistmentMedicalBookingDb == null) {
+            EarlyEnlistmentMedicalBooking EarlyEnlistmentMedicalBookingId = iEarlyEnlistmentMedicalBookingRepository.findFirstByOrderByHospitalBookingIdDesc();
+            BigInteger hospitalBookingId = EarlyEnlistmentMedicalBookingId == null ? BigInteger.ONE : EarlyEnlistmentMedicalBookingId.getHospitalBookingId().add(BigInteger.ONE);
+            earlyEnlistmentMedicalBooking.setHospitalBookingId(hospitalBookingId);
+            earlyEnlistmentMedicalBooking.setCreatedBy(currentUserId);
+            earlyEnlistmentMedicalBooking.setCreatedDate(new Date());
+
+        } else {
+            earlyEnlistmentMedicalBooking.setHospitalBookingId(earlyEnlistmentMedicalBookingDb.getHospitalBookingId());
+            earlyEnlistmentMedicalBooking.setCreatedBy(earlyEnlistmentMedicalBookingDb.getCreatedBy());
+            earlyEnlistmentMedicalBooking.setCreatedDate(earlyEnlistmentMedicalBookingDb.getCreatedDate());
+            earlyEnlistmentMedicalBooking.setUpdatedBy(currentUserId);
+            earlyEnlistmentMedicalBooking.setUpdatedDate(new Date());
         }
+        iEarlyEnlistmentMedicalBookingRepository.save(earlyEnlistmentMedicalBooking);
+        sendEmailAndSms(earlyEnlistmentMedBookingDto, userResponse);
 
         return ResponseEntity.ok(earlyEnlistmentMedBookingDto);
 
     }
 
-    @Override
-    public ResponseEntity<?> getEarlyEnlistMedBookingById(BigInteger earlyEnlistmentId) {
-        return ResponseEntity.ok(repository.findByEarlyEnlistmentId(earlyEnlistmentId));
-    }
-
-    private void sendEmailAndSms(String authHeader, BigInteger userId, Date appointmentDate, String hospitalName, Date date) throws Exception {
+    private void sendEmailAndSms(EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto
+            , ResponseEntity<UserInfoDto> userResponse) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
-        HttpEntity<String> httpRequest = headerToken.tokenHeader(authHeader);
-
-        String userUrl = properties.getUserProfileById() + userId;
-        ResponseEntity<UserInfoDto> userResponse = restTemplate.exchange(userUrl, HttpMethod.GET, httpRequest, UserInfoDto.class);
-        String emailMessage = "";
-        String subject = "";
-
+        Character amPm = earlyEnlistmentMedBookingDto.getAmPm();
+        Date appointmentDate = earlyEnlistmentMedBookingDto.getAppointmentDate();
+        String hospitalName = earlyEnlistmentMedBookingDto.getHospitalName();
+        String morningOrAfternoon = amPm == 'A' ? "morning" : "afternoon";
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy");
-        String formattedDate = dateFormat.format(date);
-
         String formattedAppointmentDate = dateFormat.format(appointmentDate);
+        String subject = "Medical Appointment";
+        String emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",<br></br>" +
+                " In continuation of your early enlistment application, the Gyalsung Head Office is pleased to inform you that your application has been reviewed. " +
+                " Now you are required to undergo a medical examination. Please report to " + hospitalName + " on " + formattedAppointmentDate + ", in the " + morningOrAfternoon + ".<br>" +
+                "We look forward to seeing you in the hospital.</br></br><br></br>" +
+                "<small>***This is a system-generated email. Please do not respond to this email.***</small></br></br><br></br>";
 
-        subject = "Medical Appointment";
-        emailMessage = "Medical Appointment\n" +
+        String smsMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
                 "\n" +
-                "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
-                "\n" +
-                "In continuation of your early enlistment application submitted on " + formattedDate + ",the Gyalsung Head Office is pleased to inform you that your application has been reviewed. Now you are required to undergo a medical examination. Please report to "+hospitalName+" on "+formattedAppointmentDate+".\n" +
-                "\n" +
+                "In continuation of your early enlistment application, the Gyalsung Head Office is pleased to inform you that your application has been reviewed." +
+                " Now you are required to undergo a medical examination. Please report to " + hospitalName + " on " + formattedAppointmentDate + ", in the " + morningOrAfternoon + ".\n" +
                 "\n" +
                 "We look forward to seeing you in the hospital.\n";
 
 
-        EventBusDto eventBus = EventBusDto.withId(
+        EventBusDto eventBusSms = EventBusDto.withId(
+                null,
+                null,
+                null,
+                smsMessage,
+                null,
+                Objects.requireNonNull(userResponse.getBody()).getMobileNo(),
+                null,
+                null);
+        EventBusDto eventBusEmail = EventBusDto.withId(
                 Objects.requireNonNull(userResponse.getBody()).getEmail(),
                 null,
                 null,
                 emailMessage,
                 subject,
-                Objects.requireNonNull(userResponse.getBody()).getMobileNo(),
+                null,
                 null,
                 null);
 
-        //todo get data from properties
-        addToQueue.addToQueue("email", eventBus);
-        addToQueue.addToQueue("sms", eventBus);
+        addToQueue.addToQueue("email", eventBusEmail);
+        addToQueue.addToQueue("sms", eventBusSms);
     }
 }

@@ -15,6 +15,7 @@ public class UserInfoDto {
     private String sex;
     private Date dob;
     private String cid;
+    private Character gender;
     private String mobileNo;
     private String employeeId;
     private String defaultBranchCode;

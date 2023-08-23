@@ -1,5 +1,7 @@
 package com.microservice.erp.controllers.rest;
 
+import com.infoworks.lab.jjwt.JWTPayload;
+import com.infoworks.lab.jjwt.TokenValidator;
 import com.microservice.erp.domain.dto.EarlyEnlistmentMedBookingDto;
 import com.microservice.erp.services.iServices.IEarlyEnlistmentMedicalBookingService;
 import com.microservice.erp.services.impl.services.SpringSecurityAuditorAware;
@@ -18,17 +20,18 @@ public class EarlyEnlistmentMedicalBookingController {
 
     private final IEarlyEnlistmentMedicalBookingService service;
 
-    @PostMapping
-    public ResponseEntity<?> save(@RequestHeader("Authorization") String authHeader,
-                                  @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                  @RequestBody EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto)
-            throws IOException {
-        SpringSecurityAuditorAware.setToken(token);
-        return service.save(authHeader,earlyEnlistmentMedBookingDto);
+    @RequestMapping(value = "/bookMedicalAppointment", method = RequestMethod.POST)
+    public ResponseEntity<?> bookMedicalAppointment(@RequestHeader("Authorization") String authHeader,
+                                                    @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                    @RequestBody EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto) throws Exception {
+        JWTPayload jwtPayload = TokenValidator.parsePayload(token, JWTPayload.class);
+        BigInteger currentUserId = new BigInteger(jwtPayload.getSub());
+        return service.bookMedicalAppointment(authHeader, currentUserId, earlyEnlistmentMedBookingDto);
     }
 
-    @GetMapping("/getEarlyEnlistMedBookingById")
-    public ResponseEntity<?> getEarlyEnlistMedBookingById(@RequestParam("earlyEnlistmentId") BigInteger earlyEnlistmentId) {
-        return service.getEarlyEnlistMedBookingById(earlyEnlistmentId);
+    @GetMapping("/getEarlyEnlistMedBookingByUserId")
+    public ResponseEntity<?> getEarlyEnlistMedBookingByUserId(@RequestParam("userId") BigInteger userId,
+                                                              @RequestParam("earlyEnlistmentId") BigInteger earlyEnlistmentId) {
+        return service.getEarlyEnlistMedBookingByUserId(userId, earlyEnlistmentId);
     }
 }
