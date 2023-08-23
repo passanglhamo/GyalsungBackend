@@ -14,8 +14,6 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 @Entity
-//@Table(name = "users", indexes = {@Index(name = "idx_username", columnList = "username")
-//        , @Index(name = "idx_email", columnList = "email")})
 @Table(name = "users")
 @AttributeOverride(name = "id", column = @Column(name = "id", columnDefinition = "bigint"))
 public class User extends Auditable<BigInteger, Long> implements UserDetails {
@@ -52,12 +50,6 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
 
     @JsonIgnore
     private boolean enabled;
-//
-//    @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "sa_user_role_mapping",
-//            joinColumns = @JoinColumn(name = "auth_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id"))
-//    private Set<Role> roles = new HashSet<>();
 
     @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Set<Role> roles;
@@ -169,17 +161,6 @@ public class User extends Auditable<BigInteger, Long> implements UserDetails {
     public void setMobileNo(String mobileNo) {
         this.mobileNo = mobileNo;
     }
-//    public void addRoles(Role... roles) {
-//        if (getRoles() == null) {
-//            setRoles(new HashSet<>());
-//        }
-//        //getRoles().addAll(Arrays.asList(roles));
-//        Stream.of(roles)
-//                .forEach(role -> {
-//                    this.getRoles().add(role);
-//                    role.getUsers().add(this);
-//                });
-//    }
 
     public Map<Integer, String> getSecrets() {
         return secrets;

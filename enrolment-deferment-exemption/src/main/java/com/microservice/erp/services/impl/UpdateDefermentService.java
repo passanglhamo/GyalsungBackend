@@ -41,60 +41,6 @@ public class UpdateDefermentService implements IUpdateDefermentService {
     @Qualifier("userProfileTemplate")
     RestTemplate restTemplate;
 
-
-    @Override
-    public ResponseEntity<?> approveByIds(String authHeader, UpdateDefermentCommand command) {
-
-        repository.findAllByDefermentId(command.getDefermentIds()).forEach(d -> {
-            d.setStatus(ApprovalStatus.APPROVED.value());
-            d.setApprovalRemarks(command.getRemarks());
-            d.setUpdatedBy(command.getUserId());
-            d.setUpdatedDate(new Date());
-            repository.save(d);
-            try {
-                sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.APPROVED.value());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-        });
-
-        return ResponseEntity.ok(new MessageResponse("Approved successfully"));
-    }
-
-    @Override
-    public ResponseEntity<?> rejectByIds(String authHeader, @Valid UpdateDefermentCommand command) {
-        repository.findAllByDefermentId(command.getDefermentIds()).forEach(d -> {
-            d.setStatus(ApprovalStatus.REJECTED.value());
-            d.setApprovalRemarks(command.getRemarks());
-            d.setUpdatedBy(command.getUserId());
-            d.setUpdatedDate(new Date());
-            repository.save(d);
-            try {
-                sendEmailAndSms(authHeader, d.getUserId(), ApprovalStatus.REJECTED.value());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-        });
-
-        return ResponseEntity.ok(new MessageResponse("Rejected successfully"));
-
-    }
-
-    @Override
-    public ResponseEntity<?> saveToDraft(String authHeader, UpdateDefermentCommand command) {
-        repository.findAllByDefermentId(command.getDefermentIds()).forEach(d -> {
-            d.setStatus(command.getStatus());
-            d.setApprovalRemarks(command.getRemarks());
-            d.setUpdatedBy(command.getUserId());
-            d.setUpdatedDate(new Date());
-            repository.save(d);
-        });
-
-        return ResponseEntity.ok(new MessageResponse("Saved successfully"));
-    }
-
     @Override
     public ResponseEntity<?> reviewRevertById(String authHeader, @Valid ReviewDefermentCommand command) throws Exception {
         final String[] caseNumber = {null};
@@ -119,7 +65,7 @@ public class UpdateDefermentService implements IUpdateDefermentService {
                 mapper.mapToEntityAudit(repository.findByDefermentId(command.getDefermentId()).get(), command.getUserId())
         );
 
-        sendReviewRevertEmailAndSms(authHeader, command.getUserId(), caseNumber[0], command.getStatus(), userIdDB[0], command.getReviewRemarks());
+        sendReviewRevertEmailAndSms(authHeader, command.getUserId(), caseNumber[0], command.getStatus(), userIdDB[0], command.getReviewRemarks(),command.getStudentName());
 
         return ResponseEntity.ok(new MessageResponse("Reviewed/Reverted successfully"));
     }
@@ -129,21 +75,21 @@ public class UpdateDefermentService implements IUpdateDefermentService {
         final BigInteger[] reviewerIdDB = {null};
         final String[] caseNumber = {null};
         repository.findByDefermentId(command.getDefermentId()).ifPresent(d -> {
-                reviewerIdDB[0] = d.getReviewerId();
-                caseNumber[0] = d.getCaseNumber();
-                d.setStatus(command.getStatus());
-                d.setApprovalRemarks(command.getReviewRemarks());
-                d.setApproverId(command.getUserId());
-                d.setUpdatedBy(command.getUserId());
-                d.setUpdatedDate(new Date());
-                repository.save(d);
+            reviewerIdDB[0] = d.getReviewerId();
+            caseNumber[0] = d.getCaseNumber();
+            d.setStatus(command.getStatus());
+            d.setApprovalRemarks(command.getReviewRemarks());
+            d.setApproverId(command.getUserId());
+            d.setUpdatedBy(command.getUserId());
+            d.setUpdatedDate(new Date());
+            repository.save(d);
         });
 
         auditRepository.save(
                 mapper.mapToEntityAudit(repository.findByDefermentId(command.getDefermentId()).get(), command.getUserId())
         );
 
-        sendReviewRevertEmailAndSms(authHeader, command.getUserId(), caseNumber[0], command.getStatus(), reviewerIdDB[0], command.getReviewRemarks());
+        sendReviewRevertEmailAndSms(authHeader, command.getUserId(), caseNumber[0], command.getStatus(), reviewerIdDB[0], command.getReviewRemarks(), command.getStudentName());
 
 
         return ResponseEntity.ok(new MessageResponse("Approved/Rejected successfully"));
@@ -152,7 +98,7 @@ public class UpdateDefermentService implements IUpdateDefermentService {
     @Override
     public ResponseEntity<?> mailSendToApplicant(String authHeader, ReviewDefermentCommand command) {
         repository.findByDefermentId(command.getDefermentId()).ifPresent(d -> {
-            if (d.getStatus().equals(ApprovalStatus.APPROVED.value())||d.getStatus().equals(ApprovalStatus.REJECTED.value())) {
+            if (d.getStatus().equals(ApprovalStatus.APPROVED.value()) || d.getStatus().equals(ApprovalStatus.REJECTED.value())) {
                 d.setMailStatus(MailSentStatus.SENT.value());
                 d.setApprovalRemarks(command.getReviewRemarks());
                 d.setUpdatedBy(command.getUserId());
@@ -176,10 +122,10 @@ public class UpdateDefermentService implements IUpdateDefermentService {
     @Override
     public ResponseEntity<?> saveDraftById(String authHeader, ReviewDefermentCommand command) {
         repository.findByDefermentId(command.getDefermentId()).ifPresent(d -> {
-                d.setStatus(command.getStatus());
-                d.setUpdatedBy(command.getUserId());
-                d.setUpdatedDate(new Date());
-                repository.save(d);
+            d.setStatus(command.getStatus());
+            d.setUpdatedBy(command.getUserId());
+            d.setUpdatedDate(new Date());
+            repository.save(d);
         });
 
         auditRepository.save(
@@ -241,7 +187,7 @@ public class UpdateDefermentService implements IUpdateDefermentService {
         addToQueue.addToQueue("sms", eventBus);
     }
 
-    private void sendReviewRevertEmailAndSms(String authHeader, BigInteger userId, String caseNumber, Character status, BigInteger studentId, String reviewRemarks) throws Exception {
+    private void  sendReviewRevertEmailAndSms(String authHeader, BigInteger userId, String caseNumber, Character status, BigInteger studentId, String reviewRemarks, String studentName) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
@@ -256,7 +202,7 @@ public class UpdateDefermentService implements IUpdateDefermentService {
 
         if (status.equals(ApprovalStatus.REVIEWED.value())) {
             subject = "Reviewed for Deferment";
-            emailMessage = "Please review the deferment application of " + Objects.requireNonNull(userResponse.getBody()).getFullName() + "\n" +
+            emailMessage = "Please review the deferment application of " + studentName + "\n" +
                     " with case number " + caseNumber + "\n" +
                     "\n" +
                     "and proceed with either its approval or rejection.\n";
@@ -264,13 +210,13 @@ public class UpdateDefermentService implements IUpdateDefermentService {
 
         } else {
 
-            if (status.equals(ApprovalStatus.APPROVED.value()) ) {
+            if (status.equals(ApprovalStatus.APPROVED.value())) {
                 subject = "Deferment Approved";
                 emailMessage = "The deferment application bearing case number " + caseNumber + " has been granted approval. Kindly proceed with the required course of action.\n";
-            } else if(status.equals(ApprovalStatus.REJECTED.value())){
+            } else if (status.equals(ApprovalStatus.REJECTED.value())) {
                 subject = "Deferment Rejected";
                 emailMessage = "The deferment application bearing case number " + caseNumber + " has been rejected. Kindly proceed with the required course of action.\n";
-            }else {
+            } else {
                 subject = "Request for Missing Document";
                 emailMessage = "Dear " + Objects.requireNonNull(userResponse.getBody()).getFullName() + ",\n" +
                         "\n" +

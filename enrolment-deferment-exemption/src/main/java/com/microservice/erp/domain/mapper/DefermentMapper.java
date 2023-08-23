@@ -223,8 +223,8 @@ public class DefermentMapper {
                 defermentInfoAudit.getApplicationDate(),
                 defermentInfoAudit.getCaseNumber(),
                 defermentInfoAudit.getCreatedDate(),
-                defermentInfoAudit.getReviewerId(),
-                defermentInfoAudit.getApproverId(),
+                null,
+                null,
                 null
         );
     }

@@ -42,9 +42,8 @@ public class DefermentInfoAudit extends BaseEntity {
     @Column(name = "deferment_year", columnDefinition = "char(4) ")
     private String defermentYear;
 
-    @CreatedDate
+    @NotNull
     @Column(name = "application_date")
-    @Temporal(TemporalType.DATE)
     private Date applicationDate;
 
     @Basic(optional = false)
@@ -68,12 +67,6 @@ public class DefermentInfoAudit extends BaseEntity {
 
     @Column(name = "mail_status", columnDefinition = "char(1)")
     private Character mailStatus;
-
-    @Column(name = "reviewer_id", columnDefinition = "bigint")
-    private BigInteger reviewerId;
-
-    @Column(name = "approver_id", columnDefinition = "bigint")
-    private BigInteger approverId;
 
     @OneToMany(
             mappedBy = "defermentAudit",
@@ -185,22 +178,6 @@ public class DefermentInfoAudit extends BaseEntity {
 
     public void setMailStatus(Character mailStatus) {
         this.mailStatus = mailStatus;
-    }
-
-    public BigInteger getReviewerId() {
-        return reviewerId;
-    }
-
-    public void setReviewerId(BigInteger reviewerId) {
-        this.reviewerId = reviewerId;
-    }
-
-    public BigInteger getApproverId() {
-        return approverId;
-    }
-
-    public void setApproverId(BigInteger approverId) {
-        this.approverId = approverId;
     }
 
     public BigInteger getDefermentId() {

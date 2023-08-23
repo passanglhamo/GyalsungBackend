@@ -5,7 +5,7 @@ import com.microservice.erp.domain.dao.UserDao;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.ApiAccessToken;
 import com.microservice.erp.domain.entities.UserInfo;
-import com.microservice.erp.domain.helper.Role;
+import com.microservice.erp.domain.helper.Status;
 import com.microservice.erp.domain.repositories.IUserInfoRepository;
 import com.microservice.erp.services.iServices.ISaUserService;
 import com.microservice.erp.services.iServices.ISignupService;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -39,7 +38,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -151,8 +149,10 @@ public class SaUserService implements ISaUserService {
             userProfileDto.setMobileNo(item.getMobileNo());
             userProfileDto.setEmail(item.getEmail());
             userProfileDto.setGender(item.getGender());
+            userProfileDto.setGenderName(item.getGender().equals('M') ? "Male" : "Female");
             userProfileDto.setDob(item.getDob());
             userProfileDto.setStatus(Objects.requireNonNull(response.getBody()).getStatus());
+            userProfileDto.setStatusName(Objects.requireNonNull(response.getBody()).getStatus().equals(Status.Active.value()) ? Status.Active.name() : Status.Inactive.name());
             userProfileDto.setRoles(Objects.requireNonNull(response.getBody()).getRoles());
             userProfileDtos.add(userProfileDto);
         });
@@ -164,9 +164,8 @@ public class SaUserService implements ISaUserService {
     }
 
 
-
     @Override
-    public ResponseEntity<?> getOfficersByUserType(String authHeader,Character userTypeVal) {
+    public ResponseEntity<?> getOfficersByUserType(String authHeader, Character userTypeVal) {
 
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
@@ -182,7 +181,7 @@ public class SaUserService implements ISaUserService {
             ResponseEntity<AuthUserDto> response = restTemplate.exchange(url, HttpMethod.GET, request, AuthUserDto.class);
             String userType = new JSONArray("[" + Objects.requireNonNull(response.getBody()).getRoles().toString().substring(1, Objects.requireNonNull(response.getBody()).getRoles().toString().length() - 1).replaceAll("=", ":") + "]")
                     .getJSONObject(0).getString("userType");
-            if(userType.equals(userTypeVal.toString())){
+            if (userType.equals(userTypeVal.toString())) {
                 userProfileDto.setUserId(item.getUserId());
                 userProfileDto.setFullName(item.getFullName());
                 userProfileDto.setCid(item.getCid());
@@ -196,19 +195,11 @@ public class SaUserService implements ISaUserService {
 
         });
 
-        return  ResponseEntity.ok(userProfileDtos);
+        return ResponseEntity.ok(userProfileDtos);
 
     }
 
-
-
-
-
     private ResponseEntity<?> addNewUser(UserDto userDto) throws IOException, ParseException, ApiException {
-//        Optional<UserInfo> saUserEmail = iUserInfoRepository.findByEmail(userDto.getEmail());
-//        if (saUserEmail.isPresent()) {
-//            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
-//        }
 
         if (!userDto.getCid().isEmpty()) {
             Optional<UserInfo> saUserCid = iUserInfoRepository.findByCid(userDto.getCid());
@@ -222,7 +213,6 @@ public class SaUserService implements ISaUserService {
 
 
         saUser.setSignupUser('N');
-        //String password = generatePassword(8); //to generate password and send email
         List<BigInteger> saRoleDtos = userDto.getRoles();
         if (saRoleDtos.size() == 0) {
             return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
@@ -246,22 +236,10 @@ public class SaUserService implements ISaUserService {
                 , saUser.getUsername(), userDto.getPassword(), saUser.getSignupUser(), userDto.getRoles());
         addToQueue.addToUserQueue("addUser", eventBusUser);
 
-//        String emailBody = "Dear " + userDto.getFullName() + ", " + "Your information has been added to Gyalsung MIS against this your email. " + "Please login in using email: " + userDto.getEmail() + " and password " + password;
-//        String subject = "User Added to Gyalsung System";
-//        EventBus eventBusEmail = EventBus.withId(userDto.getEmail(), null, null, emailBody, subject, null);
-//        String smsBody = "Dear " + userDto.getFullName() + ", " + " Your information has been added to Gyalsung MIS against this your email. " + "Please check your email " + userDto.getEmail() + " to see login credentials.";
-//        EventBus eventBusSms = EventBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
-//
-//         addToQueue.addToQueue("email", eventBusEmail);
-//        addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("User added successfully!"));
     }
 
     private ResponseEntity<?> editUser(UserDto userDto) throws JsonProcessingException {
-//        String isEmailAlreadyInUse = userDao.isEmailAlreadyInUse(userDto.getEmail(), userDto.getUserId());
-//        if (isEmailAlreadyInUse != null) {
-//            return ResponseEntity.badRequest().body(new MessageResponse("Email already in use."));
-//        }
         String isCidAlreadyInUse = userDao.isCidAlreadyInUse(userDto.getCid(), userDto.getUserId());
         if (isCidAlreadyInUse != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("CID " + userDto.getCid() + " already in use."));
@@ -273,28 +251,13 @@ public class SaUserService implements ISaUserService {
         saUser.setGender(userDto.getGender());
         saUser.setMobileNo(userDto.getMobileNo());
         saUser.setEmail(userDto.getEmail());
-        //saUser.setStatus(userDto.getStatus());
         List<BigInteger> saRoleDtos = userDto.getRoles();
-        if (saRoleDtos.size() == 0) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
+        if (saRoleDtos.size() != 0) {
+            EventBusUser eventBusUser = EventBusUser.withId(saUserDb.getUserId(), userDto.getStatus(), saUser.getCid(), null, saUserDb.getEmail(), saUserDb.getMobileNo()
+                    , saUserDb.getUsername(), null, saUserDb.getSignupUser(), userDto.getRoles());
+            addToQueue.addToUserQueue("addUser", eventBusUser);
         }
 
-        BigInteger userId = iUserInfoRepository.save(saUser).getUserId();
-
-        //todo: need to pass dob in string format
-        EventBusUser eventBusUser = EventBusUser.withId(userId, userDto.getStatus(), saUser.getCid(),null, saUser.getEmail(), saUser.getMobileNo()
-                , saUser.getUsername(), null, saUser.getSignupUser(), userDto.getRoles());
-        addToQueue.addToUserQueue("addUser", eventBusUser);
-
-        String emailBody = "Dear " + saUser.getFullName() + ", " + "Your information in Gyalsung MIS has been updated. " + "Please login in using email: " + saUser.getEmail();
-        String subject = "User Updated in Gyalsung System";
-        EventBus eventBusEmail = EventBus.withId(userDto.getEmail(), null, null, emailBody, subject, userDto.getMobileNo());
-
-        String smsBody = "Dear " + saUser.getFullName() + ", " + " Your information in Gyalsung MIS has been updated. " + "Please check your email " + saUser.getEmail() + " to see login credentials.";
-        EventBus eventBusSms = EventBus.withId(null, null, null, smsBody, null, userDto.getMobileNo());
-
-        addToQueue.addToQueue("email", eventBusEmail);
-        addToQueue.addToQueue("sms", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
     }
 

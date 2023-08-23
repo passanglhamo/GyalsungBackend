@@ -11,12 +11,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 public interface IUpdateDefermentService {
-    ResponseEntity<?> approveByIds(String authHeader, @Valid UpdateDefermentCommand command);
-
-    ResponseEntity<?> rejectByIds(String authHeader, @Valid UpdateDefermentCommand command);
-
-    ResponseEntity<?> saveToDraft(String authHeader, @Valid UpdateDefermentCommand command);
-
     ResponseEntity<?> reviewRevertById(String authHeader, @Valid ReviewDefermentCommand command) throws Exception;
 
     ResponseEntity<?> approveRejectById(String authHeader, @Valid ReviewDefermentCommand command) throws Exception;
@@ -45,6 +39,7 @@ public interface IUpdateDefermentService {
         private String reviewRemarks;
         private Character status;
         private BigInteger defermentId;
+        private String studentName;
     }
 
 

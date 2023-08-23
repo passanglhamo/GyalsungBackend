@@ -32,6 +32,7 @@ public class DefermentListDto {
     private Character gender;
     private String genderName;
     private Date applicationDate;
+    private String applicationDateInString;
     private String caseNumber;
     private Collection<DefermentDto> defermentList;
     private Date createdDate;
@@ -41,6 +42,9 @@ public class DefermentListDto {
     private String approverFullName;
     private String reasonName;
     private Character isMedicalReason;
+    private String statusName;
+    private String mailStatusName;
+    private String reviewerRemarks;
 
 
     public static DefermentListDto withId(
@@ -60,6 +64,7 @@ public class DefermentListDto {
             Character gender,
             String genderName,
             Date applicationDate,
+            String applicationDateInString,
             String caseNumber,
             Collection<DefermentDto> defermentList,
             Date createdDate,
@@ -68,7 +73,10 @@ public class DefermentListDto {
             String reviewerFullName,
             String approverFullName,
             String reasonName,
-            Character isMedicalReason) {
+            Character isMedicalReason,
+            String statusName,
+            String mailStatusName,
+            String reviewerRemarks) {
         return new DefermentListDto(
                 id,
                 defermentYear,
@@ -86,6 +94,7 @@ public class DefermentListDto {
                 gender,
                 genderName,
                 applicationDate,
+                applicationDateInString,
                 caseNumber,
                 defermentList,
                 createdDate,
@@ -94,6 +103,9 @@ public class DefermentListDto {
                 reviewerFullName,
                 approverFullName,
                 reasonName,
-                isMedicalReason);
+                isMedicalReason,
+                statusName,
+                mailStatusName,
+                reviewerRemarks);
     }
 }

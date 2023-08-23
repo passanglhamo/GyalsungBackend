@@ -25,14 +25,23 @@ public class AddUserEventService {
     private final PasswordEncoder encoder;
 
     @KafkaListener(topics = {"${topic.addUser}"}, concurrency = "1")
-    public void sendEmail(@Payload String message, Acknowledgment ack) throws Exception {
+    public void addUser(@Payload String message, Acknowledgment ack) throws Exception {
 
         Gson gson = new Gson();
+        System.out.println("-------------------Gson start-------------------");
+        System.out.println(gson);
+        System.out.println("-------------------Gson end-------------------");
         EventBusUser userEventInfo = gson.fromJson(message, EventBusUser.class);
-
+        System.out.println("-------------------event Bus start-------------------");
+        System.out.println(userEventInfo);
+        System.out.println("-------------------event Bus end-------------------");
         User userInfo = new User();
-        Optional<User> userDb = repository.findByUserId(userEventInfo.getUserId());
+        //todo:need to check with CID not userID
+        Optional<User> userDb = repository.findByCid(userEventInfo.getCid());
 
+        System.out.println("------------------User entity Bus start-------------------");
+        System.out.println(userDb);
+        System.out.println("-------------------User entity end-------------------");
         if (!userDb.isPresent()) {
 
             String dob = userEventInfo.getDob();
@@ -41,7 +50,13 @@ public class AddUserEventService {
             userInfo.setUserId(userEventInfo.getUserId());
             userInfo.setUsername(Objects.isNull(userEventInfo.getCid()) ? userEventInfo.getEmail() :
                     userEventInfo.getCid());
+            System.out.println("-------------------email start-------------------");
+            System.out.println(userEventInfo.getEmail());
+            System.out.println("-------------------email end-------------------");
             userInfo.setEmail(userEventInfo.getEmail());
+            System.out.println("-------------------mobile start-------------------");
+            System.out.println(userEventInfo.getMobileNo());
+            System.out.println("-------------------mobile end-------------------");
             userInfo.setMobileNo(userEventInfo.getMobileNo());
             userInfo.setStatus(userEventInfo.getStatus());
             userInfo.setCid(userEventInfo.getCid());
@@ -53,6 +68,9 @@ public class AddUserEventService {
                 Role saRoleDb = roleRepository.findByUserType(UserType.STUDENT.value());// to get student user role information
                 saRoles.add(saRoleDb);
                 userInfo.setRoles(saRoles);
+                System.out.println("-------------------ROles start-------------------");
+                System.out.println(saRoleDb);
+                System.out.println("-------------------ROles end-------------------");
             } else {
                 userEventInfo.getRoles().forEach(roleId -> {
                     Role saRoleDb = roleRepository.findById(roleId).get();
@@ -60,16 +78,19 @@ public class AddUserEventService {
                 });
                 userInfo.setRoles(saRoles);
             }
+            System.out.println("-------------------Before save -------------------");
             repository.save(userInfo);
+            System.out.println("-------------------Save method start-------------------");
+            System.out.println(userInfo);
+            System.out.println("-------------------Save method end-------------------");
 
         } else {
-            repository.findByUserId(userEventInfo.userId).ifPresent(user -> {
+            repository.findByCid(userEventInfo.getCid()).ifPresent(user -> {
                 user.setStatus(userEventInfo.getStatus());
-                user.setUserId(userEventInfo.userId);
                 Set<Role> saRoles = new HashSet<>();
                 Set<Role> roleDb = user.getRoles();
                 user.getRoles().removeAll(roleDb);
-                if (userEventInfo.getUserType().equals('S')) {
+                if (userEventInfo.getUserType().equals('Y')) {
                     Role saRoleDb = roleRepository.findByUserType(UserType.STUDENT.value());// to get student user role information
                     saRoles.add(saRoleDb);
                     user.setRoles(saRoles);

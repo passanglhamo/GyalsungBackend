@@ -47,11 +47,9 @@ public class CaseNumberGenerator {
 
         LocalDate currentDate = LocalDate.now();
         String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("yyMMdd"));
-        Calendar calendar = Calendar.getInstance();
-        Date presentDate = calendar.getTime();
         String caseNumber = "";
         if(deferExempt.equals('D')){
-            DefermentInfo defermentInfo = repository.findByReasonIdAndApplicationDateOrderByDefermentIdDesc(reasonId,presentDate);
+            DefermentInfo defermentInfo = repository.getLatestDefermentByReasonIdAndApplicationDate(reasonId,new Date());
             if(Objects.isNull(defermentInfo)){
                 return formattedDate+"/"+deferExempt+Objects.requireNonNull(responseTraining.getBody()).getCode()+"/"+initialRandomNo;
             }
@@ -59,7 +57,7 @@ public class CaseNumberGenerator {
 
         }
         if(deferExempt.equals('E')){
-            ExemptionInfo exemptionInfo = exemptionInfoRepository.findByReasonIdAndApplicationDateOrderByExemptionIdDesc(reasonId,presentDate);
+            ExemptionInfo exemptionInfo = exemptionInfoRepository.findByReasonIdAndApplicationDateOrderByExemptionIdDesc(reasonId,new Date());
             if(Objects.isNull(exemptionInfo)){
                 return formattedDate+"/"+deferExempt+Objects.requireNonNull(responseTraining.getBody()).getCode()+"/"+initialRandomNo;
             }

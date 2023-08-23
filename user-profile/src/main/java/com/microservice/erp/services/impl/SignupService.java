@@ -275,10 +275,10 @@ public class SignupService implements ISignupService {
         userInfo.setCreatedDate(new Date());
         userInfo.setCreatedBy(userId);
         iUserInfoRepository.save(userInfo);
-
+        List<BigInteger> roles = new ArrayList<>();
 //         queue following data: password, roles, email, username, userId in auth microservices
         EventBusUser eventBusSms = EventBusUser.withId(userId, 'A', userInfo.getCid(), birthDateString, userInfo.getEmail(), userInfo.getMobileNo()
-                , userInfo.getUsername(), signupRequestDto.getPassword(), userInfo.getSignupUser(), null);
+                , userInfo.getUsername(), signupRequestDto.getPassword(), userInfo.getSignupUser(), roles);
         addToQueue.addToUserQueue("addUser", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));
     }

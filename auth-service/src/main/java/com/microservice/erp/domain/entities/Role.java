@@ -22,11 +22,11 @@ public class Role extends Auditable<BigInteger, Long> {
     private Character userType;
 
 
-    @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY, mappedBy = "roles")
+    @ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY, mappedBy = "roles",cascade = CascadeType.DETACH)
     @JsonIgnore
     private Set<User> users = new HashSet<>();
 
-    @ManyToMany(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(targetEntity = Policy.class, fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JsonIgnore
     private Set<Policy> policies;
 

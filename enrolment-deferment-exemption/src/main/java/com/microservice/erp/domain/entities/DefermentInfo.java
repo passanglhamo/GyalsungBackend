@@ -14,7 +14,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "ede_deferment_info")
-//@AttributeOverride(name = "id", column = @Column(name = "deferment_id", columnDefinition = "bigint"))
 public class DefermentInfo extends BaseEntity {
 
     //region private variables
@@ -40,9 +39,8 @@ public class DefermentInfo extends BaseEntity {
     @Column(name = "deferment_year", columnDefinition = "char(4) ")
     private String defermentYear;
 
-    @CreatedDate
+    @NotNull
     @Column(name = "application_date")
-    @Temporal(TemporalType.DATE)
     private Date applicationDate;
 
     @Basic(optional = false)

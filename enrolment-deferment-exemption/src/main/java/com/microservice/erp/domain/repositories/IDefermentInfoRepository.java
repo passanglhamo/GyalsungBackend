@@ -20,14 +20,11 @@ public interface IDefermentInfoRepository extends JpaRepository<DefermentInfo, B
             "where d.user_id =:userId order by deferment_id DESC LIMIT 1", nativeQuery = true)
     DefermentInfo getDefermentByUserId(BigInteger userId);
 
-    @Query(value = "select d.* from ede_deferment_info d \n" +
-            "where d.user_id =:userId AND (d.status !=:rejectStatus) " +
-            "order by deferment_id DESC LIMIT 1", nativeQuery = true)
-    DefermentInfo getDefermentByUserIdNotRejected(BigInteger userId, Character rejectStatus);
-
     List<DefermentInfo> findByDefermentYearAndStatus(String year, Character status);
 
     List<DefermentInfo> findAllByDefermentYearAndUserIdAndStatusIn(String defermentYear, BigInteger userId, List<Character> status);
+
+    List<DefermentInfo> findAllByDefermentYearAndUserIdAndStatusAndMailStatus(String defermentYear, BigInteger userId,Character status,Character mailStatus);
 
     List<DefermentInfo> findAllByUserIdOrderByDefermentIdDesc(BigInteger userId);
 
@@ -35,8 +32,9 @@ public interface IDefermentInfoRepository extends JpaRepository<DefermentInfo, B
 
     DefermentInfo findByDefermentYearAndStatusAndUserId(String year, Character status, BigInteger userId);
 
-    DefermentInfo findByReasonIdAndApplicationDateOrderByDefermentIdDesc(BigInteger reasonId, Date applicationDate);
-
+    @Query(value = "select d.* from ede_deferment_info d \n" +
+            "where d.reason_id = :reasonId and DATE(d.application_date) = DATE(:applicationDate) order by deferment_id DESC LIMIT 1", nativeQuery = true)
+    DefermentInfo getLatestDefermentByReasonIdAndApplicationDate(BigInteger reasonId, Date applicationDate);
 
     List<DefermentInfo> findAllByDefermentId(List<BigInteger> defermentIds);
 

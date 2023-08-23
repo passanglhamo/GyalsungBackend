@@ -17,6 +17,7 @@ public class UserProfileDto {
     private String fullName;
     private String full_name;
     private Character gender;
+    private String genderName;
     private String cid;
     private String studentCode;
     private String birthDate;
@@ -44,12 +45,6 @@ public class UserProfileDto {
     private String motherMobileNo;
     private String motherEmail;
     private String motherOccupation;
-    //    private String guardianName;
-//    private String guardianCid;
-//    private String guardianMobileNo;
-//    private String guardianEmail;
-//    private String guardianOccupation;
-//    private String relationToGuardian;
     private String socialMediaLink1;
     private String socialMediaLink2;
     private String socialMediaLink3;
@@ -64,6 +59,7 @@ public class UserProfileDto {
     private byte[] profilePhoto;
     private Object roles;
     private Character status;
+    private String statusName;
     private String guardianNameFirst;
     private String guardianCidFirst;
     private String guardianMobileNoFirst;

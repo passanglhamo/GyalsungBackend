@@ -7,6 +7,7 @@ import com.jcraft.jsch.SftpException;
 import com.microservice.erp.domain.dto.*;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
+import com.microservice.erp.domain.helper.MailSentStatus;
 import com.microservice.erp.domain.mapper.DefermentMapper;
 import com.microservice.erp.domain.repositories.IDefermentInfoAuditRepository;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
@@ -26,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -90,6 +92,8 @@ public class ReadDefermentService implements IReadDefermentService {
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
         HttpEntity<String> httpRequest = headerToken.tokenHeader(authHeader);
+        // Define the desired date format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
 
 
         defermentYear = defermentYear.isEmpty() ? null : defermentYear;
@@ -127,11 +131,10 @@ public class ReadDefermentService implements IReadDefermentService {
                     .collect(Collectors.toUnmodifiableList());
             DefermentListDto defermentData = new DefermentListDto();
             if (!Objects.isNull(defermentDto)) {
-
-
                 defermentData.setId(defermentDto.getId());
                 defermentData.setRemarks(defermentDto.getRemarks());
                 defermentData.setApprovalRemarks(defermentDto.getApprovalRemarks());
+                defermentData.setReviewerRemarks(defermentDto.getReviewerRemarks());
                 defermentData.setDefermentYear(defermentDto.getDefermentYear());
                 defermentData.setStatus(defermentDto.getStatus());
                 defermentData.setFullName(Objects.requireNonNull(item).getFullName());
@@ -142,10 +145,15 @@ public class ReadDefermentService implements IReadDefermentService {
                 defermentData.setDefermentFileDtos(defermentDto.getDefermentFileDtos());
                 defermentData.setReasonId(defermentDto.getReasonId());
                 defermentData.setApplicationDate(defermentDto.getApplicationDate());
+                // Format the date to the desired format
+                String formattedDate = dateFormat.format(defermentDto.getApplicationDate());
+                defermentData.setApplicationDateInString(formattedDate);
                 defermentData.setUserId(defermentDto.getUserId());
                 defermentData.setCaseNumber(defermentDto.getCaseNumber());
                 defermentData.setMailStatus(defermentDto.getMailStatus());
                 defermentData.setDefermentList(defermentList);
+                defermentData.setStatusName(ApprovalStatus.fromValue(defermentDto.getStatus()).getName());
+                defermentData.setMailStatusName(Objects.isNull(defermentDto.getMailStatus())?"":MailSentStatus.fromValue(defermentDto.getMailStatus()).getName());
                 String reasonUrl = properties.getReasonById() + defermentDto.getReasonId();
                 ResponseEntity<ReasonDto> reasonDto = restTemplate.exchange(reasonUrl, HttpMethod.GET, httpRequest, ReasonDto.class);
                 defermentData.setReasonName(Objects.requireNonNull(reasonDto.getBody()).getReasonName());
@@ -183,13 +191,28 @@ public class ReadDefermentService implements IReadDefermentService {
 
     @Override
     public List<DefermentDto> getApprovedListByDefermentYearAndUserId(String authHeader, String defermentYear, BigInteger userId) {
-        List<Character> statuses = Arrays.asList(ApprovalStatus.APPROVED.value(),
-                ApprovalStatus.PENDING.value());
 
-        return repository.findAllByDefermentYearAndUserIdAndStatusIn(defermentYear, userId, statuses)
+
+        List<DefermentDto> defermentInfosList =  repository.findAllByDefermentYearAndUserIdAndStatusAndMailStatus(defermentYear, userId, ApprovalStatus.REJECTED.value(),
+                MailSentStatus.NOT_SENT.value())
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
+
+        if(defermentInfosList.isEmpty()){
+            List<Character> statuses = Arrays.asList(ApprovalStatus.APPROVED.value(),
+                    ApprovalStatus.PENDING.value(),ApprovalStatus.REVIEWED.value(),ApprovalStatus.REVERTED.value(),
+                    ApprovalStatus.PENDING_APPROVAL.value(),ApprovalStatus.PENDING_REJECTION.value());
+
+            return repository.findAllByDefermentYearAndUserIdAndStatusIn(defermentYear, userId, statuses)
+                    .stream()
+                    .map(mapper::mapToDomain)
+                    .collect(Collectors.toUnmodifiableList());
+        }
+
+        return  defermentInfosList;
+
+
     }
 
     @Override

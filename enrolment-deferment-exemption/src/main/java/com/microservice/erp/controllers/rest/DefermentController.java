@@ -43,22 +43,6 @@ public class DefermentController {
     }
 
 
-    @PostMapping(value = "/approveByIds")
-    public ResponseEntity<?> approveByIds(@RequestHeader("Authorization") String authHeader,
-                                          @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                          @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
-        SpringSecurityAuditorAware.setToken(token);
-        return updateService.approveByIds(authHeader, command);
-    }
-
-    @PostMapping(value = "/rejectByIds")
-    public ResponseEntity<?> rejectByIds(@RequestHeader("Authorization") String authHeader,
-                                         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                         @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
-        SpringSecurityAuditorAware.setToken(token);
-        return updateService.rejectByIds(authHeader, command);
-    }
-
     @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
     public ResponseEntity<?> downloadFile(@RequestParam("url") String url) throws IOException, URISyntaxException, SftpException {
         return readService.downloadFile(url);
@@ -96,14 +80,6 @@ public class DefermentController {
     @GetMapping(value = "/getDefermentListByUserId")
     public ResponseEntity<?> getDefermentListByUserId(@RequestParam("userId") BigInteger userId) {
         return readService.getDefermentListByUserId(userId);
-    }
-
-    @PostMapping(value = "/saveToDraft")
-    public ResponseEntity<?> saveToDraft(@RequestHeader("Authorization") String authHeader,
-                                         @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-                                         @RequestBody IUpdateDefermentService.UpdateDefermentCommand command) {
-        SpringSecurityAuditorAware.setToken(token);
-        return updateService.saveToDraft(authHeader, command);
     }
 
     @GetMapping(value = "/getDefermentAuditListByDefermentId")
