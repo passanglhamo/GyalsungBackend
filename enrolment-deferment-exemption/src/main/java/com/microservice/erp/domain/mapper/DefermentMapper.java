@@ -1,6 +1,7 @@
 package com.microservice.erp.domain.mapper;
 
 
+
 import com.microservice.erp.domain.dto.DefermentDto;
 import com.microservice.erp.domain.dto.DefermentFileDto;
 import com.microservice.erp.domain.entities.DefermentFileInfo;
@@ -8,18 +9,19 @@ import com.microservice.erp.domain.entities.DefermentFileInfoAudit;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.entities.DefermentInfoAudit;
 import com.microservice.erp.domain.helper.ApprovalStatus;
-import com.microservice.erp.domain.helper.FileUploadDTO;
-import com.microservice.erp.domain.helper.FileUploadToExternalLocation;
 import com.microservice.erp.domain.repositories.IDefermentFileInfoAuditRepository;
 import com.microservice.erp.domain.repositories.IDefermentFileInfoRepository;
 import com.microservice.erp.domain.repositories.IDefermentInfoAuditRepository;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -28,6 +30,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPInputStream;
 
 @Component
 @RequiredArgsConstructor
@@ -42,14 +47,14 @@ public class DefermentMapper {
 
         DefermentInfo deferment = new ModelMapper().map(command, DefermentInfo.class);
         DefermentInfo defermentDb = repository.findFirstByOrderByDefermentIdDesc();
-        BigInteger defermentId = (!Objects.isNull(command.getId()))?command.getId():defermentDb == null ? BigInteger.ONE : defermentDb.getDefermentId().add(BigInteger.ONE);
+        BigInteger defermentId = (!Objects.isNull(command.getId())) ? command.getId() : defermentDb == null ? BigInteger.ONE : defermentDb.getDefermentId().add(BigInteger.ONE);
         deferment.setDefermentId(defermentId);
         deferment.setStatus(ApprovalStatus.PENDING.value());
-        deferment.setApplicationDate((!Objects.isNull(command.getId()))?defermentDb.getApplicationDate():new Date());
-        deferment.setCaseNumber((!Objects.isNull(command.getId()))?defermentDb.getCaseNumber():caseNumber);
-        deferment.setCreatedBy((!Objects.isNull(command.getId()))?defermentDb.getCreatedBy():command.getUserId());
-        deferment.setCreatedDate((!Objects.isNull(command.getId()))?defermentDb.getCreatedDate():new Date());
-        if(!Objects.isNull(command.getId())){
+        deferment.setApplicationDate((!Objects.isNull(command.getId())) ? defermentDb.getApplicationDate() : new Date());
+        deferment.setCaseNumber((!Objects.isNull(command.getId())) ? defermentDb.getCaseNumber() : caseNumber);
+        deferment.setCreatedBy((!Objects.isNull(command.getId())) ? defermentDb.getCreatedBy() : command.getUserId());
+        deferment.setCreatedDate((!Objects.isNull(command.getId())) ? defermentDb.getCreatedDate() : new Date());
+        if (!Objects.isNull(command.getId())) {
             deferment.setReviewerRemarks(defermentDb.getReviewerRemarks());
             deferment.setReviewerId(defermentDb.getReviewerId());
             deferment.setApproverId(defermentDb.getApproverId());
@@ -71,14 +76,13 @@ public class DefermentMapper {
                                 initialNo[0] = initialNo[0].add(BigInteger.ONE);
 
                                 try {
+                                    byte[] bytes = t.getBytes();
+                                    byte[] compressedBytes = compress(bytes);
                                     String filename = t.getOriginalFilename();
                                     Long fileSize = t.getSize();
-                                    FileUploadDTO fileUploadDTO = FileUploadToExternalLocation.fileUploadPathRetriever(request);
-                                    String fileUrl = fileUploadDTO.getUploadFilePath().concat(filename);
                                     BigDecimal size = (new BigDecimal(fileSize).divide(new BigDecimal(1024)));
                                     Integer length = (fileSize.toString()).length();
 
-                                    FileUploadToExternalLocation.fileUploader(t, filename, "fileConfig/attachFile.properties", request);
                                     String finalSize = null;
                                     DecimalFormat df = new DecimalFormat("#.00");
                                     if (length == 6) {
@@ -89,14 +93,14 @@ public class DefermentMapper {
                                     }
                                     return new DefermentFileInfo(
                                             defermentFileId.add(initialNo[0]),
-                                            fileUrl,
                                             finalSize,
                                             filename,
                                             deferment,
                                             command.getUserId(),
-                                            new Date()
+                                            new Date(),
+                                            compressedBytes
                                     );
-                                } catch (IOException e) {
+                                } catch (Exception e) {
                                     throw new RuntimeException(e);
                                 }
 
@@ -111,7 +115,7 @@ public class DefermentMapper {
         return deferment;
     }
 
-    public DefermentInfoAudit mapToEntityAudit(DefermentInfo defermentInfo,BigInteger userId) {
+    public DefermentInfoAudit mapToEntityAudit(DefermentInfo defermentInfo, BigInteger userId) {
 
         DefermentInfoAudit defermentAudit = new ModelMapper().map(defermentInfo, DefermentInfoAudit.class);
         DefermentInfoAudit defermentAuditDb = auditRepository.findFirstByOrderByDefermentAuditIdDesc();
@@ -132,12 +136,12 @@ public class DefermentMapper {
 
                         return new DefermentFileInfoAudit(
                                 defermentAuditFileId.add(initialNo[0]),
-                                t.getFilePath(),
                                 t.getFileSize(),
                                 t.getFileName(),
                                 defermentAudit,
                                 userId,
-                                new Date()
+                                new Date(),
+                                t.getFile()
                         );
 
 
@@ -169,9 +173,9 @@ public class DefermentMapper {
                                 .map(ta ->
                                         DefermentFileDto.withId(
                                                 ta.getDefermentFileId(),
-                                                ta.getFilePath(),
                                                 ta.getFileSize(),
-                                                ta.getFileName()
+                                                ta.getFileName(),
+                                                ta.getFile()
                                         )
                                 )
                                 .collect(Collectors.toUnmodifiableSet())
@@ -208,9 +212,9 @@ public class DefermentMapper {
                                 .map(ta ->
                                         DefermentFileDto.withId(
                                                 ta.getDefermentFileAuditId(),
-                                                ta.getFilePath(),
                                                 ta.getFileSize(),
-                                                ta.getFileName()
+                                                ta.getFileName(),
+                                                ta.getFile()
                                         )
                                 )
                                 .collect(Collectors.toUnmodifiableSet())
@@ -228,4 +232,26 @@ public class DefermentMapper {
                 null
         );
     }
+
+    public static byte[] compress(byte[] data) throws Exception {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteArrayOutputStream, new Deflater(Deflater.BEST_COMPRESSION));
+        deflaterOutputStream.write(data);
+        deflaterOutputStream.finish();
+        deflaterOutputStream.close();
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    public byte[] decompress(byte[] data) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (GZIPInputStream gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(data))) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = gzipInputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, len);
+            }
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
+
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Rajib Kumer Ghosh
@@ -18,4 +19,6 @@ public interface IDefermentFileInfoRepository extends JpaRepository<DefermentFil
     List<DefermentFileInfo> findAllByDeferment(BigInteger defermentId);
 
     DefermentFileInfo findFirstByOrderByDefermentFileIdDesc();
+
+    Optional<DefermentFileInfo> findAllByDefermentFileId(BigInteger defermentFileId);
 }

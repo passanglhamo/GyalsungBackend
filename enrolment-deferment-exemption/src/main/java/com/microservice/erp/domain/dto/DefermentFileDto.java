@@ -13,9 +13,9 @@ public class DefermentFileDto {
 
     private final BigInteger id;
 
-    private final String filePath;
-
     private final String fileSize;
 
     private final String fileName;
+
+    private final byte[] file;
 }

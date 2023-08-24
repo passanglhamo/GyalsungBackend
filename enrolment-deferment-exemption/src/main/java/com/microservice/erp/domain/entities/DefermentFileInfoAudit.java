@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigInteger;
+import java.sql.Blob;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -22,10 +23,6 @@ public class DefermentFileInfoAudit extends BaseEntity {
     @Column(name = "deferment_file_audit_id", columnDefinition = "bigint")
     private BigInteger defermentFileAuditId;
 
-    @Basic(optional = false)
-    @NotNull(message = "File path cannot be null")
-    @Column(name = "file_path", columnDefinition = "varchar(255)")
-    private String filePath;
 
     @Basic(optional = false)
     @NotNull(message = "File size cannot be null")
@@ -37,18 +34,23 @@ public class DefermentFileInfoAudit extends BaseEntity {
     @Column(name = "file_name", columnDefinition = "varchar(255)")
     private String fileName;
 
+    @Basic(optional = false)
+    @NotNull(message = "File  cannot be null")
+    @Column(name = "file",columnDefinition = "bytea")
+    private byte[] file;
+
     @ManyToOne
     @JoinColumn(name = "deferment_audit_id", nullable = false, columnDefinition = "bigint")
     private DefermentInfoAudit defermentAudit;
 
-    public DefermentFileInfoAudit(BigInteger defermentFileAuditId, String filePath, String fileSize,
+    public DefermentFileInfoAudit(BigInteger defermentFileAuditId, String fileSize,
                                   String fileName, DefermentInfoAudit defermentAudit, BigInteger createdBy,
-                                  Date createdDate) {
+                                  Date createdDate,byte[] file) {
         this.defermentFileAuditId = defermentFileAuditId;
-        this.filePath = filePath;
         this.fileSize = fileSize;
         this.fileName = fileName;
         this.defermentAudit = defermentAudit;
+        this.file = file;
 
         this.setCreatedBy(createdBy);
         this.setCreatedDate(createdDate);

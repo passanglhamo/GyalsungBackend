@@ -1,5 +1,6 @@
 package com.microservice.erp.controllers.rest;
 
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import com.microservice.erp.domain.dto.DefermentDto;
 import com.microservice.erp.domain.dto.DefermentListDto;
@@ -42,12 +43,6 @@ public class DefermentController {
         return readService.getAllDefermentList(authHeader);
     }
 
-
-    @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
-    public ResponseEntity<?> downloadFile(@RequestParam("url") String url) throws IOException, URISyntaxException, SftpException {
-        return readService.downloadFile(url);
-
-    }
 
     @GetMapping(value = "/getDefermentListByDefermentYearReasonStatus")
     public List<DefermentListDto> getDefermentListByDefermentYearReasonStatus(@RequestHeader("Authorization") String authHeader,
