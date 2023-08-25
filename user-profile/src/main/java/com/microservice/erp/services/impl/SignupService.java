@@ -270,16 +270,15 @@ public class SignupService implements ISignupService {
             return ResponseEntity.badRequest().body(new MessageResponse("The password didn't match."));
         }
         userInfo.setPresentCountry(signupRequestDto.getPresentCountry());
-        UserInfo userInfoDb = iUserInfoRepository.findFirstByOrderByUserIdDesc();
-        BigInteger userId = userInfoDb == null ? BigInteger.ONE : userInfoDb.getUserId().add(BigInteger.ONE);
-//        long currentTimeMicros = System.nanoTime() / 1000;
-         userInfo.setUserId(userId);
+//        UserInfo userInfoDb = iUserInfoRepository.findFirstByOrderByUserIdDesc();
+//        BigInteger userId = userInfoDb == null ? BigInteger.ONE : userInfoDb.getUserId().add(BigInteger.ONE);
+//          userInfo.setUserId(userId);
         userInfo.setCreatedDate(new Date());
-        userInfo.setCreatedBy(userId);
-        iUserInfoRepository.save(userInfo);
+//        userInfo.setCreatedBy(userId);
+        UserInfo userInfoSave = iUserInfoRepository.save(userInfo);
         List<BigInteger> roles = new ArrayList<>();
 //         queue following data: password, roles, email, username, userId in auth microservices
-        EventBusUser eventBusSms = EventBusUser.withId(userId, 'A', userInfo.getCid(), birthDateString, userInfo.getEmail(), userInfo.getMobileNo()
+        EventBusUser eventBusSms = EventBusUser.withId(userInfoSave.getUserId(), 'A', userInfo.getCid(), birthDateString, userInfo.getEmail(), userInfo.getMobileNo()
                 , userInfo.getUsername(), signupRequestDto.getPassword(), userInfo.getSignupUser(), roles);
         addToQueue.addToUserQueue("addUser", eventBusSms);
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));

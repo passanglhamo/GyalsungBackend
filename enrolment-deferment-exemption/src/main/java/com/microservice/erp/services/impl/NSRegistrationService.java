@@ -56,11 +56,11 @@ public class NSRegistrationService implements INSRegistrationService {
         }
         String registrationYear = registrationDateInfo.getRegistrationYear();
 
-        NSRegistration alreadyExistNsRegis = repository.findByUserId(new BigInteger(String.valueOf(nsRegistrationDto.getUserId())));
-        //to check already registered or not
-        if (alreadyExistNsRegis != null) {
-            return ResponseEntity.badRequest().body(new MessageResponse("You have already registered."));
-        }
+//        NSRegistration alreadyExistNsRegis = repository.findByUserId(new BigInteger(String.valueOf(nsRegistrationDto.getUserId())));
+//        //to check already registered or not
+//        if (alreadyExistNsRegis != null) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("You have already registered."));
+//        }
         nsRegistrationDto.setYear(registrationYear);
 
         HttpHeaders headers = new HttpHeaders();
@@ -97,13 +97,15 @@ public class NSRegistrationService implements INSRegistrationService {
 
     @Override
     public ResponseEntity<?> getMyRegistrationInfo(BigInteger userId) {
-        NSRegistration nsRegistration = repository.findByUserId(userId);
-        if (nsRegistration != null) {
-            //enrolmentInfo.setEnrolmentCoursePreferences(null);
-            return ResponseEntity.ok(nsRegistration);
-        } else {
-            return ResponseEntity.badRequest().body("Information not found.");
-        }
+//        NSRegistration nsRegistration = repository.findByUserId(userId);
+//        if (nsRegistration != null) {
+//            //enrolmentInfo.setEnrolmentCoursePreferences(null);
+//            return ResponseEntity.ok(nsRegistration);
+//        }
+//        else {
+//            return ResponseEntity.badRequest().body("Information not found.");
+//        }
+        return ResponseEntity.badRequest().body("Information not found.");
     }
 
     @Override

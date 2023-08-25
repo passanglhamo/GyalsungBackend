@@ -21,6 +21,7 @@ import java.util.Objects;
 public class UserInfo extends BaseEntity implements UserDetails {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", columnDefinition = "bigint")
     private BigInteger userId;
 
