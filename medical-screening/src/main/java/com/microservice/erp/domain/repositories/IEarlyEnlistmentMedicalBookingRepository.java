@@ -11,4 +11,6 @@ public interface IEarlyEnlistmentMedicalBookingRepository extends JpaRepository<
     EarlyEnlistmentMedicalBooking findByEarlyEnlistmentIdAndUserId(BigInteger earlyEnlistmentId, BigInteger userId);
 
     EarlyEnlistmentMedicalBooking findByCid(String cid);
+
+    EarlyEnlistmentMedicalBooking findByEarlyEnlistmentId(BigInteger earlyEnlistmentId);
 }

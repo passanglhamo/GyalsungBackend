@@ -45,8 +45,6 @@ public class DefermentMapper {
 
         DefermentInfo deferment = new ModelMapper().map(command, DefermentInfo.class);
         DefermentInfo defermentDb = repository.findFirstByOrderByDefermentIdDesc();
-        BigInteger defermentId = (!Objects.isNull(command.getId())) ? command.getId() : defermentDb == null ? BigInteger.ONE : defermentDb.getDefermentId().add(BigInteger.ONE);
-        deferment.setDefermentId(defermentId);
         deferment.setStatus(ApprovalStatus.PENDING.value());
         deferment.setApplicationDate((!Objects.isNull(command.getId())) ? defermentDb.getApplicationDate() : new Date());
         deferment.setCaseNumber((!Objects.isNull(command.getId())) ? defermentDb.getCaseNumber() : caseNumber);
@@ -61,17 +59,11 @@ public class DefermentMapper {
             deferment.setUpdatedDate(new Date());
         }
 
-        DefermentFileInfo defermentFileDb = fileInfoRepository.findFirstByOrderByDefermentFileIdDesc();
-        BigInteger defermentFileId = defermentFileDb == null ? BigInteger.ZERO : defermentFileDb.getDefermentFileId();
-        final BigInteger[] initialNo = {BigInteger.ZERO};
-
         if (!Objects.isNull(command.getProofDocuments())) {
             deferment.setFiles(
                     Arrays.stream(command.getProofDocuments())
                             .map(t ->
                             {
-
-                                initialNo[0] = initialNo[0].add(BigInteger.ONE);
 
                                 try {
                                     byte[] bytes = t.getBytes();
@@ -93,7 +85,6 @@ public class DefermentMapper {
                                     }
 
                                     return new DefermentFileInfo(
-                                            defermentFileId.add(initialNo[0]),
                                             finalSize,
                                             filename,
                                             deferment,
@@ -128,24 +119,17 @@ public class DefermentMapper {
     public DefermentInfoAudit mapToEntityAudit(DefermentInfo defermentInfo, BigInteger userId) {
 
         DefermentInfoAudit defermentAudit = new ModelMapper().map(defermentInfo, DefermentInfoAudit.class);
-        DefermentInfoAudit defermentAuditDb = auditRepository.findFirstByOrderByDefermentAuditIdDesc();
-        BigInteger defermentAuditId = defermentAuditDb == null ? BigInteger.ONE : defermentAuditDb.getDefermentAuditId().add(BigInteger.ONE);
-        defermentAudit.setDefermentAuditId(defermentAuditId);
         defermentAudit.setCreatedBy(userId);
         defermentAudit.setCreatedDate(new Date());
         DefermentFileInfoAudit defermentAuditFileDb = fileAuditInfoRepository.findFirstByOrderByDefermentFileAuditIdDesc();
         BigInteger defermentAuditFileId = defermentAuditFileDb == null ? BigInteger.ZERO : defermentAuditFileDb.getDefermentFileAuditId();
-        final BigInteger[] initialNo = {BigInteger.ZERO};
 
         if (!Objects.isNull(defermentInfo.getFiles())) {
             defermentAudit.setFiles(
                     defermentInfo.getFiles().stream().map(t ->
                     {
 
-                        initialNo[0] = initialNo[0].add(BigInteger.ONE);
-
                         return new DefermentFileInfoAudit(
-                                defermentAuditFileId.add(initialNo[0]),
                                 t.getFileSize(),
                                 t.getFileName(),
                                 defermentAudit,

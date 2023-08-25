@@ -7,4 +7,6 @@ import java.math.BigInteger;
 
 public interface IEarlyEnlistmentMedicalBookingService {
     ResponseEntity<?> bookMedicalAppointment(String authHeader, BigInteger currentUserId, EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto) throws Exception;
+
+    ResponseEntity<?> getEarlyEnlistMedBookingById(BigInteger earlyEnlistmentId);
 }

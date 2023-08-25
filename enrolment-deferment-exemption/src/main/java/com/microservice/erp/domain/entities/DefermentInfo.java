@@ -19,6 +19,7 @@ public class DefermentInfo extends BaseEntity {
     //region private variables
     @Id
     @Column(name = "deferment_id", columnDefinition = "bigint")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger defermentId;
 
     @NotNull(message = "User id cannot be null")

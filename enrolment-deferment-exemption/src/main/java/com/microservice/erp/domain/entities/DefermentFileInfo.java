@@ -17,6 +17,7 @@ public class DefermentFileInfo extends BaseEntity {
 
     @Id
     @Column(name = "deferment_file_id", columnDefinition = "bigint")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger defermentFileId;
 
     @Basic(optional = false)
@@ -38,10 +39,9 @@ public class DefermentFileInfo extends BaseEntity {
     @JoinColumn(name = "deferment_id", nullable = false, columnDefinition = "bigint")
     private DefermentInfo deferment;
 
-    public DefermentFileInfo(BigInteger defermentFileId, String fileSize,
+    public DefermentFileInfo(String fileSize,
                              String fileName, DefermentInfo deferment,BigInteger createdBy,
                              Date createdDate,byte[] file) {
-        this.defermentFileId = defermentFileId;
         this.fileSize = fileSize;
         this.fileName = fileName;
         this.deferment = deferment;

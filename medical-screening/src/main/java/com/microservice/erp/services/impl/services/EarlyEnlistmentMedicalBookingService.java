@@ -78,6 +78,11 @@ public class EarlyEnlistmentMedicalBookingService implements IEarlyEnlistmentMed
 
     }
 
+    @Override
+    public ResponseEntity<?> getEarlyEnlistMedBookingById(BigInteger earlyEnlistmentId) {
+        return ResponseEntity.ok(iEarlyEnlistmentMedicalBookingRepository.findByEarlyEnlistmentId(earlyEnlistmentId));
+    }
+
     private void sendEmailAndSms(EarlyEnlistmentMedBookingDto earlyEnlistmentMedBookingDto
             , ResponseEntity<UserInfoDto> userResponse) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);

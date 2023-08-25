@@ -18,6 +18,7 @@ public class DefermentInfoAudit extends BaseEntity {
     //region private variables
     @Id
     @Column(name = "deferment_audit_id", columnDefinition = "bigint")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger defermentAuditId;
 
     @NotNull(message = "Deferment id cannot be null")

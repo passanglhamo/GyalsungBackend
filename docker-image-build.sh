@@ -1,6 +1,6 @@
 #!/bin/bash
 
-AppVersion="v1.0.32"
+AppVersion="v1.0.29"
 DockerHubUser="engrajibkumerghosh"
 DockerHubRepoName="ms-training-repo-v1"
 DockerHubRepository="${DockerHubUser}/${DockerHubRepoName}"
@@ -26,13 +26,13 @@ docker login --password "Hema@2020" --username ${DockerHubUser}
 #
 
 ###
-AuthServiceDir="auth-service"
-AuthServiceName="auth-service"
-echo "Creating ${AuthServiceName} Image"
-mvn -pl ${AuthServiceDir} -am clean package -DskipTests
-docker image build -f ${AuthServiceName}/Dockerfile -t ${AuthServiceName}:${AppVersion} ./${AuthServiceDir}
-docker image tag ${AuthServiceName}:${AppVersion} ${DockerHubRepository}:${AuthServiceName}-${AppVersion}
-docker push ${DockerHubRepository}:${AuthServiceName}-${AppVersion}
+#AuthServiceDir="auth-service"
+#AuthServiceName="auth-service"
+#echo "Creating ${AuthServiceName} Image"
+#mvn -pl ${AuthServiceDir} -am clean package -DskipTests
+#docker image build -f ${AuthServiceName}/Dockerfile -t ${AuthServiceName}:${AppVersion} ./${AuthServiceDir}
+#docker image tag ${AuthServiceName}:${AppVersion} ${DockerHubRepository}:${AuthServiceName}-${AppVersion}
+#docker push ${DockerHubRepository}:${AuthServiceName}-${AppVersion}
 #
 
 ####
@@ -46,13 +46,13 @@ docker push ${DockerHubRepository}:${AuthServiceName}-${AppVersion}
 ##
 
 ###
-#TrainingManagementDir="training-management"
-#TrainingManagementName="training-management"
-#echo "Creating ${TrainingManagementName} Image"
-#mvn -pl ${TrainingManagementDir} -am clean package -DskipTests
-#docker image build -f ${TrainingManagementName}/Dockerfile -t ${TrainingManagementName}:${AppVersion} ./${TrainingManagementDir}
-#docker image tag ${TrainingManagementName}:${AppVersion} ${DockerHubRepository}:${TrainingManagementName}-${AppVersion}
-#docker push ${DockerHubRepository}:${TrainingManagementName}-${AppVersion}
+TrainingManagementDir="training-management"
+TrainingManagementName="training-management"
+echo "Creating ${TrainingManagementName} Image"
+mvn -pl ${TrainingManagementDir} -am clean package -DskipTests
+docker image build -f ${TrainingManagementName}/Dockerfile -t ${TrainingManagementName}:${AppVersion} ./${TrainingManagementDir}
+docker image tag ${TrainingManagementName}:${AppVersion} ${DockerHubRepository}:${TrainingManagementName}-${AppVersion}
+docker push ${DockerHubRepository}:${TrainingManagementName}-${AppVersion}
 #
 
 ###

@@ -21,8 +21,8 @@ public class DefermentFileInfoAudit extends BaseEntity {
 
     @Id
     @Column(name = "deferment_file_audit_id", columnDefinition = "bigint")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger defermentFileAuditId;
-
 
     @Basic(optional = false)
     @NotNull(message = "File size cannot be null")
@@ -43,10 +43,8 @@ public class DefermentFileInfoAudit extends BaseEntity {
     @JoinColumn(name = "deferment_audit_id", nullable = false, columnDefinition = "bigint")
     private DefermentInfoAudit defermentAudit;
 
-    public DefermentFileInfoAudit(BigInteger defermentFileAuditId, String fileSize,
-                                  String fileName, DefermentInfoAudit defermentAudit, BigInteger createdBy,
+    public DefermentFileInfoAudit(String fileSize, String fileName, DefermentInfoAudit defermentAudit, BigInteger createdBy,
                                   Date createdDate,byte[] file) {
-        this.defermentFileAuditId = defermentFileAuditId;
         this.fileSize = fileSize;
         this.fileName = fileName;
         this.defermentAudit = defermentAudit;
