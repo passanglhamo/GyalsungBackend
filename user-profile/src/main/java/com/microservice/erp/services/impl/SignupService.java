@@ -65,10 +65,10 @@ public class SignupService implements ISignupService {
     @Override
     public ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException {
         // to check if user is already exist or not by cid
-        Optional<UserInfo> userInfo = iUserInfoRepository.findByCid(cid);
-        if (userInfo.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + cid + " already exists in the system."));
-        }
+//        Optional<UserInfo> userInfo = iUserInfoRepository.findByCid(cid);
+//        if (userInfo.isPresent()) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + cid + " already exists in the system."));
+//        }
         //to check age eligible age first
         AgeCriteria ageCriteria = iAgeCriteriaRepository.findTopByOrderByMinimumAgeDesc();
         if (ageCriteria == null) {
@@ -168,10 +168,10 @@ public class SignupService implements ISignupService {
     public ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, IOException, ApiException {
 
         //check already registered not by CID
-        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
-        if (userInfoDB.isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + signupRequestDto.getCid() + " already exist."));
-        }
+//        Optional<UserInfo> userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
+//        if (userInfoDB.isPresent()) {
+//            return ResponseEntity.badRequest().body(new MessageResponse("User with CID " + signupRequestDto.getCid() + " already exist."));
+//        }
 
 //  to save guardian info, both the parents need will be guardian by default. If Parents are expired, then the separate guardian need to add from profile
         UserInfo userInfo = new ModelMapper().map(signupRequestDto, UserInfo.class);
@@ -248,9 +248,10 @@ public class SignupService implements ISignupService {
             ResponseEntity<?> responseEntity = verifyOtp(notificationRequestDto);
             if (responseEntity.getStatusCode().value() != HttpStatus.OK.value()) {
                 return ResponseEntity.badRequest().body(new MessageResponse("The OTP didn't match."));
-            } else {
-                iSignupSmsOtpRepository.deleteById(notificationRequestDto.getMobileNo());//delete OTP after validation
             }
+//            else {
+//                iSignupSmsOtpRepository.deleteById(notificationRequestDto.getMobileNo());//delete OTP after validation
+//            }
         } else {
             //Email verification code received from dto must be equal to backend
             userInfo.setMobileNo(null);
@@ -271,7 +272,8 @@ public class SignupService implements ISignupService {
         userInfo.setPresentCountry(signupRequestDto.getPresentCountry());
         UserInfo userInfoDb = iUserInfoRepository.findFirstByOrderByUserIdDesc();
         BigInteger userId = userInfoDb == null ? BigInteger.ONE : userInfoDb.getUserId().add(BigInteger.ONE);
-        userInfo.setUserId(userId);
+//        long currentTimeMicros = System.nanoTime() / 1000;
+         userInfo.setUserId(userId);
         userInfo.setCreatedDate(new Date());
         userInfo.setCreatedBy(userId);
         iUserInfoRepository.save(userInfo);
