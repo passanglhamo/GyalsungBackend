@@ -142,7 +142,6 @@ public class ReadDefermentService implements IReadDefermentService {
                 defermentData.setDob(Objects.requireNonNull(item).getDob());
                 defermentData.setGender(Objects.requireNonNull(item).getGender());
                 defermentData.setGenderName(Objects.requireNonNull(item).getGender().equals('M') ? "Male" : "Female");
-                defermentData.setDefermentFileDtos(defermentDto.getDefermentFileDtos());
                 defermentData.setReasonId(defermentDto.getReasonId());
                 defermentData.setApplicationDate(defermentDto.getApplicationDate());
                 // Format the date to the desired format
@@ -251,19 +250,12 @@ public class ReadDefermentService implements IReadDefermentService {
         return defermentDtoList;
     }
 
-    private String determineContentType(String fileName) {
-        String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
-        switch (extension.toLowerCase()) {
-            case "pdf":
-                return "application/pdf";
-            case "jpg":
-            case "jpeg":
-                return "image/jpeg";
-            case "png":
-                return "image/png";
-            default:
-                return MediaType.APPLICATION_OCTET_STREAM_VALUE;
-        }
+    @Override
+    public List<DefermentFileDto> getDefermentFileListByDefermentId(BigInteger defermentId) {
+       return fileInfoRepository.findAllByDeferment(repository.findByDefermentId(defermentId).get())
+                .stream()
+                .map(mapper::mapToFileDomain)
+                .collect(Collectors.toUnmodifiableList());
     }
 
 

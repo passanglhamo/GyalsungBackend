@@ -19,7 +19,6 @@ public class DefermentFileInfo extends BaseEntity {
     @Column(name = "deferment_file_id", columnDefinition = "bigint")
     private BigInteger defermentFileId;
 
-
     @Basic(optional = false)
     @NotNull(message = "File size cannot be null")
     @Column(name = "file_size", columnDefinition = "varchar(255)")

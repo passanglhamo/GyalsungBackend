@@ -3,6 +3,7 @@ package com.microservice.erp.controllers.rest;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
 import com.microservice.erp.domain.dto.DefermentDto;
+import com.microservice.erp.domain.dto.DefermentFileDto;
 import com.microservice.erp.domain.dto.DefermentListDto;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import com.microservice.erp.services.iServices.IReadDefermentService;
@@ -112,5 +113,11 @@ public class DefermentController {
                                                @RequestBody IUpdateDefermentService.ReviewDefermentCommand command) throws Exception {
         SpringSecurityAuditorAware.setToken(token);
         return updateService.saveDraftById(authHeader, command);
+    }
+
+
+    @GetMapping(value = "/getDefermentFileListByDefermentId")
+    public  List<DefermentFileDto>  getDefermentFileListByDefermentId(@RequestParam("defermentId") BigInteger defermentId) {
+        return readService.getDefermentFileListByDefermentId(defermentId);
     }
 }
