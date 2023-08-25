@@ -277,8 +277,8 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
                 earlyEnlistmentDto.setEnlistmentId(item.getEnlistmentId());
                 earlyEnlistmentDto.setUserId(item.getUserId());
                 earlyEnlistmentDto.setEnlistmentYear(item.getEnlistmentYear());
-                //earlyEnlistmentDto.setGender(item.getGender());
-                earlyEnlistmentDto.setGender(item.getGender());
+                earlyEnlistmentDto.setGender(userProfileDto.getGender());
+                earlyEnlistmentDto.setGenderName(Gender.fromValue(userProfileDto.getGender()).getName());
                 earlyEnlistmentDto.setApplicationDate(item.getApplicationDate());
                 earlyEnlistmentDto.setCid(userProfileDto.getCid());
                 earlyEnlistmentDto.setFullName(userProfileDto.getFullName());
@@ -290,7 +290,10 @@ public class EarlyEnlistmentService implements IEarlyEnlistmentService {
                 earlyEnlistmentDto.setEarlyEnlistmentMedBookingDto(medicalBooking.getBody());
                 if (!Objects.isNull(guardianConsent)) {
                     earlyEnlistmentDto.setParentConsentStatus(guardianConsent.getStatus());
+                    earlyEnlistmentDto.setParentConsentName(Objects.isNull(guardianConsent.getStatus())?"Pending":ParentConsentStatus.fromValue(guardianConsent.getStatus()).getName());
+
                 }
+                earlyEnlistmentDto.setStatusName(EnlistmentStatus.fromValue(item.getStatus()).getName());
                 finalEarlyEnlistmentDtos.add(earlyEnlistmentDto);
             }
 

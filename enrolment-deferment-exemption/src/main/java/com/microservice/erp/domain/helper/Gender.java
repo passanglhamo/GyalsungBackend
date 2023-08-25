@@ -1,19 +1,13 @@
 package com.microservice.erp.domain.helper;
 
-
-public enum ApprovalStatus {
-    APPROVED('A',"Approved"),
-    REJECTED('R',"Rejected"),
-    PENDING('P',"Pending"),
-    PENDING_APPROVAL('N',"Pending Approval"),
-    PENDING_REJECTION('S',"Pending Rejection"),
-    REVIEWED('T',"Reviewed"),
-    REVERTED('V',"Reverted");
+public enum Gender {
+    MALE('M', "Male"),
+    FEMALE('F', "Female");
 
     private final char value;
     private final String name;
 
-    ApprovalStatus(char value, String name) {
+    Gender(char value, String name) {
         this.value = value;
         this.name = name;
     }
@@ -26,8 +20,8 @@ public enum ApprovalStatus {
         return name;
     }
 
-    public static ApprovalStatus fromValue(char value) {
-        for (ApprovalStatus status : ApprovalStatus.values()) {
+    public static Gender fromValue(char value) {
+        for (Gender status : Gender.values()) {
             if (status.value == value) {
                 return status;
             }
