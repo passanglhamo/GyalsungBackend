@@ -1,7 +1,6 @@
 package com.microservice.erp.domain.mapper;
 
 
-
 import com.microservice.erp.domain.dto.DefermentDto;
 import com.microservice.erp.domain.dto.DefermentFileDto;
 import com.microservice.erp.domain.entities.DefermentFileInfo;
@@ -15,7 +14,6 @@ import com.microservice.erp.domain.repositories.IDefermentInfoAuditRepository;
 import com.microservice.erp.domain.repositories.IDefermentInfoRepository;
 import com.microservice.erp.services.iServices.ICreateDefermentService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -80,17 +78,20 @@ public class DefermentMapper {
                                     byte[] compressedBytes = compress(bytes);
                                     String filename = t.getOriginalFilename();
                                     Long fileSize = t.getSize();
+
                                     BigDecimal size = (new BigDecimal(fileSize).divide(new BigDecimal(1024)));
                                     Integer length = (fileSize.toString()).length();
 
                                     String finalSize = null;
                                     DecimalFormat df = new DecimalFormat("#.00");
-                                    if (length == 6) {
+
+                                    if (length <= 6) {
                                         finalSize = df.format(size).toString() + "KB";
                                     } else {
                                         size = (size.divide(new BigDecimal(1024)));
                                         finalSize = df.format(size).toString() + "MB";
                                     }
+
                                     return new DefermentFileInfo(
                                             defermentFileId.add(initialNo[0]),
                                             finalSize,
@@ -113,6 +114,15 @@ public class DefermentMapper {
 
 
         return deferment;
+    }
+
+    public static byte[] compress(byte[] data) throws Exception {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteArrayOutputStream, new Deflater(Deflater.BEST_COMPRESSION));
+        deflaterOutputStream.write(data);
+        deflaterOutputStream.finish();
+        deflaterOutputStream.close();
+        return byteArrayOutputStream.toByteArray();
     }
 
     public DefermentInfoAudit mapToEntityAudit(DefermentInfo defermentInfo, BigInteger userId) {
@@ -194,6 +204,16 @@ public class DefermentMapper {
         );
     }
 
+    public DefermentFileDto mapToFileDomain(DefermentFileInfo defermentFileInfo) {
+        return DefermentFileDto.withId(
+                defermentFileInfo.getDefermentFileId(),
+                defermentFileInfo.getFileSize(),
+                defermentFileInfo.getFileName(),
+                defermentFileInfo.getFile()
+        );
+    }
+
+
     public DefermentDto mapToAuditDomain(DefermentInfoAudit defermentInfoAudit) {
         return DefermentDto.withId(
                 defermentInfoAudit.getDefermentId(),
@@ -233,14 +253,6 @@ public class DefermentMapper {
         );
     }
 
-    public static byte[] compress(byte[] data) throws Exception {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteArrayOutputStream, new Deflater(Deflater.BEST_COMPRESSION));
-        deflaterOutputStream.write(data);
-        deflaterOutputStream.finish();
-        deflaterOutputStream.close();
-        return byteArrayOutputStream.toByteArray();
-    }
 
     public byte[] decompress(byte[] data) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

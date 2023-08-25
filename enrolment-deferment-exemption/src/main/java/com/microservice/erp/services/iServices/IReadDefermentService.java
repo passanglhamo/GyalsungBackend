@@ -2,6 +2,7 @@ package com.microservice.erp.services.iServices;
 
 
 import com.microservice.erp.domain.dto.DefermentDto;
+import com.microservice.erp.domain.dto.DefermentFileDto;
 import com.microservice.erp.domain.dto.DefermentListDto;
 import org.springframework.http.ResponseEntity;
 
@@ -21,5 +22,7 @@ public interface IReadDefermentService {
 
     ResponseEntity<?> getDefermentListByUserId(BigInteger userId);
 
-    List<DefermentDto> getDefermentAuditListByDefermentId(String authHeader,BigInteger defermentId);
+    List<DefermentDto> getDefermentAuditListByDefermentId(String authHeader, BigInteger defermentId);
+
+    List<DefermentFileDto> getDefermentFileListByDefermentId(BigInteger defermentId);
 }

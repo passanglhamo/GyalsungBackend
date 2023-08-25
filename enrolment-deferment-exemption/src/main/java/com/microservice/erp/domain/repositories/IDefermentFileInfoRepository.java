@@ -1,5 +1,6 @@
 package com.microservice.erp.domain.repositories;
 
+import com.microservice.erp.domain.dto.DefermentFileDto;
 import com.microservice.erp.domain.entities.DefermentFileInfo;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +17,7 @@ import java.util.Optional;
 @Repository
 public interface IDefermentFileInfoRepository extends JpaRepository<DefermentFileInfo, BigInteger> {
 
-    List<DefermentFileInfo> findAllByDeferment(BigInteger defermentId);
+    List<DefermentFileInfo> findAllByDeferment(DefermentInfo defermentId);
 
     DefermentFileInfo findFirstByOrderByDefermentFileIdDesc();
 

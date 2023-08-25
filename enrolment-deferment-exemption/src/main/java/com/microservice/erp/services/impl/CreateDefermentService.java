@@ -42,11 +42,9 @@ public class CreateDefermentService implements ICreateDefermentService {
     Integer fileLength = 5;
     private final CaseNumberGenerator caseNumberGenerator;
 
-
     @Autowired
     @Qualifier("userProfileTemplate")
     RestTemplate restTemplate;
-
 
     @Transactional
     public ResponseEntity<?> saveDeferment(HttpServletRequest request, CreateDefermentCommand command) {
