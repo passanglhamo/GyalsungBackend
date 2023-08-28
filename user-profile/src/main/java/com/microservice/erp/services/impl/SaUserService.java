@@ -225,10 +225,6 @@ public class SaUserService implements ISaUserService {
         saUser.setDob(birthDate);
 
         saUser.setSignupUser('N');
-        UserInfo userInfoDb = iUserInfoRepository.findFirstByOrderByUserIdDesc();
-        BigInteger userIdNew = userInfoDb == null ? BigInteger.ONE : userInfoDb.getUserId().add(BigInteger.ONE);
-        saUser.setUserId(userIdNew);
-
         BigInteger userId = iUserInfoRepository.save(saUser).getUserId();
 
         //todo: need to pass dob in string format
