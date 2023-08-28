@@ -48,7 +48,15 @@ public class HospitalBookingDetailsService implements IHospitalBookingDetailsSer
     RestTemplate restTemplate;
 
     @Override
-    public ResponseEntity<?> preBookHospitalAppointment(String authHeader, HospitalBookingDetailsDto hospitalBookingDetailsDto) throws JsonProcessingException {
+    public ResponseEntity<?> preBookHospitalAppointment(String authHeader, HospitalBookingDetailsDto hospitalBookingDetailsDto){
+        ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
+        ApplicationProperties properties = context.getBean(ApplicationProperties.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        String url = properties.getUserProfileById() + hospitalBookingDetailsDto.getUserId();
+        ResponseEntity<UserInfoDto> userInfoDtoResponse = userRestTemplate.exchange(url, HttpMethod.GET, request, UserInfoDto.class);
+
         BigInteger bookingDetailId;
         HospitalBookingDetail hospitalBookingDetailBooked = iHospitalBookingDetailsRepository.findByUserId(hospitalBookingDetailsDto.getUserId()
         );
@@ -80,6 +88,10 @@ public class HospitalBookingDetailsService implements IHospitalBookingDetailsSer
             hospitalBookingDetail.setUserId(hospitalBookingDetailsDto.getUserId());
             hospitalBookingDetail.setHospitalBookingDetailId(hospitalBookingDetailId);
             hospitalBookingDetail.setStatus('A');
+            hospitalBookingDetail.setFullName(Objects.requireNonNull(userInfoDtoResponse.getBody()).getFullName());
+            hospitalBookingDetail.setDob(Objects.requireNonNull(userInfoDtoResponse.getBody()).getDob());
+            hospitalBookingDetail.setCid(Objects.requireNonNull(userInfoDtoResponse.getBody()).getCid());
+            hospitalBookingDetail.setGender(Objects.requireNonNull(userInfoDtoResponse.getBody()).getGender());
             hospitalBookingDetail.setCreatedBy(hospitalBookingDetailsDto.getUserId());
             hospitalBookingDetail.setCreatedDate(new Date());
             iHospitalBookingDetailsRepository.save(hospitalBookingDetail);

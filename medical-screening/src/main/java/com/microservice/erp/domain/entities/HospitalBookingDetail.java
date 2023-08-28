@@ -42,6 +42,23 @@ public class HospitalBookingDetail extends BaseEntity {
     @Column(name = "status", columnDefinition = "char(1)")
     private Character status;
 
+    @Basic(optional = false)
+    @NotNull(message = "Full name cannot be null")
+    @Column(name = "full_name", columnDefinition = "varchar(255)")
+    private String fullName;
+
+    @Column(name = "gender", columnDefinition = "char(1)")
+    @NotNull(message = "Gender cannot be null")
+    private Character gender;
+
+    @Column(name = "dob")
+    @NotNull(message = "DOB cannot be null")
+    private Date dob;
+
+    @Column(name = "cid", columnDefinition = "varchar(255)")
+    @NotNull(message = "CID cannot be null")
+    private String cid;
+
     public BigInteger getHospitalBookingDetailId() {
         return hospitalBookingDetailId;
     }
@@ -82,4 +99,35 @@ public class HospitalBookingDetail extends BaseEntity {
         this.status = status;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public Character getGender() {
+        return gender;
+    }
+
+    public void setGender(Character gender) {
+        this.gender = gender;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
 }
