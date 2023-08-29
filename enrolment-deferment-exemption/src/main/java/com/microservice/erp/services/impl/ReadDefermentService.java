@@ -1,8 +1,6 @@
 package com.microservice.erp.services.impl;
 
-import com.jcraft.jsch.*;
 import com.microservice.erp.domain.dto.*;
-import com.microservice.erp.domain.entities.DefermentFileInfo;
 import com.microservice.erp.domain.entities.DefermentInfo;
 import com.microservice.erp.domain.helper.ApprovalStatus;
 import com.microservice.erp.domain.helper.MailSentStatus;
@@ -16,16 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigInteger;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -87,7 +80,7 @@ public class ReadDefermentService implements IReadDefermentService {
     @Override
     public List<DefermentListDto> getDefermentListByDefermentYearReasonStatus(String authHeader, String defermentYear,
                                                                               BigInteger reasonId, Character status,
-                                                                              Character gender, String cid, String caseNumber) {
+                                                                              Character gender, String cid, String caseNumber, Character mailStatus) {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
 
@@ -102,7 +95,7 @@ public class ReadDefermentService implements IReadDefermentService {
 
         List<UserProfileDto> userProfileDtos;
 
-        List<DefermentDto> defermentDtoList = repository.getDefermentListByToDateStatus(defermentYear, status, gender, reasonId, caseNumber)
+        List<DefermentDto> defermentDtoList = repository.getDefermentListByToDateStatus(defermentYear, status, gender, reasonId, caseNumber,mailStatus)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
@@ -125,7 +118,7 @@ public class ReadDefermentService implements IReadDefermentService {
                     .filter(deferment -> item.getUserId().equals(deferment.getUserId()))
                     .max(Comparator.comparing(DefermentDto::getId))
                     .orElse(null);
-            List<DefermentDto> defermentList = repository.findAllByUserIdOrderByDefermentIdDesc(item.getId())
+            List<DefermentDto> defermentList = repository.findAllByUserIdOrderByDefermentIdDesc(item.getUserId())
                     .stream()
                     .map(mapper::mapToDomain)
                     .collect(Collectors.toUnmodifiableList());
@@ -144,13 +137,13 @@ public class ReadDefermentService implements IReadDefermentService {
                 defermentData.setGenderName(Objects.requireNonNull(item).getGender().equals('M') ? "Male" : "Female");
                 defermentData.setReasonId(defermentDto.getReasonId());
                 defermentData.setApplicationDate(defermentDto.getApplicationDate());
+                defermentData.setDefermentListLength(defermentDtoList.size());
                 // Format the date to the desired format
                 String formattedDate = dateFormat.format(defermentDto.getApplicationDate());
                 defermentData.setApplicationDateInString(formattedDate);
                 defermentData.setUserId(defermentDto.getUserId());
                 defermentData.setCaseNumber(defermentDto.getCaseNumber());
                 defermentData.setMailStatus(defermentDto.getMailStatus());
-                defermentData.setDefermentList(defermentList);
                 defermentData.setStatusName(ApprovalStatus.fromValue(defermentDto.getStatus()).getName());
                 defermentData.setMailStatusName(Objects.isNull(defermentDto.getMailStatus()) ? "" : MailSentStatus.fromValue(defermentDto.getMailStatus()).getName());
                 String reasonUrl = properties.getReasonById() + defermentDto.getReasonId();

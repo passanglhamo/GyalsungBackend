@@ -45,6 +45,8 @@ public class DefermentListDto {
     private String statusName;
     private String mailStatusName;
     private String reviewerRemarks;
+    private Integer defermentListLength;
+
 
 
     public static DefermentListDto withId(
@@ -76,7 +78,8 @@ public class DefermentListDto {
             Character isMedicalReason,
             String statusName,
             String mailStatusName,
-            String reviewerRemarks) {
+            String reviewerRemarks,
+            Integer defermentListLength) {
         return new DefermentListDto(
                 id,
                 defermentYear,
@@ -106,6 +109,7 @@ public class DefermentListDto {
                 isMedicalReason,
                 statusName,
                 mailStatusName,
-                reviewerRemarks);
+                reviewerRemarks,
+                defermentListLength);
     }
 }
