@@ -137,7 +137,7 @@ public class ReadDefermentService implements IReadDefermentService {
                 defermentData.setGenderName(Objects.requireNonNull(item).getGender().equals('M') ? "Male" : "Female");
                 defermentData.setReasonId(defermentDto.getReasonId());
                 defermentData.setApplicationDate(defermentDto.getApplicationDate());
-                defermentData.setDefermentListLength(defermentDtoList.size());
+                defermentData.setDefermentListLength(defermentList.size());
                 // Format the date to the desired format
                 String formattedDate = dateFormat.format(defermentDto.getApplicationDate());
                 defermentData.setApplicationDateInString(formattedDate);
