@@ -223,6 +223,8 @@ public class SaUserService implements ISaUserService {
 
         String birthDateString = validateCitizenDetails.getBody().getDob();
         saUser.setDob(birthDate);
+        saUser.setFullName(validateCitizenDetails.getBody().getFullName());
+        saUser.setGender(validateCitizenDetails.getBody().getGender());
 
         saUser.setSignupUser('N');
         BigInteger userId = iUserInfoRepository.save(saUser).getUserId();
@@ -235,24 +237,39 @@ public class SaUserService implements ISaUserService {
         return ResponseEntity.ok(new MessageResponse("User added successfully!"));
     }
 
-    private ResponseEntity<?> editUser(UserDto userDto) throws JsonProcessingException {
+    private ResponseEntity<?> editUser(UserDto userDto) throws IOException, ParseException, ApiException {
         String isCidAlreadyInUse = userDao.isCidAlreadyInUse(userDto.getCid(), userDto.getUserId());
         if (isCidAlreadyInUse != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("CID " + userDto.getCid() + " already in use."));
         }
 
+        List<BigInteger> saRoleDtos = userDto.getRoles();
+        if (saRoleDtos.size() == 0) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Roles not selected."));
+        }
         UserInfo saUserDb = iUserInfoRepository.findById(userDto.getUserId()).get();
         UserInfo saUser = new ModelMapper().map(saUserDb, UserInfo.class);
-        saUser.setFullName(userDto.getFullName());
-        saUser.setGender(userDto.getGender());
+
+        ResponseEntity<CitizenDetailDto> validateCitizenDetails = (ResponseEntity<CitizenDetailDto>) iSignupService.validateCitizenDetails(userDto.getCid(), userDto.getDateOfBirth());
+        Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(validateCitizenDetails.getBody().getDob());
+
+        String birthDateString = validateCitizenDetails.getBody().getDob();
+        saUser.setDob(birthDate);
+
+        saUser.setFullName(validateCitizenDetails.getBody().getFullName());
+        saUser.setGender(validateCitizenDetails.getBody().getGender());
         saUser.setMobileNo(userDto.getMobileNo());
         saUser.setEmail(userDto.getEmail());
-        List<BigInteger> saRoleDtos = userDto.getRoles();
-        if (saRoleDtos.size() != 0) {
-            EventBusUser eventBusUser = EventBusUser.withId(saUserDb.getUserId(), userDto.getStatus(), saUser.getCid(), null, saUserDb.getEmail(), saUserDb.getMobileNo()
-                    , saUserDb.getUsername(), null, saUserDb.getSignupUser(), userDto.getRoles());
-            addToQueue.addToUserQueue("addUser", eventBusUser);
-        }
+
+        iUserInfoRepository.save(saUser);
+
+//        List<BigInteger> saRoleDtos = userDto.getRoles();
+//        if (saRoleDtos.size() != 0) {
+        EventBusUser eventBusUser = EventBusUser.withId(saUserDb.getUserId(), userDto.getStatus(), saUser.getCid()
+                , birthDateString, saUserDb.getEmail(), saUserDb.getMobileNo() , saUserDb.getUsername(), null
+                , saUserDb.getSignupUser(), userDto.getRoles());
+        addToQueue.addToUserQueue("addUser", eventBusUser);
+//        }
 
         return ResponseEntity.ok(new MessageResponse("User updated successfully!"));
     }

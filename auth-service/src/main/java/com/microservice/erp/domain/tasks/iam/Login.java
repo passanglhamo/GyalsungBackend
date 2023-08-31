@@ -97,12 +97,15 @@ public class Login extends TokenizerTask {
 //            exist = repository.findByEmail(request.getUsername());
 //        }
         if (exist.isPresent()) {
+
+            if (exist.get().getStatus() == 'I')
+                return new Response().setStatus(401).setMessage("Failed to login: You are locked.");
+
             //PasswordEncoder::matches(RawPassword, EncodedPassword) == will return true/false
             if (!isNDILogin) {
                 if (!encoder.matches(request.getPassword(), exist.get().getPassword()))
                     return new Response().setStatus(401).setMessage("Password didn't matched.");
             }
-
 
             //Now existing password matched: lets create the JWT token;
             try {

@@ -14,6 +14,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -95,6 +96,17 @@ public class AddUserEventService {
                     saRoles.add(saRoleDb);
                     user.setRoles(saRoles);
                 } else {
+                    user.setMobileNo(userEventInfo.getMobileNo());
+                    user.setCid(userEventInfo.getCid());
+                    user.setEmail(userEventInfo.getEmail());
+                    String dob = userEventInfo.getDob();
+                    Date birthDate = null;
+                    try {
+                        birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(dob);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    user.setDob(birthDate);
                     userEventInfo.getRoles().forEach(roleId -> {
                         Role saRoleDb = roleRepository.findById(roleId).get();
                         saRoles.add(saRoleDb);
