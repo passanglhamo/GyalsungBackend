@@ -36,20 +36,19 @@ public class DefermentMapper {
                                      String caseNumber) {
 
         DefermentInfo deferment = new ModelMapper().map(command, DefermentInfo.class);
-        DefermentInfo defermentDb = repository.findFirstByOrderByDefermentIdDesc();
+        Optional<DefermentInfo> defermentDb = repository.findByDefermentId(command.getId());
         deferment.setStatus(ApprovalStatus.PENDING.value());
-        deferment.setApplicationDate((!Objects.isNull(command.getId())) ? defermentDb.getApplicationDate() : new Date());
-        deferment.setCaseNumber((!Objects.isNull(command.getId())) ? defermentDb.getCaseNumber() : caseNumber);
-        deferment.setCreatedBy((!Objects.isNull(command.getId())) ? defermentDb.getCreatedBy() : command.getUserId());
-        deferment.setCreatedDate((!Objects.isNull(command.getId())) ? defermentDb.getCreatedDate() : new Date());
-        Set<DefermentFileInfo> defermentFileDb = new HashSet<>(fileRepository.findAllByDeferment(defermentDb));
-
+        deferment.setApplicationDate((!Objects.isNull(command.getId())) ? defermentDb.get().getApplicationDate() : new Date());
+        deferment.setCaseNumber((!Objects.isNull(command.getId())) ? defermentDb.get().getCaseNumber() : caseNumber);
+        deferment.setCreatedBy((!Objects.isNull(command.getId())) ? defermentDb.get().getCreatedBy() : command.getUserId());
+        deferment.setCreatedDate((!Objects.isNull(command.getId())) ? defermentDb.get().getCreatedDate() : new Date());
         if (!Objects.isNull(command.getId())) {
-            deferment.setReviewerRemarks(defermentDb.getReviewerRemarks());
-            deferment.setReviewerId(defermentDb.getReviewerId());
-            deferment.setApproverId(defermentDb.getApproverId());
-            deferment.setApprovalRemarks(defermentDb.getApprovalRemarks());
-            deferment.setFiles(defermentDb.getFiles());
+            Set<DefermentFileInfo> defermentFileDb = new HashSet<>(fileRepository.findAllByDeferment(defermentDb.get()));
+            deferment.setReviewerRemarks(defermentDb.get().getReviewerRemarks());
+            deferment.setReviewerId(defermentDb.get().getReviewerId());
+            deferment.setApproverId(defermentDb.get().getApproverId());
+            deferment.setApprovalRemarks(defermentDb.get().getApprovalRemarks());
+            deferment.setFiles(defermentDb.get().getFiles());
             deferment.setUpdatedBy(command.getUserId());
             deferment.setUpdatedDate(new Date());
             deferment.setFiles(defermentFileDb);

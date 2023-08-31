@@ -82,7 +82,7 @@ public class CreateDefermentService implements ICreateDefermentService {
             throw new RuntimeException(e);
         }
 
-        return ResponseEntity.ok(caseNumber);
+        return ResponseEntity.ok(deferment.getCaseNumber());
     }
 
     private void sendEmailAndSms(String authTokenHeader, BigInteger userId, String caseNumber, Character isMedicalReason) throws Exception {

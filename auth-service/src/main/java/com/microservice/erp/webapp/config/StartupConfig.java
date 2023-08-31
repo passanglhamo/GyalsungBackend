@@ -311,6 +311,7 @@ public class StartupConfig implements CommandLineRunner {
         user.setPassword(passwordEncoder.encode(password));
         user.setEmail(username);
         user.setEnabled(true);
+        user.setStatus('A');
         user.setSecrets(User.createRandomMapOfSecret());
         if (userRole != null && !userRole.isEmpty()) {
             Optional<Role> roleDb = roleRepository.findByRoleName(userRole);

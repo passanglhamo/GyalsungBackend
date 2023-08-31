@@ -1,6 +1,6 @@
 #!/bin/bash
 
-AppVersion="v1.0.41"
+AppVersion="v1.0.36"
 DockerHubUser="engrajibkumerghosh"
 DockerHubRepoName="ms-training-repo-v1"
 DockerHubRepository="${DockerHubUser}/${DockerHubRepoName}"
@@ -36,13 +36,13 @@ docker login --password "Hema@2020" --username ${DockerHubUser}
 #
 
 ####
-UserProfileDir="user-profile"
-UserProfileName="user-profile"
-echo "Creating ${UserProfileName} Image"
-mvn -pl ${UserProfileDir} -am clean package -DskipTests
-docker image build -f ${UserProfileDir}/Dockerfile -t ${UserProfileName}:${AppVersion} ./${UserProfileDir}
-docker image tag ${UserProfileName}:${AppVersion} ${DockerHubRepository}:${UserProfileName}-${AppVersion}
-docker push ${DockerHubRepository}:${UserProfileName}-${AppVersion}
+#UserProfileDir="user-profile"
+#UserProfileName="user-profile"
+#echo "Creating ${UserProfileName} Image"
+#mvn -pl ${UserProfileDir} -am clean package -DskipTests
+#docker image build -f ${UserProfileDir}/Dockerfile -t ${UserProfileName}:${AppVersion} ./${UserProfileDir}
+#docker image tag ${UserProfileName}:${AppVersion} ${DockerHubRepository}:${UserProfileName}-${AppVersion}
+#docker push ${DockerHubRepository}:${UserProfileName}-${AppVersion}
 ##
 
 ###
@@ -56,13 +56,13 @@ docker push ${DockerHubRepository}:${UserProfileName}-${AppVersion}
 #
 
 ###
-#EnrolmentDefermentExemptionDir="enrolment-deferment-exemption"
-#EnrolmentDefermentExemptionName="enrolment-deferment-exemption"
-#echo "Creating ${EnrolmentDefermentExemptionName} Image"
-#mvn -pl ${EnrolmentDefermentExemptionDir} -am clean package -DskipTests
-#docker image build -f ${EnrolmentDefermentExemptionName}/Dockerfile -t ${EnrolmentDefermentExemptionName}:${AppVersion} ./${EnrolmentDefermentExemptionDir}
-#docker image tag ${EnrolmentDefermentExemptionName}:${AppVersion} ${DockerHubRepository}:${EnrolmentDefermentExemptionName}-${AppVersion}
-#docker push ${DockerHubRepository}:${EnrolmentDefermentExemptionName}-${AppVersion}
+EnrolmentDefermentExemptionDir="enrolment-deferment-exemption"
+EnrolmentDefermentExemptionName="enrolment-deferment-exemption"
+echo "Creating ${EnrolmentDefermentExemptionName} Image"
+mvn -pl ${EnrolmentDefermentExemptionDir} -am clean package -DskipTests
+docker image build -f ${EnrolmentDefermentExemptionName}/Dockerfile -t ${EnrolmentDefermentExemptionName}:${AppVersion} ./${EnrolmentDefermentExemptionDir}
+docker image tag ${EnrolmentDefermentExemptionName}:${AppVersion} ${DockerHubRepository}:${EnrolmentDefermentExemptionName}-${AppVersion}
+docker push ${DockerHubRepository}:${EnrolmentDefermentExemptionName}-${AppVersion}
 #
 
 ###
