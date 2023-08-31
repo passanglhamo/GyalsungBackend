@@ -49,27 +49,23 @@ public class NSRegistrationService implements INSRegistrationService {
     public ResponseEntity<?> save(String authHeader, NSRegistrationDto nsRegistrationDto) throws Exception {
         ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationProperties.class);
         ApplicationProperties properties = context.getBean(ApplicationProperties.class);
-
         RegistrationDateInfo registrationDateInfo = iRegistrationDateInfoRepository.findByStatus(ActiveStatus.Active.value());
         if (registrationDateInfo == null) {
             return ResponseEntity.badRequest().body(new MessageResponse("Registration date information not found."));
         }
         String registrationYear = registrationDateInfo.getRegistrationYear();
 
-//        NSRegistration alreadyExistNsRegis = repository.findByUserId(new BigInteger(String.valueOf(nsRegistrationDto.getUserId())));
-//        //to check already registered or not
-//        if (alreadyExistNsRegis != null) {
-//            return ResponseEntity.badRequest().body(new MessageResponse("You have already registered."));
-//        }
+        NSRegistration alreadyExistNsRegis = repository.findByUserId(new BigInteger(String.valueOf(nsRegistrationDto.getUserId())));
+        //to check already registered or not
+        if (alreadyExistNsRegis != null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("You have already registered."));
+        }
         nsRegistrationDto.setYear(registrationYear);
-
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         HttpEntity<String> request = new HttpEntity<>(headers);
-
         String url = properties.getUserProfileById() + nsRegistrationDto.getUserId();
         ResponseEntity<UserProfileDto> userDtoResponse = userRestTemplate.exchange(url, HttpMethod.GET, request, UserProfileDto.class);
-
         Character gender = Objects.requireNonNull(userDtoResponse.getBody()).getGender();
         String fullName = userDtoResponse.getBody().getFullName();
         String mobileNo = userDtoResponse.getBody().getMobileNo();
@@ -79,41 +75,33 @@ public class NSRegistrationService implements INSRegistrationService {
         var nsRegistration = repository.save(
                 mapper.mapToEntity(nsRegistrationDto)
         );
-
         repository.save(nsRegistration);
-
-
         String message = "Dear " + fullName + ",  Thank you for registering to Gyalsung training.";
         String subject = "Gyalsung Registration";
-
         EventBus eventBus = EventBus.withId(email, null, null, message, subject, mobileNo, null, null);
-
         //todo get from properties
         addToQueue.addToQueue("email", eventBus);
         addToQueue.addToQueue("sms", eventBus);
-
         return ResponseEntity.ok(new MessageResponse("Registered successfully."));
     }
 
     @Override
     public ResponseEntity<?> getMyRegistrationInfo(BigInteger userId) {
-//        NSRegistration nsRegistration = repository.findByUserId(userId);
-//        if (nsRegistration != null) {
-//            //enrolmentInfo.setEnrolmentCoursePreferences(null);
-//            return ResponseEntity.ok(nsRegistration);
-//        }
-//        else {
-//            return ResponseEntity.badRequest().body("Information not found.");
-//        }
-        return ResponseEntity.badRequest().body("Information not found.");
+        NSRegistration nsRegistration = repository.findByUserId(userId);
+        if (nsRegistration != null) {
+            //enrolmentInfo.setEnrolmentCoursePreferences(null);
+            return ResponseEntity.ok(nsRegistration);
+        } else {
+            return ResponseEntity.badRequest().body("Information not found.");
+        }
     }
 
     @Override
-    public List<NSRegistrationDto> getRegistrationListByCriteria(String authHeader, String enlistmentYear,Character status, Character gender, String cid) {
+    public List<NSRegistrationDto> getRegistrationListByCriteria(String authHeader, String enlistmentYear, Character status, Character gender, String cid) {
         cid = cid.isEmpty() ? null : cid;
         enlistmentYear = enlistmentYear.isEmpty() ? null : enlistmentYear;
 
-        List<NSRegistrationDto> nsRegistrationDtos = repository.getRegistrationListByStatus(enlistmentYear,status, gender)
+        List<NSRegistrationDto> nsRegistrationDtos = repository.getRegistrationListByStatus(enlistmentYear, status, gender)
                 .stream()
                 .map(mapper::mapToDomain)
                 .collect(Collectors.toUnmodifiableList());
@@ -137,7 +125,7 @@ public class NSRegistrationService implements INSRegistrationService {
                     .filter(userProfileDto1 -> item.getUserId().equals(userProfileDto1.getUserId()))
                     .findFirst()
                     .orElse(null);
-            if(!Objects.isNull(userProfileDto)){
+            if (!Objects.isNull(userProfileDto)) {
                 NSRegistrationDto nsRegistrationDto = new NSRegistrationDto();
                 nsRegistrationDto.setId(item.getId());
                 nsRegistrationDto.setUserId(item.getUserId());
@@ -149,7 +137,6 @@ public class NSRegistrationService implements INSRegistrationService {
                 nsRegistrationDto.setId(item.getId());
                 nsRegistrationDtoList.add(nsRegistrationDto);
             }
-
         });
         return nsRegistrationDtoList;
     }
