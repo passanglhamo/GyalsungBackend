@@ -41,6 +41,11 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <!-- Custom Local Repository -->
+        <repository>
+            <id>my-local-repo</id>
+            <url>file://${user.home}/.m2/repository</url>
+        </repository>
     </repositories>
 
     <dependencyManagement>
