@@ -272,12 +272,20 @@
             <artifactId>okhttp</artifactId>
             <version>2.7.5</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.wso2</groupId>-->
+<!--            <artifactId>org.wso2.client.DCRC_CitizenDetailsAPI</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.wso2</groupId>
             <artifactId>org.wso2.client.DCRC_CitizenDetailsAPI</artifactId>
             <version>1.0.0</version>
-            <scope>compile</scope>
+            <scope>system</scope>
+            <systemPath>C:\Users\PassangLhamo\.m2\repository\org\wso2\org.wso2.client.BNS_InfomationDetailServiceAPI\1.0.0\org.wso2.client.BNS_InfomationDetailServiceAPI-1.0.0.jar</systemPath>
         </dependency>
+
         <!--endregion end-->
 
         <!-- lombok start-->
