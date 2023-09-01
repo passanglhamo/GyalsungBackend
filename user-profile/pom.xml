@@ -31,7 +31,7 @@
         <!-- Custom Local Repository -->
         <repository>
             <id>my-local-repo</id>
-            <url>file://${user.home}/.m2/repository/org/wso2</url>
+            <url>C:\Users\PassangLhamo\.m2\repository</url>
         </repository>
         <repository>
             <id>spring-milestones</id>
