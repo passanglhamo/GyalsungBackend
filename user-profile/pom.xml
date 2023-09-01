@@ -272,12 +272,12 @@
             <artifactId>okhttp</artifactId>
             <version>2.7.5</version>
         </dependency>
-        <dependency>
-            <groupId>org.wso2</groupId>
-            <artifactId>org.wso2.client.DCRC_CitizenDetailsAPI</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.wso2</groupId>-->
+<!--            <artifactId>org.wso2.client.DCRC_CitizenDetailsAPI</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
         <!--endregion end-->
 
         <!-- lombok start-->
