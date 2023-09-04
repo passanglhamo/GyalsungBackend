@@ -7,7 +7,6 @@ import com.microservice.erp.services.impl.SpringSecurityAuditorAware;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.wso2.client.api.ApiException;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -23,20 +22,20 @@ public class SaUserController {
     }
 
     @GetMapping("/getCensusDetailByCid")
-    public ResponseEntity<?> getCensusDetailByCid(@RequestParam("cid") String cid) throws ParseException, ApiException, IOException {
+    public ResponseEntity<?> getCensusDetailByCid(@RequestParam("cid") String cid) throws ParseException, IOException {
         return iSaUserService.getCensusDetailByCid(cid);
     }
 
     @PostMapping("/addUser")
     public ResponseEntity<?> addUser(@RequestBody UserDto userDto,
-                                     @RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws IOException, ParseException, ApiException {
+                                     @RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws IOException, ParseException {
         SpringSecurityAuditorAware.setToken(token);
         return iSaUserService.saveUser(userDto);
     }
 
     @PostMapping("/editUser")
     public ResponseEntity<?> editUser(@RequestBody UserDto userDto,
-                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws IOException, ParseException, ApiException {
+                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String token) throws IOException, ParseException {
         SpringSecurityAuditorAware.setToken(token);
         return iSaUserService.saveUser(userDto);
     }

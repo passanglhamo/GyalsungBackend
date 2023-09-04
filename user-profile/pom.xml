@@ -28,10 +28,6 @@
     </properties>
 
     <repositories>
-        <repository>
-            <id>my-local-repo</id>
-            <url>file:///C:/Users/PassangLhamo/.m2/repository</url>
-        </repository>
         <!-- Custom Local Repository -->
         <repository>
             <id>spring-milestones</id>
@@ -106,7 +102,6 @@
             <artifactId>commons-vfs2</artifactId>
             <version>2.9.0</version>
         </dependency>
-
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
@@ -330,12 +325,12 @@
             <version>1.4.9</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.wso2</groupId>
-            <artifactId>org.wso2.client.DCRC_CitizenDetailsAPI</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.wso2</groupId>-->
+<!--            <artifactId>org.wso2.client.DCRC_CitizenDetailsAPI</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

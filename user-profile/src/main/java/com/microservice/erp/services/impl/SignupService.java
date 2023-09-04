@@ -20,13 +20,13 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.wso2.client.api.ApiClient;
-import org.wso2.client.api.ApiException;
-import org.wso2.client.api.DCRC_CitizenDetailsAPI.DefaultApi;
-import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizenDetailsResponse;
-import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
-import org.wso2.client.model.DCRC_CitizenDetailsAPI.ParentdetailObj;
-import org.wso2.client.model.DCRC_CitizenDetailsAPI.ParentdetailResponse;
+//import org.wso2.client.api.ApiClient;
+//import org.wso2.client.api.ApiException;
+//import org.wso2.client.api.DCRC_CitizenDetailsAPI.DefaultApi;
+//import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizenDetailsResponse;
+//import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
+//import org.wso2.client.model.DCRC_CitizenDetailsAPI.ParentdetailObj;
+//import org.wso2.client.model.DCRC_CitizenDetailsAPI.ParentdetailResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -63,7 +63,7 @@ public class SignupService implements ISignupService {
 
 
     @Override
-    public ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException {
+    public ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException {
         // to check if user is already exist or not by cid
         Optional<UserInfo> userInfo = iUserInfoRepository.findByCid(cid);
         if (userInfo.isPresent()) {
@@ -165,7 +165,7 @@ public class SignupService implements ISignupService {
     }
 
     @Override
-    public ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, IOException, ApiException {
+    public ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, IOException {
 
         //check already registered not by CID
         Optional<UserInfo> userInfoDB = iUserInfoRepository.findByCid(signupRequestDto.getCid());
@@ -401,7 +401,7 @@ public class SignupService implements ISignupService {
 
 
     @Override
-    public ResponseEntity<?> getPersonDetailsByCid(String cid) throws IOException, ParseException, ApiException {
+    public ResponseEntity<?> getPersonDetailsByCid(String cid) throws IOException, ParseException {
         CitizenDetailDto citizenDetailDto = new CitizenDetailDto();
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
@@ -409,44 +409,44 @@ public class SignupService implements ISignupService {
         OkHttpClient httpClient = new OkHttpClient();
         httpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
         httpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
-        ApiClient apiClient = new ApiClient();
-        apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(getCitizenDetails);
-        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
-        apiClient.setAccessToken(apiAccessToken.getAccess_token());
-
-        DefaultApi api = new DefaultApi(apiClient);
-        CitizenDetailsResponse citizenDetailsResponse = api.citizendetailsCidGet(cid);
-        ParentdetailResponse parentdetailResponse = api.parentdetailsCidGet(cid);
-        if (citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail() != null && !citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().isEmpty()) {
-            CitizendetailsObj citizendetailsObj = citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().get(0);
-            ParentdetailObj parentdetailObj = parentdetailResponse.getParentDetailResponse().getParentDetail().get(0);
-            char genderChar = citizendetailsObj.getGender().charAt(0);
-            String genderName = "Male";
-            if (genderChar == 'F') {
-                genderName = "Female";
-            } else if (genderChar == 'O') {
-                genderName = "Other";
-            }
-            citizenDetailDto.setFullName(citizendetailsObj.getFirstName() + " " + citizendetailsObj.getMiddleName() + " " + citizendetailsObj.getLastName());
-            citizenDetailDto.setFullName(citizenDetailDto.getFullName().replaceAll("null", ""));
-            citizenDetailDto.setCid(citizendetailsObj.getCid());
-            citizenDetailDto.setDob(citizendetailsObj.getDob());
-            citizenDetailDto.setGender(genderChar);
-            citizenDetailDto.setGenderName(genderName);
-            citizenDetailDto.setFatherName(citizendetailsObj.getFatherName());
-            citizenDetailDto.setFatherCid(parentdetailObj.getFatherCID());
-            citizenDetailDto.setMotherName(citizendetailsObj.getMotherName());
-            citizenDetailDto.setMotherCid(parentdetailObj.getMotherCID());
-            citizenDetailDto.setVillageName(citizendetailsObj.getVillageName());
-            citizenDetailDto.setGeogName(citizendetailsObj.getGewogName());
-            citizenDetailDto.setDzongkhagName(citizendetailsObj.getDzongkhagName());
-            citizenDetailDto.setHouseNo(citizendetailsObj.getHouseNo());
-            citizenDetailDto.setThramNo(citizendetailsObj.getThramNo());
-
-        } else {
-            return ResponseEntity.badRequest().body(new MessageResponse("No information found matching CID No " + cid));
-        }
+//        ApiClient apiClient = new ApiClient();
+//        apiClient.setHttpClient(httpClient);
+//        apiClient.setBasePath(getCitizenDetails);
+//        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
+//        apiClient.setAccessToken(apiAccessToken.getAccess_token());
+//
+//        DefaultApi api = new DefaultApi(apiClient);
+//        CitizenDetailsResponse citizenDetailsResponse = api.citizendetailsCidGet(cid);
+//        ParentdetailResponse parentdetailResponse = api.parentdetailsCidGet(cid);
+//        if (citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail() != null && !citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().isEmpty()) {
+//            CitizendetailsObj citizendetailsObj = citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().get(0);
+//            ParentdetailObj parentdetailObj = parentdetailResponse.getParentDetailResponse().getParentDetail().get(0);
+//            char genderChar = citizendetailsObj.getGender().charAt(0);
+//            String genderName = "Male";
+//            if (genderChar == 'F') {
+//                genderName = "Female";
+//            } else if (genderChar == 'O') {
+//                genderName = "Other";
+//            }
+//            citizenDetailDto.setFullName(citizendetailsObj.getFirstName() + " " + citizendetailsObj.getMiddleName() + " " + citizendetailsObj.getLastName());
+//            citizenDetailDto.setFullName(citizenDetailDto.getFullName().replaceAll("null", ""));
+//            citizenDetailDto.setCid(citizendetailsObj.getCid());
+//            citizenDetailDto.setDob(citizendetailsObj.getDob());
+//            citizenDetailDto.setGender(genderChar);
+//            citizenDetailDto.setGenderName(genderName);
+//            citizenDetailDto.setFatherName(citizendetailsObj.getFatherName());
+//            citizenDetailDto.setFatherCid(parentdetailObj.getFatherCID());
+//            citizenDetailDto.setMotherName(citizendetailsObj.getMotherName());
+//            citizenDetailDto.setMotherCid(parentdetailObj.getMotherCID());
+//            citizenDetailDto.setVillageName(citizendetailsObj.getVillageName());
+//            citizenDetailDto.setGeogName(citizendetailsObj.getGewogName());
+//            citizenDetailDto.setDzongkhagName(citizendetailsObj.getDzongkhagName());
+//            citizenDetailDto.setHouseNo(citizendetailsObj.getHouseNo());
+//            citizenDetailDto.setThramNo(citizendetailsObj.getThramNo());
+//
+//        } else {
+//            return ResponseEntity.badRequest().body(new MessageResponse("No information found matching CID No " + cid));
+//        }
         return ResponseEntity.ok(citizenDetailDto);
     }
 
@@ -458,7 +458,7 @@ public class SignupService implements ISignupService {
         return ResponseEntity.ok(saUsers);
     }
 
-    public ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, ApiException, IOException {
+    public ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, IOException {
         CitizenDetailDto citizenDetailDto = new CitizenDetailDto();
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
         Properties props = PropertiesLoaderUtils.loadProperties(resource);
@@ -466,53 +466,53 @@ public class SignupService implements ISignupService {
         OkHttpClient httpClient = new OkHttpClient();
         httpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
         httpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
-        ApiClient apiClient = new ApiClient();
-        apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(getCitizenDetails);
-        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
-        apiClient.setAccessToken(apiAccessToken.getAccess_token());
-
-        DefaultApi api = new DefaultApi(apiClient);
-        CitizenDetailsResponse citizenDetailsResponse = api.citizendetailsCidGet(cid);
-        ParentdetailResponse parentdetailResponse = api.parentdetailsCidGet(cid);
-        if (citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail() != null && !citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().isEmpty()) {
-            CitizendetailsObj citizendetailsObj = citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().get(0);
-            ParentdetailObj parentdetailObj = parentdetailResponse.getParentDetailResponse().getParentDetail().get(0);
-            char genderChar = citizendetailsObj.getGender().charAt(0);
-            String genderName = "Male";
-            if (genderChar == 'F') {
-                genderName = "Female";
-            } else if (genderChar == 'O') {
-                genderName = "Other";
-            }
-            String censusDob = citizendetailsObj.getDob();
-            if (!censusDob.equals(dob)) {
-                return ResponseEntity.badRequest().body(new MessageResponse("CID or date of birth is incorrect."));
-            }
-            citizenDetailDto.setFullName(citizendetailsObj.getFirstName() + " " + citizendetailsObj.getMiddleName() + " " + citizendetailsObj.getLastName());
-            citizenDetailDto.setFullName(citizenDetailDto.getFullName().replaceAll("null", ""));
-            citizenDetailDto.setCid(citizendetailsObj.getCid());
-            citizenDetailDto.setDob(censusDob);
-            citizenDetailDto.setGender(genderChar);
-            citizenDetailDto.setGenderName(genderName);
-            citizenDetailDto.setFatherName(citizendetailsObj.getFatherName());
-            citizenDetailDto.setFatherCid(parentdetailObj.getFatherCID());
-            citizenDetailDto.setMotherName(citizendetailsObj.getMotherName());
-            citizenDetailDto.setMotherCid(parentdetailObj.getMotherCID());
-            citizenDetailDto.setVillageName(citizendetailsObj.getVillageName());
-            citizenDetailDto.setGeogName(citizendetailsObj.getGewogName());
-            citizenDetailDto.setDzongkhagName(citizendetailsObj.getDzongkhagName());
-            citizenDetailDto.setHouseNo(citizendetailsObj.getHouseNo());
-            citizenDetailDto.setThramNo(citizendetailsObj.getThramNo());
-
-            //set father name and father cid as guardian 1 name and guardian 1 cid, and mother name and cid as guardian 2 name and guardian 2 cid respectively
-//            citizenDetailDto.setGuardianNameFirst(citizendetailsObj.getFatherName());
-//            citizenDetailDto.setGuardianCidFirst(parentdetailObj.getFatherCID());
-//            citizenDetailDto.setGuardianNameSecond(citizendetailsObj.getMotherName());
-//            citizenDetailDto.setGuardianCidSecond(parentdetailObj.getMotherCID());
-        } else {
-            return ResponseEntity.badRequest().body(new MessageResponse("CID or date of birth is incorrect."));
-        }
+//        ApiClient apiClient = new ApiClient();
+//        apiClient.setHttpClient(httpClient);
+//        apiClient.setBasePath(getCitizenDetails);
+//        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
+//        apiClient.setAccessToken(apiAccessToken.getAccess_token());
+//
+//        DefaultApi api = new DefaultApi(apiClient);
+//        CitizenDetailsResponse citizenDetailsResponse = api.citizendetailsCidGet(cid);
+//        ParentdetailResponse parentdetailResponse = api.parentdetailsCidGet(cid);
+//        if (citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail() != null && !citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().isEmpty()) {
+//            CitizendetailsObj citizendetailsObj = citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().get(0);
+//            ParentdetailObj parentdetailObj = parentdetailResponse.getParentDetailResponse().getParentDetail().get(0);
+//            char genderChar = citizendetailsObj.getGender().charAt(0);
+//            String genderName = "Male";
+//            if (genderChar == 'F') {
+//                genderName = "Female";
+//            } else if (genderChar == 'O') {
+//                genderName = "Other";
+//            }
+//            String censusDob = citizendetailsObj.getDob();
+//            if (!censusDob.equals(dob)) {
+//                return ResponseEntity.badRequest().body(new MessageResponse("CID or date of birth is incorrect."));
+//            }
+//            citizenDetailDto.setFullName(citizendetailsObj.getFirstName() + " " + citizendetailsObj.getMiddleName() + " " + citizendetailsObj.getLastName());
+//            citizenDetailDto.setFullName(citizenDetailDto.getFullName().replaceAll("null", ""));
+//            citizenDetailDto.setCid(citizendetailsObj.getCid());
+//            citizenDetailDto.setDob(censusDob);
+//            citizenDetailDto.setGender(genderChar);
+//            citizenDetailDto.setGenderName(genderName);
+//            citizenDetailDto.setFatherName(citizendetailsObj.getFatherName());
+//            citizenDetailDto.setFatherCid(parentdetailObj.getFatherCID());
+//            citizenDetailDto.setMotherName(citizendetailsObj.getMotherName());
+//            citizenDetailDto.setMotherCid(parentdetailObj.getMotherCID());
+//            citizenDetailDto.setVillageName(citizendetailsObj.getVillageName());
+//            citizenDetailDto.setGeogName(citizendetailsObj.getGewogName());
+//            citizenDetailDto.setDzongkhagName(citizendetailsObj.getDzongkhagName());
+//            citizenDetailDto.setHouseNo(citizendetailsObj.getHouseNo());
+//            citizenDetailDto.setThramNo(citizendetailsObj.getThramNo());
+//
+//            //set father name and father cid as guardian 1 name and guardian 1 cid, and mother name and cid as guardian 2 name and guardian 2 cid respectively
+////            citizenDetailDto.setGuardianNameFirst(citizendetailsObj.getFatherName());
+////            citizenDetailDto.setGuardianCidFirst(parentdetailObj.getFatherCID());
+////            citizenDetailDto.setGuardianNameSecond(citizendetailsObj.getMotherName());
+////            citizenDetailDto.setGuardianCidSecond(parentdetailObj.getMotherCID());
+//        } else {
+//            return ResponseEntity.badRequest().body(new MessageResponse("CID or date of birth is incorrect."));
+//        }
         return ResponseEntity.ok(citizenDetailDto);
     }
 

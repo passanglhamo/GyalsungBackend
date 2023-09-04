@@ -5,7 +5,6 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.microservice.erp.domain.dto.NotificationRequestDto;
 import com.microservice.erp.domain.dto.SignupRequestDto;
 import org.springframework.http.ResponseEntity;
-import org.wso2.client.api.ApiException;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -13,9 +12,9 @@ import java.util.Date;
 
 
 public interface ISignupService {
-    ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException;
+    ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException;
 
-    ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException;
+    ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, IOException;
 
     ResponseEntity<?> receiveOtp(NotificationRequestDto notificationRequestDto) throws JsonProcessingException;
 
@@ -25,9 +24,9 @@ public interface ISignupService {
 
     ResponseEntity<?> verifyEmailVcode(NotificationRequestDto notificationRequestDto);
 
-    ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, IOException, ApiException;
+    ResponseEntity<?> signup(SignupRequestDto signupRequestDto) throws ParseException, IOException;
 
-    ResponseEntity<?> getPersonDetailsByCid(String cid) throws IOException, ParseException, ApiException;
+    ResponseEntity<?> getPersonDetailsByCid(String cid) throws IOException, ParseException;
 
     ResponseEntity<?> getSignUpUsers(String tillDate) throws ParseException;
 

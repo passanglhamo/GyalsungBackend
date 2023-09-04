@@ -9,7 +9,6 @@ import com.microservice.erp.services.iServices.ISignupService;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.wso2.client.api.ApiException;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -33,12 +32,12 @@ public class SignupController {
     }
 
     @GetMapping("/getCitizenDetails")
-    public ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException {
+    public ResponseEntity<?> getCitizenDetails(String cid, String dob) throws ParseException, IOException {
         return iSignupService.getCitizenDetails(cid, dob);
     }
 
     @GetMapping("/validateCitizenDetails")
-    public ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, IOException, ApiException {
+    public ResponseEntity<?> validateCitizenDetails(String cid, String dob) throws ParseException, IOException {
         return iSignupService.validateCitizenDetails(cid, dob);
     }
 
@@ -64,12 +63,12 @@ public class SignupController {
 
     @SneakyThrows
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) throws ParseException, IOException, ApiException {
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) throws ParseException, IOException {
         return iSignupService.signup(signupRequestDto);
     }
 
     @GetMapping("/getPersonDetailsByCid")
-    public ResponseEntity<?> getPersonDetailsByCid(String cid) throws ParseException, IOException, ApiException {
+    public ResponseEntity<?> getPersonDetailsByCid(String cid) throws ParseException, IOException {
         return iSignupService.getPersonDetailsByCid(cid);
     }
 

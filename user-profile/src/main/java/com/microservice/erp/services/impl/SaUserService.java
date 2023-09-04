@@ -26,11 +26,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.wso2.client.api.ApiClient;
-import org.wso2.client.api.ApiException;
-import org.wso2.client.api.DCRC_CitizenDetailsAPI.DefaultApi;
-import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizenDetailsResponse;
-import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
+//import org.wso2.client.api.ApiClient;
+//import org.wso2.client.api.ApiException;
+//import org.wso2.client.api.DCRC_CitizenDetailsAPI.DefaultApi;
+//import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizenDetailsResponse;
+//import org.wso2.client.model.DCRC_CitizenDetailsAPI.CitizendetailsObj;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -54,7 +54,7 @@ public class SaUserService implements ISaUserService {
     RestTemplate restTemplate;
 
     @Override
-    public ResponseEntity<?> getCensusDetailByCid(String cid) throws IOException, ParseException, ApiException {
+    public ResponseEntity<?> getCensusDetailByCid(String cid) throws IOException, ParseException {
         CitizenDetailDto citizenDetailDto = new CitizenDetailDto();
 
         Resource resource = new ClassPathResource("/apiConfig/dcrcApi.properties");
@@ -66,57 +66,57 @@ public class SaUserService implements ISaUserService {
         httpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
         httpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
 
-        ApiClient apiClient = new ApiClient();
-        apiClient.setHttpClient(httpClient);
-
-        apiClient.setBasePath(getCitizenDetails);
+//        ApiClient apiClient = new ApiClient();
+//        apiClient.setHttpClient(httpClient);
+//
+//        apiClient.setBasePath(getCitizenDetails);
 
         //region off this in stagging
-        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
-        apiClient.setAccessToken(apiAccessToken.getAccess_token());
+//        ApiAccessToken apiAccessToken = citizenDetailApiService.getApplicationToken();
+//        apiClient.setAccessToken(apiAccessToken.getAccess_token());
         //endregion
 
-        DefaultApi api = new DefaultApi(apiClient);
-        CitizenDetailsResponse citizenDetailsResponse = api.citizendetailsCidGet(cid);
-        if (citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail() != null && !citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().isEmpty()) {
-            CitizendetailsObj citizendetailsObj = citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().get(0);
+//        DefaultApi api = new DefaultApi(apiClient);
+//        CitizenDetailsResponse citizenDetailsResponse = api.citizendetailsCidGet(cid);
+//        if (citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail() != null && !citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().isEmpty()) {
+//            CitizendetailsObj citizendetailsObj = citizenDetailsResponse.getCitizenDetailsResponse().getCitizenDetail().get(0);
+//
+//            char genderChar = citizendetailsObj.getGender().charAt(0);
+//
+//            //todo need to change static code
+//            String genderName = "Male";
+//            if (genderChar == 'F') {
+//                genderName = "Female";
+//            } else if (genderChar == 'O') {
+//                genderName = "Other";
+//            }
+//
+//            String censusDob = citizendetailsObj.getDob();
+//            citizenDetailDto.setFullName(citizendetailsObj.getFirstName() + " " + citizendetailsObj.getMiddleName() + " " + citizendetailsObj.getLastName());
+//            citizenDetailDto.setFullName(citizenDetailDto.getFullName().replaceAll("null", ""));
+//            citizenDetailDto.setCid(citizendetailsObj.getCid());
+//            citizenDetailDto.setDob(censusDob);
+//            citizenDetailDto.setGender(genderChar);
+//            citizenDetailDto.setGenderName(genderName);
+//            citizenDetailDto.setFatherName(citizendetailsObj.getFatherName());
+//            citizenDetailDto.setFatherCid(null);
+//            citizenDetailDto.setMotherName(citizendetailsObj.getMotherName());
+//            citizenDetailDto.setMotherCid(null);
+//            citizenDetailDto.setVillageName(citizendetailsObj.getVillageName());
+//            citizenDetailDto.setGeogName(citizendetailsObj.getGewogName());
+//            citizenDetailDto.setDzongkhagName(citizendetailsObj.getDzongkhagName());
+//            citizenDetailDto.setHouseNo(citizendetailsObj.getHouseNo());
+//            citizenDetailDto.setThramNo(citizendetailsObj.getThramNo());
 
-            char genderChar = citizendetailsObj.getGender().charAt(0);
-
-            //todo need to change static code
-            String genderName = "Male";
-            if (genderChar == 'F') {
-                genderName = "Female";
-            } else if (genderChar == 'O') {
-                genderName = "Other";
-            }
-
-            String censusDob = citizendetailsObj.getDob();
-            citizenDetailDto.setFullName(citizendetailsObj.getFirstName() + " " + citizendetailsObj.getMiddleName() + " " + citizendetailsObj.getLastName());
-            citizenDetailDto.setFullName(citizenDetailDto.getFullName().replaceAll("null", ""));
-            citizenDetailDto.setCid(citizendetailsObj.getCid());
-            citizenDetailDto.setDob(censusDob);
-            citizenDetailDto.setGender(genderChar);
-            citizenDetailDto.setGenderName(genderName);
-            citizenDetailDto.setFatherName(citizendetailsObj.getFatherName());
-            citizenDetailDto.setFatherCid(null);
-            citizenDetailDto.setMotherName(citizendetailsObj.getMotherName());
-            citizenDetailDto.setMotherCid(null);
-            citizenDetailDto.setVillageName(citizendetailsObj.getVillageName());
-            citizenDetailDto.setGeogName(citizendetailsObj.getGewogName());
-            citizenDetailDto.setDzongkhagName(citizendetailsObj.getDzongkhagName());
-            citizenDetailDto.setHouseNo(citizendetailsObj.getHouseNo());
-            citizenDetailDto.setThramNo(citizendetailsObj.getThramNo());
-
-        } else {
-            return ResponseEntity.badRequest().body(new MessageResponse("No information found matching CID No " + cid));
-        }
+//        } else {
+//            return ResponseEntity.badRequest().body(new MessageResponse("No information found matching CID No " + cid));
+//        }
         return ResponseEntity.ok(citizenDetailDto);
     }
 
 
     @Override
-    public ResponseEntity<?> saveUser(UserDto userDto) throws IOException, ParseException, ApiException {
+    public ResponseEntity<?> saveUser(UserDto userDto) throws IOException, ParseException {
         ResponseEntity<?> responseEntity;
         if (userDto.getUserId() == null) {
             responseEntity = addNewUser(userDto);
@@ -199,7 +199,7 @@ public class SaUserService implements ISaUserService {
 
     }
 
-    private ResponseEntity<?> addNewUser(UserDto userDto) throws IOException, ParseException, ApiException {
+    private ResponseEntity<?> addNewUser(UserDto userDto) throws IOException, ParseException {
 
         if (!userDto.getCid().isEmpty()) {
             Optional<UserInfo> saUserCid = iUserInfoRepository.findByCid(userDto.getCid());
@@ -237,7 +237,7 @@ public class SaUserService implements ISaUserService {
         return ResponseEntity.ok(new MessageResponse("User added successfully!"));
     }
 
-    private ResponseEntity<?> editUser(UserDto userDto) throws IOException, ParseException, ApiException {
+    private ResponseEntity<?> editUser(UserDto userDto) throws IOException, ParseException {
         String isCidAlreadyInUse = userDao.isCidAlreadyInUse(userDto.getCid(), userDto.getUserId());
         if (isCidAlreadyInUse != null) {
             return ResponseEntity.badRequest().body(new MessageResponse("CID " + userDto.getCid() + " already in use."));
