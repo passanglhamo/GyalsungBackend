@@ -31,7 +31,7 @@
         <!-- Custom Local Repository -->
         <repository>
             <id>my-local-repo</id>
-            <url>file:///C:/Users/PassangLhamo/.m2/repository</url>
+            <url>file:///C:/Program Files/JetBrains/IntelliJ IDEA 2020.2.2/plugins/maven/lib/maven3</url>
         </repository>
         <repository>
             <id>spring-milestones</id>
