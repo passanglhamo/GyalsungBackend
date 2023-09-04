@@ -28,6 +28,10 @@
     </properties>
 
     <repositories>
+        <repository>
+            <id>my-local-repo</id>
+            <url>file:///C:/Users/PassangLhamo/.m2/repository</url>
+        </repository>
         <!-- Custom Local Repository -->
         <repository>
             <id>spring-milestones</id>
